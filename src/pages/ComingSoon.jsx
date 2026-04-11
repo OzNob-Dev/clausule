@@ -1,5 +1,5 @@
 import React from 'react';
-import './ComingSoon.css'; // Make sure the path matches where you save the CSS
+import '../styles/coming-soon.css'; // Make sure the path matches where you save the CSS
 
 export default function ComingSoon() {
   return (
