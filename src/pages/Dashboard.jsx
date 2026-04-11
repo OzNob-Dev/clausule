@@ -28,7 +28,7 @@ export default function Dashboard() {
           </div>
           <Link
             to="/new-entry"
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-ledger hover:opacity-90 transition-opacity no-underline"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-clausule hover:opacity-90 transition-opacity no-underline"
           >
             + New entry
           </Link>
@@ -37,7 +37,7 @@ export default function Dashboard() {
         {/* Stats row */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {STATS.map(({ n, l }) => (
-            <div key={l} className="bg-card dark:bg-card-dark rounded-ledger p-4 border border-[rgba(0,0,0,0.07)]">
+            <div key={l} className="bg-card dark:bg-card-dark rounded-clausule p-4 border border-[rgba(0,0,0,0.07)]">
               <div className="text-[24px] font-medium text-tp dark:text-tp-dark tracking-tight">{n}</div>
               <div className="text-[12px] text-tm dark:text-[#6B6B68] mt-1">{l}</div>
             </div>
@@ -54,7 +54,7 @@ export default function Dashboard() {
             placeholder="Search by name…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-60 px-3 py-2 text-[13px] bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] dark:border-[rgba(255,255,255,0.08)] rounded-ledger text-tp dark:text-tp-dark placeholder:text-tm outline-none focus:border-bl transition-colors"
+            className="w-60 px-3 py-2 text-[13px] bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] dark:border-[rgba(255,255,255,0.08)] rounded-clausule text-tp dark:text-tp-dark placeholder:text-tm outline-none focus:border-bl transition-colors"
           />
         </div>
 

@@ -21,7 +21,7 @@ export function EntryComposer({ onSave, onClose }) {
   }
 
   return (
-    <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] rounded-ledger p-4 mb-4">
+    <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] rounded-clausule p-4 mb-4">
       {/* Category pills */}
       <div className="flex items-center gap-1.5 mb-3">
         {CATS.map((c) => (
@@ -75,7 +75,7 @@ export function EntryComposer({ onSave, onClose }) {
         <button
           onClick={handleSave}
           disabled={!title.trim()}
-          className="px-3.5 py-1.5 text-[12px] font-medium bg-nav text-[#E8ECF8] rounded-ledger hover:opacity-90 disabled:opacity-40 transition-opacity"
+          className="px-3.5 py-1.5 text-[12px] font-medium bg-nav text-[#E8ECF8] rounded-clausule hover:opacity-90 disabled:opacity-40 transition-opacity"
         >
           Save entry
         </button>

@@ -58,7 +58,7 @@ export default {
         },
       },
       borderRadius: {
-        ledger: '5px',
+        clausule: '5px',
       },
     },
   },

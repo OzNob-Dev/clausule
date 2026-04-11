@@ -49,7 +49,7 @@ export function EscalationModal({ open, onClose, onConfirm, context, preDraft = 
         onChange={(e) => { setReason(e.target.value); setError(false) }}
         rows={4}
         placeholder="Describe the reason for escalating this to HR…"
-        className={`w-full resize-none rounded-ledger border text-[13px] text-tp dark:text-tp-dark bg-card dark:bg-card-dark p-3 outline-none focus:border-bl transition-colors ${
+        className={`w-full resize-none rounded-clausule border text-[13px] text-tp dark:text-tp-dark bg-card dark:bg-card-dark p-3 outline-none focus:border-bl transition-colors ${
           error ? 'border-[#E24B4A]' : 'border-[rgba(0,0,0,0.09)]'
         }`}
       />

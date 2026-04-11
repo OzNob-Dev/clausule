@@ -55,12 +55,12 @@ export default function Entries() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search entries, names, themes…"
-                className="w-full pl-9 pr-4 py-2.5 bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] dark:border-[rgba(255,255,255,0.08)] rounded-ledger text-[14px] text-tp dark:text-tp-dark placeholder:text-tm outline-none focus:border-bl transition-colors"
+                className="w-full pl-9 pr-4 py-2.5 bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] dark:border-[rgba(255,255,255,0.08)] rounded-clausule text-[14px] text-tp dark:text-tp-dark placeholder:text-tm outline-none focus:border-bl transition-colors"
               />
             </div>
             <button
               type="submit"
-              className="px-4 py-2.5 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-ledger hover:opacity-90 transition-opacity"
+              className="px-4 py-2.5 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-clausule hover:opacity-90 transition-opacity"
             >
               Search
             </button>
@@ -86,7 +86,7 @@ export default function Entries() {
                   <div
                     key={entry.id}
                     onClick={() => setSelected(entry)}
-                    className="flex items-start gap-3 p-3 bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-ledger cursor-pointer hover:border-[rgba(0,0,0,0.14)] transition-colors"
+                    className="flex items-start gap-3 p-3 bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule cursor-pointer hover:border-[rgba(0,0,0,0.14)] transition-colors"
                   >
                     <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />
                     <div className="flex-1 min-w-0">
@@ -135,7 +135,7 @@ export default function Entries() {
                       <button
                         key={entry.id}
                         onClick={() => setSelected(entry)}
-                        className={`text-left p-3 rounded-ledger border transition-colors ${
+                        className={`text-left p-3 rounded-clausule border transition-colors ${
                           selected?.id === entry.id
                             ? 'bg-blb border-bl'
                             : 'bg-card dark:bg-card-dark border-[rgba(0,0,0,0.07)] hover:border-[rgba(0,0,0,0.14)]'
@@ -156,7 +156,7 @@ export default function Entries() {
             {/* Detail pane */}
             {selected && (
               <div className="w-72 flex-shrink-0">
-                <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-ledger p-4 sticky top-8">
+                <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 sticky top-8">
                   <div className="flex items-center justify-between mb-3">
                     <CategoryPill cat={selected.cat} />
                     <span className="text-[11px] text-tm">{relativeTime(selected.date)}</span>

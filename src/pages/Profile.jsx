@@ -77,7 +77,7 @@ export default function Profile() {
             <button
               id="escalateTrigger"
               onClick={() => setEscalateOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-rt border border-rb rounded-ledger hover:bg-rb transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-rt border border-rb rounded-clausule hover:bg-rb transition-colors"
             >
               <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
@@ -85,7 +85,7 @@ export default function Profile() {
               Escalate to HR
             </button>
           ) : (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-rt bg-rb rounded-ledger">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-rt bg-rb rounded-clausule">
               <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
               </svg>
@@ -95,7 +95,7 @@ export default function Profile() {
         </div>
 
         {/* Pitstop */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-ledger p-4 mb-4">
+        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 mb-4">
           <div className="flex items-center justify-between">
             <span className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px]">Status</span>
           </div>
@@ -105,7 +105,7 @@ export default function Profile() {
         </div>
 
         {/* Manager summary */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-ledger p-4 mb-4">
+        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 mb-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px]">Manager summary</span>
             <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ export default function Profile() {
         </div>
 
         {/* Entries */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-ledger p-4">
+        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4">
           <div className="flex items-center justify-between mb-4">
             <span className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px]">
               File notes · {entries.length}
@@ -165,7 +165,7 @@ export default function Profile() {
           {!composerOpen && (
             <button
               onClick={() => setComposerOpen(true)}
-              className="w-full text-left px-3 py-2.5 text-[13px] text-tm border border-dashed border-[rgba(0,0,0,0.12)] rounded-ledger hover:border-[rgba(0,0,0,0.22)] hover:text-ts transition-colors mb-4"
+              className="w-full text-left px-3 py-2.5 text-[13px] text-tm border border-dashed border-[rgba(0,0,0,0.12)] rounded-clausule hover:border-[rgba(0,0,0,0.22)] hover:text-ts transition-colors mb-4"
             >
               + Add a note…
             </button>

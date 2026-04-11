@@ -1,5 +1,5 @@
 export function Button({ children, variant = 'primary', size = 'md', className = '', ...props }) {
-  const base = 'inline-flex items-center justify-center font-sans font-medium transition-opacity duration-150 cursor-pointer border-0 rounded-ledger'
+  const base = 'inline-flex items-center justify-center font-sans font-medium transition-opacity duration-150 cursor-pointer border-0 rounded-clausule'
 
   const variants = {
     primary: 'bg-nav text-[#E8ECF8] hover:opacity-90',

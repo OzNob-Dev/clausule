@@ -1,9 +1,9 @@
 const KEY = {
-  theme: 'ledger-theme',
-  authed: 'ledger-authed',
-  role: 'ledger-role',
-  escalatedCount: 'ledger-escalated-count',
-  pitstop: (path) => `ledger-ps-${path}`,
+  theme: 'clausule-theme',
+  authed: 'clausule-authed',
+  role: 'clausule-role',
+  escalatedCount: 'clausule-escalated-count',
+  pitstop: (path) => `clausule-ps-${path}`,
 }
 
 export const storage = {

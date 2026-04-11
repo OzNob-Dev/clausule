@@ -35,14 +35,14 @@ export default function NewEntry() {
           <h1 className="text-[20px] font-medium text-tp dark:text-tp-dark">New file note</h1>
         </div>
 
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-ledger p-6 flex flex-col gap-5">
+        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-6 flex flex-col gap-5">
           {/* Employee */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Employee</label>
             <select
               value={form.employee}
               onChange={(e) => set('employee', e.target.value)}
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-ledger text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl appearance-none"
+              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl appearance-none"
             >
               <option value="">Select employee…</option>
               {EMPLOYEES.map((e) => <option key={e} value={e}>{e}</option>)}
@@ -57,7 +57,7 @@ export default function NewEntry() {
                 type="date"
                 value={form.date}
                 onChange={(e) => set('date', e.target.value)}
-                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-ledger text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl"
+                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -65,7 +65,7 @@ export default function NewEntry() {
               <select
                 value={form.category}
                 onChange={(e) => set('category', e.target.value)}
-                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-ledger text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl appearance-none"
+                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl appearance-none"
               >
                 {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
               </select>
@@ -100,7 +100,7 @@ export default function NewEntry() {
               value={form.title}
               onChange={(e) => set('title', e.target.value)}
               placeholder="Brief title for this note…"
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-ledger text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl placeholder:text-tm"
+              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl placeholder:text-tm"
             />
           </div>
 
@@ -112,7 +112,7 @@ export default function NewEntry() {
               onChange={(e) => set('details', e.target.value)}
               rows={5}
               placeholder="What happened? Be specific and factual…"
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-ledger text-[13px] text-ts dark:text-[#9A9994] outline-none focus:border-bl resize-none leading-relaxed placeholder:text-tm"
+              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[13px] text-ts dark:text-[#9A9994] outline-none focus:border-bl resize-none leading-relaxed placeholder:text-tm"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function NewEntry() {
             <button
               onClick={handleSave}
               disabled={!form.employee || !form.title}
-              className="px-4 py-2.5 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-ledger hover:opacity-90 disabled:opacity-40 transition-opacity"
+              className="px-4 py-2.5 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-clausule hover:opacity-90 disabled:opacity-40 transition-opacity"
             >
               Save entry
             </button>

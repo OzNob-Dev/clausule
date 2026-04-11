@@ -56,7 +56,7 @@ export function EntryCard({ entry, onDelete, filterActive, isFiltered }) {
           </div>
         </div>
       ) : (
-        <div className="py-4 border-b border-[rgba(0,0,0,0.07)] last:border-0 bg-[rgba(0,0,0,0.02)] -mx-4 px-4 rounded-ledger">
+        <div className="py-4 border-b border-[rgba(0,0,0,0.07)] last:border-0 bg-[rgba(0,0,0,0.02)] -mx-4 px-4 rounded-clausule">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}

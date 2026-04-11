@@ -58,7 +58,7 @@ export default function BragEmployee() {
           LDG
         </div>
         <nav className="flex-1 flex flex-col items-center gap-1">
-          <button className="w-[34px] h-[34px] flex items-center justify-center rounded-ledger text-[#E8ECF8]"
+          <button className="w-[34px] h-[34px] flex items-center justify-center rounded-clausule text-[#E8ECF8]"
             style={{ background: 'rgba(196,107,74,0.22)' }}>
             <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
@@ -87,7 +87,7 @@ export default function BragEmployee() {
       {/* Identity sidebar */}
       <div className="w-60 flex flex-col flex-shrink-0 overflow-y-auto" style={{ background: '#2E2820' }}>
         <div className="px-5 py-[21px_20px_17px] border-b border-[rgba(255,255,255,0.07)]">
-          <div className="text-[9px] font-medium tracking-[4px] text-accent uppercase">Ledger</div>
+          <div className="text-[9px] font-medium tracking-[4px] text-accent uppercase">Clausule</div>
         </div>
         <div className="px-5 py-5 flex-1 flex flex-col gap-[18px] overflow-y-auto">
           <div>
@@ -239,7 +239,7 @@ export default function BragEmployee() {
               <button
                 onClick={generateCV}
                 disabled={generating}
-                className="flex items-center gap-1.5 px-[18px] py-2.5 text-[12px] font-medium text-white rounded-ledger hover:opacity-90 disabled:opacity-50 transition-opacity"
+                className="flex items-center gap-1.5 px-[18px] py-2.5 text-[12px] font-medium text-white rounded-clausule hover:opacity-90 disabled:opacity-50 transition-opacity"
                 style={{ background: '#C46B4A' }}
               >
                 {generating ? (

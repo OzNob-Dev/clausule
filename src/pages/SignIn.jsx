@@ -132,7 +132,7 @@ export default function SignIn() {
 
               <button
                 onClick={goToCreds}
-                className={`w-full py-3 text-[13px] font-medium tracking-[0.2px] rounded-ledger text-[#E8ECF8] transition-opacity hover:opacity-90 ${
+                className={`w-full py-3 text-[13px] font-medium tracking-[0.2px] rounded-clausule text-[#E8ECF8] transition-opacity hover:opacity-90 ${
                   isEmp ? 'bg-[#534AB7]' : 'bg-nav'
                 }`}
               >
@@ -202,7 +202,7 @@ export default function SignIn() {
 
               <button
                 onClick={signIn}
-                className={`w-full py-3 text-[13px] font-medium tracking-[0.2px] rounded-ledger text-[#E8ECF8] transition-opacity hover:opacity-90 mb-5 ${
+                className={`w-full py-3 text-[13px] font-medium tracking-[0.2px] rounded-clausule text-[#E8ECF8] transition-opacity hover:opacity-90 mb-5 ${
                   isEmp ? 'bg-[#534AB7]' : 'bg-nav'
                 }`}
               >
@@ -217,7 +217,7 @@ export default function SignIn() {
 
               <button
                 onClick={signIn}
-                className="w-full flex items-center justify-center gap-2 py-2.5 text-[13px] font-sans text-ts border border-[rgba(0,0,0,0.09)] rounded-ledger hover:bg-[rgba(0,0,0,0.02)] transition-colors bg-transparent mb-5"
+                className="w-full flex items-center justify-center gap-2 py-2.5 text-[13px] font-sans text-ts border border-[rgba(0,0,0,0.09)] rounded-clausule hover:bg-[rgba(0,0,0,0.02)] transition-colors bg-transparent mb-5"
               >
                 <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/>

@@ -40,7 +40,7 @@ export default function Escalated() {
         </div>
 
         {/* Banner */}
-        <div className="flex items-start gap-2.5 px-4 py-3 bg-rb rounded-ledger mb-6 text-[13px] text-rt">
+        <div className="flex items-start gap-2.5 px-4 py-3 bg-rb rounded-clausule mb-6 text-[13px] text-rt">
           <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/>
           </svg>
@@ -52,7 +52,7 @@ export default function Escalated() {
           {ESCALATED.map((item) => (
             <div
               key={item.id}
-              className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-ledger p-4"
+              className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4"
             >
               <div className="flex items-start gap-3">
                 <Avatar initials={item.emp.av} bg={item.emp.avBg} color={item.emp.avCol} size="md" />
