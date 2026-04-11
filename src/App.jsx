@@ -17,7 +17,7 @@ export default function App() {
   useEffect(() => {
       // 1. Check if the URL has the secret query parameter
       const queryParams = new URLSearchParams(window.location.search);
-      const hasBypassParam = queryParams.get('bypass') === 'true';
+      const hasBypassParam = queryParams.get('bypassss') === 'true';
 
       // 2. If they have the link, save it to local storage so it persists
       if (hasBypassParam) {
