@@ -61,7 +61,7 @@ export function RailNav() {
     >
       {/* Logo */}
       <div className="text-[10px] font-medium tracking-[3px] text-[#EDEAE5] mb-6 select-none">
-        LDG
+        CLS
       </div>
 
       {/* Nav items */}

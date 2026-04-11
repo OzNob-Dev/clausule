@@ -43,7 +43,7 @@ export default function SignIn() {
           style={{ background: '#1C2540' }}
         >
           <div className="text-[10px] font-medium tracking-[5px] text-[#EDEAE5] uppercase select-none">
-            LED<span className="text-accent">GER</span>
+            CLAU<span className="text-accent">SULE</span>
           </div>
           <div>
             <h1 className="font-serif text-[28px] font-normal text-[#EDEAE5] leading-tight tracking-[-0.4px] mb-3">

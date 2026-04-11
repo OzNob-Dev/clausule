@@ -55,7 +55,7 @@ export default function BragEmployee() {
           className="text-[8px] font-medium tracking-[4px] text-accent uppercase mb-5 select-none"
           style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
         >
-          LDG
+          CLS
         </div>
         <nav className="flex-1 flex flex-col items-center gap-1">
           <button className="w-[34px] h-[34px] flex items-center justify-center rounded-clausule text-[#E8ECF8]"
