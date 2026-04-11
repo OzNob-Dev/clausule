@@ -1,5 +1,19 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "cookie",
+          "key": "bypass_clausulee",
+          "value": "true"
+        }
+      ],
+      "destination": "/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/coming-soon.html"
+    }
   ]
 }
