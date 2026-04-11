@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Source+Sans+3:wght@300;400;500&display=swap');
+
+.coming-soon-wrapper {
+  /* Scope variables locally so they don't affect other pages */
+  --canvas: #F5F2EC;
+  --nav: #1C2540;
+  --tp: #1A1F2B;
+  --ts: #4A4A47;
+  --tm: #9A9994;
+  --tc: #C4C0BA;
+  --acc: #C9A84C;
+  --terra: #C46B4A;
+  --rule: rgba(0,0,0,0.09);
+  --serif: 'Fraunces', serif;
+  --sans: 'Source Sans 3', sans-serif;
+
+  /* Acts as the new 'body' */
+  font-family: var(--sans);
+  background: var(--canvas);
+  color: var(--tp);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100vh;
+  width: 100vw;
+  position: relative; /* Traps the ::before background */
+}
+
+/* Faint ruled lines */
+.coming-soon-wrapper::before {
+  content: '';
+  position: absolute; /* Changed from fixed so it doesn't leak when scrolling */
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent, transparent 47px,
+    rgba(0,0,0,0.038) 47px, rgba(0,0,0,0.038) 48px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.coming-soon-wrapper main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 10vw;
+  max-width: 860px;
+}
+
+.coming-soon-wrapper .eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--terra);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: up 0.7s ease 0.1s forwards;
+}
+
+.coming-soon-wrapper h1 {
+  font-family: var(--serif);
+  font-size: clamp(42px, 6vw, 76px);
+  font-weight: 400;
+  color: var(--tp);
+  letter-spacing: -2.5px;
+  line-height: 1.04;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: up 0.7s ease 0.25s forwards;
+}
+
+.coming-soon-wrapper h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--ts);
+}
+
+.coming-soon-wrapper .sub {
+  font-family: var(--serif);
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ts);
+  line-height: 1.78;
+  max-width: 580px;
+  padding-left: 20px;
+  border-left: 2px solid var(--acc);
+  opacity: 0;
+  animation: up 0.7s ease 0.4s forwards;
+}
+
+.coming-soon-wrapper footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 10vw;
+  border-top: 1px solid var(--rule);
+}
+
+.coming-soon-wrapper .logo {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--tp);
+  font-weight: 500;
+}
+
+.coming-soon-wrapper .logo span { 
+  color: var(--acc); 
+}
+
+.coming-soon-wrapper .footer-note {
+  font-size: 11px;
+  color: var(--tm);
+}
+
+@keyframes up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .coming-soon-wrapper main { padding: 60px 28px; }
+  .coming-soon-wrapper footer { padding: 18px 28px; }
+  .coming-soon-wrapper .footer-note { display: none; }
+}
