@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger — Jordan Ellis</title>
+<link rel="stylesheet" href="ledger.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <div class="rail-logo">LDG</div>
+    <nav class="rail-nav">
+      <a href="dashboard.html" class="rail-item" data-tip="Dashboard"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></a>
+      <a href="entries.html" class="rail-item" data-tip="Search entries"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/></svg></a>
+      <a href="escalated.html" class="rail-item" data-tip="Escalated" style="position:relative">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/></svg>
+        <div class="rail-badge"></div>
+      </a>
+      <a href="#" class="rail-item" data-tip="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg></a>
+    </nav>
+    <div class="rail-spacer"></div>
+    <div class="rail-foot">
+      <button class="rail-tog" onclick="toggleTheme()" title="Toggle theme"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/></svg></button>
+      <div class="rail-av" title="Adrian Diente">AD</div>
+      <button class="rail-logout" onclick="logout()" title="Sign out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/><polyline points="11 11 14 8 11 5"/><line x1="14" y1="8" x2="6" y2="8"/></svg></button>
+    </div>
+  </aside>
+
+  <div class="doc-scroll">
+    <div class="doc-inner">
+
+      <div class="doc-toprow">
+        <a href="dashboard.html" class="doc-back"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="10 4 6 8 10 12"/></svg>Dashboard</a>
+        <div class="doc-lastmod">7 entries · <span data-date="2025-09-12"></span></div>
+      </div>
+
+      <div class="doc-name">Jordan Ellis</div>
+      <div class="doc-deck">
+        <span>Senior engineer</span><span class="doc-sep"></span>
+        <span>Platform team</span><span class="doc-sep"></span>
+        <span>A. Diente</span><span class="doc-sep"></span>
+        <span>Since Mar 2022</span>
+      </div>
+
+      <div class="doc-ps-row">
+        <span class="doc-ps-label">Pitstop</span>
+        <button class="doc-pso ps-g" data-ps="g">Going well</button>
+        <button class="doc-pso ps-y sel" data-ps="y">Working on it</button>
+        <button class="doc-pso ps-r" data-ps="r">Needs work</button>
+        <span class="ps-saved" id="psSaved">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 8 6 11 13 4"/></svg>
+          Saved
+        </span>
+        <span style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <span id="escalateFlag" style="display:none" class="esc-flag"><svg viewBox="0 0 16 16" fill="currentColor" style="width:10px;height:10px"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/></svg>Escalated</span>
+          <button id="escalateTrigger" onclick="openEscalateModal('Jordan Ellis', null)" style="font-size:11px;padding:3px 10px;background:transparent;border:0.5px solid rgba(226,75,74,0.3);border-radius:3px;color:#A32D2D;cursor:pointer;font-family:var(--font-sans)">Escalate to HR</button>
+        </span>
+      </div>
+
+      <div class="doc-esc-flash" id="escalateFlash">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px;flex-shrink:0"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/></svg>
+        Jordan Ellis has been escalated — HR has been notified.
+      </div>
+
+      <div class="doc-rule"></div>
+
+      <div class="doc-sum-label">
+        Manager summary — internal only
+        <span class="sum-saved" id="sumSaved">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 8 6 11 13 4"/></svg>
+          Auto-saved
+        </span>
+      </div>
+      <div class="doc-sum" id="sumView" onclick="editSummary()" title="Click to edit">Jordan is a strong senior engineer with genuine potential for a tech lead role in the next 12–18 months. Delivery is consistently reliable — the platform migration in Q3 was a standout. Current status is largely contextual and overall trajectory is positive.</div>
+      <textarea class="doc-sum-ta" id="sumTA" rows="5">Jordan is a strong senior engineer with genuine potential for a tech lead role in the next 12–18 months. Delivery is consistently reliable — the platform migration in Q3 was a standout. Current status is largely contextual and overall trajectory is positive.</textarea>
+      <div class="doc-sum-actions" id="sumActions">
+        <button onclick="runAIDraft()" id="aiBtn" style="font-size:11px;padding:4px 12px;background:transparent;border:1px solid rgba(201,168,76,0.4);border-radius:4px;color:var(--at);cursor:pointer;font-family:var(--font-sans);margin-right:auto">AI draft</button>
+        <button class="sum-cancel" onclick="cancelSummary()">Cancel</button>
+        <button class="sum-save" onclick="saveSummary()">Save</button>
+      </div>
+
+      <div class="doc-rule"></div>
+
+      <div class="doc-entries-hd">
+        <div class="doc-entries-label">File entries</div>
+        <div class="doc-filter-hint">
+          tap <span class="doc-filter-hint-dot"></span> to filter by category
+        </div>
+      </div>
+
+      <!-- Quick-add near top — no scroll required -->
+      <div class="doc-composer-trigger" id="composerTrigger" onclick="openComposer()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>
+        Add entry
+      </div>
+
+      <!-- Inline composer with pill cats -->
+      <div class="doc-composer" id="composer">
+        <div class="doc-comp-metarow">
+          <input type="date" class="doc-comp-date" value="2026-04-11">
+          <div class="comp-pill-cats">
+            <button class="comp-pill-cat sel-perf" data-cat="perf">Performance</button>
+            <button class="comp-pill-cat" data-cat="conduct">Conduct</button>
+            <button class="comp-pill-cat" data-cat="dev">Development</button>
+          </div>
+          <div class="comp-pill-types">
+            <button class="comp-pill-type sel">Manager</button>
+            <button class="comp-pill-type">HR</button>
+          </div>
+        </div>
+        <input type="text" class="doc-comp-title" placeholder="What is this entry about?">
+        <textarea class="doc-comp-body" rows="4" placeholder="Describe what was discussed, agreed, or observed. Write plainly."></textarea>
+        <div class="doc-comp-actions">
+          <div class="doc-comp-checks">
+            <label><input type="checkbox"> Confidential</label>
+            <label><input type="checkbox" checked> Employee informed</label>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="doc-comp-cancel" onclick="closeComposer()">Cancel</button>
+            <button class="doc-comp-save" onclick="closeComposer()">Save entry</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entries — dot-click filter, relative time -->
+      <div id="entriesList">
+
+        <div class="doc-entry" id="e1" data-cat="perf" onclick="openEdit('e1')">
+          <div class="doc-entry-meta">
+            <span class="entry-dot-filter doc-entry-cat" style="background:#4A6FA5" data-cat="perf"></span>
+            <span data-date="2025-09-12"></span><span style="color:var(--tc)">·</span><span>Manager note</span>
+            <span class="doc-edit-hint">click to edit</span>
+          </div>
+          <div class="doc-entry-title">Q3 performance check-in</div>
+          <div class="doc-entry-body">Discussed missed sprint velocity over two consecutive cycles. Jordan acknowledged context — two team members on leave. Agreed to revisit with a clearer baseline in Q4.</div>
+          <div class="doc-entry-foot"><span class="doc-entry-auth">A. Diente</span><div class="doc-entry-foot-right"><span class="tag tag-blue">Reviewed by employee</span></div></div>
+        </div>
+        <div class="doc-editor" id="editor-e1" data-cat="perf">
+          <div class="doc-ed-metarow">
+            <input type="date" class="doc-ed-date" value="2025-09-12">
+            <div class="comp-pill-cats"><button class="comp-pill-cat sel-perf" data-cat="perf">Performance</button><button class="comp-pill-cat" data-cat="conduct">Conduct</button><button class="comp-pill-cat" data-cat="dev">Development</button></div>
+            <div class="comp-pill-types"><button class="comp-pill-type sel">Manager</button><button class="comp-pill-type">HR</button></div>
+          </div>
+          <input type="text" class="doc-ed-title" value="Q3 performance check-in">
+          <textarea class="doc-ed-body" rows="4">Discussed missed sprint velocity over two consecutive cycles. Jordan acknowledged context — two team members on leave. Agreed to revisit with a clearer baseline in Q4.</textarea>
+          <div class="doc-ed-actions">
+            <button class="doc-ed-delete" onclick="deleteEntry('e1')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 4 14 12 14 13 6"/><line x1="1" y1="6" x2="15" y2="6"/></svg>Delete</button>
+            <div style="display:flex;gap:6px">
+              <button class="doc-ed-cancel" onclick="closeEdit('e1')">Cancel</button>
+              <button class="doc-ed-save" onclick="closeEdit('e1')">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-entry" id="e2" data-cat="conduct" onclick="openEdit('e2')">
+          <div class="doc-entry-meta">
+            <span class="entry-dot-filter doc-entry-cat" style="background:#BA7517" data-cat="conduct"></span>
+            <span data-date="2025-08-03"></span><span style="color:var(--tc)">·</span><span>HR note</span>
+            <span class="doc-edit-hint">click to edit</span>
+          </div>
+          <div class="doc-entry-title">Verbal guidance — meeting conduct</div>
+          <div class="doc-entry-body">Informal discussion regarding tone in cross-functional stand-ups. No formal action taken. Employee acknowledged feedback and committed to adjusting approach.</div>
+          <div class="doc-entry-foot">
+            <span class="doc-entry-auth">P. Manalaysay · HR</span>
+            <div class="doc-entry-foot-right">
+              <span class="tag tag-gold">Confidential</span>
+              <button class="btn-esc-sm" onclick="event.stopPropagation();openEscalateModal('Verbal guidance — meeting conduct', 'e2')">Escalate</button>
+            </div>
+          </div>
+        </div>
+        <div class="doc-editor" id="editor-e2" data-cat="conduct">
+          <div class="doc-ed-metarow">
+            <input type="date" class="doc-ed-date" value="2025-08-03">
+            <div class="comp-pill-cats"><button class="comp-pill-cat" data-cat="perf">Performance</button><button class="comp-pill-cat sel-conduct" data-cat="conduct">Conduct</button><button class="comp-pill-cat" data-cat="dev">Development</button></div>
+            <div class="comp-pill-types"><button class="comp-pill-type">Manager</button><button class="comp-pill-type sel">HR</button></div>
+          </div>
+          <input type="text" class="doc-ed-title" value="Verbal guidance — meeting conduct">
+          <textarea class="doc-ed-body" rows="3">Informal discussion regarding tone in cross-functional stand-ups. No formal action taken. Employee acknowledged feedback and committed to adjusting approach.</textarea>
+          <div class="doc-ed-actions">
+            <button class="doc-ed-delete" onclick="deleteEntry('e2')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 4 14 12 14 13 6"/><line x1="1" y1="6" x2="15" y2="6"/></svg>Delete</button>
+            <div style="display:flex;gap:6px">
+              <button class="doc-ed-cancel" onclick="closeEdit('e2')">Cancel</button>
+              <button class="doc-ed-save" onclick="closeEdit('e2')">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-entry" id="e3" data-cat="dev" onclick="openEdit('e3')">
+          <div class="doc-entry-meta">
+            <span class="entry-dot-filter doc-entry-cat" style="background:#639922" data-cat="dev"></span>
+            <span data-date="2025-06-17"></span><span style="color:var(--tc)">·</span><span>Manager note</span>
+            <span class="doc-edit-hint">click to edit</span>
+          </div>
+          <div class="doc-entry-title">Development plan — technical leadership</div>
+          <div class="doc-entry-body">Jordan expressed interest in moving toward a tech lead role. Agreed on stretch assignments: leading the next architecture review and presenting at the guild session in August.</div>
+          <div class="doc-entry-foot"><span class="doc-entry-auth">A. Diente</span><div class="doc-entry-foot-right"><span class="tag tag-blue">Shared with employee</span></div></div>
+        </div>
+        <div class="doc-editor" id="editor-e3" data-cat="dev">
+          <div class="doc-ed-metarow">
+            <input type="date" class="doc-ed-date" value="2025-06-17">
+            <div class="comp-pill-cats"><button class="comp-pill-cat" data-cat="perf">Performance</button><button class="comp-pill-cat" data-cat="conduct">Conduct</button><button class="comp-pill-cat sel-dev" data-cat="dev">Development</button></div>
+            <div class="comp-pill-types"><button class="comp-pill-type sel">Manager</button><button class="comp-pill-type">HR</button></div>
+          </div>
+          <input type="text" class="doc-ed-title" value="Development plan — technical leadership">
+          <textarea class="doc-ed-body" rows="3">Jordan expressed interest in moving toward a tech lead role. Agreed on stretch assignments: leading the next architecture review and presenting at the guild session in August.</textarea>
+          <div class="doc-ed-actions">
+            <button class="doc-ed-delete" onclick="deleteEntry('e3')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 4 14 12 14 13 6"/><line x1="1" y1="6" x2="15" y2="6"/></svg>Delete</button>
+            <div style="display:flex;gap:6px">
+              <button class="doc-ed-cancel" onclick="closeEdit('e3')">Cancel</button>
+              <button class="doc-ed-save" onclick="closeEdit('e3')">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-entry" id="e4" data-cat="perf" onclick="openEdit('e4')">
+          <div class="doc-entry-meta">
+            <span class="entry-dot-filter doc-entry-cat" style="background:#4A6FA5" data-cat="perf"></span>
+            <span data-date="2025-07-15"></span><span style="color:var(--tc)">·</span><span>Manager note</span>
+            <span class="doc-edit-hint">click to edit</span>
+          </div>
+          <div class="doc-entry-title">Mid-year review — strong delivery</div>
+          <div class="doc-entry-body">Jordan delivered the platform migration ahead of schedule and received positive feedback from two stakeholder teams. Recommended for recognition in the next cycle.</div>
+          <div class="doc-entry-foot"><span class="doc-entry-auth">A. Diente</span><div class="doc-entry-foot-right"><span class="tag tag-blue">Reviewed by employee</span></div></div>
+        </div>
+        <div class="doc-editor" id="editor-e4" data-cat="perf">
+          <div class="doc-ed-metarow">
+            <input type="date" class="doc-ed-date" value="2025-07-15">
+            <div class="comp-pill-cats"><button class="comp-pill-cat sel-perf" data-cat="perf">Performance</button><button class="comp-pill-cat" data-cat="conduct">Conduct</button><button class="comp-pill-cat" data-cat="dev">Development</button></div>
+            <div class="comp-pill-types"><button class="comp-pill-type sel">Manager</button><button class="comp-pill-type">HR</button></div>
+          </div>
+          <input type="text" class="doc-ed-title" value="Mid-year review — strong delivery">
+          <textarea class="doc-ed-body" rows="3">Jordan delivered the platform migration ahead of schedule and received positive feedback from two stakeholder teams. Recommended for recognition in the next cycle.</textarea>
+          <div class="doc-ed-actions">
+            <button class="doc-ed-delete" onclick="deleteEntry('e4')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 4 14 12 14 13 6"/><line x1="1" y1="6" x2="15" y2="6"/></svg>Delete</button>
+            <div style="display:flex;gap:6px">
+              <button class="doc-ed-cancel" onclick="closeEdit('e4')">Cancel</button>
+              <button class="doc-ed-save" onclick="closeEdit('e4')">Save</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Escalate modal — pre-drafted reason -->
+<div class="modal-overlay" id="escalateModal" onclick="if(event.target===this)closeEscalateModal()">
+  <div class="modal">
+    <div class="modal-title">Escalate to HR</div>
+    <div class="modal-sub">Escalating <strong id="escalateContext"></strong> for Jordan Ellis. HR will be notified immediately.</div>
+    <div class="modal-label" style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+      Reason <span class="predraft-badge" id="preDraftBadge">Pre-drafted from entry</span>
+    </div>
+    <textarea class="modal-ta" id="escalateReason" placeholder="Describe why this needs HR's attention…" rows="4"></textarea>
+    <div class="modal-notice">
+      <div class="modal-notice-dot"></div>
+      <div class="modal-notice-text">This action is logged with your name and cannot be undone.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeEscalateModal()">Cancel</button>
+      <button class="btn-confirm-esc" onclick="confirmEscalate()">Confirm escalation</button>
+    </div>
+  </div>
+</div>
+
+<script src="ledger.js"></script>
+<script>
+async function runAIDraft() {
+  const btn = document.getElementById('aiBtn');
+  const ta = document.getElementById('sumTA');
+  if (!ta || !ta.value.trim()) return;
+  btn.textContent = 'Drafting…'; btn.style.opacity = '0.5';
+  const entries = ["Performance (12 Sep 2025): Missed sprint velocity over two cycles. Team leave was a factor.","Conduct (3 Aug 2025): Informal discussion re meeting tone. No formal action.","Development (17 Jun 2025): Interest in tech lead role. Stretch assignments agreed.","Performance (15 Jul 2025): Platform migration delivered ahead of schedule."].join('\n');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`Write a concise 3-5 sentence internal manager summary of this employee for HR and the management chain. Professional, factual, balanced. Do not start with their name.\n\nCurrent draft: "${ta.value}"\n\nEntries:\n${entries}`}]})});
+    const data = await res.json();
+    const text = data.content?.find(b=>b.type==='text')?.text||'';
+    if (text) { ta.value = text.trim(); showSumSaved(); }
+  } catch(e) { console.error(e); }
+  btn.textContent = 'AI draft'; btn.style.opacity = '';
+}
+</script>
+</body>
+</html>
