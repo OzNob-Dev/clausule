@@ -31,6 +31,7 @@ export default function SignIn() {
 
         {/* Right panel */}
         <div className="si-right">
+          <div className="si-form">
           <h2 className="si-heading">Welcome back</h2>
           <p className="si-subheading">Sign in to your account</p>
 
@@ -89,6 +90,7 @@ export default function SignIn() {
             Don't have an account?{' '}
             <Link to="/signup">Sign up</Link>
           </p>
+          </div>
         </div>
       </div>
     </div>

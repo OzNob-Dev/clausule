@@ -61,8 +61,14 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   background: var(--canvas);
   padding: 48px 44px;
+}
+
+.si-form {
+  width: 100%;
+  max-width: 340px;
 }
 
 .si-heading {
