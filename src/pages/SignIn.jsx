@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { storage } from '../utils/storage'
 
 export default function SignIn() {
@@ -174,6 +174,13 @@ export default function SignIn() {
 
           <p style={{ fontSize: '11px', textAlign: 'center', color: 'var(--tm)' }}>
             By signing in you agree to Acme Corp's internal data policy.
+          </p>
+
+          <p style={{ fontSize: '12px', textAlign: 'center', color: 'var(--tm)', marginTop: '16px' }}>
+            Don't have an account?{' '}
+            <Link to="/signup" style={{ color: 'var(--bl)', textDecoration: 'none', fontWeight: 600 }}>
+              Sign up
+            </Link>
           </p>
         </div>
       </div>
