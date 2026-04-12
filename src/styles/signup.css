@@ -19,6 +19,7 @@
   font-family: var(--su-font);
   background: var(--su-canvas);
   color: var(--su-tx1);
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
