@@ -15,8 +15,6 @@ const EMPLOYEE = {
   role: 'Senior engineer',
   team: 'Platform',
   av: 'JE',
-  avBg: 'rgba(208,90,52,0.18)',
-  avCol: '#F5A070',
 }
 
 const INITIAL_SUMMARY = 'Jordan is a strong senior engineer with genuine potential for a tech lead role. Delivery is consistently reliable — the platform migration was a standout. Overall trajectory is positive.'
@@ -59,9 +57,9 @@ export default function Profile() {
   const deleteEntry = (id) => setEntries((prev) => prev.filter((e) => e.id !== id))
 
   const PITSTOP_OPTIONS = [
-    { value: 'g', label: 'Going well',    dot: '#1D9E75' },
-    { value: 'y', label: 'Working on it', dot: '#BA7517' },
-    { value: 'r', label: 'Needs work',    dot: '#E24B4A' },
+    { value: 'g', label: 'Going well'    },
+    { value: 'y', label: 'Working on it' },
+    { value: 'r', label: 'Needs work'    },
   ]
 
   return (
@@ -73,7 +71,7 @@ export default function Profile() {
           {/* Back link */}
           <div className="pf-back-row">
             <Link to="/dashboard" className="pf-back-link">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="w-3 h-3">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="10 4 6 8 10 12"/>
               </svg>
               Dashboard
@@ -87,7 +85,6 @@ export default function Profile() {
             <div>
               <div
                 className="pf-avatar"
-                style={{ background: EMPLOYEE.avBg, color: EMPLOYEE.avCol }}
               >
                 {EMPLOYEE.av}
               </div>
@@ -98,7 +95,7 @@ export default function Profile() {
             <div className="pf-divider" />
 
             {/* Meta */}
-            <div className="flex flex-col gap-3">
+            <div className="pf-meta-list">
               {[
                 { label: 'Manager', val: 'A. Diente' },
                 { label: 'Entries', val: `${entries.length} total` },
@@ -115,8 +112,8 @@ export default function Profile() {
             {/* Pitstop */}
             <div>
               <div className="pf-pitstop-label">Pitstop</div>
-              <div className="flex flex-col gap-1.5">
-                {PITSTOP_OPTIONS.map(({ value, label, dot }) => {
+              <div className="pf-pitstop-options">
+                {PITSTOP_OPTIONS.map(({ value, label }) => {
                   const isSel = ps === value
                   return (
                     <button
@@ -124,7 +121,7 @@ export default function Profile() {
                       onClick={() => setPs(value)}
                       className={`pf-pitstop-btn pf-pitstop-btn--${value}${isSel ? ' pf-pitstop-btn--sel' : ''}`}
                     >
-                      <span className="pf-pitstop-dot" style={{ background: dot }} />
+                      <span className="pf-pitstop-dot" />
                       {label}
                     </button>
                   )
@@ -132,7 +129,7 @@ export default function Profile() {
               </div>
               {psSaved && (
                 <div className="pf-saved">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[11px] h-[11px]">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <polyline points="3 8 6 11 13 4"/>
                   </svg>
                   Saved
@@ -145,14 +142,14 @@ export default function Profile() {
             {/* Escalate */}
             {!escalated ? (
               <button onClick={() => setEscalateOpen(true)} className="pf-escalate-btn">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
                   <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
                 </svg>
                 Escalate to HR
               </button>
             ) : (
               <div className="pf-escalated-indicator">
-                <svg className="w-3 h-3" viewBox="0 0 16 16" fill="currentColor">
+                <svg viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
                 </svg>
                 Escalated
@@ -199,7 +196,7 @@ export default function Profile() {
                   <div className="pf-summary-hint">Click to edit · auto-saves</div>
                   {summarySaved && (
                     <div className="pf-auto-saved">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[11px] h-[11px]">
+                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <polyline points="3 8 6 11 13 4"/>
                       </svg>
                       Auto-saved
@@ -241,7 +238,7 @@ export default function Profile() {
               onClick={() => setComposerOpen(true)}
               className="pf-composer-trigger"
             >
-              <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/>
               </svg>
               Add entry

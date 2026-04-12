@@ -46,6 +46,11 @@
 
 .pf-back-link:hover { color: var(--tx-1); }
 
+.pf-back-link svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
 .pf-body {
   display: flex;
   flex-direction: column;
@@ -64,6 +69,8 @@
   font-weight: 900;
   font-size: 18px;
   margin-bottom: 10px;
+  background: var(--acc-tint);
+  color: var(--acc-text);
 }
 
 .pf-name {
@@ -136,6 +143,10 @@
   border-radius: 3px;
 }
 
+.pf-pitstop-btn--g .pf-pitstop-dot { background: #1D9E75; }
+.pf-pitstop-btn--y .pf-pitstop-dot { background: #BA7517; }
+.pf-pitstop-btn--r .pf-pitstop-dot { background: #E24B4A; }
+
 .pf-pitstop-btn--g.pf-pitstop-btn--sel {
   background: rgba(29, 158, 117, 0.14);
   border-color: rgba(29, 158, 117, 0.28);
@@ -154,6 +165,18 @@
   color: var(--red);
 }
 
+.pf-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pf-pitstop-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
 .pf-saved {
   display: flex;
   align-items: center;
@@ -162,6 +185,11 @@
   font-size: 10px;
   font-weight: 600;
   color: var(--teal);
+}
+
+.pf-saved svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* Escalate */
@@ -182,6 +210,11 @@
   transition: background 0.15s, border-color 0.15s;
 }
 
+.pf-escalate-btn svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
 .pf-escalate-btn:hover {
   background: rgba(240, 149, 149, 0.18);
   border-color: rgba(240, 149, 149, 0.38);
@@ -197,6 +230,11 @@
   padding: 9px 13px;
   background: var(--red-bg);
   border-radius: var(--r);
+}
+
+.pf-escalated-indicator svg {
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 /* Summary */
@@ -304,6 +342,11 @@
   color: var(--teal);
 }
 
+.pf-auto-saved svg {
+  width: 11px;
+  height: 11px;
+}
+
 /* Document area — light content surface */
 .pf-doc {
   flex: 1;
@@ -361,6 +404,11 @@
 }
 
 .pf-composer-trigger:hover { color: var(--acc-text); }
+
+.pf-composer-trigger svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
 
 @media (max-width: 768px) {
   .pf-page {
