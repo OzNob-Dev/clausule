@@ -783,7 +783,7 @@ export default function SignUp() {
       }}>
         <div style={{
           display: 'flex', gap: '48px', alignItems: 'flex-start',
-          maxWidth: step === 1 ? '900px' : '480px', width: '100%',
+          maxWidth: step === 1 ? '480px' : '900px', width: '100%',
         }}>
           <div style={{ width: '100%' }}>
             {step === 1 && <Step1 onNext={handleStep1} />}
