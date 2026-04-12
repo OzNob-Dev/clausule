@@ -333,6 +333,7 @@
   cursor: pointer;
   font-family: var(--font);
   transition: opacity 0.15s;
+  float: right;
 }
 
 .st-btn-save:hover { opacity: 0.88; }

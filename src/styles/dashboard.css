@@ -30,7 +30,7 @@
 
 .db-btn-new {
   background: var(--acc);
-  color: var(--tx-1);
+  color: var(--bg-doc);
   border-radius: var(--r);
   font-size: 12px;
   font-weight: 700;

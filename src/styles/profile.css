@@ -171,12 +171,12 @@
   gap: 8px;
   width: 100%;
   padding: 9px 13px;
-  background: var(--red-bg);
+  background: var(--red);
   border: 1.5px solid rgba(240, 149, 149, 0.22);
   border-radius: var(--r);
   font-size: 12px;
   font-weight: 700;
-  color: var(--red);
+  color: var(--bg-doc);
   cursor: pointer;
   font-family: var(--font);
   transition: background 0.15s, border-color 0.15s;
