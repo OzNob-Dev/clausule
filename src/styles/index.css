@@ -70,7 +70,7 @@
 
 /* ── Mobile: rail nav becomes a fixed bottom bar ─────────────── */
 @media (max-width: 640px) {
-  .rail-nav {
+  .rail-aside {
     position: fixed !important;
     bottom: 0;
     left: 0;

@@ -55,7 +55,7 @@ export function RailNav() {
   }
 
   return (
-    <aside className="rail-nav w-[52px] flex flex-col items-center py-4 flex-shrink-0 sticky top-0 h-screen bg-[var(--nav)] border-r border-[var(--border)]">
+    <aside className="rail-aside w-[52px] flex flex-col items-center py-4 flex-shrink-0 sticky top-0 h-screen bg-[var(--nav)] border-r border-[var(--border)]">
       {/* Logo — square icon bug */}
       <div className="rail-logo w-[30px] h-[30px] flex items-center justify-center mb-[18px] flex-shrink-0 bg-[var(--acc)] rounded-[9px]">
         <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" className="w-4 h-4">
