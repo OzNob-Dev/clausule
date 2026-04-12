@@ -2,10 +2,15 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AppShell } from '../components/layout/AppShell'
 import { Avatar } from '../components/ui/Avatar'
-import { CategoryPill } from '../components/ui/CategoryPill'
 import { ThinkingDots } from '../components/ui/ThinkingDots'
 import { ALL_EMP, SAMPLE_ENTRIES } from '../data/employees'
 import { relativeTime } from '../utils/relativeTime'
+
+const CAT_DOT = {
+  perf:    'var(--blue)',
+  conduct: 'var(--amber)',
+  dev:     'var(--teal)',
+}
 
 const MOCK_RESULTS = [
   {
@@ -39,155 +44,176 @@ export default function Entries() {
 
   return (
     <AppShell>
-      <div className="px-8 py-8">
-        {/* Search bar */}
-        <form onSubmit={handleSearch} className="mb-8">
-          <div className="flex items-center gap-3 max-w-2xl">
-            <div className="relative flex-1">
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tm"
-                viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
-              >
-                <circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/>
-              </svg>
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search entries, names, themes…"
-                className="w-full pl-9 pr-4 py-2.5 bg-transparent rounded-clausule text-[14px] text-tp placeholder:text-tm outline-none focus:border-bl transition-colors"
-                style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
-              />
+      <div className="flex flex-col flex-1 overflow-hidden">
+
+        {/* Search zone */}
+        <div className="flex-shrink-0" style={{ padding: '24px 32px 0' }}>
+          <div className="flex items-end justify-between mb-5">
+            <div>
+              <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--tx-1)', letterSpacing: '-0.6px', lineHeight: 1 }}>Search</div>
+              <div style={{ fontSize: '12px', color: 'var(--tx-3)', marginTop: '4px' }}>Search entries by name, theme, or keyword</div>
             </div>
+          </div>
+
+          <form onSubmit={handleSearch} className="relative">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search entries, names, themes…"
+              style={{
+                width: '100%',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1.5px solid var(--border2)',
+                borderRadius: 'var(--r)',
+                padding: '12px 44px 12px 14px',
+                fontSize: '16px',
+                fontWeight: 500,
+                color: 'var(--tx-1)',
+                outline: 'none',
+                fontFamily: 'var(--font)',
+                transition: 'border-color 0.2s',
+              }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--acc-text)' }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border2)' }}
+            />
             <button
               type="submit"
-              className="px-4 py-2.5 text-[13px] font-bold rounded-clausule hover:opacity-90 transition-opacity text-white"
-              style={{ background: 'var(--acc)' }}
+              className="absolute right-3 top-1/2 -translate-y-1/2"
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--tx-4)' }}
             >
-              Search
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                <circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/>
+              </svg>
             </button>
-          </div>
-        </form>
+          </form>
 
-        {/* Thinking state */}
-        {searching && (
-          <div className="flex items-center gap-2 text-[13px] text-tm mb-6">
-            <ThinkingDots />
-            <span>Searching entries…</span>
-          </div>
-        )}
+          {searching && (
+            <div className="flex items-center gap-2 mt-2.5" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--tx-3)' }}>
+              <ThinkingDots />
+              <span>Searching entries…</span>
+            </div>
+          )}
 
-        {/* Idle state */}
-        {!searching && !results && (
-          <div>
-            <p className="text-[12px] font-bold text-tm uppercase tracking-[0.4px] mb-3">Recent entries</p>
-            <div className="flex flex-col gap-2">
+          <div className="h-px mt-4" style={{ background: 'var(--border)' }} />
+        </div>
+
+        {/* Results / idle area */}
+        <div className="flex-1 overflow-y-auto" style={{ padding: '0 32px 60px' }}>
+
+          {/* Idle state */}
+          {!searching && !results && (
+            <div>
+              <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--tx-3)', padding: '20px 0 16px' }}>
+                Recent entries
+              </div>
               {SAMPLE_ENTRIES.map((entry) => {
                 const emp = ALL_EMP[0]
                 return (
                   <div
                     key={entry.id}
+                    className="cursor-pointer transition-all duration-150"
+                    style={{ padding: '20px 0', borderBottom: '1px solid var(--border)' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.paddingLeft = '5px' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.paddingLeft = '0' }}
                     onClick={() => setSelected(entry)}
-                    className="flex items-start gap-3 p-3 rounded-clausule cursor-pointer transition-colors"
-                    style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
                   >
-                    <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[13px] font-bold text-tp truncate">{entry.title}</span>
-                        <CategoryPill cat={entry.cat} showDot={false} />
-                      </div>
-                      <p className="text-[12px] text-tm">{emp.name} · {relativeTime(entry.date)}</p>
+                    <div className="flex items-center gap-1.5 mb-1.5" style={{ fontSize: '11px', color: 'var(--tx-3)' }}>
+                      <span
+                        className="flex-shrink-0"
+                        style={{ width: '5px', height: '5px', borderRadius: '50%', background: CAT_DOT[entry.cat] || 'var(--blue)' }}
+                      />
+                      {emp.name} · {relativeTime(entry.date)}
+                    </div>
+                    <div style={{ fontSize: '19px', fontWeight: 800, color: 'var(--tx-1)', lineHeight: 1.3, marginBottom: '8px' }}>
+                      {entry.title}
+                    </div>
+                    <div style={{ fontSize: '13px', color: 'var(--tx-2)', lineHeight: 1.75 }}>
+                      {entry.body}
                     </div>
                   </div>
                 )
               })}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Results */}
-        {results && !searching && (
-          <div className="flex gap-6">
-            {/* Results list */}
-            <div className="flex-1 min-w-0">
-              <p className="text-[12px] text-tm mb-4">
-                Found results for <strong className="text-tp">"{query}"</strong>
-              </p>
+          {/* Results */}
+          {results && !searching && (
+            <div>
+              <div className="flex items-center justify-between" style={{ padding: '16px 0 8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--tx-3)' }}>
+                  {results.reduce((n, r) => n + r.entries.length, 0)} results for "{query}"
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--tx-4)', fontStyle: 'italic' }}>
+                  Ranked by relevance
+                </div>
+              </div>
+
               {results.map(({ emp, entries, pattern }) => (
-                <div key={emp.name} className="mb-6">
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />
-                    <Link to="/profile" className="text-[14px] font-bold text-tp hover:underline">
-                      {emp.name}
-                    </Link>
-                    <span className="text-[12px] text-tm">{emp.role}</span>
+                <div key={emp.name} className="mb-6" style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                  {/* Person header */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div
+                      className="flex items-center justify-center flex-shrink-0"
+                      style={{
+                        width: '34px', height: '34px', borderRadius: '11px',
+                        background: emp.avBg, color: emp.avCol,
+                        fontSize: '11px', fontWeight: 800,
+                      }}
+                    >
+                      {emp.av}
+                    </div>
+                    <div>
+                      <Link to="/profile" className="no-underline" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--tx-1)' }}>
+                        {emp.name}
+                      </Link>
+                      <div style={{ fontSize: '11px', color: 'var(--tx-2)', marginTop: '1px' }}>{emp.role}</div>
+                    </div>
                   </div>
 
                   {pattern && (
-                    <div className="ml-[42px] mb-2 flex items-start gap-2 px-3 py-2 bg-blb rounded text-[12px] text-bl">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/>
-                      </svg>
-                      {pattern}
+                    <div
+                      className="flex items-start gap-2.5 mb-4"
+                      style={{
+                        background: 'var(--acc-bg)',
+                        border: '1px solid var(--acc-border)',
+                        borderRadius: 'var(--r)',
+                        padding: '11px 15px',
+                      }}
+                    >
+                      <span
+                        className="flex-shrink-0 mt-[5px]"
+                        style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--acc-text)' }}
+                      />
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--acc-text)', lineHeight: 1.6 }}>{pattern}</span>
                     </div>
                   )}
 
-                  <div className="ml-[42px] flex flex-col gap-1.5">
-                    {entries.map((entry) => (
-                      <button
-                        key={entry.id}
-                        onClick={() => setSelected(entry)}
-                        className="text-left p-3 rounded-clausule transition-colors"
-                        style={
-                          selected?.id === entry.id
-                            ? { background: 'var(--blb)', border: '1px solid var(--bl)' }
-                            : { background: 'var(--card)', border: '1px solid var(--rule)' }
-                        }
-                      >
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[13px] font-bold text-tp">{entry.title}</span>
-                          <CategoryPill cat={entry.cat} showDot={false} />
-                        </div>
-                        <p className="text-[12px] text-tm">{relativeTime(entry.date)}</p>
-                      </button>
-                    ))}
-                  </div>
+                  {entries.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="cursor-pointer transition-all duration-150"
+                      style={{ padding: '13px 0', borderBottom: '1px solid var(--border)' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.paddingLeft = '6px' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.paddingLeft = '0' }}
+                      onClick={() => setSelected(entry)}
+                    >
+                      <div className="flex items-center gap-1.5 mb-1.5" style={{ fontSize: '10px', color: 'var(--tx-3)' }}>
+                        <span
+                          className="flex-shrink-0"
+                          style={{ width: '5px', height: '5px', borderRadius: '50%', background: CAT_DOT[entry.cat] || 'var(--blue)' }}
+                        />
+                        {relativeTime(entry.date)}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--tx-1)', marginBottom: '6px' }}>{entry.title}</div>
+                      <div style={{ fontSize: '13px', color: 'var(--tx-2)', lineHeight: 1.75 }}>{entry.body}</div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
-
-            {/* Detail pane */}
-            {selected && (
-              <div className="w-72 flex-shrink-0">
-                <div
-                  className="rounded-clausule2 p-4 sticky top-8"
-                  style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <CategoryPill cat={selected.cat} />
-                    <span className="text-[11px] text-tm">{relativeTime(selected.date)}</span>
-                  </div>
-                  <h3 className="text-[15px] font-bold text-tp mb-2">{selected.title}</h3>
-                  <p className="text-[13px] text-ts leading-relaxed mb-3">{selected.body}</p>
-                  {selected.tags?.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {selected.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[11px] px-2 py-0.5 rounded-full text-tm"
-                          style={{ background: 'rgba(255,255,255,0.07)' }}
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </AppShell>
   )

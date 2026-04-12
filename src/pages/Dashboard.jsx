@@ -19,52 +19,66 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <div className="p-8">
+      <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top bar */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-end justify-between flex-shrink-0" style={{ padding: '22px 28px 0' }}>
           <div>
-            <h1 className="text-[20px] font-black tracking-[-0.3px]" style={{ color: 'var(--tp)' }}>Dashboard</h1>
-            <p className="text-[13px] mt-0.5" style={{ color: 'var(--tm)' }}>Acme Corp · April 2026</p>
+            <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--tx-1)', letterSpacing: '-0.6px' }}>Dashboard</div>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--tx-3)', marginTop: '3px' }}>Acme Corp · April 2026</div>
           </div>
           <Link
             to="/new-entry"
-            className="flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-bold rounded-clausule hover:opacity-90 transition-opacity no-underline text-white"
-            style={{ background: 'var(--acc)' }}
+            className="no-underline transition-opacity hover:opacity-90"
+            style={{
+              background: 'var(--acc)',
+              color: 'var(--tx-1)',
+              borderRadius: 'var(--r)',
+              fontSize: '12px',
+              fontWeight: 700,
+              padding: '9px 16px',
+            }}
           >
             + New entry
           </Link>
         </div>
 
-        {/* Stats row */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          {STATS.map(({ n, l }) => (
+        {/* Stats strip */}
+        <div className="flex items-stretch flex-shrink-0" style={{ borderBottom: '1px solid var(--border)', marginTop: '18px' }}>
+          {STATS.map(({ n, l }, i) => (
             <div
               key={l}
-              className="rounded-clausule2 p-4"
-              style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+              style={{
+                padding: '14px 24px',
+                borderRight: i < STATS.length - 1 ? '1px solid var(--border)' : 'none',
+              }}
             >
-              <div className="text-[24px] font-black tracking-tight" style={{ color: 'var(--tp)' }}>{n}</div>
-              <div className="text-[12px] mt-1 font-bold" style={{ color: 'var(--tm)' }}>{l}</div>
+              <div style={{ fontSize: '28px', fontWeight: 900, color: 'var(--tx-1)', letterSpacing: '-1px', lineHeight: 1 }}>{n}</div>
+              <div style={{ fontSize: '11px', fontWeight: 500, color: 'var(--tx-3)', marginTop: '4px' }}>{l}</div>
             </div>
           ))}
         </div>
 
-        {/* Divider */}
-        <div className="h-px mb-5" style={{ background: 'var(--rule)' }} />
-
         {/* Search */}
-        <div className="mb-5">
+        <div className="flex-shrink-0" style={{ padding: '14px 28px 0' }}>
           <input
             type="text"
             placeholder="Search by name…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-60 px-3 py-2 text-[13px] rounded-clausule outline-none transition-colors"
             style={{
-              background: 'var(--card)',
-              border: '1px solid var(--rule)',
-              color: 'var(--tp)',
+              width: '220px',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1.5px solid var(--border2)',
+              borderRadius: 'var(--r)',
+              padding: '8px 13px',
+              fontSize: '12px',
+              fontWeight: 500,
+              color: 'var(--tx-1)',
+              outline: 'none',
+              fontFamily: 'var(--font)',
             }}
+            onFocus={(e) => { e.target.style.borderColor = 'var(--acc-text)' }}
+            onBlur={(e) => { e.target.style.borderColor = 'var(--border2)' }}
           />
         </div>
 

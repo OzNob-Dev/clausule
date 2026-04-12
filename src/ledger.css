@@ -79,6 +79,30 @@
 
   /* Legacy alias — keeps any old var(--font-serif) references rendering in DM Sans */
   --font-serif: var(--font-sans);
+
+  /* ── Mockup var aliases (derived from whitelabel override points above) ── */
+  /* These mirror the dev-mockup CSS class names so mockup patterns can be used directly */
+  --bg-rail:    var(--nav);
+  --bg-panel:   var(--nav);
+  --bg-doc:     var(--canvas);
+  --bg-comp:    var(--card);
+  --tx-1:       var(--tp);
+  --tx-2:       var(--ts);
+  --tx-3:       var(--tm);
+  --tx-4:       var(--tc);
+  --blue:       var(--bl);
+  --blue-bg:    var(--blb);
+  --teal:       var(--gt);
+  --teal-bg:    var(--gb);
+  --amber:      var(--at);
+  --amber-bg:   var(--ab);
+  --red:        var(--rt);
+  --red-bg:     var(--rb);
+  --border:     var(--rule);
+  --border2:    var(--rule-em);
+  --acc-bg:     var(--acc-tint);
+  --acc-border: rgba(208,90,52,0.32);
+  --font:       var(--font-sans);
 }
 
 /* Dark class = same palette (design is dark-first; kept for theme-toggle compat) */

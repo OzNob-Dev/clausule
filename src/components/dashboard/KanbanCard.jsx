@@ -6,20 +6,35 @@ export function KanbanCard({ emp }) {
   return (
     <Link
       to="/profile"
-      className="block rounded-clausule2 p-3.5 mb-2 transition-colors no-underline"
-      style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+      className="block no-underline transition-all duration-150"
+      style={{
+        background: 'var(--bg-panel)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--r2)',
+        padding: '14px 16px',
+        display: 'block',
+        position: 'relative',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.borderColor = 'var(--border2)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.borderColor = 'var(--border)'
+      }}
     >
       <div className="flex items-center gap-2.5 mb-2.5">
         <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />
         <div className="min-w-0">
-          <div className="text-[13px] font-bold truncate" style={{ color: 'var(--tp)' }}>{emp.name}</div>
-          <div className="text-[11px] mt-0.5" style={{ color: 'var(--ts)' }}>{emp.role} · {emp.team}</div>
+          <div className="truncate" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--tx-1)' }}>{emp.name}</div>
+          <div style={{ fontSize: '11px', color: 'var(--tx-3)', marginTop: '1px' }}>{emp.role} · {emp.team}</div>
         </div>
       </div>
-      <div className="h-px mb-2.5" style={{ background: 'var(--rule)' }} />
+      <div className="h-px mb-2.5" style={{ background: 'var(--border)' }} />
       <div className="flex items-center justify-between">
-        <span className="text-[11px]" style={{ color: 'var(--tm)' }}>{relativeTime(emp.last)}</span>
-        <span className="text-[11px]" style={{ color: 'var(--tm)' }}>{emp.entries} entries</span>
+        <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--tx-3)' }}>{relativeTime(emp.last)}</span>
+        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--tx-3)' }}>{emp.entries} entries</span>
       </div>
     </Link>
   )

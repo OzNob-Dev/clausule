@@ -1,29 +1,30 @@
 import { AppShell } from '../components/layout/AppShell'
-import { Avatar } from '../components/ui/Avatar'
-import { CategoryPill } from '../components/ui/CategoryPill'
 import { relativeTime } from '../utils/relativeTime'
 
 const ESCALATED = [
   {
     id: 'esc1',
-    emp: { name: "Marcus O'Brien", role: 'Engineer I', team: 'Platform', av: 'MO', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595' },
+    emp: { name: "Marcus O'Brien", role: 'Engineer I', team: 'Platform', av: 'MO' },
     title: 'Formal performance improvement plan',
+    body: 'A formal PIP was issued following three consecutive quarters of missed deliverables. Manager and HR aligned on a 90-day improvement window with fortnightly check-ins.',
     cat: 'perf',
     date: '2025-11-03',
     confidential: true,
   },
   {
     id: 'esc2',
-    emp: { name: 'Sophie Okafor', role: 'Engineer II', team: 'Security', av: 'SO', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595' },
+    emp: { name: 'Sophie Okafor', role: 'Engineer II', team: 'Security', av: 'SO' },
     title: 'Conduct investigation — repeated lateness',
+    body: 'HR opened a formal investigation after six documented incidents of arriving 30+ minutes late without prior notice. Employee was notified and a formal meeting scheduled.',
     cat: 'conduct',
     date: '2025-10-19',
     confidential: true,
   },
   {
     id: 'esc3',
-    emp: { name: 'David Kim', role: 'Engineer I', team: 'Security', av: 'DK', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595' },
+    emp: { name: 'David Kim', role: 'Engineer I', team: 'Security', av: 'DK' },
     title: 'Verbal warning issued',
+    body: 'A verbal warning was issued following a pattern of missed PR review deadlines affecting team delivery. Documented for the record. No further action at this stage.',
     cat: 'conduct',
     date: '2025-11-28',
     confidential: false,
@@ -33,46 +34,48 @@ const ESCALATED = [
 export default function Escalated() {
   return (
     <AppShell>
-      <div className="px-8 py-8 max-w-2xl">
-        <div className="mb-6">
-          <h1 className="text-[20px] font-black text-tp mb-0.5">Escalated</h1>
-          <p className="text-[13px] text-tm">Entries escalated to HR for formal process.</p>
-        </div>
-
-        {/* Banner */}
-        <div className="flex items-start gap-2.5 px-4 py-3 bg-rb rounded-clausule mb-6 text-[13px] text-rt">
-          <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/>
-          </svg>
-          <p>These records are part of a formal HR process and are visible to HR only. Handle with care.</p>
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Top bar */}
+        <div className="flex-shrink-0" style={{ padding: '24px 32px 0', marginBottom: '20px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--tx-1)', letterSpacing: '-0.6px' }}>Escalated</div>
+          <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--tx-3)', marginTop: '3px' }}>
+            Entries escalated to HR for formal process.
+          </div>
         </div>
 
         {/* Entry list */}
-        <div className="flex flex-col gap-3">
+        <div className="flex-1 overflow-y-auto" style={{ padding: '0 32px 60px' }}>
           {ESCALATED.map((item) => (
             <div
               key={item.id}
-              className="rounded-clausule p-4"
-              style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+              className="cursor-pointer transition-all duration-150"
+              style={{
+                padding: '20px 0 20px 18px',
+                borderBottom: '1px solid var(--border)',
+                borderLeft: '3px solid var(--red)',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.paddingLeft = '22px' }}
+              onMouseLeave={(e) => { e.currentTarget.style.paddingLeft = '18px' }}
             >
-              <div className="flex items-start gap-3">
-                <Avatar initials={item.emp.av} bg={item.emp.avBg} color={item.emp.avCol} size="md" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="text-[14px] font-bold text-tp">{item.title}</h3>
-                    {item.confidential && (
-                      <span className="text-[10px] px-2 py-0.5 bg-rb text-rt rounded-full flex-shrink-0">Confidential</span>
-                    )}
-                  </div>
-                  <div className="text-[13px] text-ts mb-2">
-                    {item.emp.name} · {item.emp.role}
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[11px] text-tm">{relativeTime(item.date)}</span>
-                    <span className="text-[11px] text-tc">·</span>
-                    <CategoryPill cat={item.cat} showDot />
-                  </div>
-                </div>
+              <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--red)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+                {item.emp.name} · {item.emp.role}
+                {item.confidential && (
+                  <span
+                    className="ml-2"
+                    style={{ fontSize: '9px', padding: '1px 6px', borderRadius: '4px', background: 'var(--red-bg)', color: 'var(--red)', fontWeight: 800 }}
+                  >
+                    Confidential
+                  </span>
+                )}
+              </div>
+              <div style={{ fontSize: '17px', fontWeight: 800, color: 'var(--tx-1)', marginBottom: '8px', letterSpacing: '-0.3px', lineHeight: 1.25 }}>
+                {item.title}
+              </div>
+              <div style={{ fontSize: '13px', color: 'var(--tx-2)', lineHeight: 1.75 }}>
+                {item.body}
+              </div>
+              <div className="flex items-center justify-between mt-2.5">
+                <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--tx-3)' }}>{relativeTime(item.date)}</span>
               </div>
             </div>
           ))}
