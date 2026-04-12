@@ -1,0 +1,61 @@
+/* ── Escalation modal — HR escalation dialog ─────────────────── */
+.em-context {
+  font-size: 13px;
+  color: var(--ts);
+  margin-bottom: 1rem;
+  border-radius: var(--r);
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.em-draft-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+}
+
+.em-draft-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 700;
+  background: var(--blb);
+  color: var(--blt);
+}
+
+.em-draft-hint {
+  font-size: 11px;
+  color: var(--tm);
+}
+
+.em-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.375rem;
+  color: var(--tm);
+}
+
+.em-textarea {
+  width: 100%;
+  resize: none;
+  border-radius: var(--r);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  color: var(--tp);
+  padding: 0.75rem;
+  outline: none;
+  transition: border-color 0.15s;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--rule);
+}
+.em-textarea--error { border-color: var(--rt); }
+
+.em-error {
+  font-size: 11px;
+  margin-top: 0.25rem;
+  color: var(--rt);
+}

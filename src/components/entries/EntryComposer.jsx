@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import '../../styles/entry-composer.css'
 
 const CATS = [
-  { id: 'perf',    label: 'Performance', bg: 'rgba(133,183,235,0.14)', text: '#85B7EB', selBg: '#85B7EB' },
-  { id: 'conduct', label: 'Conduct',     bg: 'rgba(239,159,39,0.14)',  text: '#EF9F27', selBg: '#EF9F27' },
-  { id: 'dev',     label: 'Development', bg: 'rgba(93,202,165,0.14)',  text: '#5DCAA5', selBg: '#5DCAA5' },
+  { id: 'perf',    label: 'Performance' },
+  { id: 'conduct', label: 'Conduct'     },
+  { id: 'dev',     label: 'Development' },
 ]
 
 const TYPES = ['Check-in', 'Note', 'Concern', 'Growth', 'Incident']
@@ -21,19 +22,14 @@ export function EntryComposer({ onSave, onClose }) {
   }
 
   return (
-    <div className="rounded-clausule2 p-4 mb-4 bg-[var(--card)] border border-[var(--rule)]">
+    <div className="ec-composer">
       {/* Category pills */}
-      <div className="flex items-center gap-1.5 mb-3">
+      <div className="ec-cat-row">
         {CATS.map((c) => (
           <button
             key={c.id}
             onClick={() => setCat(c.id)}
-            className="px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors [background:var(--cat-bg)] [color:var(--cat-text)]"
-            style={
-              cat === c.id
-                ? { '--cat-bg': c.selBg, '--cat-text': '#fff' }
-                : { '--cat-bg': c.bg,    '--cat-text': c.text }
-            }
+            className={`ec-cat-btn ec-cat-btn--${c.id}${cat === c.id ? ' ec-cat-btn--sel' : ''}`}
           >
             {c.label}
           </button>
@@ -41,16 +37,12 @@ export function EntryComposer({ onSave, onClose }) {
       </div>
 
       {/* Type pills */}
-      <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+      <div className="ec-type-row">
         {TYPES.map((t) => (
           <button
             key={t}
             onClick={() => setType(t)}
-            className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors border ${
-              type === t
-                ? 'bg-[var(--acc-tint)] text-[var(--acc-text)] border-transparent'
-                : 'bg-transparent text-[var(--ts)] border-[var(--rule)]'
-            }`}
+            className={`ec-type-btn${type === t ? ' ec-type-btn--sel' : ''}`}
           >
             {t}
           </button>
@@ -62,27 +54,24 @@ export function EntryComposer({ onSave, onClose }) {
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Title…"
         autoFocus
-        className="w-full text-[14px] font-bold bg-transparent border-0 border-b border-[var(--rule)] pb-2 mb-3 outline-none text-[var(--tp)]"
+        className="ec-title-input"
       />
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
         placeholder="Details…"
         rows={3}
-        className="w-full text-[13px] text-[var(--ts)] rounded p-2.5 resize-none outline-none mb-3 bg-[rgba(255,255,255,0.04)] border border-[var(--rule)]"
+        className="ec-body-textarea"
       />
-      <div className="flex items-center gap-2">
+      <div className="ec-actions">
         <button
           onClick={handleSave}
           disabled={!title.trim()}
-          className="px-3.5 py-1.5 text-[12px] font-bold rounded-clausule bg-[var(--acc)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity"
+          className="ec-btn-save"
         >
           Save entry
         </button>
-        <button
-          onClick={onClose}
-          className="text-[12px] text-[var(--tm)]"
-        >
+        <button onClick={onClose} className="ec-btn-cancel">
           Cancel
         </button>
       </div>

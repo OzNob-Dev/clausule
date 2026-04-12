@@ -1,0 +1,122 @@
+/* ── Entry composer — inline compose panel on Profile ─────────── */
+.ec-composer {
+  border-radius: var(--r2);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+
+.ec-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.75rem;
+}
+
+.ec-cat-btn {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  transition: background-color 0.15s, color 0.15s;
+  border: none;
+  cursor: pointer;
+}
+
+/* Per-category colours — unselected (tint) and selected (solid) */
+.ec-cat-btn--perf                 { background: rgba(133, 183, 235, 0.14); color: #85B7EB; }
+.ec-cat-btn--perf.ec-cat-btn--sel { background: #85B7EB; color: #fff; }
+
+.ec-cat-btn--conduct                 { background: rgba(239, 159, 39, 0.14); color: #EF9F27; }
+.ec-cat-btn--conduct.ec-cat-btn--sel { background: #EF9F27; color: #fff; }
+
+.ec-cat-btn--dev                 { background: rgba(93, 202, 165, 0.14); color: #5DCAA5; }
+.ec-cat-btn--dev.ec-cat-btn--sel { background: #5DCAA5; color: #fff; }
+
+.ec-type-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ec-type-btn {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ts);
+  cursor: pointer;
+}
+
+.ec-type-btn--sel {
+  background: var(--acc-tint);
+  color: var(--acc-text);
+  border-color: transparent;
+}
+
+.ec-title-input {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  outline: none;
+  color: var(--tp);
+}
+
+.ec-body-textarea {
+  display: block;
+  width: 100%;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  color: var(--ts);
+  border-radius: 4px;
+  padding: 10px;
+  resize: none;
+  outline: none;
+  margin-bottom: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--rule);
+}
+
+.ec-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ec-btn-save {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  border-radius: var(--r);
+  background: var(--acc);
+  color: #fff;
+  transition: opacity 0.15s;
+  border: none;
+  cursor: pointer;
+}
+.ec-btn-save:hover { opacity: 0.9; }
+.ec-btn-save:disabled { opacity: 0.4; cursor: default; }
+
+.ec-btn-cancel {
+  font-size: 12px;
+  font-family: var(--font-sans);
+  color: var(--tm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
