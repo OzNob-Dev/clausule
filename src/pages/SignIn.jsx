@@ -29,14 +29,11 @@ export default function SignIn() {
           </div>
           <div>
             <h1 style={{ fontSize: '28px', fontWeight: 900, lineHeight: 1.2, letterSpacing: '-0.4px', color: 'var(--tp)', marginBottom: '12px' }}>
-              Thoughtful records.<br />Better conversations.
+              Capture Every Win.<br />Retain Every Insight.
             </h1>
             <p style={{ fontSize: '14px', fontStyle: 'italic', lineHeight: 1.75, color: 'var(--ts)' }}>
-              The file note tool built for managers who care about their people.
+              Transforming daily interactions into a permanent record of professional impact.
             </p>
-          </div>
-          <div style={{ fontSize: '11px', color: 'var(--tc)' }}>
-            Internal use only · Acme Corp
           </div>
         </div>
 
@@ -59,7 +56,7 @@ export default function SignIn() {
             </label>
             <input
               type="email"
-              placeholder="you@acmecorp.com"
+              placeholder="you@email.com"
               autoFocus
               style={{
                 width: '100%',
@@ -171,10 +168,6 @@ export default function SignIn() {
             </svg>
             Continue with SSO
           </button>
-
-          <p style={{ fontSize: '11px', textAlign: 'center', color: 'var(--tm)' }}>
-            By signing in you agree to Acme Corp's internal data policy.
-          </p>
 
           <p style={{ fontSize: '12px', textAlign: 'center', color: 'var(--tm)', marginTop: '16px' }}>
             Don't have an account?{' '}
