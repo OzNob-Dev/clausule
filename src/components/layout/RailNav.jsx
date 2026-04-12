@@ -88,16 +88,6 @@ export function RailNav() {
 
       {/* Footer */}
       <div className="rail-footer flex flex-col items-center gap-2">
-        <button
-          onClick={toggle}
-          title="Toggle theme"
-          className="w-7 h-7 flex items-center justify-center transition-colors bg-transparent border-0 text-[var(--tc)] hover:text-[var(--ts)]"
-        >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>
-          </svg>
-        </button>
-
         <div
           className="w-[30px] h-[30px] flex items-center justify-center text-[10px] font-extrabold cursor-default select-none bg-[var(--acc)] text-[var(--tp)] rounded-[var(--r)]"
           title="Adrian Diente"

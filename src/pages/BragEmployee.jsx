@@ -207,15 +207,6 @@ export default function BragEmployee() {
           </button>
         </nav>
         <div className="flex flex-col items-center gap-2">
-          <button
-            onClick={toggle}
-            className="w-7 h-7 flex items-center justify-center transition-opacity opacity-40 hover:opacity-100 be-rail-icon-btn"
-            aria-label="Toggle theme"
-          >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-              <path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>
-            </svg>
-          </button>
           <div className="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold be-rail-avatar" aria-hidden="true">
             JE
           </div>
