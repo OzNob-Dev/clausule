@@ -208,3 +208,14 @@
   text-decoration: none;
   font-weight: 600;
 }
+
+@media (max-width: 640px) {
+  .si-card { flex-direction: column; }
+
+  /* Hide the marketing panel on small screens */
+  .si-left { display: none; }
+
+  .si-right { padding: 32px 20px 40px; }
+
+  .si-form { max-width: 100%; }
+}

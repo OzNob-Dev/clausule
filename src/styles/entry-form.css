@@ -186,3 +186,9 @@
   font-family: var(--font);
   margin-left: auto;
 }
+
+@media (max-width: 640px) {
+  .ef-page { padding: 24px 16px 80px; }
+
+  .ef-grid { grid-template-columns: 1fr; }
+}

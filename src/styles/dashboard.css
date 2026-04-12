@@ -90,3 +90,15 @@
 }
 
 .db-search:focus { border-color: var(--acc-text); }
+
+@media (max-width: 640px) {
+  .db-topbar { padding: 16px 16px 0; flex-wrap: wrap; gap: 10px; }
+
+  .db-search-wrap { padding: 12px 16px 0; }
+
+  .db-search { width: 100%; max-width: 100%; }
+
+  .db-stat { padding: 12px 16px; }
+
+  .db-stat__n { font-size: 22px; }
+}

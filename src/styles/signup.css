@@ -185,8 +185,8 @@
 
 .su-step1-form {
   flex-shrink: 0;
-  width: 480px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 480px;
 }
 
 .su-aside { flex: 1; display: none; }
@@ -750,4 +750,22 @@
   background: var(--su-tx1);
   flex-shrink: 0;
   margin-top: 5px;
+}
+
+@media (max-width: 640px) {
+  .su-topbar { padding: 14px 20px; }
+
+  .su-progress { padding: 16px 16px 0; }
+
+  .su-main { padding: 32px 16px 60px; }
+
+  .su-step1-layout { flex-direction: column; gap: 24px; }
+
+  .su-name-row { flex-direction: column; gap: 0; }
+
+  .su-expiry-cvc-row { flex-direction: column; gap: 0; }
+
+  .su-expiry-cvc-row > div { flex: none; margin-bottom: 18px; }
+
+  .su-step-label { display: none; }
 }

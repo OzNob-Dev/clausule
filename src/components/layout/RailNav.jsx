@@ -55,16 +55,16 @@ export function RailNav() {
   }
 
   return (
-    <aside className="w-[52px] flex flex-col items-center py-4 flex-shrink-0 sticky top-0 h-screen bg-[var(--nav)] border-r border-[var(--border)]">
+    <aside className="rail-nav w-[52px] flex flex-col items-center py-4 flex-shrink-0 sticky top-0 h-screen bg-[var(--nav)] border-r border-[var(--border)]">
       {/* Logo — square icon bug */}
-      <div className="w-[30px] h-[30px] flex items-center justify-center mb-[18px] flex-shrink-0 bg-[var(--acc)] rounded-[9px]">
+      <div className="rail-logo w-[30px] h-[30px] flex items-center justify-center mb-[18px] flex-shrink-0 bg-[var(--acc)] rounded-[9px]">
         <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" className="w-4 h-4">
           <path d="M3 5h12M3 9h8M3 13h5"/>
         </svg>
       </div>
 
       {/* Nav items */}
-      <nav className="flex flex-col items-center gap-0.5 flex-1">
+      <nav className="rail-items flex flex-col items-center gap-0.5 flex-1">
         {navItems.map(({ to, tip, icon, badge }) => (
           <NavLink
             key={to}
@@ -87,7 +87,7 @@ export function RailNav() {
       </nav>
 
       {/* Footer */}
-      <div className="flex flex-col items-center gap-2">
+      <div className="rail-footer flex flex-col items-center gap-2">
         <button
           onClick={toggle}
           title="Toggle theme"

@@ -518,3 +518,18 @@
 }
 
 .st-btn-modal-cancel:hover { border-color: var(--tx-1); }
+
+@media (max-width: 640px) {
+  .st-content { padding: 24px 16px 80px; }
+
+  .st-slider-label { min-width: 110px; }
+
+  .st-flagged-table { overflow-x: auto; }
+
+  .st-flagged-header,
+  .st-flagged-row { min-width: 480px; }
+
+  .st-danger-inner { flex-direction: column; gap: 16px; }
+
+  .st-btn-delete-account { width: 100%; text-align: center; }
+}

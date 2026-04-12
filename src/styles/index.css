@@ -67,3 +67,43 @@
   .kb-col-body::-webkit-scrollbar-track { background: transparent; }
   .kb-col-body::-webkit-scrollbar-thumb { background: var(--tc); @apply rounded-full; }
 }
+
+/* ── Mobile: rail nav becomes a fixed bottom bar ─────────────── */
+@media (max-width: 640px) {
+  .rail-nav {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto !important;
+    width: 100% !important;
+    height: 56px !important;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+    z-index: 100;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .rail-logo,
+  .rail-footer { display: none !important; }
+
+  .rail-items {
+    flex-direction: row;
+    flex: none;
+    gap: 0;
+    justify-content: space-around;
+    width: 100%;
+    align-items: center;
+  }
+
+  .rail-items a {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Offset main content above the bottom nav */
+  .app-main { padding-bottom: 56px; }
+}

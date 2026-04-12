@@ -8,7 +8,8 @@ const COLUMNS = [
 
 export function KanbanBoard({ employees }) {
   return (
-    <div className="flex-1 overflow-hidden grid grid-cols-3 gap-3 px-[18px] pt-[14px] pb-[18px]">
+    <div className="flex-1 min-h-0 overflow-x-auto overflow-y-hidden">
+    <div className="grid grid-cols-3 gap-3 px-[18px] pt-[14px] pb-[18px] h-full" style={{ minWidth: 'max(100%, 480px)' }}>
       {COLUMNS.map(({ id, label, dot, color, countBg, countColor }) => {
         const people = employees.filter((e) => e.ps === id)
         return (
@@ -44,6 +45,7 @@ export function KanbanBoard({ employees }) {
           </div>
         )
       })}
+    </div>
     </div>
   )
 }

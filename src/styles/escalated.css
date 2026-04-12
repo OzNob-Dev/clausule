@@ -81,3 +81,9 @@
   font-weight: 600;
   color: var(--tx-3);
 }
+
+@media (max-width: 640px) {
+  .es-topbar { padding: 16px 16px 0; }
+
+  .es-list { padding: 0 16px 60px; }
+}
