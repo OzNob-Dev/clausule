@@ -12,7 +12,7 @@ export default function SignIn() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="h-screen flex items-center justify-center p-6"
       style={{ background: 'var(--canvas)' }}
     >
       <div
@@ -21,7 +21,7 @@ export default function SignIn() {
       >
         {/* Left panel */}
         <div
-          className="w-[300px] flex-shrink-0 flex flex-col justify-between"
+          className="w-[300px] flex-shrink-0 flex flex-col justify-center gap-10"
           style={{ background: 'var(--nav)', padding: '36px 30px' }}
         >
           <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '5px', textTransform: 'uppercase', color: 'var(--acc-text)' }}>
@@ -52,7 +52,7 @@ export default function SignIn() {
           {/* Email */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--tm)', marginBottom: '8px' }}>
-              Work email
+              Email
             </label>
             <input
               type="email"
