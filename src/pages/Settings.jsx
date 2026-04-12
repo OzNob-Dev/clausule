@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AppShell } from '../components/layout/AppShell'
+import { storage } from '../utils/storage'
 
 const WINDOWS = ['30 days', '60 days', '90 days', '6 months']
 
@@ -9,6 +11,9 @@ const FLAGGED = [
 ]
 
 export default function Settings() {
+  const navigate = useNavigate()
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [combined, setCombined] = useState(true)
   const [conductThreshold, setConductThreshold] = useState(3)
   const [escalationThreshold, setEscalationThreshold] = useState(2)
@@ -220,8 +225,169 @@ export default function Settings() {
           >
             Save settings
           </button>
+
+          {/* Danger zone */}
+          <div style={{ marginTop: '48px', paddingTop: '28px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--red)', marginBottom: '14px' }}>
+              Danger zone
+            </div>
+            <div style={{ background: 'var(--bg-panel)', border: '1px solid rgba(232,79,79,0.22)', borderRadius: 'var(--r2)', padding: '20px 24px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '24px' }}>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--tx-1)', marginBottom: '4px' }}>Delete account</div>
+                  <div style={{ fontSize: '12px', color: 'var(--tx-3)', lineHeight: 1.6 }}>
+                    Permanently remove your account and all associated data. This cannot be undone.
+                  </div>
+                </div>
+                <button
+                  onClick={() => { setDeleteConfirmText(''); setDeleteModal(true) }}
+                  style={{
+                    flexShrink: 0,
+                    padding: '8px 18px',
+                    background: 'transparent',
+                    border: '1.5px solid var(--red)',
+                    borderRadius: 'var(--r)',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: 'var(--red)',
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font)',
+                    transition: 'background 0.15s, color 0.15s',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--red)'; e.currentTarget.style.color = '#fff' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--red)' }}
+                >
+                  Delete account
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
+
+      {/* Delete account modal */}
+      {deleteModal && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 50,
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '24px',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setDeleteModal(false) }}
+        >
+          <div style={{
+            background: 'var(--card)',
+            border: '1px solid var(--border2)',
+            borderRadius: 'var(--r2)',
+            padding: '32px',
+            width: '100%',
+            maxWidth: '440px',
+          }}>
+            {/* Icon */}
+            <div style={{
+              width: '44px', height: '44px', borderRadius: '12px',
+              background: 'var(--red-bg)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              marginBottom: '20px',
+            }}>
+              <svg viewBox="0 0 20 20" fill="none" stroke="var(--red)" strokeWidth="1.8" strokeLinecap="round" style={{ width: 20, height: 20 }}>
+                <polyline points="3 6 5 6 17 6" />
+                <path d="M8 6V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2" />
+                <path d="M16 6l-1 11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
+                <line x1="10" y1="11" x2="10" y2="15" />
+                <line x1="8" y1="11" x2="8" y2="15" />
+                <line x1="12" y1="11" x2="12" y2="15" />
+              </svg>
+            </div>
+
+            <div style={{ fontSize: '18px', fontWeight: 900, color: 'var(--tx-1)', letterSpacing: '-0.4px', marginBottom: '8px' }}>
+              Delete your account?
+            </div>
+            <div style={{ fontSize: '13px', color: 'var(--tx-2)', lineHeight: 1.7, marginBottom: '20px' }}>
+              This will <strong style={{ color: 'var(--tx-1)' }}>permanently delete</strong> your account and remove all associated data — including every entry, note, and file record — from our servers. This action <strong style={{ color: 'var(--red)' }}>cannot be undone</strong>.
+            </div>
+
+            {/* Confirm by typing */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--tx-3)', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '8px' }}>
+                Type <span style={{ color: 'var(--tx-1)', fontStyle: 'normal' }}>DELETE</span> to confirm
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETE"
+                autoFocus
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: '1.5px solid var(--border2)',
+                  borderRadius: 'var(--r)',
+                  padding: '10px 12px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: 'var(--tx-1)',
+                  outline: 'none',
+                  fontFamily: 'var(--font)',
+                  letterSpacing: '0.5px',
+                }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--red)' }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--border2)' }}
+              />
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button
+                disabled={deleteConfirmText !== 'DELETE'}
+                onClick={() => {
+                  storage.clearAuth()
+                  navigate('/')
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: deleteConfirmText === 'DELETE' ? 'var(--red)' : 'rgba(232,79,79,0.18)',
+                  color: deleteConfirmText === 'DELETE' ? '#fff' : 'var(--red)',
+                  border: 'none',
+                  borderRadius: 'var(--r)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: deleteConfirmText === 'DELETE' ? 'pointer' : 'not-allowed',
+                  fontFamily: 'var(--font)',
+                  transition: 'background 0.15s, color 0.15s',
+                  opacity: deleteConfirmText === 'DELETE' ? 1 : 0.6,
+                }}
+              >
+                Yes, permanently delete my account
+              </button>
+              <button
+                onClick={() => setDeleteModal(false)}
+                style={{
+                  width: '100%',
+                  padding: '11px',
+                  background: 'transparent',
+                  border: '1.5px solid var(--border2)',
+                  borderRadius: 'var(--r)',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: 'var(--tx-2)',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font)',
+                  transition: 'border-color 0.15s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--tx-1)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border2)' }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </AppShell>
   )
 }
