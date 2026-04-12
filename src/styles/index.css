@@ -56,6 +56,12 @@
   .think-dot:nth-child(2) { animation-delay: 0.15s; }
   .think-dot:nth-child(3) { animation-delay: 0.3s; }
 
+  /* Rail nav item hover — only fires when NOT active */
+  .nav-item:not([aria-current="page"]):hover {
+    background: rgba(255,255,255,0.07);
+    color: var(--ts);
+  }
+
   /* Custom scrollbar */
   .kb-col-body::-webkit-scrollbar { width: 3px; }
   .kb-col-body::-webkit-scrollbar-track { background: transparent; }

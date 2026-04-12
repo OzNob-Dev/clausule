@@ -21,21 +21,18 @@ export function EntryComposer({ onSave, onClose }) {
   }
 
   return (
-    <div
-      className="rounded-clausule2 p-4 mb-4"
-      style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
-    >
+    <div className="rounded-clausule2 p-4 mb-4 bg-[var(--card)] border border-[var(--rule)]">
       {/* Category pills */}
       <div className="flex items-center gap-1.5 mb-3">
         {CATS.map((c) => (
           <button
             key={c.id}
             onClick={() => setCat(c.id)}
-            className="px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors"
+            className="px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors [background:var(--cat-bg)] [color:var(--cat-text)]"
             style={
               cat === c.id
-                ? { background: c.selBg, color: '#fff' }
-                : { background: c.bg, color: c.text }
+                ? { '--cat-bg': c.selBg, '--cat-text': '#fff' }
+                : { '--cat-bg': c.bg,    '--cat-text': c.text }
             }
           >
             {c.label}
@@ -49,12 +46,11 @@ export function EntryComposer({ onSave, onClose }) {
           <button
             key={t}
             onClick={() => setType(t)}
-            className="px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors"
-            style={
+            className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors border ${
               type === t
-                ? { background: 'var(--acc-tint)', color: 'var(--acc-text)', border: '1px solid transparent' }
-                : { background: 'transparent', color: 'var(--ts)', border: '1px solid var(--rule)' }
-            }
+                ? 'bg-[var(--acc-tint)] text-[var(--acc-text)] border-transparent'
+                : 'bg-transparent text-[var(--ts)] border-[var(--rule)]'
+            }`}
           >
             {t}
           </button>
@@ -66,37 +62,26 @@ export function EntryComposer({ onSave, onClose }) {
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Title…"
         autoFocus
-        className="w-full text-[14px] font-bold bg-transparent border-0 pb-2 mb-3 outline-none"
-        style={{
-          color: 'var(--tp)',
-          borderBottom: '1px solid var(--rule)',
-        }}
+        className="w-full text-[14px] font-bold bg-transparent border-0 border-b border-[var(--rule)] pb-2 mb-3 outline-none text-[var(--tp)]"
       />
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
         placeholder="Details…"
         rows={3}
-        className="w-full text-[13px] rounded p-2.5 resize-none outline-none mb-3"
-        style={{
-          color: 'var(--ts)',
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid var(--rule)',
-        }}
+        className="w-full text-[13px] text-[var(--ts)] rounded p-2.5 resize-none outline-none mb-3 bg-[rgba(255,255,255,0.04)] border border-[var(--rule)]"
       />
       <div className="flex items-center gap-2">
         <button
           onClick={handleSave}
           disabled={!title.trim()}
-          className="px-3.5 py-1.5 text-[12px] font-bold rounded-clausule hover:opacity-90 disabled:opacity-40 transition-opacity"
-          style={{ background: 'var(--acc)', color: '#fff' }}
+          className="px-3.5 py-1.5 text-[12px] font-bold rounded-clausule bg-[var(--acc)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity"
         >
           Save entry
         </button>
         <button
           onClick={onClose}
-          className="text-[12px]"
-          style={{ color: 'var(--tm)' }}
+          className="text-[12px] text-[var(--tm)]"
         >
           Cancel
         </button>

@@ -2,19 +2,11 @@ export function Button({ children, variant = 'primary', size = 'md', className =
   const base = 'inline-flex items-center justify-center font-sans font-bold transition-opacity duration-150 cursor-pointer border-0 rounded-clausule'
 
   const variants = {
-    primary: 'text-white hover:opacity-90',
-    employee: 'text-white hover:opacity-90',
-    ghost: 'bg-transparent border border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.05)]',
-    danger: 'text-white hover:opacity-90',
-    confirm: 'text-white hover:opacity-90',
-  }
-
-  const variantStyles = {
-    primary:  { background: 'var(--acc)', color: '#fff' },
-    employee: { background: 'var(--acc)', color: '#fff' },
-    ghost:    { background: 'transparent', color: 'var(--ts)', border: '1px solid var(--rule)' },
-    danger:   { background: 'var(--rt)',  color: 'var(--canvas)' },
-    confirm:  { background: 'var(--gt)', color: 'var(--canvas)' },
+    primary:  'bg-[var(--acc)] text-white hover:opacity-90',
+    employee: 'bg-[var(--acc)] text-white hover:opacity-90',
+    ghost:    'bg-transparent text-[var(--ts)] border border-[var(--rule)] hover:bg-[rgba(255,255,255,0.05)]',
+    danger:   'bg-[var(--rt)] text-[var(--canvas)] hover:opacity-90',
+    confirm:  'bg-[var(--gt)] text-[var(--canvas)] hover:opacity-90',
   }
 
   const sizes = {
@@ -26,7 +18,6 @@ export function Button({ children, variant = 'primary', size = 'md', className =
   return (
     <button
       className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
-      style={variantStyles[variant]}
       {...props}
     >
       {children}

@@ -8,37 +8,35 @@ const COLUMNS = [
 
 export function KanbanBoard({ employees }) {
   return (
-    <div
-      className="flex-1 overflow-hidden grid grid-cols-3"
-      style={{ gap: '12px', padding: '14px 18px 18px' }}
-    >
+    <div className="flex-1 overflow-hidden grid grid-cols-3 gap-3 px-[18px] pt-[14px] pb-[18px]">
       {COLUMNS.map(({ id, label, dot, color, countBg, countColor }) => {
         const people = employees.filter((e) => e.ps === id)
         return (
           <div key={id} className="flex flex-col overflow-hidden">
             {/* Column header */}
-            <div className="flex items-center justify-between" style={{ padding: '0 4px 10px' }}>
+            <div className="flex items-center justify-between px-1 pb-[10px]">
               <div
-                className="flex items-center gap-2"
-                style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', color }}
+                className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.8px] [color:var(--col-color)]"
+                style={{ '--col-color': color }}
               >
-                <span className="flex-shrink-0" style={{ width: '10px', height: '10px', borderRadius: '3px', background: dot }} />
+                <span
+                  className="flex-shrink-0 w-[10px] h-[10px] rounded-[3px] [background:var(--dot-bg)]"
+                  style={{ '--dot-bg': dot }}
+                />
                 {label}
               </div>
               <span
-                style={{
-                  fontSize: '11px', fontWeight: 700, padding: '3px 9px',
-                  borderRadius: '20px', background: countBg, color: countColor,
-                }}
+                className="text-[11px] font-bold px-[9px] py-[3px] rounded-[20px] [background:var(--cnt-bg)] [color:var(--cnt-color)]"
+                style={{ '--cnt-bg': countBg, '--cnt-color': countColor }}
               >
                 {people.length}
               </span>
             </div>
 
             {/* Cards */}
-            <div className="flex-1 overflow-y-auto flex flex-col gap-2">
+            <div className="flex-1 overflow-y-auto flex flex-col gap-2 kb-col-body">
               {people.length === 0 ? (
-                <div style={{ fontSize: '12px', padding: '20px 0', textAlign: 'center', color: 'var(--tx-4)' }}>None</div>
+                <div className="text-[12px] py-5 text-center text-[var(--tc)]">None</div>
               ) : (
                 people.map((emp) => <KanbanCard key={emp.name} emp={emp} />)
               )}

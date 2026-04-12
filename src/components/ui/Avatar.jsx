@@ -8,8 +8,8 @@ export function Avatar({ initials, bg, color, size = 'md', className = '' }) {
 
   return (
     <div
-      className={`${sizes[size]} rounded-full flex items-center justify-center font-medium flex-shrink-0 ${className}`}
-      style={{ background: bg, color }}
+      className={`${sizes[size]} rounded-full flex items-center justify-center font-medium flex-shrink-0 [background:var(--av-bg)] [color:var(--av-color)] ${className}`}
+      style={{ '--av-bg': bg, '--av-color': color }}
     >
       {initials}
     </div>

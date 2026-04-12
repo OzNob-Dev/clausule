@@ -55,15 +55,9 @@ export function RailNav() {
   }
 
   return (
-    <aside
-      className="w-[52px] flex flex-col items-center py-4 flex-shrink-0 sticky top-0 h-screen"
-      style={{ background: 'var(--nav)', borderRight: '1px solid var(--border)' }}
-    >
+    <aside className="w-[52px] flex flex-col items-center py-4 flex-shrink-0 sticky top-0 h-screen bg-[var(--nav)] border-r border-[var(--border)]">
       {/* Logo — square icon bug */}
-      <div
-        className="w-[30px] h-[30px] flex items-center justify-center mb-[18px] flex-shrink-0"
-        style={{ background: 'var(--acc)', borderRadius: '9px' }}
-      >
+      <div className="w-[30px] h-[30px] flex items-center justify-center mb-[18px] flex-shrink-0 bg-[var(--acc)] rounded-[9px]">
         <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" className="w-4 h-4">
           <path d="M3 5h12M3 9h8M3 13h5"/>
         </svg>
@@ -76,30 +70,17 @@ export function RailNav() {
             key={to}
             to={to}
             title={tip}
-            className="relative w-9 h-9 flex items-center justify-center transition-all duration-150"
-            style={({ isActive }) => ({
-              borderRadius: 'var(--r)',
-              color: isActive ? 'var(--acc-text)' : 'var(--tc)',
-              background: isActive ? 'var(--acc-bg)' : 'transparent',
-            })}
-            onMouseEnter={(e) => {
-              if (!e.currentTarget.classList.contains('active')) {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
-                e.currentTarget.style.color = 'var(--ts)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              const isActive = e.currentTarget.getAttribute('aria-current') === 'page'
-              e.currentTarget.style.background = isActive ? 'var(--acc-bg)' : 'transparent'
-              e.currentTarget.style.color = isActive ? 'var(--acc-text)' : 'var(--tc)'
-            }}
+            className={({ isActive }) =>
+              `nav-item relative w-9 h-9 flex items-center justify-center transition-all duration-150 rounded-[var(--r)] ${
+                isActive
+                  ? 'text-[var(--acc-text)] bg-[var(--acc-bg)]'
+                  : 'text-[var(--tc)]'
+              }`
+            }
           >
             <span className="w-4 h-4">{icon}</span>
             {badge && escalatedCount > 0 && (
-              <span
-                className="absolute top-[5px] right-[5px] w-1.5 h-1.5 rounded-full"
-                style={{ background: 'var(--red)', border: '1.5px solid var(--bg-rail)' }}
-              />
+              <span className="absolute top-[5px] right-[5px] w-1.5 h-1.5 rounded-full bg-[var(--red)] border-[1.5px] border-[var(--bg-rail)]" />
             )}
           </NavLink>
         ))}
@@ -110,10 +91,7 @@ export function RailNav() {
         <button
           onClick={toggle}
           title="Toggle theme"
-          className="w-7 h-7 flex items-center justify-center transition-colors"
-          style={{ color: 'var(--tc)', background: 'transparent', border: 'none' }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ts)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--tc)' }}
+          className="w-7 h-7 flex items-center justify-center transition-colors bg-transparent border-0 text-[var(--tc)] hover:text-[var(--ts)]"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>
@@ -121,8 +99,7 @@ export function RailNav() {
         </button>
 
         <div
-          className="w-[30px] h-[30px] flex items-center justify-center text-[10px] font-extrabold cursor-default select-none"
-          style={{ background: 'var(--acc)', color: 'var(--tp)', borderRadius: 'var(--r)' }}
+          className="w-[30px] h-[30px] flex items-center justify-center text-[10px] font-extrabold cursor-default select-none bg-[var(--acc)] text-[var(--tp)] rounded-[var(--r)]"
           title="Adrian Diente"
         >
           AD
@@ -131,10 +108,7 @@ export function RailNav() {
         <button
           onClick={logout}
           title="Sign out"
-          className="w-7 h-7 flex items-center justify-center transition-colors"
-          style={{ color: 'var(--tc)', background: 'transparent', border: 'none' }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ts)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--tc)' }}
+          className="w-7 h-7 flex items-center justify-center transition-colors bg-transparent border-0 text-[var(--tc)] hover:text-[var(--ts)]"
         >
           <svg className="w-[15px] h-[15px]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>

@@ -13,23 +13,20 @@ export function PitstopSelector({ value, onSelect, saved }) {
           <button
             key={opt.id}
             onClick={() => onSelect(opt.id)}
-            className={`px-3 py-1.5 rounded-full text-[12px] font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-full text-[12px] font-bold transition-all border border-transparent [background:var(--ps-bg)] [color:var(--ps-color)] ${
               active ? 'opacity-100 scale-[1.02]' : 'opacity-60 hover:opacity-90'
             }`}
             style={
               active
-                ? { background: opt.activeBg, color: 'var(--canvas)', border: '1px solid transparent' }
-                : { background: opt.bg, color: opt.color, border: '1px solid transparent' }
+                ? { '--ps-bg': opt.activeBg, '--ps-color': 'var(--canvas)' }
+                : { '--ps-bg': opt.bg,       '--ps-color': opt.color }
             }
           >
             {opt.label}
           </button>
         )
       })}
-      <span
-        className={`text-[11px] transition-opacity duration-300 ml-1 ${saved ? 'opacity-100' : 'opacity-0'}`}
-        style={{ color: 'var(--tm)' }}
-      >
+      <span className={`text-[11px] text-[var(--tm)] transition-opacity duration-300 ml-1 ${saved ? 'opacity-100' : 'opacity-0'}`}>
         Saved
       </span>
     </div>
