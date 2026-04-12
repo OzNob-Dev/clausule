@@ -1,5 +1,6 @@
 import { AppShell } from '../components/layout/AppShell'
 import { relativeTime } from '../utils/relativeTime'
+import '../styles/escalated.css'
 
 const ESCALATED = [
   {
@@ -34,48 +35,27 @@ const ESCALATED = [
 export default function Escalated() {
   return (
     <AppShell>
-      <div className="flex flex-col" style={{ height: '100vh', overflow: 'hidden' }}>
+      <div className="es-page">
         {/* Top bar */}
-        <div className="flex-shrink-0" style={{ padding: '24px 32px 0', marginBottom: '20px' }}>
-          <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--tx-1)', letterSpacing: '-0.6px' }}>Escalated</div>
-          <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--tx-3)', marginTop: '3px' }}>
-            Entries escalated to HR for formal process.
-          </div>
+        <div className="es-topbar">
+          <div className="es-title">Escalated</div>
+          <div className="es-subtitle">Entries escalated to HR for formal process.</div>
         </div>
 
         {/* Entry list */}
-        <div className="flex-1 overflow-y-auto" style={{ padding: '0 32px 60px' }}>
+        <div className="es-list">
           {ESCALATED.map((item) => (
-            <div
-              key={item.id}
-              className="cursor-pointer transition-all duration-150"
-              style={{
-                padding: '20px 0 20px 18px',
-                borderBottom: '1px solid var(--border)',
-                borderLeft: '3px solid var(--red)',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.paddingLeft = '22px' }}
-              onMouseLeave={(e) => { e.currentTarget.style.paddingLeft = '18px' }}
-            >
-              <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--red)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+            <div key={item.id} className="es-item">
+              <div className="es-item__emp">
                 {item.emp.name} · {item.emp.role}
                 {item.confidential && (
-                  <span
-                    className="ml-2"
-                    style={{ fontSize: '9px', padding: '1px 6px', borderRadius: '4px', background: 'var(--red-bg)', color: 'var(--red)', fontWeight: 800 }}
-                  >
-                    Confidential
-                  </span>
+                  <span className="es-item__badge">Confidential</span>
                 )}
               </div>
-              <div style={{ fontSize: '17px', fontWeight: 800, color: 'var(--tx-1)', marginBottom: '8px', letterSpacing: '-0.3px', lineHeight: 1.25 }}>
-                {item.title}
-              </div>
-              <div style={{ fontSize: '13px', color: 'var(--tx-2)', lineHeight: 1.75 }}>
-                {item.body}
-              </div>
+              <div className="es-item__title">{item.title}</div>
+              <div className="es-item__body">{item.body}</div>
               <div className="flex items-center justify-between mt-2.5">
-                <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--tx-3)' }}>{relativeTime(item.date)}</span>
+                <span className="es-item__date">{relativeTime(item.date)}</span>
               </div>
             </div>
           ))}

@@ -1,0 +1,139 @@
+/* ── BragEmployee page ────────────────────────────────────────── */
+.be-page {
+  background: var(--canvas);
+}
+
+.be-rail-logo {
+  color: var(--acc-text);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.be-rail-btn-active {
+  background: var(--acc-tint);
+  color: var(--tp);
+}
+
+.be-rail-icon-btn { color: var(--tp); }
+
+.be-rail-avatar {
+  background: var(--acc-tint);
+  color: var(--acc-text);
+}
+
+.be-sidebar {
+  background: var(--nav);
+}
+
+.be-sidebar-header { border-bottom: 1px solid var(--rule); }
+
+.be-sidebar-eyebrow { color: var(--acc-text); }
+
+.be-sidebar-name { color: var(--tp); }
+
+.be-sidebar-role { color: var(--tm); }
+
+.be-sidebar-avatar {
+  background: var(--acc-tint);
+  color: var(--acc-text);
+}
+
+.be-divider { background: var(--rule); }
+
+.be-notes-label { color: var(--tc); }
+
+.be-note-quote {
+  color: var(--ts);
+  border-color: var(--acc-text);
+}
+
+.be-overview-label { color: var(--tc); }
+
+.be-overview-status { color: var(--tp); }
+
+.be-overview-sub { color: var(--tm); }
+
+/* Main content */
+.be-main { background: var(--canvas); }
+
+.be-tabs { border-color: var(--rule); }
+
+.be-tab {
+  border-color: transparent;
+  color: var(--tm);
+}
+
+.be-tab--active {
+  border-color: var(--acc);
+  color: var(--acc-text);
+}
+
+/* Brag doc */
+.be-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+
+.be-card-label { color: var(--tm); }
+
+.be-card-rule { background: var(--rule); }
+
+.be-read-only-badge {
+  background: var(--acc-tint);
+  color: var(--acc-text);
+}
+
+.be-summary-quote {
+  color: var(--ts);
+  border-color: var(--acc-text);
+}
+
+.be-highlights-label { color: var(--tm); }
+
+.be-bullet-marker { color: var(--acc-text); }
+
+.be-bullet-input {
+  color: var(--tp);
+  font-family: var(--font-sans);
+}
+
+.be-remove-btn { color: var(--tm); }
+
+.be-add-btn {
+  color: var(--tm);
+  transition: color 0.15s;
+}
+
+.be-add-btn:hover { color: var(--acc-text); }
+
+/* CV tab */
+.be-cv-desc { color: var(--ts); }
+
+.be-cv-subdesc { color: var(--tm); }
+
+.be-btn-generate { background: var(--acc); }
+
+.be-cv-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+
+.be-cv-name { color: var(--tp); }
+
+.be-cv-role { color: var(--ts); }
+
+.be-cv-contact { color: var(--tm); }
+
+.be-cv-rule { background: var(--rule); }
+
+.be-cv-section-label { color: var(--tm); }
+
+.be-cv-job-title { color: var(--tp); }
+
+.be-cv-dates { color: var(--tm); }
+
+.be-cv-company { color: var(--ts); }
+
+.be-cv-bullet { color: var(--ts); }
+
+.be-cv-bullet-marker { color: var(--acc-text); }

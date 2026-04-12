@@ -1,24 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
-// Light oatmeal palette — scoped to this page only
-const P = {
-  canvas:    '#F5F0EA',
-  card:      '#FDFCFA',
-  panel:     '#EDE8E0',
-  tx1:       '#1A1510',
-  tx2:       '#3D3228',
-  tx3:       '#5B4E42',
-  tx4:       '#786B5F',
-  acc:       '#D05A34',
-  accDk:     '#A75743',
-  accBg:     'rgba(208,90,52,0.1)',
-  border:    'rgba(26,21,16,0.1)',
-  borderEm:  'rgba(26,21,16,0.18)',
-  r:         '10px',
-  r2:        '16px',
-  font:      "'DM Sans', sans-serif",
-}
+import '../styles/signup.css'
 
 const STEPS = ['You', 'Plan', 'Payment', 'Done']
 
@@ -36,9 +18,9 @@ const NEXT_STEPS = [
   { label: 'Invite your manager', desc: '— they can add file notes on their side, you see nothing confidential.' },
 ]
 
-function CheckIcon({ color = P.canvas }) {
+function CheckIcon({ dark }) {
   return (
-    <svg viewBox="0 0 10 10" fill="none" stroke={color} strokeWidth="1.8" style={{ width: 10, height: 10 }}>
+    <svg viewBox="0 0 10 10" fill="none" stroke={dark ? '#1A1510' : '#F5F0EA'} strokeWidth="1.8" style={{ width: 10, height: 10 }}>
       <polyline points="2 5 4 7 8 3" />
     </svg>
   )
@@ -61,71 +43,24 @@ function BackIcon() {
   )
 }
 
-function CtaBtn({ onClick, terra, children, as: As = 'button', href, style: extraStyle }) {
-  const base = {
-    width: '100%',
-    background: terra ? P.acc : P.tx1,
-    color: P.canvas,
-    border: 'none',
-    borderRadius: P.r,
-    fontSize: '15px',
-    fontWeight: 800,
-    padding: '15px',
-    cursor: 'pointer',
-    fontFamily: P.font,
-    letterSpacing: '-0.2px',
-    transition: 'opacity 0.15s',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-    textDecoration: 'none',
-    ...extraStyle,
-  }
+function CtaBtn({ onClick, terra, children, as: As = 'button', href }) {
+  const cls = `su-cta-btn${terra ? ' su-cta-btn--terra' : ''}`
   if (As === 'a') {
-    return (
-      <a href={href} style={base}
-        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.88' }}
-        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
-      >
-        {children}
-      </a>
-    )
+    return <a href={href} className={cls}>{children}</a>
   }
-  return (
-    <button onClick={onClick} style={base}
-      onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.88' }}
-      onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
-    >
-      {children}
-    </button>
-  )
+  return <button onClick={onClick} className={cls}>{children}</button>
 }
 
 function BackBtn({ onClick }) {
   return (
-    <button onClick={onClick} style={{
-      display: 'flex', alignItems: 'center', gap: '5px',
-      fontSize: '13px', fontWeight: 600, color: P.tx3,
-      cursor: 'pointer', marginTop: '16px', justifyContent: 'center',
-      background: 'transparent', border: 'none', fontFamily: P.font,
-      transition: 'color 0.12s', width: '100%',
-    }}
-      onMouseEnter={(e) => { e.currentTarget.style.color = P.tx1 }}
-      onMouseLeave={(e) => { e.currentTarget.style.color = P.tx3 }}
-    >
+    <button onClick={onClick} className="su-back-btn">
       <BackIcon /> Back
     </button>
   )
 }
 
 function FieldLabel({ children }) {
-  return (
-    <label style={{
-      display: 'block', fontSize: '10px', fontWeight: 700, color: P.tx3,
-      textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '7px',
-    }}>{children}</label>
-  )
+  return <label className="su-field-label">{children}</label>
 }
 
 function FieldInput({ error, style: extra, ...props }) {
@@ -133,27 +68,14 @@ function FieldInput({ error, style: extra, ...props }) {
   return (
     <input
       {...props}
-      style={{
-        width: '100%',
-        background: P.card,
-        border: `1.5px solid ${error ? '#C0392B' : focused ? P.tx1 : P.borderEm}`,
-        borderRadius: P.r,
-        padding: '12px 14px',
-        fontSize: '15px',
-        fontWeight: 500,
-        color: P.tx1,
-        outline: 'none',
-        fontFamily: P.font,
-        transition: 'border-color 0.18s',
-        ...extra,
-      }}
+      className={`su-input${error ? ' su-input--error' : ''}${focused ? ' su-input--focused' : ''}`}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     />
   )
 }
 
-// ── Step 1: Account ─────────────────────────────────────────────────────────
+// ── Step 1: Account ──────────────────────────────────────────────
 function Step1({ onNext }) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName]   = useState('')
@@ -178,46 +100,30 @@ function Step1({ onNext }) {
 
   return (
     <div>
-      <div style={{ fontSize: '30px', fontWeight: 900, color: P.tx1, letterSpacing: '-0.8px', lineHeight: 1.1, marginBottom: '6px' }}>
-        Create your account
-      </div>
-      <div style={{ fontSize: '14px', color: P.tx3, lineHeight: 1.65, marginBottom: '32px' }}>
-        Your brag doc, your file. Takes about 2 minutes.
-      </div>
+      <div className="su-step-heading">Create your account</div>
+      <div className="su-step-sub">Your brag doc, your file. Takes about 2 minutes.</div>
 
       {/* Social proof */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: '14px',
-        marginBottom: '32px', padding: '14px 18px',
-        background: P.panel, borderRadius: P.r2,
-      }}>
-        <div style={{ display: 'flex' }}>
+      <div className="su-social-proof">
+        <div className="su-avatars">
           {[
-            ['SC', P.tx1],
+            ['SC', '#1A1510'],
             ['PL', '#5B4E42'],
             ['AM', '#3D3228'],
-          ].map(([initials, bg], i) => (
-            <div key={initials} style={{
-              width: '28px', height: '28px', borderRadius: '50%',
-              border: `2px solid ${P.canvas}`,
-              background: bg, color: P.canvas,
-              fontSize: '9px', fontWeight: 800,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-              marginLeft: i === 0 ? 0 : '-8px',
-            }}>
+          ].map(([initials, bg]) => (
+            <div key={initials} className="su-proof-avatar" style={{ background: bg }}>
               {initials}
             </div>
           ))}
         </div>
-        <div style={{ fontSize: '12px', fontWeight: 600, color: P.tx2, lineHeight: 1.45 }}>
-          Join <span style={{ color: P.tx1, fontWeight: 700 }}>214 managers and employees</span> already using Clausule to build better careers.
+        <div className="su-proof-text">
+          Join <strong>214 managers and employees</strong> already using Clausule to build better careers.
         </div>
       </div>
 
       {/* Name row */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '18px' }}>
-        <div style={{ flex: 1 }}>
+      <div className="su-name-row">
+        <div className="su-name-col">
           <FieldLabel>First name</FieldLabel>
           <FieldInput
             type="text" placeholder="Jordan" value={firstName}
@@ -225,7 +131,7 @@ function Step1({ onNext }) {
             error={errors.firstName}
           />
         </div>
-        <div style={{ flex: 1 }}>
+        <div className="su-name-col">
           <FieldLabel>Last name</FieldLabel>
           <FieldInput
             type="text" placeholder="Ellis" value={lastName}
@@ -235,20 +141,18 @@ function Step1({ onNext }) {
       </div>
 
       {/* Email */}
-      <div style={{ marginBottom: '18px' }}>
+      <div className="su-field">
         <FieldLabel>Work email</FieldLabel>
         <FieldInput
           type="email" placeholder="you@company.com" value={email}
           onChange={(e) => { setEmail(e.target.value); setErrors(ev => ({ ...ev, email: false })) }}
           error={errors.email}
         />
-        <div style={{ fontSize: '11px', fontWeight: 500, color: P.tx4, marginTop: '5px' }}>
-          We'll send your receipt and setup link here.
-        </div>
+        <div className="su-field-hint">We'll send your receipt and setup link here.</div>
       </div>
 
       {/* Password */}
-      <div style={{ marginBottom: '24px' }}>
+      <div className="su-field">
         <FieldLabel>Password</FieldLabel>
         <FieldInput
           type="password" placeholder="At least 8 characters" value={password}
@@ -258,34 +162,28 @@ function Step1({ onNext }) {
       </div>
 
       {/* Terms */}
-      <div style={{ marginBottom: '24px' }}>
-        <label style={{
-          display: 'flex', alignItems: 'flex-start', gap: '10px',
-          cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: P.tx2, lineHeight: 1.5,
-        }}>
+      <div className="su-terms">
+        <label className="su-terms-label">
           <input
             type="checkbox" checked={agreed}
             onChange={(e) => { setAgreed(e.target.checked); setErrors(ev => ({ ...ev, agreed: false })) }}
-            style={{ marginTop: '3px', accentColor: P.tx1, flexShrink: 0 }}
           />
           I agree to Clausule's{' '}
-          <a href="#" style={{ color: P.tx1 }}>Terms of Service</a>{' '}and{' '}
-          <a href="#" style={{ color: P.tx1 }}>Privacy Policy</a>
+          <a href="#">Terms of Service</a>{' '}and{' '}
+          <a href="#">Privacy Policy</a>
         </label>
         {errors.agreed && (
-          <div style={{ fontSize: '11px', color: '#C0392B', marginTop: '4px' }}>Please agree to continue.</div>
+          <div className="su-terms-error">Please agree to continue.</div>
         )}
       </div>
 
       <CtaBtn onClick={handleContinue}>Continue <ArrowIcon /></CtaBtn>
-      <div style={{ fontSize: '11px', fontWeight: 500, color: P.tx4, textAlign: 'center', marginTop: '14px' }}>
-        No card required until the next step.
-      </div>
+      <div className="su-no-card-note">No card required until the next step.</div>
     </div>
   )
 }
 
-// ── Step 2: Plan ─────────────────────────────────────────────────────────────
+// ── Step 2: Plan ─────────────────────────────────────────────────
 const PLANS = [
   {
     id: 'free',
@@ -322,11 +220,7 @@ function Step2({ onNext, onBack }) {
   const [selected, setSelected] = useState('monthly')
 
   const handleContinue = () => {
-    if (selected === 'free') {
-      onNext({ plan: 'free', skipPayment: true })
-    } else {
-      onNext({ plan: selected, skipPayment: false })
-    }
+    onNext({ plan: selected, skipPayment: selected === 'free' })
   }
 
   const ctaLabel = selected === 'free'
@@ -337,60 +231,40 @@ function Step2({ onNext, onBack }) {
 
   return (
     <div>
-      <div style={{ fontSize: '30px', fontWeight: 900, color: P.tx1, letterSpacing: '-0.8px', lineHeight: 1.1, marginBottom: '6px' }}>
-        Choose your plan
-      </div>
-      <div style={{ fontSize: '14px', color: P.tx3, lineHeight: 1.65, marginBottom: '32px' }}>
-        Start free, upgrade when you're ready. Cancel any time.
-      </div>
+      <div className="su-step-heading">Choose your plan</div>
+      <div className="su-step-sub">Start free, upgrade when you're ready. Cancel any time.</div>
 
       {/* Plan cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
+      <div className="su-plans">
         {PLANS.map((plan) => {
           const sel = selected === plan.id
           return (
-            <div key={plan.id} onClick={() => setSelected(plan.id)} style={{
-              display: 'flex', alignItems: 'flex-start', gap: '14px',
-              padding: '18px 20px',
-              background: sel ? P.canvas : P.card,
-              border: `1.5px solid ${sel ? P.tx1 : P.borderEm}`,
-              borderRadius: P.r2,
-              cursor: 'pointer',
-              transition: 'all 0.15s',
-            }}>
+            <div
+              key={plan.id}
+              onClick={() => setSelected(plan.id)}
+              className={`su-plan-card${sel ? ' su-plan-card--sel' : ''}`}
+            >
               {/* Radio */}
-              <div style={{
-                width: '20px', height: '20px', borderRadius: '50%',
-                border: `1.5px solid ${sel ? P.tx1 : P.borderEm}`,
-                background: sel ? P.tx1 : 'transparent',
-                flexShrink: 0, marginTop: '2px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 0.15s',
-              }}>
-                {sel && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: P.canvas }} />}
+              <div className={`su-plan-radio${sel ? ' su-plan-radio--sel' : ''}`}>
+                {sel && <div className="su-plan-radio-dot" />}
               </div>
               {/* Body */}
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                  <span style={{ fontSize: '15px', fontWeight: 800, color: P.tx1 }}>{plan.name}</span>
+              <div className="su-plan-body">
+                <div className="su-plan-name-row">
+                  <span className="su-plan-name">{plan.name}</span>
                   {plan.badge && (
-                    <span style={{
-                      fontSize: '10px', fontWeight: 800, padding: '2px 8px',
-                      borderRadius: '20px', textTransform: 'uppercase', letterSpacing: '0.4px',
-                      background: plan.badgePopular ? 'rgba(208,90,52,0.12)' : 'rgba(26,21,16,0.08)',
-                      color: plan.badgePopular ? P.accDk : P.tx2,
-                    }}>
+                    <span className={`su-plan-badge${plan.badgePopular ? ' su-plan-badge--popular' : ' su-plan-badge--annual'}`}>
                       {plan.badge}
                     </span>
                   )}
                 </div>
-                <div style={{ fontSize: '13px', color: P.tx3, lineHeight: 1.55 }}>{plan.desc}</div>
+                <div className="su-plan-desc">{plan.desc}</div>
               </div>
               {/* Price */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, paddingTop: '2px' }}>
-                <span style={{ fontSize: '20px', fontWeight: 900, color: P.tx1, letterSpacing: '-0.5px', lineHeight: 1 }}>{plan.amount}</span>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: P.tx4, marginTop: '2px' }}>{plan.period}</span>
-                {plan.saves && <span style={{ fontSize: '10px', fontWeight: 700, color: P.accDk, marginTop: '3px' }}>{plan.saves}</span>}
+              <div className="su-plan-price">
+                <span className="su-plan-amount">{plan.amount}</span>
+                <span className="su-plan-period">{plan.period}</span>
+                {plan.saves && <span className="su-plan-saves">{plan.saves}</span>}
               </div>
             </div>
           )
@@ -398,21 +272,12 @@ function Step2({ onNext, onBack }) {
       </div>
 
       {/* What's included */}
-      <div style={{ background: P.panel, borderRadius: P.r2, padding: '18px 20px', marginBottom: '28px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 700, color: P.tx3, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
-          Everything in Individual includes
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="su-includes">
+        <div className="su-includes-label">Everything in Individual includes</div>
+        <div className="su-includes-list">
           {INCLUDES.map((item) => (
-            <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: P.tx2, lineHeight: 1.5 }}>
-              <div style={{
-                width: '18px', height: '18px', borderRadius: '50%',
-                background: P.tx1, flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginTop: '1px',
-              }}>
-                <CheckIcon />
-              </div>
+            <div key={item} className="su-include-item">
+              <div className="su-check-circle"><CheckIcon /></div>
               {item}
             </div>
           ))}
@@ -425,7 +290,7 @@ function Step2({ onNext, onBack }) {
   )
 }
 
-// ── Step 3: Payment ───────────────────────────────────────────────────────────
+// ── Step 3: Payment ───────────────────────────────────────────────
 function formatCardNumber(val) {
   return val.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
 }
@@ -443,72 +308,64 @@ function trialEndDate() {
 }
 
 function Step3({ plan, onNext, onBack }) {
-  const [cardName, setCardName]   = useState('')
-  const [cardNum, setCardNum]     = useState('')
-  const [expiry, setExpiry]       = useState('')
-  const [cvc, setCvc]             = useState('')
+  const [cardName, setCardName] = useState('')
+  const [cardNum, setCardNum]   = useState('')
+  const [expiry, setExpiry]     = useState('')
+  const [cvc, setCvc]           = useState('')
 
   const orderAmount = plan === 'annual' ? '$84.00 / yr' : '$9.00 / mo'
 
   return (
     <div>
-      <div style={{ fontSize: '30px', fontWeight: 900, color: P.tx1, letterSpacing: '-0.8px', lineHeight: 1.1, marginBottom: '6px' }}>
-        Payment details
-      </div>
-      <div style={{ fontSize: '14px', color: P.tx3, lineHeight: 1.65, marginBottom: '32px' }}>
-        Secured by Stripe. We never store your card details.
-      </div>
+      <div className="su-step-heading">Payment details</div>
+      <div className="su-step-sub">Secured by Stripe. We never store your card details.</div>
 
       {/* Order summary */}
-      <div style={{ background: P.panel, borderRadius: P.r2, padding: '20px', marginBottom: '24px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 700, color: P.tx3, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '14px' }}>
-          Order summary
+      <div className="su-order-summary">
+        <div className="su-order-label">Order summary</div>
+        <div className="su-order-row">
+          <span className="su-order-item">Clausule Individual</span>
+          <span className="su-order-val">{orderAmount}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '13px', color: P.tx2, fontWeight: 500 }}>Clausule Individual</span>
-          <span style={{ fontSize: '13px', color: P.tx1, fontWeight: 700 }}>{orderAmount}</span>
+        <div className="su-order-row">
+          <span className="su-order-item">14-day free trial</span>
+          <span className="su-order-val su-order-val--discount">−{plan === 'annual' ? '$84.00' : '$9.00'}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '13px', color: P.tx2, fontWeight: 500 }}>14-day free trial</span>
-          <span style={{ fontSize: '13px', fontWeight: 700, color: P.accDk }}>−{plan === 'annual' ? '$84.00' : '$9.00'}</span>
+        <div className="su-order-divider" />
+        <div className="su-order-row">
+          <span className="su-order-total-label">Due today</span>
+          <span className="su-order-total-val">$0.00</span>
         </div>
-        <div style={{ height: '1px', background: P.borderEm, margin: '12px 0' }} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '15px', fontWeight: 800, color: P.tx1 }}>Due today</span>
-          <span style={{ fontSize: '15px', fontWeight: 900, color: P.tx1 }}>$0.00</span>
-        </div>
-        <div style={{ fontSize: '11px', fontWeight: 600, color: P.tx4, marginTop: '10px' }}>
+        <div className="su-order-note">
           Your card won't be charged until your trial ends on{' '}
-          <strong style={{ color: P.tx2 }}>{trialEndDate()}</strong>. Cancel any time before then.
+          <strong>{trialEndDate()}</strong>. Cancel any time before then.
         </div>
       </div>
 
       {/* Name on card */}
-      <div style={{ marginBottom: '18px' }}>
+      <div className="su-pay-field">
         <FieldLabel>Name on card</FieldLabel>
         <FieldInput type="text" placeholder="Jordan Ellis" value={cardName} onChange={(e) => setCardName(e.target.value)} />
       </div>
 
       {/* Card number */}
-      <div style={{ marginBottom: '18px', position: 'relative' }}>
+      <div className="su-pay-field su-card-input-wrap">
         <FieldLabel>Card number</FieldLabel>
-        <div style={{ position: 'relative' }}>
+        <div className="su-card-input-wrap">
           <FieldInput
             type="text" placeholder="1234 5678 9012 3456" maxLength={19}
             value={cardNum}
             onChange={(e) => setCardNum(formatCardNumber(e.target.value))}
             style={{ paddingRight: '88px' }}
           />
-          <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '6px', alignItems: 'center' }}>
-            {/* Visa */}
-            <div style={{ width: '30px', height: '20px', borderRadius: '3px', background: P.panel, border: `1px solid ${P.borderEm}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="su-card-icons">
+            <div className="su-card-icon">
               <svg viewBox="0 0 30 20" fill="none" style={{ width: 18, height: 12 }}>
                 <rect width="30" height="20" rx="2" fill="#1A1FAC" />
                 <text x="4" y="14" fontFamily="Arial" fontSize="9" fontWeight="900" fill="white">VISA</text>
               </svg>
             </div>
-            {/* Mastercard */}
-            <div style={{ width: '30px', height: '20px', borderRadius: '3px', background: P.panel, border: `1px solid ${P.borderEm}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="su-card-icon">
               <svg viewBox="0 0 30 20" style={{ width: 18, height: 12 }}>
                 <circle cx="11" cy="10" r="7" fill="#EB001B" />
                 <circle cx="19" cy="10" r="7" fill="#F79E1B" />
@@ -520,8 +377,8 @@ function Step3({ plan, onNext, onBack }) {
       </div>
 
       {/* Expiry + CVC */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '18px' }}>
-        <div style={{ flex: 1 }}>
+      <div className="su-expiry-cvc-row">
+        <div>
           <FieldLabel>Expiry</FieldLabel>
           <FieldInput
             type="text" placeholder="MM / YY" maxLength={7}
@@ -529,14 +386,14 @@ function Step3({ plan, onNext, onBack }) {
             onChange={(e) => setExpiry(formatExpiry(e.target.value))}
           />
         </div>
-        <div style={{ flex: 1 }}>
+        <div>
           <FieldLabel>CVC</FieldLabel>
           <FieldInput type="text" placeholder="123" maxLength={4} value={cvc} onChange={(e) => setCvc(e.target.value.replace(/\D/g, ''))} />
         </div>
       </div>
 
       {/* Secure note */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '11px', fontWeight: 600, color: P.tx4, marginBottom: '20px' }}>
+      <div className="su-secure-note">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 13, height: 13, flexShrink: 0 }}>
           <rect x="3" y="7" width="10" height="8" rx="1.5" />
           <path d="M5 7V5a3 3 0 0 1 6 0v2" />
@@ -546,55 +403,38 @@ function Step3({ plan, onNext, onBack }) {
 
       <CtaBtn terra onClick={onNext}>Start free trial <ArrowIcon /></CtaBtn>
       <BackBtn onClick={onBack} />
-      <div style={{ fontSize: '11px', fontWeight: 500, color: P.tx4, textAlign: 'center', marginTop: '14px', lineHeight: 1.6 }}>
-        By starting your trial you agree to our <a href="#" style={{ color: P.tx3 }}>Subscription Terms</a>. You'll receive an email reminder before your trial ends.
+      <div className="su-trial-note">
+        By starting your trial you agree to our <a href="#">Subscription Terms</a>. You'll receive an email reminder before your trial ends.
       </div>
     </div>
   )
 }
 
-// ── Step 4: Done ─────────────────────────────────────────────────────────────
+// ── Step 4: Done ─────────────────────────────────────────────────
 function Step4({ email }) {
   const navigate = useNavigate()
   return (
     <div>
-      {/* Success ring */}
-      <div style={{
-        width: '72px', height: '72px', borderRadius: '50%',
-        background: P.tx1,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        marginBottom: '24px',
-      }}>
-        <svg viewBox="0 0 34 34" fill="none" stroke={P.canvas} strokeWidth="2.5" strokeLinecap="round" style={{ width: 34, height: 34 }}>
+      <div className="su-success-ring">
+        <svg viewBox="0 0 34 34" fill="none" stroke="#F5F0EA" strokeWidth="2.5" strokeLinecap="round" style={{ width: 34, height: 34 }}>
           <polyline points="7 17 13 23 27 11" />
         </svg>
       </div>
 
-      <div style={{ fontSize: '30px', fontWeight: 900, color: P.tx1, letterSpacing: '-0.8px', lineHeight: 1.1, marginBottom: '6px' }}>
-        You're in.
-      </div>
-      <div style={{ fontSize: '14px', color: P.tx3, lineHeight: 1.65, marginBottom: '28px' }}>
+      <div className="su-step-heading">You're in.</div>
+      <div className="su-step-sub su-done-sub">
         Your Clausule account is ready. We've sent a confirmation to{' '}
-        <strong style={{ color: P.tx1 }}>{email || 'you@company.com'}</strong>.
+        <strong>{email || 'you@company.com'}</strong>.
         {' '}Your 14-day trial starts now — no charge until it ends.
       </div>
 
       {/* Next steps */}
-      <div style={{ background: P.panel, borderRadius: P.r2, padding: '18px 20px', marginBottom: '28px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 700, color: P.tx3, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
-          What to do next
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="su-includes">
+        <div className="su-includes-label">What to do next</div>
+        <div className="su-includes-list">
           {NEXT_STEPS.map((step) => (
-            <div key={step.label} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: P.tx2, lineHeight: 1.5 }}>
-              <div style={{
-                width: '18px', height: '18px', borderRadius: '50%',
-                background: P.acc, flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginTop: '1px',
-              }}>
-                <CheckIcon />
-              </div>
+            <div key={step.label} className="su-include-item">
+              <div className="su-check-circle su-check-circle--acc"><CheckIcon /></div>
               <div><strong>{step.label}</strong> {step.desc}</div>
             </div>
           ))}
@@ -604,55 +444,37 @@ function Step4({ email }) {
       <CtaBtn onClick={() => navigate('/brag')}>
         Go to my brag doc <ArrowIcon />
       </CtaBtn>
-      <div style={{ fontSize: '11px', fontWeight: 500, color: P.tx4, textAlign: 'center', marginTop: '14px' }}>
-        Questions? <a href="mailto:help@clausule.com" style={{ color: P.tx3 }}>help@clausule.com</a>
+      <div className="su-questions-note">
+        Questions? <a href="mailto:help@clausule.com">help@clausule.com</a>
       </div>
     </div>
   )
 }
 
-// ── Progress indicator ────────────────────────────────────────────────────────
+// ── Progress indicator ────────────────────────────────────────────
 function Progress({ step }) {
   return (
-    <div style={{ position: 'relative', zIndex: 10, padding: '20px 24px 0', flexShrink: 0, display: 'flex', justifyContent: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 0, width: '100%', maxWidth: step === 1 ? '900px' : '480px' }}>
+    <div className="su-progress">
+      <div className={`su-progress-inner${step === 1 ? ' su-progress-inner--wide' : ' su-progress-inner--narrow'}`}>
         {STEPS.map((label, i) => {
           const n = i + 1
           const done   = n < step
           const active = n === step
           return (
-            <div key={label} style={{ display: 'contents' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
-                <div style={{
-                  width: '28px', height: '28px', borderRadius: '50%',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '11px', fontWeight: 800,
-                  background: done ? P.tx1 : active ? P.acc : P.panel,
-                  color: done ? P.canvas : active ? '#fff' : P.tx3,
-                  border: `1.5px solid ${done ? P.tx1 : active ? P.acc : P.borderEm}`,
-                  flexShrink: 0,
-                  transition: 'all 0.3s',
-                }}>
+            <div key={label} className="su-step-wrap">
+              <div className="su-step-item">
+                <div className={`su-step-circle${done ? ' su-step-circle--done' : active ? ' su-step-circle--active' : ''}`}>
                   {done
                     ? <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 12, height: 12 }}><polyline points="3 8 6 11 13 4" /></svg>
                     : n
                   }
                 </div>
-                <div style={{
-                  fontSize: '10px', fontWeight: 700,
-                  color: active ? P.tx2 : done ? P.tx3 : P.tx4,
-                  textTransform: 'uppercase', letterSpacing: '0.6px', whiteSpace: 'nowrap',
-                }}>
+                <div className={`su-step-label${active ? ' su-step-label--active' : done ? ' su-step-label--done' : ''}`}>
                   {label}
                 </div>
               </div>
               {i < STEPS.length - 1 && (
-                <div style={{
-                  flex: 1, height: '1.5px',
-                  background: done ? P.tx1 : P.borderEm,
-                  margin: '0 8px', marginBottom: '18px',
-                  transition: 'background 0.3s',
-                }} />
+                <div className={`su-step-connector${done ? ' su-step-connector--done' : ''}`} />
               )}
             </div>
           )
@@ -662,40 +484,28 @@ function Progress({ step }) {
   )
 }
 
-// ── Aside panel (step 1 only) ─────────────────────────────────────────────────
+// ── Aside panel (step 1 only) ─────────────────────────────────────
 function Aside() {
   return (
-    <div style={{ flex: 1, paddingTop: '58px' }}>
-      <div style={{
-        background: P.card, border: `1px solid ${P.borderEm}`,
-        borderRadius: P.r2, padding: '20px 22px', marginBottom: '14px',
-      }}>
-        <div style={{ fontSize: '9px', fontWeight: 800, color: P.tx4, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
-          What people say
-        </div>
-        <div style={{ fontSize: '14px', fontStyle: 'italic', color: P.tx2, lineHeight: 1.7, borderLeft: `2px solid ${P.tx1}`, paddingLeft: '14px' }}>
+    <div className="su-aside-wrap">
+      <div className="su-aside-card">
+        <div className="su-aside-label">What people say</div>
+        <div className="su-aside-quote">
           Finally, a tool that feels like it's on my side. My brag doc went from a blank document I never updated to something I actually look forward to adding to.
         </div>
-        <div style={{ fontSize: '11px', fontWeight: 700, color: P.tx3, marginTop: '10px' }}>
-          — Software engineer, 4 years exp.
-        </div>
+        <div className="su-aside-attr">— Software engineer, 4 years exp.</div>
       </div>
-      <div style={{
-        background: P.card, border: `1px solid ${P.borderEm}`,
-        borderRadius: P.r2, padding: '20px 22px',
-      }}>
-        <div style={{ fontSize: '9px', fontWeight: 800, color: P.tx4, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
-          What's included
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div className="su-aside-card">
+        <div className="su-aside-label">What's included</div>
+        <div className="su-aside-feature-list">
           {[
             'Brag doc with evidence rings',
             'One-tap CV generator',
             'Semantic search across notes',
             '14-day free trial, no card needed to start',
           ].map((feat) => (
-            <div key={feat} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: P.tx2, lineHeight: 1.5 }}>
-              <div style={{ width: '7px', height: '7px', borderRadius: '2px', background: P.tx1, flexShrink: 0, marginTop: '5px' }} />
+            <div key={feat} className="su-aside-feature">
+              <div className="su-aside-dot" />
               {feat}
             </div>
           ))}
@@ -705,9 +515,9 @@ function Aside() {
   )
 }
 
-// ── Root component ─────────────────────────────────────────────────────────────
+// ── Root component ─────────────────────────────────────────────────
 export default function SignUp() {
-  const [step, setStep]       = useState(1)
+  const [step, setStep]     = useState(1)
   const [userData, setUserData] = useState({})
   const [planData, setPlanData] = useState({})
 
@@ -716,59 +526,29 @@ export default function SignUp() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleStep1 = (data) => {
-    setUserData(data)
-    goStep(2)
-  }
-
+  const handleStep1 = (data) => { setUserData(data); goStep(2) }
   const handleStep2 = (data) => {
     setPlanData(data)
-    if (data.skipPayment) {
-      goStep(4)
-    } else {
-      goStep(3)
-    }
+    goStep(data.skipPayment ? 4 : 3)
   }
 
   return (
-    <div style={{
-      fontFamily: P.font,
-      background: P.canvas,
-      color: P.tx1,
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'relative',
-    }}>
-      {/* Faint ruled lines */}
-      <div style={{
-        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
-        backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 47px, rgba(26,21,16,0.028) 47px, rgba(26,21,16,0.028) 48px)',
-      }} />
+    <div className="su-page">
+      <div className="su-bg-lines" aria-hidden="true" />
 
       {/* Topbar */}
-      <div style={{
-        position: 'relative', zIndex: 10,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '18px 48px',
-        borderBottom: `1px solid ${P.border}`,
-        background: P.canvas,
-        flexShrink: 0,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-          <div style={{
-            width: '28px', height: '28px', background: P.tx1,
-            borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <svg viewBox="0 0 18 18" fill="none" stroke={P.canvas} strokeWidth="2.2" strokeLinecap="round" style={{ width: 14, height: 14 }}>
+      <div className="su-topbar">
+        <div className="su-topbar-brand">
+          <div className="su-logo-bug">
+            <svg viewBox="0 0 18 18" fill="none" stroke="#F5F0EA" strokeWidth="2.2" strokeLinecap="round" style={{ width: 14, height: 14 }}>
               <path d="M3 5h12M3 9h8M3 13h5" />
             </svg>
           </div>
-          <span style={{ fontSize: '15px', fontWeight: 800, color: P.tx1, letterSpacing: '-0.3px' }}>clausule</span>
+          <span className="su-brand-name">clausule</span>
         </div>
-        <Link to="/" style={{ fontSize: '13px', fontWeight: 600, color: P.tx3, textDecoration: 'none' }}>
+        <Link to="/" className="su-signin-link">
           Already have an account?{' '}
-          <span style={{ color: P.accDk }}>Sign in</span>
+          <span>Sign in</span>
         </Link>
       </div>
 
@@ -776,22 +556,18 @@ export default function SignUp() {
       {step < 4 && <Progress step={step} />}
 
       {/* Main */}
-      <div style={{
-        position: 'relative', zIndex: 1,
-        flex: 1, display: 'flex', alignItems: 'flex-start',
-        justifyContent: 'center', padding: '48px 24px 80px',
-      }}>
+      <div className="su-main">
         {step === 1 ? (
-          <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start', maxWidth: '900px', width: '100%' }}>
-            <div style={{ flexShrink: 0, width: '480px', maxWidth: '100%' }}>
+          <div className="su-step1-layout">
+            <div className="su-step1-form">
               <Step1 onNext={handleStep1} />
             </div>
-            <div style={{ flex: 1, display: 'none' }} className="signup-aside">
+            <div className="su-aside">
               <Aside />
             </div>
           </div>
         ) : (
-          <div style={{ width: '100%', maxWidth: '480px' }}>
+          <div className="su-narrow">
             {step === 2 && <Step2 onNext={handleStep2} onBack={() => goStep(1)} />}
             {step === 3 && (
               <Step3
@@ -804,10 +580,6 @@ export default function SignUp() {
           </div>
         )}
       </div>
-
-      <style>{`
-        @media (min-width: 900px) { .signup-aside { display: block !important; } }
-      `}</style>
     </div>
   )
 }
