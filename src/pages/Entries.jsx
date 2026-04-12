@@ -44,7 +44,7 @@ export default function Entries() {
 
   return (
     <AppShell>
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col" style={{ height: '100vh', overflow: 'hidden' }}>
 
         {/* Search zone */}
         <div className="flex-shrink-0" style={{ padding: '24px 32px 0' }}>

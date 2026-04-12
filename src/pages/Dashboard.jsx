@@ -19,7 +19,7 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col" style={{ height: '100vh', overflow: 'hidden' }}>
         {/* Top bar */}
         <div className="flex items-end justify-between flex-shrink-0" style={{ padding: '22px 28px 0' }}>
           <div>

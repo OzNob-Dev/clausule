@@ -34,7 +34,7 @@ const ESCALATED = [
 export default function Escalated() {
   return (
     <AppShell>
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col" style={{ height: '100vh', overflow: 'hidden' }}>
         {/* Top bar */}
         <div className="flex-shrink-0" style={{ padding: '24px 32px 0', marginBottom: '20px' }}>
           <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--tx-1)', letterSpacing: '-0.6px' }}>Escalated</div>

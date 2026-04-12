@@ -66,7 +66,7 @@ export default function Profile() {
 
   return (
     <AppShell>
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex" style={{ height: '100vh', overflow: 'hidden' }}>
 
         {/* ── Identity panel ── */}
         <div
