@@ -783,9 +783,9 @@ export default function SignUp() {
       }}>
         <div style={{
           display: 'flex', gap: '48px', alignItems: 'flex-start',
-          maxWidth: '900px', width: '100%',
+          maxWidth: step === 1 ? '900px' : '480px', width: '100%',
         }}>
-          <div style={{ flexShrink: 0, width: '480px', maxWidth: '100%' }}>
+          <div style={{ width: '100%' }}>
             {step === 1 && <Step1 onNext={handleStep1} />}
             {step === 2 && <Step2 onNext={handleStep2} onBack={() => goStep(1)} />}
             {step === 3 && (
