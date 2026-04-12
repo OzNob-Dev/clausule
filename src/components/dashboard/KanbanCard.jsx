@@ -6,7 +6,7 @@ export function KanbanCard({ emp }) {
   return (
     <Link
       to="/profile"
-      className="block no-underline transition-all duration-150 bg-[var(--bg-panel)] border border-[var(--border)] rounded-clausule2 p-[14px_16px] relative hover:-translate-y-0.5 hover:border-[var(--border2)]"
+      className="block no-underline transition-all duration-150 bg-[var(--card)] border border-[var(--border)] rounded-clausule2 p-[14px_16px] relative hover:-translate-y-0.5 hover:border-[var(--border2)]"
     >
       <div className="flex items-center gap-2.5 mb-2.5">
         <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />

@@ -59,7 +59,7 @@
 
 .ef-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(60, 45, 35, 0.05);
   border: 1.5px solid var(--border2);
   border-radius: var(--r);
   padding: 11px 13px;
@@ -74,7 +74,7 @@
 .ef-input:focus { border-color: var(--acc-text); }
 
 .ef-input--readonly {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(60, 45, 35, 0.03);
   border-color: var(--border);
   color: var(--tx-2);
   cursor: default;

@@ -56,15 +56,24 @@
   color: var(--ts);
 }
 
-/* Right panel */
+/* Right panel — light form surface */
 .si-right {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: var(--canvas);
+  background: #EDE8DF;
   padding: 48px 44px;
+
+  /* Scope light-palette vars to the form panel */
+  --tp:      #2A221A;
+  --ts:      #5C5048;
+  --tm:      #8A7E76;
+  --tc:      #9A9490;
+  --rule:    rgba(60, 45, 35, 0.10);
+  --rule-em: rgba(60, 45, 35, 0.16);
+  --acc-text: var(--acc);
 }
 
 .si-form {
@@ -194,7 +203,7 @@
   gap: 8px;
 }
 
-.si-btn-sso:hover { border-color: var(--border2); }
+.si-btn-sso:hover { border-color: var(--rule-em); }
 
 .si-footer {
   font-size: 12px;

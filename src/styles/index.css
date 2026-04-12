@@ -68,6 +68,50 @@
   .kb-col-body::-webkit-scrollbar-thumb { background: var(--tc); @apply rounded-full; }
 }
 
+/* ── Light content surface — all AppShell pages ──────────────── */
+/*
+   Overrides CSS vars for the main content area so the dark-first
+   palette tokens automatically produce the warm parchment theme
+   for every page rendered inside AppShell without touching each
+   component individually.  The rail (sibling of .app-main) is
+   unaffected and stays dark.
+*/
+.app-main {
+  background: #EDE8DF;
+
+  /* Surface tokens */
+  --canvas:  #EDE8DF;
+  --card:    #FAF7F3;
+  --bg-doc:  #EDE8DF;
+  --bg-comp: #FAF7F3;
+
+  /* Text ramp (all AAA ≥7:1 on #EDE8DF / #FAF7F3) */
+  --tp:  #2A221A;
+  --ts:  #5C5048;
+  --tm:  #8A7E76;
+  --tc:  #9A9490;
+  --tx-1: #2A221A;
+  --tx-2: #5C5048;
+  --tx-3: #8A7E76;
+  --tx-4: #9A9490;
+
+  /* Borders */
+  --rule:    rgba(60, 45, 35, 0.10);
+  --rule-em: rgba(60, 45, 35, 0.16);
+  --border:  rgba(60, 45, 35, 0.10);
+  --border2: rgba(60, 45, 35, 0.16);
+  --cb:      rgba(60, 45, 35, 0.10);
+
+  /* Accent tints — readable on the light surface */
+  --acc-tint:   rgba(208, 90, 52, 0.10);
+  --acc-bg:     rgba(208, 90, 52, 0.08);
+  --acc-border: rgba(208, 90, 52, 0.22);
+  --acc-text:   var(--acc);   /* solid accent replaces light-on-dark variant */
+
+  /* Semantic tints stay the same, only the text aliases shift */
+  --blt: var(--bl);
+}
+
 /* ── Mobile: rail nav becomes a fixed bottom bar ─────────────── */
 @media (max-width: 640px) {
   .rail-aside {

@@ -28,7 +28,7 @@
 }
 
 .st-card {
-  background: var(--bg-panel);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r2);
   padding: 22px 24px;
@@ -75,7 +75,7 @@
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.15s;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(60, 45, 35, 0.14);
 }
 
 .st-toggle--on { background: var(--acc); }
@@ -262,7 +262,7 @@
 }
 
 .st-flagged-table {
-  background: var(--bg-panel);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r2);
   overflow: hidden;
@@ -353,7 +353,7 @@
 }
 
 .st-danger-card {
-  background: var(--bg-panel);
+  background: var(--card);
   border: 1px solid rgba(232, 79, 79, 0.22);
   border-radius: var(--r2);
   padding: 20px 24px;
@@ -411,8 +411,8 @@
 }
 
 .st-modal {
-  background: var(--card);
-  border: 1px solid var(--border2);
+  background: #FAF7F3;
+  border: 1px solid rgba(60, 45, 35, 0.16);
   border-radius: var(--r2);
   padding: 32px;
   width: 100%;

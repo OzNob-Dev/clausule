@@ -5,15 +5,27 @@
   overflow: hidden;
 }
 
-/* Identity panel */
+/* Identity panel — stays dark even inside .app-main */
 .pf-panel {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   overflow-y: auto;
   width: 258px;
-  background: var(--bg-panel);
-  border-right: 1px solid var(--border);
+  background: var(--nav);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+
+  /* Reset text vars back to light-on-dark values */
+  --tx-1: #FBF7F2;
+  --tx-2: #C8C4BE;
+  --tx-3: #B8B2AC;
+  --tx-4: #B3B0AB;
+  --border:  rgba(255, 255, 255, 0.07);
+  --border2: rgba(255, 255, 255, 0.12);
+  --acc-text: #F5A070;
+  --acc-tint: rgba(208, 90, 52, 0.18);
+  --acc-bg:   rgba(208, 90, 52, 0.18);
+  --acc-border: rgba(208, 90, 52, 0.32);
 }
 
 .pf-back-row {
@@ -205,7 +217,7 @@
   color: var(--tx-1);
   line-height: 1.75;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05); /* inside pf-panel which resets vars */
   border: 1.5px solid var(--border2);
   border-radius: var(--r);
   outline: none;
@@ -267,7 +279,7 @@
   line-height: 1.75;
   cursor: text;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.04); /* inside pf-panel which resets vars */
   border-radius: var(--r);
   border: 1.5px solid transparent;
   transition: border-color 0.15s;
@@ -292,11 +304,11 @@
   color: var(--teal);
 }
 
-/* Document area */
+/* Document area — light content surface */
 .pf-doc {
   flex: 1;
   overflow-y: auto;
-  background: var(--bg-doc);
+  background: #EDE8DF;
   padding: 24px 32px;
 }
 
