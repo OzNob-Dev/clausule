@@ -614,8 +614,8 @@ function Step4({ email }) {
 // ── Progress indicator ────────────────────────────────────────────────────────
 function Progress({ step }) {
   return (
-    <div style={{ position: 'relative', zIndex: 10, padding: '20px 48px 0', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 0, flex: 1 }}>
+    <div style={{ position: 'relative', zIndex: 10, padding: '20px 24px 0', flexShrink: 0, display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 0, width: '100%', maxWidth: step === 1 ? '900px' : '480px' }}>
         {STEPS.map((label, i) => {
           const n = i + 1
           const done   = n < step
@@ -781,12 +781,17 @@ export default function SignUp() {
         flex: 1, display: 'flex', alignItems: 'flex-start',
         justifyContent: 'center', padding: '48px 24px 80px',
       }}>
-        <div style={{
-          display: 'flex', gap: '48px', alignItems: 'flex-start',
-          maxWidth: step === 1 ? '480px' : '900px', width: '100%',
-        }}>
-          <div style={{ width: '100%' }}>
-            {step === 1 && <Step1 onNext={handleStep1} />}
+        {step === 1 ? (
+          <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start', maxWidth: '900px', width: '100%' }}>
+            <div style={{ flexShrink: 0, width: '480px', maxWidth: '100%' }}>
+              <Step1 onNext={handleStep1} />
+            </div>
+            <div style={{ flex: 1, display: 'none' }} className="signup-aside">
+              <Aside />
+            </div>
+          </div>
+        ) : (
+          <div style={{ width: '100%', maxWidth: '480px' }}>
             {step === 2 && <Step2 onNext={handleStep2} onBack={() => goStep(1)} />}
             {step === 3 && (
               <Step3
@@ -797,14 +802,7 @@ export default function SignUp() {
             )}
             {step === 4 && <Step4 email={userData.email} />}
           </div>
-
-          {/* Aside — only on step 1, desktop only */}
-          {step === 1 && (
-            <div style={{ flex: 1, display: 'none' }} className="signup-aside">
-              <Aside />
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       <style>{`
