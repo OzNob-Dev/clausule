@@ -23,12 +23,13 @@ export default function Dashboard() {
         {/* Top bar */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h1 className="text-[20px] font-medium text-tp dark:text-tp-dark tracking-[-0.3px]">Dashboard</h1>
-            <p className="text-[13px] text-tm dark:text-[#6B6B68] mt-0.5">Acme Corp · April 2026</p>
+            <h1 className="text-[20px] font-black tracking-[-0.3px]" style={{ color: 'var(--tp)' }}>Dashboard</h1>
+            <p className="text-[13px] mt-0.5" style={{ color: 'var(--tm)' }}>Acme Corp · April 2026</p>
           </div>
           <Link
             to="/new-entry"
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-clausule hover:opacity-90 transition-opacity no-underline"
+            className="flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-bold rounded-clausule hover:opacity-90 transition-opacity no-underline text-white"
+            style={{ background: 'var(--acc)' }}
           >
             + New entry
           </Link>
@@ -37,15 +38,19 @@ export default function Dashboard() {
         {/* Stats row */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {STATS.map(({ n, l }) => (
-            <div key={l} className="bg-card dark:bg-card-dark rounded-clausule p-4 border border-[rgba(0,0,0,0.07)]">
-              <div className="text-[24px] font-medium text-tp dark:text-tp-dark tracking-tight">{n}</div>
-              <div className="text-[12px] text-tm dark:text-[#6B6B68] mt-1">{l}</div>
+            <div
+              key={l}
+              className="rounded-clausule2 p-4"
+              style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+            >
+              <div className="text-[24px] font-black tracking-tight" style={{ color: 'var(--tp)' }}>{n}</div>
+              <div className="text-[12px] mt-1 font-bold" style={{ color: 'var(--tm)' }}>{l}</div>
             </div>
           ))}
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-[rgba(0,0,0,0.07)] mb-5" />
+        <div className="h-px mb-5" style={{ background: 'var(--rule)' }} />
 
         {/* Search */}
         <div className="mb-5">
@@ -54,7 +59,12 @@ export default function Dashboard() {
             placeholder="Search by name…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-60 px-3 py-2 text-[13px] bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] dark:border-[rgba(255,255,255,0.08)] rounded-clausule text-tp dark:text-tp-dark placeholder:text-tm outline-none focus:border-bl transition-colors"
+            className="w-60 px-3 py-2 text-[13px] rounded-clausule outline-none transition-colors"
+            style={{
+              background: 'var(--card)',
+              border: '1px solid var(--rule)',
+              color: 'var(--tp)',
+            }}
           />
         </div>
 

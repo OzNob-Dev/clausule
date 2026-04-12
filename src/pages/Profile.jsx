@@ -14,8 +14,8 @@ const EMPLOYEE = {
   role: 'Senior engineer',
   team: 'Platform',
   av: 'JE',
-  avBg: '#FAEEDA',
-  avCol: '#854F0B',
+  avBg: 'rgba(239,159,39,0.14)',
+  avCol: '#EF9F27',
 }
 
 const INITIAL_SUMMARY = 'Jordan has been a consistent performer this quarter, demonstrating technical initiative on the authentication refactor and meaningful growth in code review quality. One interpersonal concern was raised and addressed promptly. Overall trajectory is positive.'
@@ -69,15 +69,16 @@ export default function Profile() {
           <div className="flex items-center gap-4">
             <Avatar initials={EMPLOYEE.av} bg={EMPLOYEE.avBg} color={EMPLOYEE.avCol} size="lg" />
             <div>
-              <h1 className="text-[20px] font-medium text-tp dark:text-tp-dark">{EMPLOYEE.name}</h1>
-              <p className="text-[13px] text-tm dark:text-[#6B6B68] mt-0.5">{EMPLOYEE.role} · {EMPLOYEE.team}</p>
+              <h1 className="text-[20px] font-black text-tp">{EMPLOYEE.name}</h1>
+              <p className="text-[13px] text-tm mt-0.5">{EMPLOYEE.role} · {EMPLOYEE.team}</p>
             </div>
           </div>
           {!escalated ? (
             <button
               id="escalateTrigger"
               onClick={() => setEscalateOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-rt border border-rb rounded-clausule hover:bg-rb transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-rt rounded-clausule hover:bg-rb transition-colors"
+              style={{ border: '1px solid var(--rb)' }}
             >
               <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
@@ -95,9 +96,12 @@ export default function Profile() {
         </div>
 
         {/* Pitstop */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 mb-4">
+        <div
+          className="rounded-clausule p-4 mb-4"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px]">Status</span>
+            <span className="text-[12px] font-bold text-ts uppercase tracking-[0.4px]">Status</span>
           </div>
           <div className="mt-3">
             <PitstopSelector value={ps} onSelect={setPs} saved={psSaved} />
@@ -105,9 +109,12 @@ export default function Profile() {
         </div>
 
         {/* Manager summary */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 mb-4">
+        <div
+          className="rounded-clausule p-4 mb-4"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px]">Manager summary</span>
+            <span className="text-[12px] font-bold text-ts uppercase tracking-[0.4px]">Manager summary</span>
             <div className="flex items-center gap-2">
               <span className={`text-[11px] text-tm transition-opacity duration-300 ${summarySaved ? 'opacity-100' : 'opacity-0'}`}>
                 Saved
@@ -123,14 +130,15 @@ export default function Profile() {
                   <button
                     onClick={handleDraftAI}
                     disabled={summaryLoading}
-                    className="text-[12px] text-accent hover:underline disabled:opacity-50"
+                    className="text-[12px] hover:underline disabled:opacity-50"
+                    style={{ color: 'var(--acc-text)' }}
                   >
                     {summaryLoading ? 'Drafting…' : 'AI draft'}
                   </button>
                 </>
               ) : (
                 <>
-                  <button onClick={saveSummary} className="text-[12px] text-[#3B6D11] font-medium hover:opacity-80">Save</button>
+                  <button onClick={saveSummary} className="text-[12px] font-bold hover:opacity-80" style={{ color: 'var(--gt)' }}>Save</button>
                   <button onClick={() => setEditingSummary(false)} className="text-[12px] text-tm hover:text-ts">Cancel</button>
                 </>
               )}
@@ -141,17 +149,21 @@ export default function Profile() {
               value={draftText}
               onChange={(e) => setDraftText(e.target.value)}
               rows={4}
-              className="w-full text-[14px] text-ts dark:text-[#9A9994] leading-relaxed bg-transparent border border-[rgba(0,0,0,0.09)] rounded p-2.5 resize-none outline-none focus:border-bl"
+              className="w-full text-[14px] text-ts leading-relaxed bg-transparent rounded-clausule p-2.5 resize-none outline-none focus:border-bl"
+              style={{ border: '1px solid var(--rule)', background: 'rgba(255,255,255,0.04)' }}
             />
           ) : (
-            <p className="text-[14px] text-ts dark:text-[#9A9994] leading-relaxed">{summaryText}</p>
+            <p className="text-[14px] text-ts leading-relaxed">{summaryText}</p>
           )}
         </div>
 
         {/* Entries */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4">
+        <div
+          className="rounded-clausule p-4"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px]">
+            <span className="text-[12px] font-bold text-ts uppercase tracking-[0.4px]">
               File notes · {entries.length}
             </span>
             {filterCat && (
@@ -165,7 +177,8 @@ export default function Profile() {
           {!composerOpen && (
             <button
               onClick={() => setComposerOpen(true)}
-              className="w-full text-left px-3 py-2.5 text-[13px] text-tm border border-dashed border-[rgba(0,0,0,0.12)] rounded-clausule hover:border-[rgba(0,0,0,0.22)] hover:text-ts transition-colors mb-4"
+              className="w-full text-left px-3 py-2.5 text-[13px] text-tm rounded-clausule hover:text-ts transition-colors mb-4"
+              style={{ border: '1px dashed var(--rule-em)' }}
             >
               + Add a note…
             </button>

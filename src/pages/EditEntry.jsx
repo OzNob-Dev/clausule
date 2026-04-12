@@ -19,6 +19,8 @@ const EXISTING = {
   updatedAt: '2025-09-15',
 }
 
+const INPUT_CLS = 'px-3 py-2 bg-transparent rounded-clausule text-[14px] text-tp outline-none focus:border-bl transition-colors'
+
 export default function EditEntry() {
   const navigate = useNavigate()
   const [form, setForm] = useState(EXISTING)
@@ -44,51 +46,63 @@ export default function EditEntry() {
               <polyline points="10 4 6 8 10 12"/>
             </svg>
           </button>
-          <h1 className="text-[20px] font-medium text-tp dark:text-tp-dark">Edit file note</h1>
+          <h1 className="text-[20px] font-black text-tp">Edit file note</h1>
         </div>
 
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-6 flex flex-col gap-5">
+        <div
+          className="rounded-clausule2 p-6 flex flex-col gap-5"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
+          {/* Employee — read-only */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Employee</label>
-            <div className="px-3 py-2 text-[14px] text-tp dark:text-tp-dark bg-[rgba(0,0,0,0.03)] rounded-clausule">
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Employee</label>
+            <div
+              className="px-3 py-2 text-[14px] text-tp rounded-clausule"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--rule)' }}
+            >
               {form.employee}
             </div>
           </div>
 
+          {/* Date + Category row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Date</label>
+              <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Date</label>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => set('date', e.target.value)}
-                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl"
+                className={INPUT_CLS}
+                style={{ border: '1px solid var(--rule)' }}
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Category</label>
+              <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Category</label>
               <select
                 value={form.category}
                 onChange={(e) => set('category', e.target.value)}
-                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl appearance-none"
+                className={`${INPUT_CLS} appearance-none`}
+                style={{ border: '1px solid var(--rule)' }}
               >
                 {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
               </select>
             </div>
           </div>
 
+          {/* Note type pills */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Note type</label>
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Note type</label>
             <div className="flex flex-wrap gap-2">
               {NOTE_TYPES.map((t) => (
                 <button
                   key={t}
                   onClick={() => set('type', t)}
-                  className={`px-3 py-1.5 rounded-full text-[12px] border transition-colors ${
+                  className="px-3 py-1.5 rounded-full text-[12px] font-bold transition-colors"
+                  style={
                     form.type === t
-                      ? 'bg-nav text-[#E8ECF8] border-nav'
-                      : 'bg-transparent text-ts border-[rgba(0,0,0,0.09)] hover:border-[rgba(0,0,0,0.2)]'
-                  }`}
+                      ? { background: 'var(--acc-tint)', color: 'var(--acc-text)', border: '1px solid transparent' }
+                      : { background: 'transparent', color: 'var(--ts)', border: '1px solid var(--rule)' }
+                  }
                 >
                   {t}
                 </button>
@@ -96,42 +110,54 @@ export default function EditEntry() {
             </div>
           </div>
 
+          {/* Title */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Title</label>
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Title</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => set('title', e.target.value)}
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl"
+              className={INPUT_CLS}
+              style={{ border: '1px solid var(--rule)' }}
             />
           </div>
 
+          {/* Details */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Details</label>
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Details</label>
             <textarea
               value={form.details}
               onChange={(e) => set('details', e.target.value)}
               rows={5}
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[13px] text-ts dark:text-[#9A9994] outline-none focus:border-bl resize-none leading-relaxed"
+              className="px-3 py-2 bg-transparent rounded-clausule text-[13px] text-ts outline-none focus:border-bl resize-none leading-relaxed"
+              style={{ border: '1px solid var(--rule)' }}
             />
           </div>
 
-          <div className="flex flex-col gap-2.5 pt-1 border-t border-[rgba(0,0,0,0.07)]">
+          {/* Options */}
+          <div className="flex flex-col gap-2.5 pt-1" style={{ borderTop: '1px solid var(--rule)' }}>
             <label className="flex items-center gap-2.5 cursor-pointer">
-              <input type="checkbox" checked={form.confidential} onChange={(e) => set('confidential', e.target.checked)} className="accent-nav" />
-              <span className="text-[13px] text-ts dark:text-[#9A9994]">Mark as confidential</span>
+              <input
+                type="checkbox"
+                checked={form.confidential}
+                onChange={(e) => set('confidential', e.target.checked)}
+                style={{ accentColor: 'var(--acc)' }}
+              />
+              <span className="text-[13px] text-ts">Mark as confidential</span>
             </label>
           </div>
 
           {/* Metadata */}
-          <div className="text-[11px] text-tm pt-1 border-t border-[rgba(0,0,0,0.07)]">
+          <div className="text-[11px] text-tm pt-1" style={{ borderTop: '1px solid var(--rule)' }}>
             Created {form.createdAt} · Last edited {form.updatedAt}
           </div>
 
+          {/* Actions */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="px-4 py-2.5 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-clausule hover:opacity-90 transition-opacity"
+              className="px-4 py-2.5 text-[13px] font-bold rounded-clausule hover:opacity-90 transition-opacity text-white"
+              style={{ background: 'var(--acc)' }}
             >
               Save changes
             </button>

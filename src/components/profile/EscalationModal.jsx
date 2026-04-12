@@ -29,19 +29,27 @@ export function EscalationModal({ open, onClose, onConfirm, context, preDraft = 
       }
     >
       {context && (
-        <div className="text-[13px] text-ts dark:text-[#9A9994] mb-4 bg-[rgba(0,0,0,0.03)] rounded px-3 py-2">
+        <div
+          className="text-[13px] mb-4 rounded-clausule px-3 py-2"
+          style={{ color: 'var(--ts)', background: 'rgba(255,255,255,0.04)' }}
+        >
           {context}
         </div>
       )}
 
       {preDraft && (
         <div className="flex items-center gap-1.5 mb-2">
-          <span className="text-[11px] px-2 py-0.5 bg-blb text-blt rounded-full">AI draft</span>
-          <span className="text-[11px] text-tm">Review and edit before sending</span>
+          <span
+            className="text-[11px] px-2 py-0.5 rounded-full font-bold"
+            style={{ background: 'var(--blb)', color: 'var(--blt)' }}
+          >
+            AI draft
+          </span>
+          <span className="text-[11px]" style={{ color: 'var(--tm)' }}>Review and edit before sending</span>
         </div>
       )}
 
-      <label className="block text-[11px] font-medium text-tm uppercase tracking-[0.5px] mb-1.5">
+      <label className="block text-[11px] font-bold uppercase tracking-[0.5px] mb-1.5" style={{ color: 'var(--tm)' }}>
         Reason for escalation
       </label>
       <textarea
@@ -49,12 +57,15 @@ export function EscalationModal({ open, onClose, onConfirm, context, preDraft = 
         onChange={(e) => { setReason(e.target.value); setError(false) }}
         rows={4}
         placeholder="Describe the reason for escalating this to HR…"
-        className={`w-full resize-none rounded-clausule border text-[13px] text-tp dark:text-tp-dark bg-card dark:bg-card-dark p-3 outline-none focus:border-bl transition-colors ${
-          error ? 'border-[#E24B4A]' : 'border-[rgba(0,0,0,0.09)]'
-        }`}
+        className="w-full resize-none rounded-clausule text-[13px] p-3 outline-none transition-colors"
+        style={{
+          color: 'var(--tp)',
+          background: 'rgba(255,255,255,0.04)',
+          border: `1px solid ${error ? 'var(--rt)' : 'var(--rule)'}`,
+        }}
       />
       {error && (
-        <p className="text-[11px] text-rt mt-1">Please provide a reason before escalating.</p>
+        <p className="text-[11px] mt-1" style={{ color: 'var(--rt)' }}>Please provide a reason before escalating.</p>
       )}
     </Modal>
   )

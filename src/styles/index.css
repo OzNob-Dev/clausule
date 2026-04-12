@@ -8,12 +8,11 @@
   }
 
   body {
-    @apply font-sans bg-canvas text-tp min-h-screen;
+    font-family: var(--font-sans);
+    background: var(--canvas);
+    color: var(--tp);
+    min-height: 100vh;
     transition: background 0.2s, color 0.2s;
-  }
-
-  body.dark {
-    @apply bg-canvas-dark text-tp-dark;
   }
 }
 
@@ -21,7 +20,7 @@
   /* Rail navigation */
   .rail {
     @apply w-[46px] flex flex-col items-center py-[18px] flex-shrink-0 sticky top-0 h-screen opacity-50 transition-opacity duration-200;
-    background: var(--nav-bg);
+    background: var(--nav);
   }
   .rail:hover {
     @apply opacity-100;
@@ -51,5 +50,5 @@
   /* Custom scrollbar */
   .kb-col-body::-webkit-scrollbar { width: 3px; }
   .kb-col-body::-webkit-scrollbar-track { background: transparent; }
-  .kb-col-body::-webkit-scrollbar-thumb { @apply bg-tc rounded-full; }
+  .kb-col-body::-webkit-scrollbar-thumb { background: var(--tc); @apply rounded-full; }
 }

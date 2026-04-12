@@ -57,10 +57,13 @@ export function RailNav() {
   return (
     <aside
       className="w-[46px] flex flex-col items-center py-[18px] flex-shrink-0 sticky top-0 h-screen opacity-50 hover:opacity-100 transition-opacity duration-200"
-      style={{ background: '#1C2540' }}
+      style={{ background: 'var(--nav)' }}
     >
       {/* Logo */}
-      <div className="text-[10px] font-medium tracking-[3px] text-[#EDEAE5] mb-6 select-none">
+      <div
+        className="text-[8px] font-bold tracking-[4px] mb-6 select-none"
+        style={{ color: 'var(--acc-text)', writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+      >
         CLS
       </div>
 
@@ -72,16 +75,23 @@ export function RailNav() {
             to={to}
             title={tip}
             className={({ isActive }) =>
-              `relative w-9 h-9 flex items-center justify-center rounded transition-colors duration-150 text-[#EDEAE5] ${
+              `relative w-9 h-9 flex items-center justify-center rounded-clausule transition-colors duration-150 ${
                 isActive
-                  ? 'bg-[rgba(201,168,76,0.16)] opacity-100'
-                  : 'opacity-50 hover:opacity-100'
+                  ? 'opacity-100'
+                  : 'opacity-45 hover:opacity-100'
               }`
             }
+            style={({ isActive }) => ({
+              background: isActive ? 'var(--nav-active-bg)' : 'transparent',
+              color: 'var(--tp)',
+            })}
           >
             <span className="w-4 h-4">{icon}</span>
             {badge && escalatedCount > 0 && (
-              <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#E24B4A] rounded-full" />
+              <span
+                className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full"
+                style={{ background: 'var(--rt)', border: '1.5px solid var(--nav)' }}
+              />
             )}
           </NavLink>
         ))}
@@ -92,7 +102,8 @@ export function RailNav() {
         <button
           onClick={toggle}
           title="Toggle theme"
-          className="w-7 h-7 flex items-center justify-center text-[#EDEAE5] opacity-50 hover:opacity-100 transition-opacity"
+          className="w-7 h-7 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
+          style={{ color: 'var(--tp)' }}
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>
@@ -100,8 +111,8 @@ export function RailNav() {
         </button>
 
         <div
-          className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-medium cursor-default"
-          style={{ background: '#FAEEDA', color: '#854F0B' }}
+          className="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold cursor-default"
+          style={{ background: 'var(--acc-tint)', color: 'var(--acc-text)' }}
           title="Adrian Diente"
         >
           AD
@@ -110,7 +121,8 @@ export function RailNav() {
         <button
           onClick={logout}
           title="Sign out"
-          className="w-7 h-7 flex items-center justify-center text-[#EDEAE5] opacity-50 hover:opacity-100 transition-opacity"
+          className="w-7 h-7 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
+          style={{ color: 'var(--tp)' }}
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>

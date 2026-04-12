@@ -20,7 +20,7 @@ export function EntryCard({ entry, onDelete, filterActive, isFiltered }) {
       className={`transition-opacity duration-150 ${isFiltered ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}
     >
       {!editing ? (
-        <div className="group py-4 border-b border-[rgba(0,0,0,0.07)] last:border-0">
+        <div className="group py-4 last:border-0" style={{ borderBottom: '1px solid var(--rule)' }}>
           <div className="flex items-start gap-3">
             <CategoryDot
               cat={entry.cat}
@@ -30,24 +30,34 @@ export function EntryCard({ entry, onDelete, filterActive, isFiltered }) {
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-1">
-                <h4 className="text-[14px] font-medium text-tp dark:text-tp-dark">{title}</h4>
+                <h4 className="text-[14px] font-bold" style={{ color: 'var(--tp)' }}>{title}</h4>
                 <button
                   onClick={() => setEditing(true)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] text-bl hover:underline flex-shrink-0"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] hover:underline flex-shrink-0"
+                  style={{ color: 'var(--bl)' }}
                 >
                   Edit
                 </button>
               </div>
-              <p className="text-[13px] text-ts dark:text-[#9A9994] leading-relaxed mb-2">{body}</p>
+              <p className="text-[13px] leading-relaxed mb-2" style={{ color: 'var(--ts)' }}>{body}</p>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[11px] text-tm dark:text-[#6B6B68]">{relativeTime(entry.date)}</span>
-                <span className="text-[11px] text-tc">·</span>
+                <span className="text-[11px]" style={{ color: 'var(--tm)' }}>{relativeTime(entry.date)}</span>
+                <span className="text-[11px]" style={{ color: 'var(--tc)' }}>·</span>
                 <CategoryPill cat={entry.cat} />
                 {entry.type && (
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-[rgba(0,0,0,0.05)] text-ts">{entry.type}</span>
+                  <span
+                    className="text-[11px] px-2 py-0.5 rounded-full font-bold"
+                    style={{ background: 'rgba(255,255,255,0.07)', color: 'var(--ts)' }}
+                  >
+                    {entry.type}
+                  </span>
                 )}
                 {entry.tags?.map((tag) => (
-                  <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-[rgba(0,0,0,0.04)] text-tm">
+                  <span
+                    key={tag}
+                    className="text-[11px] px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--tm)' }}
+                  >
                     #{tag}
                   </span>
                 ))}
@@ -56,22 +66,52 @@ export function EntryCard({ entry, onDelete, filterActive, isFiltered }) {
           </div>
         </div>
       ) : (
-        <div className="py-4 border-b border-[rgba(0,0,0,0.07)] last:border-0 bg-[rgba(0,0,0,0.02)] -mx-4 px-4 rounded-clausule">
+        <div
+          className="py-4 last:border-0 -mx-4 px-4 rounded-clausule2"
+          style={{ borderBottom: '1px solid var(--rule)', background: 'rgba(255,255,255,0.03)' }}
+        >
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full text-[14px] font-medium text-tp dark:text-tp-dark bg-transparent border-0 border-b border-[rgba(0,0,0,0.12)] pb-1.5 mb-3 outline-none focus:border-bl"
+            className="w-full text-[14px] font-bold bg-transparent border-0 pb-1.5 mb-3 outline-none"
+            style={{
+              color: 'var(--tp)',
+              borderBottom: '1px solid var(--rule-em)',
+            }}
           />
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={3}
-            className="w-full text-[13px] text-ts dark:text-[#9A9994] bg-transparent border border-[rgba(0,0,0,0.09)] rounded p-2 resize-none outline-none focus:border-bl mb-3"
+            className="w-full text-[13px] rounded p-2 resize-none outline-none mb-3"
+            style={{
+              color: 'var(--ts)',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid var(--rule)',
+            }}
           />
           <div className="flex items-center gap-2">
-            <button onClick={handleSave} className="text-[12px] text-[#3B6D11] font-medium hover:opacity-80">Save</button>
-            <button onClick={() => setEditing(false)} className="text-[12px] text-tm hover:text-ts">Cancel</button>
-            <button onClick={handleDelete} className="text-[12px] text-rt hover:opacity-80 ml-auto">Delete</button>
+            <button
+              onClick={handleSave}
+              className="text-[12px] font-bold hover:opacity-80"
+              style={{ color: 'var(--gt)' }}
+            >
+              Save
+            </button>
+            <button
+              onClick={() => setEditing(false)}
+              className="text-[12px] hover:opacity-80"
+              style={{ color: 'var(--tm)' }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="text-[12px] hover:opacity-80 ml-auto"
+              style={{ color: 'var(--rt)' }}
+            >
+              Delete
+            </button>
           </div>
         </div>
       )}

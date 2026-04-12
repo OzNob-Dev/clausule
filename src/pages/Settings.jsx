@@ -4,16 +4,16 @@ import { AppShell } from '../components/layout/AppShell'
 const WINDOWS = ['30 days', '60 days', '90 days', '6 months']
 
 const FLAGGED = [
-  { name: "Marcus O'Brien", role: 'Engineer I · Platform', av: 'MO', avBg: '#FCEBEB', avCol: '#A32D2D', reason: '4 conduct notes + 2 escalations in 60d' },
-  { name: 'Sophie Okafor',  role: 'Engineer II · Security', av: 'SO', avBg: '#FCEBEB', avCol: '#A32D2D', reason: '3 weeks at Needs work + 1 escalation' },
+  { name: "Marcus O'Brien", role: 'Engineer I · Platform', av: 'MO', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595', reason: '4 conduct notes + 2 escalations in 60d' },
+  { name: 'Sophie Okafor',  role: 'Engineer II · Security', av: 'SO', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595', reason: '3 weeks at Needs work + 1 escalation' },
 ]
 
 function Slider({ label, value, min, max, onChange, hint }) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <span className="text-[13px] text-ts dark:text-[#9A9994]">{label}</span>
-        <span className="text-[13px] font-medium text-tp dark:text-tp-dark tabular-nums">{value}</span>
+        <span className="text-[13px] text-ts">{label}</span>
+        <span className="text-[13px] font-bold text-tp tabular-nums">{value}</span>
       </div>
       <input
         type="range"
@@ -21,7 +21,8 @@ function Slider({ label, value, min, max, onChange, hint }) {
         max={max}
         value={value}
         onChange={(e) => onChange(+e.target.value)}
-        className="w-full accent-nav h-1 rounded-full"
+        className="w-full h-1 rounded-full"
+        style={{ accentColor: 'var(--acc)' }}
       />
       {hint && <span className="text-[11px] text-tm">{hint}</span>}
     </div>
@@ -42,28 +43,37 @@ export default function Settings() {
     <AppShell>
       <div className="px-8 py-8 max-w-xl">
         <div className="mb-6">
-          <h1 className="text-[20px] font-medium text-tp dark:text-tp-dark mb-0.5">Signal settings</h1>
-          <p className="text-[13px] text-tm dark:text-[#6B6B68]">Configure when Clausule surfaces HR alerts.</p>
+          <h1 className="text-[20px] font-black text-tp mb-0.5">Signal settings</h1>
+          <p className="text-[13px] text-tm">Configure when Clausule surfaces HR alerts.</p>
         </div>
 
         {/* Combined toggle */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 mb-4">
+        <div
+          className="rounded-clausule p-4 mb-4"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
           <label className="flex items-center justify-between cursor-pointer">
             <div>
-              <div className="text-[14px] font-medium text-tp dark:text-tp-dark">Combined signal threshold</div>
+              <div className="text-[14px] font-bold text-tp">Combined signal threshold</div>
               <div className="text-[12px] text-tm mt-0.5">Use all signals together when evaluating risk</div>
             </div>
             <button
               onClick={() => setCombined((c) => !c)}
-              className={`w-10 h-5 rounded-full transition-colors relative ${combined ? 'bg-nav' : 'bg-tc'}`}
+              className="w-10 h-5 rounded-full transition-colors relative flex-shrink-0"
+              style={{ background: combined ? 'var(--acc)' : 'var(--rule-em)' }}
             >
-              <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${combined ? 'translate-x-5' : 'translate-x-0.5'}`} />
+              <span
+                className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${combined ? 'translate-x-5' : 'translate-x-0.5'}`}
+              />
             </button>
           </label>
         </div>
 
         {/* Sliders */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-5 mb-4 flex flex-col gap-5">
+        <div
+          className="rounded-clausule p-5 mb-4 flex flex-col gap-5"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
           <Slider
             label="Conduct / performance notes"
             value={conductThreshold}
@@ -71,7 +81,7 @@ export default function Settings() {
             onChange={setConductThreshold}
             hint={`Flag when ≥ ${conductThreshold} conduct or performance notes in the time window`}
           />
-          <div className="h-px bg-[rgba(0,0,0,0.06)]" />
+          <div className="h-px" style={{ background: 'var(--rule)' }} />
           <Slider
             label="Escalations"
             value={escalationThreshold}
@@ -79,7 +89,7 @@ export default function Settings() {
             onChange={setEscalationThreshold}
             hint={`Flag when ≥ ${escalationThreshold} escalation${escalationThreshold !== 1 ? 's' : ''} in the time window`}
           />
-          <div className="h-px bg-[rgba(0,0,0,0.06)]" />
+          <div className="h-px" style={{ background: 'var(--rule)' }} />
           <Slider
             label="Weeks at Needs work"
             value={needsWorkWeeks}
@@ -90,18 +100,22 @@ export default function Settings() {
         </div>
 
         {/* Time window */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 mb-4">
-          <div className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px] mb-3">Time window</div>
+        <div
+          className="rounded-clausule p-4 mb-4"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
+          <div className="text-[12px] font-bold text-ts uppercase tracking-[0.4px] mb-3">Time window</div>
           <div className="flex gap-2 flex-wrap">
             {WINDOWS.map((w) => (
               <button
                 key={w}
                 onClick={() => setWindow(w)}
-                className={`px-3 py-1.5 rounded-full text-[12px] border transition-colors ${
+                className="px-3 py-1.5 rounded-full text-[12px] font-bold transition-colors"
+                style={
                   window === w
-                    ? 'bg-nav text-[#E8ECF8] border-nav'
-                    : 'bg-transparent text-ts border-[rgba(0,0,0,0.09)] hover:border-[rgba(0,0,0,0.2)]'
-                }`}
+                    ? { background: 'var(--acc-tint)', color: 'var(--acc-text)', border: '1px solid transparent' }
+                    : { background: 'transparent', color: 'var(--ts)', border: '1px solid var(--rule)' }
+                }
               >
                 {w}
               </button>
@@ -110,8 +124,11 @@ export default function Settings() {
         </div>
 
         {/* Actions */}
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 mb-6">
-          <div className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px] mb-3">When threshold is hit</div>
+        <div
+          className="rounded-clausule p-4 mb-6"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
+          <div className="text-[12px] font-bold text-ts uppercase tracking-[0.4px] mb-3">When threshold is hit</div>
           <div className="flex flex-col gap-3">
             {[
               { key: 'notifyHR',    label: 'Notify HR team' },
@@ -124,9 +141,9 @@ export default function Settings() {
                   type="checkbox"
                   checked={actions[key]}
                   onChange={() => toggleAction(key)}
-                  className="accent-nav"
+                  style={{ accentColor: 'var(--acc)' }}
                 />
-                <span className="text-[13px] text-ts dark:text-[#9A9994]">{label}</span>
+                <span className="text-[13px] text-ts">{label}</span>
               </label>
             ))}
           </div>
@@ -145,20 +162,24 @@ export default function Settings() {
 
         {/* Currently flagged */}
         <div>
-          <div className="text-[12px] font-medium text-ts dark:text-[#9A9994] uppercase tracking-[0.4px] mb-3">
+          <div className="text-[12px] font-bold text-ts uppercase tracking-[0.4px] mb-3">
             Currently flagged · {FLAGGED.length}
           </div>
           <div className="flex flex-col gap-2.5">
             {FLAGGED.map((f) => (
-              <div key={f.name} className="flex items-center gap-3 bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-3">
+              <div
+                key={f.name}
+                className="flex items-center gap-3 rounded-clausule p-3"
+                style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+              >
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-medium flex-shrink-0"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
                   style={{ background: f.avBg, color: f.avCol }}
                 >
                   {f.av}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-medium text-tp dark:text-tp-dark">{f.name}</div>
+                  <div className="text-[13px] font-bold text-tp">{f.name}</div>
                   <div className="text-[11px] text-tm">{f.reason}</div>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 bg-rb text-rt rounded-full flex-shrink-0">Flagged</span>

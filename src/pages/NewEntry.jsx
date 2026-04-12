@@ -6,6 +6,8 @@ const CATEGORIES = ['Performance', 'Conduct', 'Development']
 const NOTE_TYPES = ['Check-in', 'Note', 'Concern', 'Growth', 'Incident', 'Commendation']
 const EMPLOYEES = ['Jordan Ellis', 'Sara Chen', "Marcus O'Brien", 'Priya Lal', 'Tom Walsh', 'Riya Nair']
 
+const INPUT_CLS = 'px-3 py-2 bg-transparent rounded-clausule text-[14px] text-tp outline-none focus:border-bl transition-colors'
+
 export default function NewEntry() {
   const navigate = useNavigate()
   const [form, setForm] = useState({
@@ -20,7 +22,6 @@ export default function NewEntry() {
   })
 
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }))
-
   const handleSave = () => navigate('/dashboard')
 
   return (
@@ -32,17 +33,21 @@ export default function NewEntry() {
               <polyline points="10 4 6 8 10 12"/>
             </svg>
           </button>
-          <h1 className="text-[20px] font-medium text-tp dark:text-tp-dark">New file note</h1>
+          <h1 className="text-[20px] font-black text-tp">New file note</h1>
         </div>
 
-        <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-6 flex flex-col gap-5">
+        <div
+          className="rounded-clausule2 p-6 flex flex-col gap-5"
+          style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+        >
           {/* Employee */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Employee</label>
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Employee</label>
             <select
               value={form.employee}
               onChange={(e) => set('employee', e.target.value)}
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl appearance-none"
+              className={INPUT_CLS}
+              style={{ border: '1px solid var(--rule)' }}
             >
               <option value="">Select employee…</option>
               {EMPLOYEES.map((e) => <option key={e} value={e}>{e}</option>)}
@@ -52,20 +57,22 @@ export default function NewEntry() {
           {/* Date + Category row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Date</label>
+              <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Date</label>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => set('date', e.target.value)}
-                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl"
+                className={INPUT_CLS}
+                style={{ border: '1px solid var(--rule)' }}
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Category</label>
+              <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Category</label>
               <select
                 value={form.category}
                 onChange={(e) => set('category', e.target.value)}
-                className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl appearance-none"
+                className={`${INPUT_CLS} appearance-none`}
+                style={{ border: '1px solid var(--rule)' }}
               >
                 {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
               </select>
@@ -74,17 +81,18 @@ export default function NewEntry() {
 
           {/* Note type pills */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Note type</label>
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Note type</label>
             <div className="flex flex-wrap gap-2">
               {NOTE_TYPES.map((t) => (
                 <button
                   key={t}
                   onClick={() => set('type', t)}
-                  className={`px-3 py-1.5 rounded-full text-[12px] border transition-colors ${
+                  className="px-3 py-1.5 rounded-full text-[12px] font-bold transition-colors"
+                  style={
                     form.type === t
-                      ? 'bg-nav text-[#E8ECF8] border-nav'
-                      : 'bg-transparent text-ts border-[rgba(0,0,0,0.09)] hover:border-[rgba(0,0,0,0.2)]'
-                  }`}
+                      ? { background: 'var(--acc-tint)', color: 'var(--acc-text)', border: '1px solid transparent' }
+                      : { background: 'transparent', color: 'var(--ts)', border: '1px solid var(--rule)' }
+                  }
                 >
                   {t}
                 </button>
@@ -94,41 +102,52 @@ export default function NewEntry() {
 
           {/* Title */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Title</label>
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Title</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => set('title', e.target.value)}
               placeholder="Brief title for this note…"
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[14px] text-tp dark:text-tp-dark outline-none focus:border-bl placeholder:text-tm"
+              className={INPUT_CLS}
+              style={{ border: '1px solid var(--rule)' }}
             />
           </div>
 
           {/* Details */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-medium text-tm uppercase tracking-[0.5px]">Details</label>
+            <label className="text-[9px] font-bold text-tm uppercase tracking-[0.5px]">Details</label>
             <textarea
               value={form.details}
               onChange={(e) => set('details', e.target.value)}
               rows={5}
               placeholder="What happened? Be specific and factual…"
-              className="px-3 py-2 bg-transparent border border-[rgba(0,0,0,0.09)] rounded-clausule text-[13px] text-ts dark:text-[#9A9994] outline-none focus:border-bl resize-none leading-relaxed placeholder:text-tm"
+              className="px-3 py-2 bg-transparent rounded-clausule text-[13px] text-ts outline-none focus:border-bl resize-none leading-relaxed placeholder:text-tm"
+              style={{ border: '1px solid var(--rule)' }}
             />
           </div>
 
           {/* Options */}
-          <div className="flex flex-col gap-2.5 pt-1 border-t border-[rgba(0,0,0,0.07)]">
+          <div className="flex flex-col gap-2.5 pt-1" style={{ borderTop: '1px solid var(--rule)' }}>
             <label className="flex items-center gap-2.5 cursor-pointer">
-              <input type="checkbox" checked={form.confidential} onChange={(e) => set('confidential', e.target.checked)} className="accent-nav" />
-              <span className="text-[13px] text-ts dark:text-[#9A9994]">Mark as confidential</span>
+              <input
+                type="checkbox"
+                checked={form.confidential}
+                onChange={(e) => set('confidential', e.target.checked)}
+                style={{ accentColor: 'var(--acc)' }}
+              />
+              <span className="text-[13px] text-ts">Mark as confidential</span>
             </label>
             <label className="flex items-center gap-2.5 cursor-pointer">
-              <input type="checkbox" checked={form.notify} onChange={(e) => set('notify', e.target.checked)} className="accent-nav" />
-              <span className="text-[13px] text-ts dark:text-[#9A9994]">Notify HR</span>
+              <input
+                type="checkbox"
+                checked={form.notify}
+                onChange={(e) => set('notify', e.target.checked)}
+                style={{ accentColor: 'var(--acc)' }}
+              />
+              <span className="text-[13px] text-ts">Notify HR</span>
             </label>
           </div>
 
-          {/* Validation notice */}
           {!form.employee || !form.title ? (
             <p className="text-[11px] text-tm">Employee and title are required.</p>
           ) : null}
@@ -138,7 +157,8 @@ export default function NewEntry() {
             <button
               onClick={handleSave}
               disabled={!form.employee || !form.title}
-              className="px-4 py-2.5 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-clausule hover:opacity-90 disabled:opacity-40 transition-opacity"
+              className="px-4 py-2.5 text-[13px] font-bold rounded-clausule hover:opacity-90 disabled:opacity-40 transition-opacity text-white"
+              style={{ background: 'var(--acc)' }}
             >
               Save entry
             </button>

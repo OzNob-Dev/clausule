@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 const CATS = [
-  { id: 'perf',    label: 'Performance', bg: '#E6F1FB', text: '#185FA5', selBg: '#4A6FA5' },
-  { id: 'conduct', label: 'Conduct',     bg: '#FAEEDA', text: '#854F0B', selBg: '#BA7517' },
-  { id: 'dev',     label: 'Development', bg: '#EAF3DE', text: '#3B6D11', selBg: '#639922' },
+  { id: 'perf',    label: 'Performance', bg: 'rgba(133,183,235,0.14)', text: '#85B7EB', selBg: '#85B7EB' },
+  { id: 'conduct', label: 'Conduct',     bg: 'rgba(239,159,39,0.14)',  text: '#EF9F27', selBg: '#EF9F27' },
+  { id: 'dev',     label: 'Development', bg: 'rgba(93,202,165,0.14)',  text: '#5DCAA5', selBg: '#5DCAA5' },
 ]
 
 const TYPES = ['Check-in', 'Note', 'Concern', 'Growth', 'Incident']
@@ -21,14 +21,17 @@ export function EntryComposer({ onSave, onClose }) {
   }
 
   return (
-    <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] rounded-clausule p-4 mb-4">
+    <div
+      className="rounded-clausule2 p-4 mb-4"
+      style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+    >
       {/* Category pills */}
       <div className="flex items-center gap-1.5 mb-3">
         {CATS.map((c) => (
           <button
             key={c.id}
             onClick={() => setCat(c.id)}
-            className="px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors"
+            className="px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors"
             style={
               cat === c.id
                 ? { background: c.selBg, color: '#fff' }
@@ -46,11 +49,12 @@ export function EntryComposer({ onSave, onClose }) {
           <button
             key={t}
             onClick={() => setType(t)}
-            className={`px-2.5 py-1 rounded-full text-[11px] transition-colors border ${
+            className="px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors"
+            style={
               type === t
-                ? 'bg-nav text-[#E8ECF8] border-nav'
-                : 'bg-transparent text-ts border-[rgba(0,0,0,0.09)] hover:border-[rgba(0,0,0,0.2)]'
-            }`}
+                ? { background: 'var(--acc-tint)', color: 'var(--acc-text)', border: '1px solid transparent' }
+                : { background: 'transparent', color: 'var(--ts)', border: '1px solid var(--rule)' }
+            }
           >
             {t}
           </button>
@@ -62,24 +66,40 @@ export function EntryComposer({ onSave, onClose }) {
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Title…"
         autoFocus
-        className="w-full text-[14px] font-medium text-tp dark:text-tp-dark bg-transparent border-0 border-b border-[rgba(0,0,0,0.09)] pb-2 mb-3 outline-none focus:border-bl placeholder:text-tm placeholder:font-normal"
+        className="w-full text-[14px] font-bold bg-transparent border-0 pb-2 mb-3 outline-none"
+        style={{
+          color: 'var(--tp)',
+          borderBottom: '1px solid var(--rule)',
+        }}
       />
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
         placeholder="Details…"
         rows={3}
-        className="w-full text-[13px] text-ts dark:text-[#9A9994] bg-transparent border border-[rgba(0,0,0,0.07)] rounded p-2.5 resize-none outline-none focus:border-bl mb-3"
+        className="w-full text-[13px] rounded p-2.5 resize-none outline-none mb-3"
+        style={{
+          color: 'var(--ts)',
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid var(--rule)',
+        }}
       />
       <div className="flex items-center gap-2">
         <button
           onClick={handleSave}
           disabled={!title.trim()}
-          className="px-3.5 py-1.5 text-[12px] font-medium bg-nav text-[#E8ECF8] rounded-clausule hover:opacity-90 disabled:opacity-40 transition-opacity"
+          className="px-3.5 py-1.5 text-[12px] font-bold rounded-clausule hover:opacity-90 disabled:opacity-40 transition-opacity"
+          style={{ background: 'var(--acc)', color: '#fff' }}
         >
           Save entry
         </button>
-        <button onClick={onClose} className="text-[12px] text-tm hover:text-ts">Cancel</button>
+        <button
+          onClick={onClose}
+          className="text-[12px]"
+          style={{ color: 'var(--tm)' }}
+        >
+          Cancel
+        </button>
       </div>
     </div>
   )

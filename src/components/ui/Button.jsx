@@ -1,12 +1,20 @@
 export function Button({ children, variant = 'primary', size = 'md', className = '', ...props }) {
-  const base = 'inline-flex items-center justify-center font-sans font-medium transition-opacity duration-150 cursor-pointer border-0 rounded-clausule'
+  const base = 'inline-flex items-center justify-center font-sans font-bold transition-opacity duration-150 cursor-pointer border-0 rounded-clausule'
 
   const variants = {
-    primary: 'bg-nav text-[#E8ECF8] hover:opacity-90',
-    employee: 'bg-[#534AB7] text-[#E8ECF8] hover:opacity-90',
-    ghost: 'bg-transparent border border-[rgba(0,0,0,0.09)] text-ts hover:bg-[rgba(0,0,0,0.02)]',
-    danger: 'bg-[#E24B4A] text-white hover:opacity-90',
-    confirm: 'bg-[#2B5E2E] text-white hover:opacity-90',
+    primary: 'text-white hover:opacity-90',
+    employee: 'text-white hover:opacity-90',
+    ghost: 'bg-transparent border border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.05)]',
+    danger: 'text-white hover:opacity-90',
+    confirm: 'text-white hover:opacity-90',
+  }
+
+  const variantStyles = {
+    primary:  { background: 'var(--acc)', color: '#fff' },
+    employee: { background: 'var(--acc)', color: '#fff' },
+    ghost:    { background: 'transparent', color: 'var(--ts)', border: '1px solid var(--rule)' },
+    danger:   { background: 'var(--rt)',  color: 'var(--canvas)' },
+    confirm:  { background: 'var(--gt)', color: 'var(--canvas)' },
   }
 
   const sizes = {
@@ -16,7 +24,11 @@ export function Button({ children, variant = 'primary', size = 'md', className =
   }
 
   return (
-    <button className={`${base} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
+    <button
+      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
+      style={variantStyles[variant]}
+      {...props}
+    >
       {children}
     </button>
   )

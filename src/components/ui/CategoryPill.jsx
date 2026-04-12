@@ -1,14 +1,15 @@
+// All colours reference CSS custom properties so white-label overrides work automatically.
 const catConfig = {
-  perf:    { label: 'Performance', bg: '#E6F1FB', text: '#185FA5', dot: '#4A6FA5' },
-  conduct: { label: 'Conduct',     bg: '#FAEEDA', text: '#854F0B', dot: '#BA7517' },
-  dev:     { label: 'Development', bg: '#EAF3DE', text: '#3B6D11', dot: '#639922' },
+  perf:    { label: 'Performance', bg: 'var(--blb)', text: 'var(--bl)',  dot: 'var(--bl)'  },
+  conduct: { label: 'Conduct',     bg: 'var(--ab)',  text: 'var(--at)', dot: 'var(--at)' },
+  dev:     { label: 'Development', bg: 'var(--gb)',  text: 'var(--gt)',  dot: 'var(--gt)'  },
 }
 
 export function CategoryPill({ cat, showDot = true, className = '' }) {
   const cfg = catConfig[cat] || catConfig.perf
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold ${className}`}
       style={{ background: cfg.bg, color: cfg.text }}
     >
       {showDot && (

@@ -6,7 +6,7 @@ import { relativeTime } from '../utils/relativeTime'
 const ESCALATED = [
   {
     id: 'esc1',
-    emp: { name: "Marcus O'Brien", role: 'Engineer I', team: 'Platform', av: 'MO', avBg: '#FCEBEB', avCol: '#A32D2D' },
+    emp: { name: "Marcus O'Brien", role: 'Engineer I', team: 'Platform', av: 'MO', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595' },
     title: 'Formal performance improvement plan',
     cat: 'perf',
     date: '2025-11-03',
@@ -14,7 +14,7 @@ const ESCALATED = [
   },
   {
     id: 'esc2',
-    emp: { name: 'Sophie Okafor', role: 'Engineer II', team: 'Security', av: 'SO', avBg: '#FCEBEB', avCol: '#A32D2D' },
+    emp: { name: 'Sophie Okafor', role: 'Engineer II', team: 'Security', av: 'SO', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595' },
     title: 'Conduct investigation — repeated lateness',
     cat: 'conduct',
     date: '2025-10-19',
@@ -22,7 +22,7 @@ const ESCALATED = [
   },
   {
     id: 'esc3',
-    emp: { name: 'David Kim', role: 'Engineer I', team: 'Security', av: 'DK', avBg: '#FCEBEB', avCol: '#A32D2D' },
+    emp: { name: 'David Kim', role: 'Engineer I', team: 'Security', av: 'DK', avBg: 'rgba(240,149,149,0.14)', avCol: '#F09595' },
     title: 'Verbal warning issued',
     cat: 'conduct',
     date: '2025-11-28',
@@ -35,8 +35,8 @@ export default function Escalated() {
     <AppShell>
       <div className="px-8 py-8 max-w-2xl">
         <div className="mb-6">
-          <h1 className="text-[20px] font-medium text-tp dark:text-tp-dark mb-0.5">Escalated</h1>
-          <p className="text-[13px] text-tm dark:text-[#6B6B68]">Entries escalated to HR for formal process.</p>
+          <h1 className="text-[20px] font-black text-tp mb-0.5">Escalated</h1>
+          <p className="text-[13px] text-tm">Entries escalated to HR for formal process.</p>
         </div>
 
         {/* Banner */}
@@ -52,18 +52,19 @@ export default function Escalated() {
           {ESCALATED.map((item) => (
             <div
               key={item.id}
-              className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4"
+              className="rounded-clausule p-4"
+              style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
             >
               <div className="flex items-start gap-3">
                 <Avatar initials={item.emp.av} bg={item.emp.avBg} color={item.emp.avCol} size="md" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="text-[14px] font-medium text-tp dark:text-tp-dark">{item.title}</h3>
+                    <h3 className="text-[14px] font-bold text-tp">{item.title}</h3>
                     {item.confidential && (
                       <span className="text-[10px] px-2 py-0.5 bg-rb text-rt rounded-full flex-shrink-0">Confidential</span>
                     )}
                   </div>
-                  <div className="text-[13px] text-ts dark:text-[#9A9994] mb-2">
+                  <div className="text-[13px] text-ts mb-2">
                     {item.emp.name} · {item.emp.role}
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">

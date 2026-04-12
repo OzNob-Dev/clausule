@@ -55,12 +55,14 @@ export default function Entries() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search entries, names, themes…"
-                className="w-full pl-9 pr-4 py-2.5 bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.09)] dark:border-[rgba(255,255,255,0.08)] rounded-clausule text-[14px] text-tp dark:text-tp-dark placeholder:text-tm outline-none focus:border-bl transition-colors"
+                className="w-full pl-9 pr-4 py-2.5 bg-transparent rounded-clausule text-[14px] text-tp placeholder:text-tm outline-none focus:border-bl transition-colors"
+                style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
               />
             </div>
             <button
               type="submit"
-              className="px-4 py-2.5 bg-nav text-[#E8ECF8] text-[13px] font-medium rounded-clausule hover:opacity-90 transition-opacity"
+              className="px-4 py-2.5 text-[13px] font-bold rounded-clausule hover:opacity-90 transition-opacity text-white"
+              style={{ background: 'var(--acc)' }}
             >
               Search
             </button>
@@ -78,7 +80,7 @@ export default function Entries() {
         {/* Idle state */}
         {!searching && !results && (
           <div>
-            <p className="text-[12px] font-medium text-tm uppercase tracking-[0.4px] mb-3">Recent entries</p>
+            <p className="text-[12px] font-bold text-tm uppercase tracking-[0.4px] mb-3">Recent entries</p>
             <div className="flex flex-col gap-2">
               {SAMPLE_ENTRIES.map((entry) => {
                 const emp = ALL_EMP[0]
@@ -86,15 +88,16 @@ export default function Entries() {
                   <div
                     key={entry.id}
                     onClick={() => setSelected(entry)}
-                    className="flex items-start gap-3 p-3 bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule cursor-pointer hover:border-[rgba(0,0,0,0.14)] transition-colors"
+                    className="flex items-start gap-3 p-3 rounded-clausule cursor-pointer transition-colors"
+                    style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
                   >
                     <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[13px] font-medium text-tp dark:text-tp-dark truncate">{entry.title}</span>
+                        <span className="text-[13px] font-bold text-tp truncate">{entry.title}</span>
                         <CategoryPill cat={entry.cat} showDot={false} />
                       </div>
-                      <p className="text-[12px] text-tm dark:text-[#6B6B68]">{emp.name} · {relativeTime(entry.date)}</p>
+                      <p className="text-[12px] text-tm">{emp.name} · {relativeTime(entry.date)}</p>
                     </div>
                   </div>
                 )
@@ -109,20 +112,20 @@ export default function Entries() {
             {/* Results list */}
             <div className="flex-1 min-w-0">
               <p className="text-[12px] text-tm mb-4">
-                Found results for <strong className="text-tp dark:text-tp-dark">"{query}"</strong>
+                Found results for <strong className="text-tp">"{query}"</strong>
               </p>
               {results.map(({ emp, entries, pattern }) => (
                 <div key={emp.name} className="mb-6">
                   <div className="flex items-center gap-2.5 mb-2">
                     <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />
-                    <Link to="/profile" className="text-[14px] font-medium text-tp dark:text-tp-dark hover:underline">
+                    <Link to="/profile" className="text-[14px] font-bold text-tp hover:underline">
                       {emp.name}
                     </Link>
                     <span className="text-[12px] text-tm">{emp.role}</span>
                   </div>
 
                   {pattern && (
-                    <div className="ml-[42px] mb-2 flex items-start gap-2 px-3 py-2 bg-blb rounded text-[12px] text-blt">
+                    <div className="ml-[42px] mb-2 flex items-start gap-2 px-3 py-2 bg-blb rounded text-[12px] text-bl">
                       <svg className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/>
                       </svg>
@@ -135,14 +138,15 @@ export default function Entries() {
                       <button
                         key={entry.id}
                         onClick={() => setSelected(entry)}
-                        className={`text-left p-3 rounded-clausule border transition-colors ${
+                        className="text-left p-3 rounded-clausule transition-colors"
+                        style={
                           selected?.id === entry.id
-                            ? 'bg-blb border-bl'
-                            : 'bg-card dark:bg-card-dark border-[rgba(0,0,0,0.07)] hover:border-[rgba(0,0,0,0.14)]'
-                        }`}
+                            ? { background: 'var(--blb)', border: '1px solid var(--bl)' }
+                            : { background: 'var(--card)', border: '1px solid var(--rule)' }
+                        }
                       >
                         <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[13px] font-medium text-tp dark:text-tp-dark">{entry.title}</span>
+                          <span className="text-[13px] font-bold text-tp">{entry.title}</span>
                           <CategoryPill cat={entry.cat} showDot={false} />
                         </div>
                         <p className="text-[12px] text-tm">{relativeTime(entry.date)}</p>
@@ -156,17 +160,26 @@ export default function Entries() {
             {/* Detail pane */}
             {selected && (
               <div className="w-72 flex-shrink-0">
-                <div className="bg-card dark:bg-card-dark border border-[rgba(0,0,0,0.07)] rounded-clausule p-4 sticky top-8">
+                <div
+                  className="rounded-clausule2 p-4 sticky top-8"
+                  style={{ background: 'var(--card)', border: '1px solid var(--rule)' }}
+                >
                   <div className="flex items-center justify-between mb-3">
                     <CategoryPill cat={selected.cat} />
                     <span className="text-[11px] text-tm">{relativeTime(selected.date)}</span>
                   </div>
-                  <h3 className="text-[15px] font-medium text-tp dark:text-tp-dark mb-2">{selected.title}</h3>
-                  <p className="text-[13px] text-ts dark:text-[#9A9994] leading-relaxed mb-3">{selected.body}</p>
+                  <h3 className="text-[15px] font-bold text-tp mb-2">{selected.title}</h3>
+                  <p className="text-[13px] text-ts leading-relaxed mb-3">{selected.body}</p>
                   {selected.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {selected.tags.map((tag) => (
-                        <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-[rgba(0,0,0,0.05)] text-tm">#{tag}</span>
+                        <span
+                          key={tag}
+                          className="text-[11px] px-2 py-0.5 rounded-full text-tm"
+                          style={{ background: 'rgba(255,255,255,0.07)' }}
+                        >
+                          #{tag}
+                        </span>
                       ))}
                     </div>
                   )}
