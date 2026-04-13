@@ -144,7 +144,7 @@ function Step1({ onNext }) {
       <div className="su-field">
         <FieldLabel>Email</FieldLabel>
         <FieldInput
-          type="email" placeholder="you@company.com" value={email}
+          type="email" placeholder="you@email.com" value={email}
           onChange={(e) => { setEmail(e.target.value); setErrors(ev => ({ ...ev, email: false })) }}
           error={errors.email}
         />
