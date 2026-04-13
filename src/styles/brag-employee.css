@@ -574,29 +574,97 @@
   margin-bottom: 7px;
 }
 
-.be-comp-count-row {
+/* Evidence drag-and-drop list */
+.be-ev-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.be-ev-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.be-comp-count-input {
-  width: 56px;
-  font-size: 13px;
+  gap: 8px;
   background: #FAF7F3;
-  border: 1px solid rgba(60, 45, 35, 0.14);
-  border-radius: 4px;
-  color: #2A221A;
-  padding: 4px 8px;
-  outline: none;
-  font-family: var(--font-sans);
+  border: 1.5px solid rgba(60, 45, 35, 0.12);
+  border-top: 2px solid transparent;
+  border-radius: 6px;
+  padding: 7px 10px;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-.be-comp-count-hint {
-  font-size: 11px;
-  color: #9A9490;
+.be-ev-item--over {
+  border-top-color: #D05A34;
+  background: rgba(208, 90, 52, 0.04);
 }
+
+.be-ev-handle {
+  color: rgba(60, 45, 35, 0.25);
+  cursor: grab;
+  flex-shrink: 0;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.be-ev-handle:active { cursor: grabbing; }
+.be-ev-item:hover .be-ev-handle { color: rgba(60, 45, 35, 0.5); }
+
+.be-ev-item-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: #2A221A;
+  outline: none;
+}
+
+.be-ev-item-input::placeholder { color: #B8B2AC; }
+
+.be-ev-remove {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(60, 45, 35, 0.25);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.be-ev-remove:hover { color: #B83232; }
+
+.be-ev-remove svg { width: 12px; height: 12px; }
+
+.be-ev-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  padding: 7px 12px;
+  margin-bottom: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  color: #9A9490;
+  background: transparent;
+  border: 1.5px dashed rgba(60, 45, 35, 0.18);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.be-ev-add:hover { border-color: rgba(60, 45, 35, 0.35); color: #5C5048; }
+.be-ev-add svg { width: 11px; height: 11px; }
 
 .be-comp-footer {
   display: flex;

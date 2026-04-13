@@ -91,7 +91,9 @@ export default function BragEmployee() {
   const [compTitle, setCompTitle] = useState('')
   const [compBody, setCompBody] = useState('')
   const [compEvTypes, setCompEvTypes] = useState(new Set())
-  const [compCount, setCompCount] = useState(1)
+  const [compItems, setCompItems] = useState([{ id: '1', text: '' }])
+  const [dragIdx, setDragIdx] = useState(null)
+  const [dragOverIdx, setDragOverIdx] = useState(null)
   const [cvVisible, setCvVisible] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [cvBullets, setCvBullets] = useState([])
@@ -112,11 +114,30 @@ export default function BragEmployee() {
     })
   }
 
+  const addItem = () =>
+    setCompItems((prev) => [...prev, { id: Date.now().toString(), text: '' }])
+
+  const removeItem = (id) =>
+    setCompItems((prev) => prev.filter((item) => item.id !== id))
+
+  const updateItem = (id, text) =>
+    setCompItems((prev) => prev.map((item) => (item.id === id ? { ...item, text } : item)))
+
+  const handleReorder = (toIdx) => {
+    if (dragIdx === null || dragIdx === toIdx) return
+    setCompItems((prev) => {
+      const items = [...prev]
+      const [moved] = items.splice(dragIdx, 1)
+      items.splice(toIdx, 0, moved)
+      return items
+    })
+  }
+
   const openComposer = () => {
     setCompTitle('')
     setCompBody('')
     setCompEvTypes(new Set())
-    setCompCount(1)
+    setCompItems([{ id: Date.now().toString(), text: '' }])
     setComposerOpen(true)
   }
 
@@ -124,15 +145,18 @@ export default function BragEmployee() {
 
   const saveEntry = () => {
     if (!compTitle.trim()) return
+    const filledItems = compItems.filter((item) => item.text.trim())
     const newEntry = {
       id: Date.now(),
       title: compTitle.trim(),
       date: new Date().toISOString().slice(0, 10),
       body: compBody.trim(),
       strength: compEvTypes.size >= 3 ? 'Exceptional' : compEvTypes.size >= 2 ? 'Solid' : 'Good',
-      strengthHint: 'Evidence added',
+      strengthHint: filledItems.length
+        ? `${filledItems.length} piece${filledItems.length !== 1 ? 's' : ''} of evidence`
+        : 'Evidence added',
       ringOffsets: [compEvTypes.size >= 1 ? 0 : 113.1, compEvTypes.size >= 2 ? 0 : 75.4, compEvTypes.size >= 3 ? 0 : 37.7],
-      pills: [...compEvTypes].map((t) => ({ label: t, type: 'filled' })),
+      pills: filledItems.map((item) => ({ label: item.text.trim(), type: 'filled' })),
     }
     setEntries((prev) => [newEntry, ...prev])
     closeComposer()
@@ -396,19 +420,53 @@ export default function BragEmployee() {
                     </button>
                   ))}
                 </div>
-                <div className="be-comp-count-label">How many pieces of evidence?</div>
-                <div className="be-comp-count-row">
-                  <input
-                    type="number"
-                    className="be-comp-count-input"
-                    min={1}
-                    max={20}
-                    value={compCount}
-                    onChange={(e) => setCompCount(Number(e.target.value))}
-                    aria-label="Number of evidence pieces"
-                  />
-                  <span className="be-comp-count-hint">More sources of the same type strengthens your case</span>
-                </div>
+                <div className="be-comp-count-label">Evidence — drag to reorder</div>
+                <ul className="be-ev-list" aria-label="Evidence items">
+                  {compItems.map((item, idx) => (
+                    <li
+                      key={item.id}
+                      draggable
+                      onDragStart={() => setDragIdx(idx)}
+                      onDragOver={(e) => { e.preventDefault(); setDragOverIdx(idx) }}
+                      onDrop={(e) => { e.preventDefault(); handleReorder(idx) }}
+                      onDragEnd={() => { setDragIdx(null); setDragOverIdx(null) }}
+                      className={`be-ev-item${dragOverIdx === idx && dragIdx !== idx ? ' be-ev-item--over' : ''}`}
+                    >
+                      <span className="be-ev-handle" aria-hidden="true">
+                        <svg viewBox="0 0 10 14" width="10" height="14" fill="currentColor">
+                          <circle cx="3" cy="2.5" r="1.2"/><circle cx="7" cy="2.5" r="1.2"/>
+                          <circle cx="3" cy="7"   r="1.2"/><circle cx="7" cy="7"   r="1.2"/>
+                          <circle cx="3" cy="11.5" r="1.2"/><circle cx="7" cy="11.5" r="1.2"/>
+                        </svg>
+                      </span>
+                      <input
+                        className="be-ev-item-input"
+                        value={item.text}
+                        onChange={(e) => updateItem(item.id, e.target.value)}
+                        placeholder="Describe this piece of evidence…"
+                        aria-label={`Evidence item ${idx + 1}`}
+                      />
+                      {compItems.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeItem(item.id)}
+                          className="be-ev-remove"
+                          aria-label={`Remove evidence item ${idx + 1}`}
+                        >
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/>
+                          </svg>
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+                <button type="button" onClick={addItem} className="be-ev-add">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/>
+                  </svg>
+                  Add evidence
+                </button>
                 <div className="be-comp-footer">
                   <div />
                   <div className="be-comp-btns">
