@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AppShell } from '../components/layout/AppShell'
-import { Avatar } from '../components/ui/Avatar'
 import { ThinkingDots } from '../components/ui/ThinkingDots'
 import { ALL_EMP, SAMPLE_ENTRIES } from '../data/employees'
 import { relativeTime } from '../utils/relativeTime'

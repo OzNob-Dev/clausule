@@ -1,5 +1,4 @@
-import React from 'react';
-import '../styles/coming-soon.css'; // Make sure the path matches where you save the CSS
+import '../styles/coming-soon.css'
 
 export default function ComingSoon() {
   return (
@@ -10,12 +9,11 @@ export default function ComingSoon() {
         </div>
         
         <h1>
-          The file note tool<br />
-          that does <em>the heavy<br />lifting</em> for you.
+          The intelligence layer for your professional interactions.
         </h1>
         
         <p className="sub">
-          Write a plain note after a 1:1. Clausule handles the rest — tagging, pattern detection, performance thresholds, and a brag doc that follows your team wherever their careers take them.
+          We do the heavy lifting for professional record-keeping. Turn simple 1:1 inputs into persistent performance narratives and career-spanning documentation. 
         </p>
       </main>
 

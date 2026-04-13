@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AppShell } from '../components/layout/AppShell'
-import { PitstopSelector } from '../components/profile/PitstopSelector'
 import { EscalationModal } from '../components/profile/EscalationModal'
 import { EntryCard } from '../components/entries/EntryCard'
 import { EntryComposer } from '../components/entries/EntryComposer'

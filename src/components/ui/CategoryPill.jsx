@@ -29,4 +29,3 @@ export function CategoryDot({ cat, size = 8, className = '', onClick }) {
   )
 }
 
-export { catConfig }
