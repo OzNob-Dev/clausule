@@ -427,6 +427,19 @@
 
 .mfa-factor-instruction strong { color: #2A221A; font-weight: 700; }
 
+/* ── QR code ─────────────────────────────────────────────────────── */
+.mfa-qr-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  background: #FAF7F3;
+  border: 1.5px solid rgba(60, 45, 35, 0.12);
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+.mfa-qr-wrap svg { display: block; }
+
 /* ── Secret key row ──────────────────────────────────────────────── */
 .mfa-secret-row {
   display: flex;

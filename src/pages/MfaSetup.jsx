@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 import { storage } from '../utils/storage'
 import '../styles/mfa-setup.css'
 
-const DEMO_OTP  = '847291'
-const DEMO_TOTP = '123456'
-const TOTP_SECRET = 'JBSW Y3DP EHPK 3PXP'
+const DEMO_OTP    = '847291'
+const DEMO_TOTP   = '123456'
+const TOTP_SECRET = 'JBSWY3DPEHPK3PXP'
+const TOTP_SECRET_DISPLAY = 'JBSW Y3DP EHPK 3PXP'
+// Real otpauth URI — scannable by Google Authenticator, Authy, 1Password, etc.
+const TOTP_URI = `otpauth://totp/Clausule:demo%40clausule.com?secret=${TOTP_SECRET}&issuer=Clausule&algorithm=SHA1&digits=6&period=30`
 
 // ── Reusable 6-box digit row ─────────────────────────────────────
 function DigitRow({ digits, state, refs, onChange, onKeyDown, onPaste, autoFocusFirst, disabled }) {
@@ -242,10 +246,19 @@ export default function MfaSetup() {
               {!totpDone && (
                 <div className="mfa-factor-body">
                   <p className="mfa-factor-instruction">
-                    Open your authenticator app, tap <strong>Add account</strong>, then enter the key below manually.
+                    Scan with your authenticator app, or enter the key manually.
                   </p>
+                  <div className="mfa-qr-wrap" aria-label="QR code for authenticator app">
+                    <QRCodeSVG
+                      value={TOTP_URI}
+                      size={148}
+                      bgColor="#FAF7F3"
+                      fgColor="#2A221A"
+                      level="M"
+                    />
+                  </div>
                   <div className="mfa-secret-row">
-                    <code className="mfa-secret">{TOTP_SECRET}</code>
+                    <code className="mfa-secret">{TOTP_SECRET_DISPLAY}</code>
                     <button className="mfa-copy-btn" onClick={copySecret} aria-label="Copy secret key">
                       {secretCopied
                         ? <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 7l3.5 3.5L12 3"/></svg>
