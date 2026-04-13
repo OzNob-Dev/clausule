@@ -639,7 +639,7 @@ export default function BragEmployee() {
                     >
                       University of Technology · Click to edit
                     </span>
-                  </div>
+                  </>
                 </div>
 
                 {/* CV actions */}
