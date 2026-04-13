@@ -49,8 +49,11 @@ export default defineConfig({
       },
     },
 
-    // Use esbuild (Vite default) for minification — fast and produces small output
+    // Use esbuild for JS minification — fast and produces small output
     minify: 'esbuild',
+
+    // Minify CSS with lightningcss — better compression than esbuild's CSS pass
+    cssMinify: 'lightningcss',
 
     // Inline assets smaller than 4 KB to reduce round trips
     assetsInlineLimit: 4096,
