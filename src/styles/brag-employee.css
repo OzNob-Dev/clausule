@@ -17,11 +17,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
-  opacity: 0.55;
-  transition: opacity 0.2s;
 }
-
-.be-rail:hover { opacity: 1; }
 
 .be-rail-logo {
   font-size: 8px;
