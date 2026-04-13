@@ -113,27 +113,96 @@
 .st-slider-track {
   position: relative;
   flex: 1;
+  height: 20px; /* tall enough to contain the thumb */
+  background: transparent;
+  display: flex;
+  align-items: center;
+}
+
+/* Visual rail */
+.st-slider-track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
   height: 4px;
-  background: var(--border2);
   border-radius: 2px;
+  background: var(--border2);
+  pointer-events: none;
 }
 
 .st-slider-fill {
   position: absolute;
   left: 0;
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   height: 4px;
   border-radius: 2px;
   background: var(--acc-text);
+  pointer-events: none;
 }
 
 .st-slider-input {
   position: absolute;
   inset: 0;
-  opacity: 0;
   width: 100%;
   cursor: pointer;
   margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  z-index: 1;
+}
+
+/* Thumb — WebKit */
+.st-slider-input::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 4px;
+}
+
+.st-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--acc);
+  box-shadow: 0 1px 4px rgba(60, 45, 35, 0.2);
+  cursor: grab;
+  margin-top: -7px; /* centres thumb on the 4px track */
+}
+
+.st-slider-input:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  box-shadow: 0 0 0 4px var(--acc-tint), 0 1px 4px rgba(60, 45, 35, 0.2);
+}
+
+/* Thumb — Firefox */
+.st-slider-input::-moz-range-track {
+  background: transparent;
+  height: 4px;
+}
+
+.st-slider-input::-moz-range-thumb {
+  -moz-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--acc);
+  box-shadow: 0 1px 4px rgba(60, 45, 35, 0.2);
+  cursor: grab;
+}
+
+.st-slider-input:active::-moz-range-thumb { cursor: grabbing; }
+
+/* Focus ring on thumb (keyboard nav) */
+.st-slider-input:focus-visible { outline: none; }
+.st-slider-input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--acc-tint), 0 1px 4px rgba(60, 45, 35, 0.2);
+}
+.st-slider-input:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--acc-tint), 0 1px 4px rgba(60, 45, 35, 0.2);
 }
 
 .st-slider-val {

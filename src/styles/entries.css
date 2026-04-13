@@ -36,7 +36,7 @@
 
 .sr-input {
   width: 100%;
-  background: rgba(60, 45, 35, 0.05);
+  background: #fff;
   border: 1.5px solid var(--border2);
   border-radius: var(--r);
   padding: 12px 44px 12px 14px;
