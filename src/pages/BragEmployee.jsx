@@ -91,9 +91,9 @@ export default function BragEmployee() {
   const [compTitle, setCompTitle] = useState('')
   const [compBody, setCompBody] = useState('')
   const [compEvTypes, setCompEvTypes] = useState(new Set())
-  const [compItems, setCompItems] = useState([{ id: '1', text: '' }])
-  const [dragIdx, setDragIdx] = useState(null)
-  const [dragOverIdx, setDragOverIdx] = useState(null)
+  const [compFiles, setCompFiles] = useState([])
+  const [dropActive, setDropActive] = useState(false)
+  const fileInputRef = useRef(null)
   const [cvVisible, setCvVisible] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [cvBullets, setCvBullets] = useState([])
@@ -114,30 +114,29 @@ export default function BragEmployee() {
     })
   }
 
-  const addItem = () =>
-    setCompItems((prev) => [...prev, { id: Date.now().toString(), text: '' }])
+  const addFiles = (files) => {
+    const mapped = [...files].map((f) => ({
+      id: `${f.name}-${Date.now()}-${Math.random()}`,
+      name: f.name,
+      size: f.size,
+      type: f.type,
+    }))
+    setCompFiles((prev) => [...prev, ...mapped])
+  }
 
-  const removeItem = (id) =>
-    setCompItems((prev) => prev.filter((item) => item.id !== id))
+  const removeFile = (id) => setCompFiles((prev) => prev.filter((f) => f.id !== id))
 
-  const updateItem = (id, text) =>
-    setCompItems((prev) => prev.map((item) => (item.id === id ? { ...item, text } : item)))
-
-  const handleReorder = (toIdx) => {
-    if (dragIdx === null || dragIdx === toIdx) return
-    setCompItems((prev) => {
-      const items = [...prev]
-      const [moved] = items.splice(dragIdx, 1)
-      items.splice(toIdx, 0, moved)
-      return items
-    })
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setDropActive(false)
+    addFiles(e.dataTransfer.files)
   }
 
   const openComposer = () => {
     setCompTitle('')
     setCompBody('')
     setCompEvTypes(new Set())
-    setCompItems([{ id: Date.now().toString(), text: '' }])
+    setCompFiles([])
     setComposerOpen(true)
   }
 
@@ -145,18 +144,17 @@ export default function BragEmployee() {
 
   const saveEntry = () => {
     if (!compTitle.trim()) return
-    const filledItems = compItems.filter((item) => item.text.trim())
     const newEntry = {
       id: Date.now(),
       title: compTitle.trim(),
       date: new Date().toISOString().slice(0, 10),
       body: compBody.trim(),
       strength: compEvTypes.size >= 3 ? 'Exceptional' : compEvTypes.size >= 2 ? 'Solid' : 'Good',
-      strengthHint: filledItems.length
-        ? `${filledItems.length} piece${filledItems.length !== 1 ? 's' : ''} of evidence`
+      strengthHint: compFiles.length
+        ? `${compFiles.length} file${compFiles.length !== 1 ? 's' : ''} attached`
         : 'Evidence added',
       ringOffsets: [compEvTypes.size >= 1 ? 0 : 113.1, compEvTypes.size >= 2 ? 0 : 75.4, compEvTypes.size >= 3 ? 0 : 37.7],
-      pills: filledItems.map((item) => ({ label: item.text.trim(), type: 'filled' })),
+      pills: compFiles.slice(0, 4).map((f) => ({ label: f.name.replace(/\.[^.]+$/, ''), type: 'filled' })),
     }
     setEntries((prev) => [newEntry, ...prev])
     closeComposer()
@@ -420,53 +418,64 @@ export default function BragEmployee() {
                     </button>
                   ))}
                 </div>
-                <div className="be-comp-count-label">Evidence — drag to reorder</div>
-                <ul className="be-ev-list" aria-label="Evidence items">
-                  {compItems.map((item, idx) => (
-                    <li
-                      key={item.id}
-                      draggable
-                      onDragStart={() => setDragIdx(idx)}
-                      onDragOver={(e) => { e.preventDefault(); setDragOverIdx(idx) }}
-                      onDrop={(e) => { e.preventDefault(); handleReorder(idx) }}
-                      onDragEnd={() => { setDragIdx(null); setDragOverIdx(null) }}
-                      className={`be-ev-item${dragOverIdx === idx && dragIdx !== idx ? ' be-ev-item--over' : ''}`}
-                    >
-                      <span className="be-ev-handle" aria-hidden="true">
-                        <svg viewBox="0 0 10 14" width="10" height="14" fill="currentColor">
-                          <circle cx="3" cy="2.5" r="1.2"/><circle cx="7" cy="2.5" r="1.2"/>
-                          <circle cx="3" cy="7"   r="1.2"/><circle cx="7" cy="7"   r="1.2"/>
-                          <circle cx="3" cy="11.5" r="1.2"/><circle cx="7" cy="11.5" r="1.2"/>
+                <div className="be-comp-count-label">Evidence files</div>
+                <div
+                  className={`be-dropzone${dropActive ? ' be-dropzone--active' : ''}`}
+                  onDragOver={(e) => { e.preventDefault(); setDropActive(true) }}
+                  onDragLeave={() => setDropActive(false)}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+                  aria-label="Drop evidence files here or press Enter to browse"
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    onChange={(e) => { addFiles(e.target.files); e.target.value = '' }}
+                    style={{ display: 'none' }}
+                    aria-hidden="true"
+                  />
+                  <svg className="be-dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <span className="be-dropzone-text">Drop files here or click to browse</span>
+                  <span className="be-dropzone-sub">Screenshots, videos, PDFs, documents</span>
+                </div>
+
+                {compFiles.length > 0 && (
+                  <ul className="be-file-list" aria-label="Attached files">
+                    {compFiles.map((file) => (
+                      <li key={file.id} className="be-file-item">
+                        <svg className="be-file-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                          {file.type.startsWith('image/') ? (
+                            <><rect x="1" y="1" width="14" height="14" rx="2"/><circle cx="5.5" cy="5.5" r="1.5"/><polyline points="1 11 5 7 8 10 11 7 15 11"/></>
+                          ) : file.type.startsWith('video/') ? (
+                            <><rect x="1" y="3" width="14" height="10" rx="1.5"/><polyline points="6 7 10 9.5 6 12"/></>
+                          ) : (
+                            <><path d="M9 1H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6z"/><polyline points="9 1 9 6 14 6"/></>
+                          )}
                         </svg>
-                      </span>
-                      <input
-                        className="be-ev-item-input"
-                        value={item.text}
-                        onChange={(e) => updateItem(item.id, e.target.value)}
-                        placeholder="Describe this piece of evidence…"
-                        aria-label={`Evidence item ${idx + 1}`}
-                      />
-                      {compItems.length > 1 && (
+                        <span className="be-file-name">{file.name}</span>
+                        <span className="be-file-size">{file.size < 1024 * 1024 ? `${Math.round(file.size / 1024)}KB` : `${(file.size / (1024 * 1024)).toFixed(1)}MB`}</span>
                         <button
                           type="button"
-                          onClick={() => removeItem(item.id)}
-                          className="be-ev-remove"
-                          aria-label={`Remove evidence item ${idx + 1}`}
+                          onClick={() => removeFile(file.id)}
+                          className="be-file-remove"
+                          aria-label={`Remove ${file.name}`}
                         >
                           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
                             <line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/>
                           </svg>
                         </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                <button type="button" onClick={addItem} className="be-ev-add">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/>
-                  </svg>
-                  Add evidence
-                </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <div className="be-comp-footer">
                   <div />
                   <div className="be-comp-btns">
