@@ -35,9 +35,9 @@ export default defineConfig({
         // Split vendor libraries into separate chunks so they can be cached
         // independently from app code — libraries change less frequently
         manualChunks(id) {
-          if (id.includes('node_modules/react-dom')) return 'vendor-react-dom'
-          if (id.includes('node_modules/react-router-dom')) return 'vendor-router'
-          if (id.includes('node_modules/react')) return 'vendor-react'
+          if (id.includes('node_modules/react-dom/')) return 'vendor-react-dom'
+          if (id.includes('node_modules/react-router-dom/')) return 'vendor-router'
+          if (id.includes('node_modules/react/') || id.includes('node_modules/scheduler/')) return 'vendor-react'
           if (id.includes('node_modules/')) return 'vendor'
         },
 
