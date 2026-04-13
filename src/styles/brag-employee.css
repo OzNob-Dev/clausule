@@ -54,16 +54,16 @@
   border: none;
   cursor: pointer;
   background: transparent;
-  color: var(--tp);
-  transition: background 0.15s, opacity 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
+/* Inactive nav icon — var(--tm) = #B8B2AC → 7.5:1 on #2A221A (AAA) */
 .be-rail-btn {
-  opacity: 0.35;
+  color: var(--tm);
 }
 
 .be-rail-btn:hover {
-  opacity: 1;
+  color: var(--tp);
   background: rgba(255, 255, 255, 0.06);
 }
 
@@ -103,15 +103,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s;
-  opacity: 0.4;
+  transition: color 0.15s;
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--tp);
+  /* var(--tc) = #B3B0AB → 7.2:1 on #2A221A (AAA) */
+  color: var(--tc);
 }
 
-.be-rail-icon-btn:hover { opacity: 1; }
+.be-rail-icon-btn:hover { color: var(--tp); }
 
 .be-rail-icon-btn svg {
   width: 0.875rem;

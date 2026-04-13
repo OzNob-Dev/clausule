@@ -1,10 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 import { storage } from '../utils/storage'
 import '../styles/brag-employee.css'
 import '../styles/brag-settings.css'
 
-// ── Demo seed data ──────────────────────────────────────────────
+// ── TOTP constants (matches MFA setup) ──────────────────────────
+const DEMO_TOTP        = '123456'
+const TOTP_SECRET_RAW  = 'JBSWY3DPEHPK3PXP'
+const TOTP_SECRET_DISP = 'JBSW Y3DP EHPK 3PXP'
+const TOTP_URI         = `otpauth://totp/Clausule:demo%40clausule.com?secret=${TOTP_SECRET_RAW}&issuer=Clausule&algorithm=SHA1&digits=6&period=30`
+
+// ── Demo seed data ───────────────────────────────────────────────
 const INITIAL_DEVICES = [
   {
     id: 'bio-seed-1',
@@ -16,7 +23,7 @@ const INITIAL_DEVICES = [
   },
 ]
 
-// ── Helpers ─────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────
 function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-AU', {
     day: 'numeric', month: 'short', year: 'numeric',
@@ -25,14 +32,13 @@ function formatDate(dateStr) {
 
 function inferDevice() {
   const ua = navigator.userAgent
-  if (/iPhone/.test(ua))  return { name: 'iPhone',        type: 'phone',  method: 'Face ID' }
-  if (/iPad/.test(ua))    return { name: 'iPad',           type: 'tablet', method: 'Face ID' }
-  if (/Android/.test(ua)) return { name: 'Android phone',  type: 'phone',  method: 'Fingerprint' }
-  if (/Windows/.test(ua)) return { name: 'Windows PC',     type: 'laptop', method: 'Windows Hello' }
-  return                           { name: 'MacBook',        type: 'laptop', method: 'Touch ID' }
+  if (/iPhone/.test(ua))  return { name: 'iPhone',       type: 'phone',  method: 'Face ID' }
+  if (/iPad/.test(ua))    return { name: 'iPad',          type: 'tablet', method: 'Face ID' }
+  if (/Android/.test(ua)) return { name: 'Android phone', type: 'phone',  method: 'Fingerprint' }
+  if (/Windows/.test(ua)) return { name: 'Windows PC',    type: 'laptop', method: 'Windows Hello' }
+  return                          { name: 'MacBook',       type: 'laptop', method: 'Touch ID' }
 }
 
-// ── Device type icon ─────────────────────────────────────────────
 function DeviceIcon({ type }) {
   if (type === 'phone') return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -58,11 +64,22 @@ function DeviceIcon({ type }) {
 export default function BragSettings() {
   const navigate = useNavigate()
 
+  // ── Biometrics ─────────────────────────────────────────────────
   const [devices, setDevices]             = useState(INITIAL_DEVICES)
   const [registering, setRegistering]     = useState(false)
   const [registerError, setRegisterError] = useState(false)
   const [passkeyAvailable, setPasskeyAvailable] = useState(null)
-  const [removeTarget, setRemoveTarget]   = useState(null)   // device.id awaiting confirm
+  const [removeTarget, setRemoveTarget]   = useState(null)
+
+  // ── MFA — TOTP reconfigure ─────────────────────────────────────
+  const [totpConfigured, setTotpConfigured] = useState(true)
+  const [totpExpanded, setTotpExpanded]     = useState(false)
+  const [totp, setTotp]                     = useState(['', '', '', '', '', ''])
+  const [totpState, setTotpState]           = useState('idle') // idle | error | done
+  const [copied, setCopied]                 = useState(false)
+  const totpRefs                            = useRef([])
+
+  // ── Delete account ─────────────────────────────────────────────
   const [deleteModal, setDeleteModal]     = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState('')
 
@@ -82,7 +99,7 @@ export default function BragSettings() {
 
   const logout = () => { storage.clearAuth(); navigate('/') }
 
-  // Simulates navigator.credentials.create()
+  // ── Passkey registration ────────────────────────────────────────
   const registerDevice = async () => {
     setRegistering(true)
     setRegisterError(false)
@@ -111,6 +128,70 @@ export default function BragSettings() {
   const removeDevice = (id) => {
     setDevices((prev) => prev.filter((d) => d.id !== id))
     setRemoveTarget(null)
+  }
+
+  // ── TOTP handlers ───────────────────────────────────────────────
+  const verifyTotp = useCallback((digits) => {
+    const code = digits.join('')
+    if (code === DEMO_TOTP) {
+      setTotpState('done')
+      setTimeout(() => {
+        setTotpConfigured(true)
+        setTotpExpanded(false)
+        setTotp(['', '', '', '', '', ''])
+        setTotpState('idle')
+      }, 600)
+    } else {
+      setTotpState('error')
+      setTimeout(() => {
+        setTotp(['', '', '', '', '', ''])
+        setTotpState('idle')
+        totpRefs.current[0]?.focus()
+      }, 700)
+    }
+  }, [])
+
+  const handleTotpChange = useCallback((i, val) => {
+    const d = val.replace(/\D/g, '').slice(-1)
+    setTotp((prev) => {
+      const next = prev.map((v, idx) => idx === i ? d : v)
+      if (d && i < 5) setTimeout(() => totpRefs.current[i + 1]?.focus(), 0)
+      if (next.every(Boolean)) verifyTotp(next)
+      return next
+    })
+  }, [verifyTotp])
+
+  const handleTotpKey = useCallback((i, e) => {
+    if (e.key === 'Backspace') {
+      setTotp((prev) => {
+        if (prev[i]) return prev.map((v, idx) => idx === i ? '' : v)
+        if (i > 0) setTimeout(() => totpRefs.current[i - 1]?.focus(), 0)
+        return prev
+      })
+    } else if (e.key === 'ArrowLeft'  && i > 0) totpRefs.current[i - 1]?.focus()
+      else if (e.key === 'ArrowRight' && i < 5) totpRefs.current[i + 1]?.focus()
+  }, [])
+
+  const handleTotpPaste = useCallback((e) => {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    if (!text) return
+    const next = Array.from({ length: 6 }, (_, i) => text[i] ?? '')
+    setTotp(next)
+    totpRefs.current[Math.min(text.length, 5)]?.focus()
+    if (next.every(Boolean)) verifyTotp(next)
+  }, [verifyTotp])
+
+  const cancelTotp = () => {
+    setTotpExpanded(false)
+    setTotp(['', '', '', '', '', ''])
+    setTotpState('idle')
+  }
+
+  const copySecret = () => {
+    navigator.clipboard?.writeText(TOTP_SECRET_RAW).catch(() => {})
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const targetDevice = devices.find((d) => d.id === removeTarget)
@@ -170,7 +251,7 @@ export default function BragSettings() {
           <div>
             <div className="be-notes-label">Account security</div>
             <p className="bss-identity-note">
-              Manage biometric devices for phishing-resistant sign-in on each device you use regularly.
+              Manage two-factor authentication and biometric devices for phishing-resistant sign-in.
             </p>
           </div>
         </div>
@@ -183,6 +264,139 @@ export default function BragSettings() {
           <div className="bss-heading">Security settings</div>
           <div className="bss-subheading">Manage how you sign in to Clausule.</div>
           <div className="bss-divider" />
+
+          {/* ── Two-factor authentication ──────────────────── */}
+          <div className="bss-section-label">Two-factor authentication</div>
+          <div className="bss-card">
+
+            {/* Email code row */}
+            <div className="bss-mfa-row">
+              <div className="bss-mfa-icon bss-mfa-icon--on" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="3" y="6" width="18" height="13" rx="2"/>
+                  <path d="M3 10l9 6 9-6"/>
+                </svg>
+              </div>
+              <div className="bss-mfa-info">
+                <div className="bss-mfa-title">Email code</div>
+                <div className="bss-mfa-sub">A one-time code sent to your email address each time you sign in.</div>
+              </div>
+              <span className="bss-mfa-status bss-mfa-status--on" aria-label="Email code is active">Active</span>
+            </div>
+
+            <div className="bss-mfa-divider" />
+
+            {/* Authenticator app row */}
+            <div className="bss-mfa-row">
+              <div className={`bss-mfa-icon${totpConfigured ? ' bss-mfa-icon--on' : ''}`} aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="5" y="2" width="14" height="20" rx="2"/>
+                  <rect x="8" y="7" width="8" height="6" rx="1"/>
+                  <circle cx="12" cy="17.5" r="1"/>
+                </svg>
+              </div>
+              <div className="bss-mfa-info">
+                <div className="bss-mfa-title">Authenticator app</div>
+                <div className="bss-mfa-sub">
+                  {totpConfigured
+                    ? 'Verified — Google Authenticator, Authy, 1Password, etc.'
+                    : 'Not configured — add an authenticator app for a second factor.'}
+                </div>
+              </div>
+              {!totpExpanded ? (
+                <button
+                  className="bss-mfa-reconfig-btn"
+                  onClick={() => setTotpExpanded(true)}
+                  aria-expanded="false"
+                  aria-controls="totp-setup"
+                >
+                  {totpConfigured ? 'Reconfigure' : 'Set up'}
+                </button>
+              ) : (
+                <button
+                  className="bss-mfa-reconfig-btn"
+                  onClick={cancelTotp}
+                  aria-expanded="true"
+                  aria-controls="totp-setup"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+
+            {/* TOTP expanded setup */}
+            {totpExpanded && (
+              <div id="totp-setup" className="bss-totp-body">
+                <p className="bss-totp-instruction">
+                  Scan the QR code with your authenticator app, or copy the key for manual entry.
+                  Then enter the 6-digit code to verify.
+                </p>
+
+                <div className="bss-qr-wrap" aria-label="QR code for authenticator app">
+                  <QRCodeSVG
+                    value={TOTP_URI}
+                    size={136}
+                    bgColor="#FAF7F3"
+                    fgColor="#2A221A"
+                    level="M"
+                  />
+                </div>
+
+                <div className="bss-secret-row">
+                  <code className="bss-secret-code">{TOTP_SECRET_DISP}</code>
+                  <button
+                    className="bss-copy-btn"
+                    onClick={copySecret}
+                    aria-label="Copy secret key"
+                  >
+                    {copied
+                      ? <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 7l3.5 3.5L12 3"/></svg>
+                      : <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="4" width="8" height="8" rx="1"/><path d="M2 10V3a1 1 0 0 1 1-1h7"/></svg>}
+                  </button>
+                </div>
+
+                <div className="bss-demo-pill">Demo code: <strong>{DEMO_TOTP}</strong></div>
+
+                <div
+                  className={[
+                    'bss-otp-row',
+                    totpState === 'error' ? 'bss-otp-row--error' : '',
+                    totpState === 'done'  ? 'bss-otp-row--done'  : '',
+                  ].join(' ')}
+                  onPaste={handleTotpPaste}
+                  role="group"
+                  aria-label="6-digit verification code"
+                >
+                  {totp.map((digit, i) => (
+                    <input
+                      key={i}
+                      ref={(el) => { totpRefs.current[i] = el }}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleTotpChange(i, e.target.value)}
+                      onKeyDown={(e) => handleTotpKey(i, e)}
+                      className="bss-otp-box"
+                      aria-label={`Digit ${i + 1} of 6`}
+                      autoFocus={i === 0}
+                      autoComplete={i === 0 ? 'one-time-code' : 'off'}
+                      disabled={totpState === 'done'}
+                    />
+                  ))}
+                </div>
+
+                {totpState === 'error' && (
+                  <p className="bss-otp-error" role="alert">Incorrect code — try again</p>
+                )}
+
+                <div className="bss-totp-actions">
+                  <button className="bss-totp-cancel" onClick={cancelTotp}>Cancel</button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* ── Biometric devices ─────────────────────────── */}
           <div className="bss-section-label">Biometric login</div>
@@ -330,10 +544,7 @@ export default function BragSettings() {
               >
                 Remove device
               </button>
-              <button
-                className="bss-btn-modal-cancel"
-                onClick={() => setRemoveTarget(null)}
-              >
+              <button className="bss-btn-modal-cancel" onClick={() => setRemoveTarget(null)}>
                 Cancel
               </button>
             </div>
@@ -389,10 +600,7 @@ export default function BragSettings() {
               >
                 Yes, permanently delete my account
               </button>
-              <button
-                className="bss-btn-modal-cancel"
-                onClick={() => setDeleteModal(false)}
-              >
+              <button className="bss-btn-modal-cancel" onClick={() => setDeleteModal(false)}>
                 Cancel
               </button>
             </div>
