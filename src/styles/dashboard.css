@@ -78,7 +78,7 @@
 
 .db-search {
   width: 220px;
-  background: rgba(60, 45, 35, 0.05);
+  background: #FAF7F3;
   border: 1.5px solid var(--border2);
   border-radius: var(--r);
   padding: 8px 13px;

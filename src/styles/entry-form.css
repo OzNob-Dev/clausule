@@ -64,7 +64,7 @@
 
 .ef-input {
   width: 100%;
-  background: rgba(60, 45, 35, 0.05);
+  background: #FAF7F3;
   border: 1.5px solid var(--border2);
   border-radius: var(--r);
   padding: 11px 13px;
