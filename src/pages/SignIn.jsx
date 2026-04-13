@@ -1,14 +1,17 @@
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { storage } from '../utils/storage'
 import '../styles/signin.css'
 
 export default function SignIn() {
   const navigate = useNavigate()
+  const [email, setEmail] = useState('')
 
-  const signIn = () => {
-    storage.setAuthed()
-    storage.setRole('manager')
-    navigate('/dashboard')
+  const sendCode = (e) => {
+    e.preventDefault()
+    if (!email.trim()) return
+    storage.setEmail(email.trim())
+    navigate('/mfa-setup')
   }
 
   return (
@@ -31,66 +34,34 @@ export default function SignIn() {
 
         {/* Right panel */}
         <div className="si-right">
-          <div className="si-form">
-          <h2 className="si-heading">Welcome back</h2>
-          <p className="si-subheading">Sign in to your account</p>
+          <form className="si-form" onSubmit={sendCode} noValidate>
+            <h2 className="si-heading">Sign in</h2>
+            <p className="si-subheading">We'll send a verification code to your email.</p>
 
-          {/* Email */}
-          <div className="si-field">
-            <label className="si-label">Email</label>
-            <input
-              type="email"
-              placeholder="you@email.com"
-              autoFocus
-              className="si-input"
-            />
-          </div>
+            <div className="si-field">
+              <label className="si-label" htmlFor="si-email">Work email</label>
+              <input
+                id="si-email"
+                type="email"
+                placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoFocus
+                autoComplete="email"
+                required
+                className="si-input"
+              />
+            </div>
 
-          {/* Password */}
-          <div className="si-field si-field--pw">
-            <label className="si-label">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="si-input"
-            />
-          </div>
+            <button type="submit" className="si-btn-primary" disabled={!email.trim()}>
+              Send code
+            </button>
 
-          {/* Remember + forgot */}
-          <div className="si-row">
-            <label className="si-remember">
-              <input type="checkbox" defaultChecked />
-              Remember me
-            </label>
-            <button className="si-forgot">Forgot password?</button>
-          </div>
-
-          {/* Sign in */}
-          <button onClick={signIn} className="si-btn-primary">
-            Sign in
-          </button>
-
-          {/* Divider */}
-          <div className="si-divider">
-            <div className="si-divider-line" />
-            <span className="si-divider-text">or</span>
-            <div className="si-divider-line" />
-          </div>
-
-          {/* SSO */}
-          <button onClick={signIn} className="si-btn-sso">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/>
-              <rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/>
-            </svg>
-            Continue with SSO
-          </button>
-
-          <p className="si-footer">
-            Don't have an account?{' '}
-            <Link to="/signup">Sign up</Link>
-          </p>
-          </div>
+            <p className="si-footer">
+              No account yet?{' '}
+              <Link to="/signup">Sign up</Link>
+            </p>
+          </form>
         </div>
       </div>
     </div>
