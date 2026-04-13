@@ -612,7 +612,7 @@ export default function BragEmployee() {
 
                   <div className="be-cv-section-label">Education</div>
 
-                  <div>
+                  <>
                     <div className="be-cv-job-header">
                       <span
                         contentEditable suppressContentEditableWarning
