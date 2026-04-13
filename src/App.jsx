@@ -7,7 +7,8 @@ import MfaSetup   from './pages/MfaSetup'
 import Dashboard   from './pages/Dashboard'
 import Profile     from './pages/Profile'
 import Entries     from './pages/Entries'
-import BragEmployee from './pages/BragEmployee'
+import BragEmployee  from './pages/BragEmployee'
+import BragSettings  from './pages/BragSettings'
 import NewEntry    from './pages/NewEntry'
 import EditEntry   from './pages/EditEntry'
 import Escalated   from './pages/Escalated'
@@ -62,7 +63,8 @@ export default function App() {
         <Route path="/dashboard"  element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/profile"    element={<RequireAuth><Profile /></RequireAuth>} />
         <Route path="/entries"    element={<RequireAuth><Entries /></RequireAuth>} />
-        <Route path="/brag"       element={<RequireAuth><BragEmployee /></RequireAuth>} />
+        <Route path="/brag"          element={<RequireAuth><BragEmployee /></RequireAuth>} />
+        <Route path="/brag/settings" element={<RequireAuth><BragSettings /></RequireAuth>} />
         <Route path="/new-entry"  element={<RequireAuth><NewEntry /></RequireAuth>} />
         <Route path="/edit-entry" element={<RequireAuth><EditEntry /></RequireAuth>} />
         <Route path="/escalated"  element={<RequireAuth><Escalated /></RequireAuth>} />

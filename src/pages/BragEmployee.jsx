@@ -223,6 +223,16 @@ export default function BragEmployee() {
               <circle cx="13" cy="12" r="1.5"/>
             </svg>
           </button>
+          <button
+            className="be-rail-btn"
+            onClick={() => navigate('/brag/settings')}
+            aria-label="Settings"
+          >
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <circle cx="8" cy="8" r="2.5"/>
+              <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M12.8 3.2l-1.1 1.1M4.3 11.7l-1.1 1.1"/>
+            </svg>
+          </button>
         </nav>
         <div className="be-rail-foot">
           <div className="be-rail-avatar" aria-hidden="true">JE</div>

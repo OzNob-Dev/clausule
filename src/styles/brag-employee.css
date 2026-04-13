@@ -43,6 +43,7 @@
   gap: 4px;
 }
 
+.be-rail-btn,
 .be-rail-btn-active {
   width: 34px;
   height: 34px;
@@ -52,10 +53,25 @@
   border-radius: var(--r);
   border: none;
   cursor: pointer;
-  background: var(--acc-tint);
+  background: transparent;
   color: var(--tp);
+  transition: background 0.15s, opacity 0.15s;
 }
 
+.be-rail-btn {
+  opacity: 0.35;
+}
+
+.be-rail-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.be-rail-btn-active {
+  background: var(--acc-tint);
+}
+
+.be-rail-btn svg,
 .be-rail-btn-active svg {
   width: 1rem;
   height: 1rem;
