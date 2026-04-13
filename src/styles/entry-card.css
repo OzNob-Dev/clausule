@@ -167,7 +167,7 @@
   font-weight: 700;
   padding: 6px 14px;
   background: var(--acc);
-  color: var(--tx-1);
+  color: #fff;
   border: none;
   border-radius: var(--r);
   cursor: pointer;
