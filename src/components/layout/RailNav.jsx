@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useTheme } from '../../hooks/useTheme'
 import { storage } from '../../utils/storage'
+import '../../styles/rail-nav.css'
 
 const navItems = [
   {
@@ -45,7 +45,6 @@ const navItems = [
 ]
 
 export function RailNav() {
-  const { toggle } = useTheme()
   const navigate = useNavigate()
   const escalatedCount = storage.getEscalatedCount()
 
@@ -55,52 +54,46 @@ export function RailNav() {
   }
 
   return (
-    <aside className="rail-aside w-[52px] flex flex-col items-center py-4 flex-shrink-0 sticky top-0 h-screen bg-[var(--nav)] border-r border-[var(--border)]">
-      {/* Logo — square icon bug */}
-      <div className="rail-logo w-[30px] h-[30px] flex items-center justify-center mb-[18px] flex-shrink-0 bg-[var(--acc)] rounded-[9px]">
-        <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" className="w-4 h-4">
+    <aside className="rail-aside">
+      {/* Logo */}
+      <div className="rail-logo">
+        <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round">
           <path d="M3 5h12M3 9h8M3 13h5"/>
         </svg>
       </div>
 
       {/* Nav items */}
-      <nav className="rail-items flex flex-col items-center gap-0.5 flex-1">
+      <nav className="rail-items">
         {navItems.map(({ to, tip, icon, badge }) => (
           <NavLink
             key={to}
             to={to}
             title={tip}
             className={({ isActive }) =>
-              `nav-item relative w-9 h-9 flex items-center justify-center transition-all duration-150 rounded-[var(--r)] ${
-                isActive
-                  ? 'text-[var(--acc-text)] bg-[var(--acc-bg)]'
-                  : 'text-[var(--tc)]'
-              }`
+              `nav-item${isActive ? ' nav-item--active' : ''}`
             }
           >
-            <span className="w-4 h-4">{icon}</span>
+            {icon}
             {badge && escalatedCount > 0 && (
-              <span className="absolute top-[5px] right-[5px] w-1.5 h-1.5 rounded-full bg-[var(--red)] border-[1.5px] border-[var(--bg-rail)]" />
+              <span className="rn-badge" aria-hidden="true" />
             )}
           </NavLink>
         ))}
       </nav>
 
       {/* Footer */}
-      <div className="rail-footer flex flex-col items-center gap-2">
-        <div
-          className="w-[30px] h-[30px] flex items-center justify-center text-[10px] font-extrabold cursor-default select-none bg-[var(--acc)] text-[var(--tp)] rounded-[var(--r)]"
-          title="Adrian Diente"
-        >
+      <div className="rail-footer">
+        <div className="rn-user" title="Adrian Diente">
           AD
         </div>
 
         <button
           onClick={logout}
           title="Sign out"
-          className="w-7 h-7 flex items-center justify-center transition-colors bg-transparent border-0 text-[var(--tc)] hover:text-[var(--ts)]"
+          className="rn-logout"
+          aria-label="Sign out"
         >
-          <svg className="w-[15px] h-[15px]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>
             <polyline points="11 11 14 8 11 5"/><line x1="14" y1="8" x2="6" y2="8"/>
           </svg>

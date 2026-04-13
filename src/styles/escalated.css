@@ -82,6 +82,13 @@
   color: var(--tx-3);
 }
 
+.es-item__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
 @media (max-width: 640px) {
   .es-topbar { padding: 16px 16px 0; }
 

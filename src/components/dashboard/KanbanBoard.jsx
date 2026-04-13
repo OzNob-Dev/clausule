@@ -1,4 +1,5 @@
 import { KanbanCard } from './KanbanCard'
+import '../../styles/kanban.css'
 
 const COLUMNS = [
   { id: 'g', label: 'Going well',    dot: '#1D9E75', color: 'var(--teal)', countBg: 'rgba(93,202,165,0.14)',  countColor: 'var(--teal)'  },
@@ -8,44 +9,44 @@ const COLUMNS = [
 
 export function KanbanBoard({ employees }) {
   return (
-    <div className="flex-1 min-h-0 overflow-x-auto overflow-y-hidden">
-    <div className="grid grid-cols-3 gap-3 px-[18px] pt-[14px] pb-[18px] h-full" style={{ minWidth: 'max(100%, 480px)' }}>
-      {COLUMNS.map(({ id, label, dot, color, countBg, countColor }) => {
-        const people = employees.filter((e) => e.ps === id)
-        return (
-          <div key={id} className="flex flex-col overflow-hidden">
-            {/* Column header */}
-            <div className="flex items-center justify-between px-1 pb-[10px]">
-              <div
-                className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.8px] [color:var(--col-color)]"
-                style={{ '--col-color': color }}
-              >
+    <div className="kb-board">
+      <div className="kb-grid">
+        {COLUMNS.map(({ id, label, dot, color, countBg, countColor }) => {
+          const people = employees.filter((e) => e.ps === id)
+          return (
+            <div key={id} className="kb-col">
+              {/* Column header */}
+              <div className="kb-col-head">
+                <div
+                  className="kb-col-label"
+                  style={{ '--col-color': color }}
+                >
+                  <span
+                    className="kb-col-dot"
+                    style={{ '--dot-bg': dot }}
+                  />
+                  {label}
+                </div>
                 <span
-                  className="flex-shrink-0 w-[10px] h-[10px] rounded-[3px] [background:var(--dot-bg)]"
-                  style={{ '--dot-bg': dot }}
-                />
-                {label}
+                  className="kb-count"
+                  style={{ '--cnt-bg': countBg, '--cnt-color': countColor }}
+                >
+                  {people.length}
+                </span>
               </div>
-              <span
-                className="text-[11px] font-bold px-[9px] py-[3px] rounded-[20px] [background:var(--cnt-bg)] [color:var(--cnt-color)]"
-                style={{ '--cnt-bg': countBg, '--cnt-color': countColor }}
-              >
-                {people.length}
-              </span>
-            </div>
 
-            {/* Cards */}
-            <div className="flex-1 overflow-y-auto flex flex-col gap-2 kb-col-body">
-              {people.length === 0 ? (
-                <div className="text-[12px] py-5 text-center text-[var(--tc)]">None</div>
-              ) : (
-                people.map((emp) => <KanbanCard key={emp.name} emp={emp} />)
-              )}
+              {/* Cards */}
+              <div className="kb-col-body">
+                {people.length === 0 ? (
+                  <div className="kb-empty">None</div>
+                ) : (
+                  people.map((emp) => <KanbanCard key={emp.name} emp={emp} />)
+                )}
+              </div>
             </div>
-          </div>
-        )
-      })}
-    </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

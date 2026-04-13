@@ -83,7 +83,7 @@ function EntryRings({ offsets }) {
 }
 
 export default function BragEmployee() {
-  const { toggle } = useTheme()
+  useTheme()
   const navigate = useNavigate()
   const [tab, setTab] = useState('brag')
   const [entries, setEntries] = useState(INITIAL_ENTRIES)
@@ -186,36 +186,29 @@ export default function BragEmployee() {
   }
 
   return (
-    <div className="flex w-full min-h-screen be-page">
+    <div className="be-page">
       {/* Employee rail */}
-      <aside
-        className="w-[46px] flex flex-col items-center py-[18px] flex-shrink-0 sticky top-0 h-screen opacity-[0.55] hover:opacity-100 transition-opacity duration-200 be-sidebar"
-        aria-label="App navigation"
-      >
-        <div className="text-[8px] font-bold tracking-[4px] uppercase mb-5 select-none be-rail-logo" aria-hidden="true">
-          CLS
-        </div>
-        <nav className="flex-1 flex flex-col items-center gap-1" aria-label="Primary">
+      <aside className="be-rail be-sidebar" aria-label="App navigation">
+        <div className="be-rail-logo" aria-hidden="true">CLS</div>
+        <nav className="be-rail-nav" aria-label="Primary">
           <button
-            className="w-[34px] h-[34px] flex items-center justify-center rounded-clausule be-rail-btn-active"
+            className="be-rail-btn-active"
             aria-label="Brag doc" aria-current="page"
           >
-            <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
               <path d="M8 2l1 2.5L11.5 5l-2 2 .5 3L8 8.5 5.5 10l.5-3-2-2L6.5 4.5z"/>
               <circle cx="13" cy="12" r="1.5"/>
             </svg>
           </button>
         </nav>
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold be-rail-avatar" aria-hidden="true">
-            JE
-          </div>
+        <div className="be-rail-foot">
+          <div className="be-rail-avatar" aria-hidden="true">JE</div>
           <button
             onClick={logout}
-            className="w-7 h-7 flex items-center justify-center transition-opacity opacity-40 hover:opacity-100 bg-transparent border-0 be-rail-icon-btn"
+            className="be-rail-icon-btn"
             aria-label="Sign out"
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
               <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>
               <polyline points="11 11 14 8 11 5"/><line x1="14" y1="8" x2="6" y2="8"/>
             </svg>
@@ -224,43 +217,31 @@ export default function BragEmployee() {
       </aside>
 
       {/* Identity sidebar */}
-      <div className="w-60 flex flex-col flex-shrink-0 overflow-y-auto be-sidebar" role="complementary" aria-label="Profile and evidence">
-        <div className="px-5 py-[21px_20px_17px] be-sidebar-header">
-          <div className="text-[9px] font-bold tracking-[4px] uppercase be-sidebar-eyebrow">Clausule · Brag doc</div>
+      <div className="be-identity be-sidebar" role="complementary" aria-label="Profile and evidence">
+        <div className="be-sidebar-header">
+          <div className="be-sidebar-eyebrow">Clausule · Brag doc</div>
         </div>
-        <div className="px-5 py-5 flex-1 flex flex-col gap-[18px] overflow-y-auto">
+        <div className="be-sidebar-body">
           <div>
-            <div className="w-11 h-11 rounded-full flex items-center justify-center text-base font-bold mb-2.5 be-sidebar-avatar" aria-hidden="true">
-              JE
-            </div>
-            <div className="text-[20px] font-black tracking-[-0.3px] leading-tight be-sidebar-name">
-              Jordan Ellis
-            </div>
-            <div className="text-[11px] mt-0.5 be-sidebar-role">
-              Senior engineer · Platform
-            </div>
+            <div className="be-sidebar-avatar" aria-hidden="true">JE</div>
+            <div className="be-sidebar-name">Jordan Ellis</div>
+            <div className="be-sidebar-role">Senior engineer · Platform</div>
           </div>
 
-          <div className="h-px be-divider" role="separator" />
+          <div className="be-divider" role="separator" />
 
           {/* Manager note */}
           <div>
-            <div className="text-[9px] uppercase tracking-[0.6px] mb-2 font-bold be-notes-label">
-              Manager note
-            </div>
-            <p className="text-[12px] font-normal italic leading-[1.75] pl-3 border-l-2 be-note-quote">
-              {MANAGER_NOTE}
-            </p>
+            <div className="be-notes-label">Manager note</div>
+            <p className="be-note-quote">{MANAGER_NOTE}</p>
           </div>
 
-          <div className="h-px be-divider" role="separator" />
+          <div className="be-divider" role="separator" />
 
           {/* Evidence strength */}
           <div>
-            <div className="text-[9px] uppercase tracking-[0.6px] mb-3 font-bold be-overview-label">
-              Evidence strength
-            </div>
-            <div className="flex items-center gap-2.5 mb-3">
+            <div className="be-overview-label">Evidence strength</div>
+            <div className="be-strength-row">
               <div className="be-sidebar-rings" aria-hidden="true">
                 <svg width="50" height="50" viewBox="0 0 50 50">
                   <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="4"/>
@@ -282,8 +263,8 @@ export default function BragEmployee() {
                 </svg>
               </div>
               <div>
-                <div className="text-[13px] font-bold be-overview-status">Strong</div>
-                <div className="text-[11px] mt-0.5 be-overview-sub">3 of 4 types</div>
+                <div className="be-overview-status">Strong</div>
+                <div className="be-overview-sub">3 of 4 types</div>
               </div>
             </div>
             <ul className="be-ring-legend" aria-label="Evidence type breakdown">
@@ -309,11 +290,11 @@ export default function BragEmployee() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 overflow-y-auto be-main">
+      <main className="be-main">
         <div className="be-inner">
 
           {/* Tabs */}
-          <div className="flex border-b mb-6 gap-0 be-tabs" role="tablist">
+          <div className="be-tabs" role="tablist">
             {[['brag', 'Brag doc'], ['cv', 'Resume']].map(([key, label]) => (
               <button
                 key={key}
@@ -321,7 +302,7 @@ export default function BragEmployee() {
                 aria-selected={tab === key}
                 aria-controls={`panel-${key}`}
                 onClick={() => setTab(key)}
-                className={`px-[18px] py-[11px] text-[13px] font-bold border-b-2 transition-all bg-transparent border-t-0 border-l-0 border-r-0 cursor-pointer be-tab${tab === key ? ' be-tab--active' : ''}`}
+                className={`be-tab${tab === key ? ' be-tab--active' : ''}`}
               >
                 {label}
               </button>
@@ -332,26 +313,20 @@ export default function BragEmployee() {
           <div id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
 
             {/* Manager banner */}
-            <div className="rounded-clausule2 p-[16px_18px] mb-5 be-card">
-              <div className="text-[9px] uppercase tracking-[0.6px] mb-2 flex items-center gap-2 font-bold be-card-label">
+            <div className="be-card">
+              <div className="be-card-label">
                 From your manager
-                <div className="flex-1 h-px be-card-rule" aria-hidden="true" />
-                <span className="text-[10px] px-1.5 py-0.5 rounded font-bold be-read-only-badge">
-                  Read only
-                </span>
+                <div className="be-card-rule" aria-hidden="true" />
+                <span className="be-read-only-badge">Read only</span>
               </div>
-              <p className="text-[15px] font-normal italic leading-[1.85] pl-3.5 border-l-2 be-summary-quote">
-                {MANAGER_NOTE}
-              </p>
+              <p className="be-summary-quote">{MANAGER_NOTE}</p>
             </div>
 
             {/* Entry list */}
-            <div className="text-[9px] uppercase tracking-[0.6px] mb-3 font-bold be-sec-label">
-              Your entries
-            </div>
+            <div className="be-sec-label">Your entries</div>
 
             {entries.map((entry) => (
-              <article key={entry.id} className="rounded-clausule2 mb-3 be-entry-card">
+              <article key={entry.id} className="be-entry-card">
                 <div className="be-entry-head">
                   <div className="be-entry-title">{entry.title}</div>
                   <div className="be-entry-date">
@@ -384,7 +359,7 @@ export default function BragEmployee() {
             {/* Add a win */}
             {!composerOpen ? (
               <button onClick={openComposer} className="be-add-trigger">
-                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <line x1="8" y1="3" x2="8" y2="13"/>
                   <line x1="3" y1="8" x2="13" y2="8"/>
                 </svg>
@@ -422,7 +397,7 @@ export default function BragEmployee() {
                   ))}
                 </div>
                 <div className="be-comp-count-label">How many pieces of evidence?</div>
-                <div className="flex items-center gap-3 mb-[14px]">
+                <div className="be-comp-count-row">
                   <input
                     type="number"
                     className="be-comp-count-input"
@@ -432,11 +407,11 @@ export default function BragEmployee() {
                     onChange={(e) => setCompCount(Number(e.target.value))}
                     aria-label="Number of evidence pieces"
                   />
-                  <span className="text-[11px] be-comp-count-hint">More sources of the same type strengthens your case</span>
+                  <span className="be-comp-count-hint">More sources of the same type strengthens your case</span>
                 </div>
                 <div className="be-comp-footer">
                   <div />
-                  <div className="flex gap-2">
+                  <div className="be-comp-btns">
                     <button type="button" onClick={closeComposer} className="be-comp-cancel">Cancel</button>
                     <button type="button" onClick={saveEntry} className="be-comp-save">Save entry</button>
                   </div>
@@ -448,28 +423,28 @@ export default function BragEmployee() {
           {/* CV / Resume tab */}
           <div id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
 
-            <div className="flex items-center justify-between mb-5">
+            <div className="be-cv-header">
               <div>
-                <p className="text-[13px] be-cv-desc">Generate your resume from your brag doc entries.</p>
-                <p className="text-[11px] mt-0.5 be-cv-subdesc">Everything is editable — treat it as a living document you take with you.</p>
+                <p className="be-cv-desc">Generate your resume from your brag doc entries.</p>
+                <p className="be-cv-subdesc">Everything is editable — treat it as a living document you take with you.</p>
               </div>
               <button
                 onClick={generateCV}
                 disabled={generating}
-                className="flex items-center gap-1.5 px-[18px] py-2.5 text-[12px] font-bold text-white rounded-clausule hover:opacity-90 disabled:opacity-50 transition-opacity be-btn-generate"
+                className="be-btn-generate"
               >
                 {generating ? (
                   <>
-                    <span className="inline-flex gap-1" aria-hidden="true">
+                    <span className="be-thinking-dots" aria-hidden="true">
                       {[0, 1, 2].map((i) => (
-                        <span key={i} className="think-dot w-1 h-1 rounded-full bg-white" />
+                        <span key={i} className="think-dot" />
                       ))}
                     </span>
                     <span>Generating…</span>
                   </>
                 ) : (
                   <>
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M8 2l1 2.5L11.5 5l-2 2 .5 3L8 8.5 5.5 10l.5-3-2-2L6.5 4.5z"/>
                     </svg>
                     {cvVisible ? 'Regenerate' : 'Generate resume'}
@@ -480,10 +455,10 @@ export default function BragEmployee() {
 
             {cvVisible && (
               <>
-                <div className="rounded-clausule2 p-[36px_38px] mb-4 be-cv-card">
+                <div className="be-cv-card">
                   {/* Autosave indicator */}
                   <div className={`be-cv-autosave${cvAutosaved ? ' be-cv-autosave--show' : ''}`} aria-live="polite" aria-atomic="true">
-                    <svg className="w-[11px] h-[11px]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <polyline points="3 8 6 11 13 4"/>
                     </svg>
                     Autosaved
@@ -493,7 +468,7 @@ export default function BragEmployee() {
                     id="cv-name"
                     contentEditable suppressContentEditableWarning
                     onInput={scheduleAutosave}
-                    className="block text-[32px] font-black tracking-[-0.8px] leading-[1.1] mb-1.5 outline-none rounded be-cv-name"
+                    className="be-cv-name"
                     role="textbox" aria-label="Full name" aria-multiline="false"
                   >
                     Jordan Ellis
@@ -502,7 +477,7 @@ export default function BragEmployee() {
                     id="cv-tagline"
                     contentEditable suppressContentEditableWarning
                     onInput={scheduleAutosave}
-                    className="block text-[15px] font-normal italic mb-[18px] outline-none rounded be-cv-tagline"
+                    className="be-cv-tagline"
                     role="textbox" aria-label="Professional tagline" aria-multiline="false"
                   >
                     Senior software engineer — platform infrastructure, distributed systems, technical leadership
@@ -511,23 +486,23 @@ export default function BragEmployee() {
                     id="cv-contact"
                     contentEditable suppressContentEditableWarning
                     onInput={scheduleAutosave}
-                    className="block text-[12px] mb-5 outline-none rounded be-cv-contact"
+                    className="be-cv-contact"
                     role="textbox" aria-label="Contact info" aria-multiline="false"
                   >
                     jordan.ellis@acmecorp.com · Platform team · Acme Corp
                   </span>
 
-                  <div className="h-px mb-[18px] be-cv-rule" aria-hidden="true" />
+                  <div className="be-cv-rule" aria-hidden="true" />
 
-                  <div className="text-[9px] uppercase tracking-[0.8px] mb-3.5 font-bold be-cv-section-label">Experience</div>
+                  <div className="be-cv-section-label">Experience</div>
 
-                  <div className="mb-5">
-                    <div className="flex items-baseline justify-between mb-1">
+                  <div className="be-cv-job">
+                    <div className="be-cv-job-header">
                       <span
                         id="cv-job-title"
                         contentEditable suppressContentEditableWarning
                         onInput={scheduleAutosave}
-                        className="text-[15px] font-bold outline-none rounded be-cv-job-title"
+                        className="be-cv-job-title"
                         role="textbox" aria-label="Job title" aria-multiline="false"
                       >
                         Senior engineer
@@ -536,7 +511,7 @@ export default function BragEmployee() {
                         id="cv-job-meta"
                         contentEditable suppressContentEditableWarning
                         onInput={scheduleAutosave}
-                        className="text-[12px] ml-3 flex-shrink-0 outline-none rounded be-cv-dates"
+                        className="be-cv-dates"
                         role="textbox" aria-label="Employment dates" aria-multiline="false"
                       >
                         Acme Corp · Mar 2022–present
@@ -546,36 +521,36 @@ export default function BragEmployee() {
                       id="cv-company"
                       contentEditable suppressContentEditableWarning
                       onInput={scheduleAutosave}
-                      className="block text-[13px] mb-2.5 outline-none rounded be-cv-company"
+                      className="be-cv-company"
                       role="textbox" aria-label="Company" aria-multiline="false"
                     >
                       Platform team
                     </span>
-                    <ul className="list-none p-0 m-0" aria-label="Accomplishments">
+                    <ul className="be-cv-bullets" aria-label="Accomplishments">
                       {cvBullets.map((b, i) => (
                         <li
                           key={i}
                           contentEditable suppressContentEditableWarning
                           onInput={scheduleAutosave}
-                          className="be-cv-bullet be-cv-bullet-li relative pl-4 py-1 text-[13px] leading-[1.75] outline-none"
+                          className="be-cv-bullet be-cv-bullet-li"
                         >
-                          <span className="absolute left-1 top-1 font-bold be-cv-bullet-marker" aria-hidden="true">·</span>
+                          <span className="be-cv-bullet-marker" aria-hidden="true">·</span>
                           {b}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="h-px mb-[18px] be-cv-rule" aria-hidden="true" />
+                  <div className="be-cv-rule" aria-hidden="true" />
 
-                  <div className="text-[9px] uppercase tracking-[0.8px] mb-3.5 font-bold be-cv-section-label">Education</div>
+                  <div className="be-cv-section-label">Education</div>
 
                   <div>
-                    <div className="flex items-baseline justify-between mb-1">
+                    <div className="be-cv-job-header">
                       <span
                         contentEditable suppressContentEditableWarning
                         onInput={scheduleAutosave}
-                        className="text-[15px] font-bold outline-none rounded be-cv-job-title"
+                        className="be-cv-job-title"
                         role="textbox" aria-label="Degree" aria-multiline="false"
                       >
                         Bachelor of Computer Science
@@ -583,7 +558,7 @@ export default function BragEmployee() {
                       <span
                         contentEditable suppressContentEditableWarning
                         onInput={scheduleAutosave}
-                        className="text-[12px] ml-3 flex-shrink-0 outline-none rounded be-cv-dates"
+                        className="be-cv-dates"
                         role="textbox" aria-label="Study dates" aria-multiline="false"
                       >
                         2018–2022
@@ -592,7 +567,7 @@ export default function BragEmployee() {
                     <span
                       contentEditable suppressContentEditableWarning
                       onInput={scheduleAutosave}
-                      className="block text-[13px] outline-none rounded be-cv-company"
+                      className="be-cv-company"
                       role="textbox" aria-label="Institution" aria-multiline="false"
                     >
                       University of Technology · Click to edit
@@ -603,14 +578,14 @@ export default function BragEmployee() {
                 {/* CV actions */}
                 <div className="be-cv-actions">
                   <button onClick={copyCV} className="be-cv-copy-btn">
-                    <svg className="w-[13px] h-[13px]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <rect x="5" y="5" width="9" height="9" rx="1"/>
                       <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
                     </svg>
                     Copy text
                   </button>
                   <button onClick={downloadCV} className="be-cv-dl-btn">
-                    <svg className="w-[13px] h-[13px]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M8 2v8M5 7l3 3 3-3"/>
                       <line x1="2" y1="13" x2="14" y2="13"/>
                     </svg>

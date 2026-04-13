@@ -27,6 +27,11 @@
 
 .ef-back-btn:hover { color: var(--tx-1); }
 
+.ef-back-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .ef-title {
   font-size: 22px;
   font-weight: 900;

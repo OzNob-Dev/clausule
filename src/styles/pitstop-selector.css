@@ -1,0 +1,37 @@
+/* ── Pitstop selector ────────────────────────────────────────────── */
+.ps-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ps-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font);
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  background: var(--ps-bg);
+  color: var(--ps-color);
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.ps-btn:hover { opacity: 0.9; }
+
+.ps-btn--active {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.ps-saved {
+  font-size: 11px;
+  color: var(--tm);
+  transition: opacity 0.3s;
+  margin-left: 4px;
+  opacity: 0;
+}
+
+.ps-saved--visible { opacity: 1; }

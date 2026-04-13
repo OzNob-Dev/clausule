@@ -48,7 +48,7 @@ export default function EditEntry() {
       <div className="ef-page">
         <div className="ef-header">
           <button className="ef-back-btn" onClick={() => navigate(-1)} aria-label="Go back">
-            <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
               <polyline points="10 4 6 8 10 12"/>
             </svg>
           </button>

@@ -184,6 +184,11 @@
   color: var(--tm);
 }
 
+.si-btn-sso svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
 .si-btn-sso {
   width: 100%;
   padding: 10px;

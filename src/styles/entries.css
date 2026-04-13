@@ -50,6 +50,11 @@
 
 .sr-input:focus { border-color: var(--acc-text); }
 
+.sr-btn-search svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .sr-btn-search {
   position: absolute;
   right: 12px;

@@ -65,7 +65,7 @@ export default function Entries() {
               className="sr-input"
             />
             <button type="submit" className="sr-btn-search" aria-label="Search">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/>
               </svg>
             </button>

@@ -54,7 +54,7 @@ export default function Escalated() {
               </div>
               <div className="es-item__title">{item.title}</div>
               <div className="es-item__body">{item.body}</div>
-              <div className="flex items-center justify-between mt-2.5">
+              <div className="es-item__foot">
                 <span className="es-item__date">{relativeTime(item.date)}</span>
               </div>
             </div>

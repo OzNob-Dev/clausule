@@ -2,9 +2,9 @@ import { RailNav } from './RailNav'
 
 export function AppShell({ children }) {
   return (
-    <div className="flex w-full min-h-screen">
+    <div className="app-shell">
       <RailNav />
-      <main className="app-main flex-1 min-w-0 flex flex-col">{children}</main>
+      <main className="app-main">{children}</main>
     </div>
   )
 }
