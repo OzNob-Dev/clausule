@@ -54,7 +54,7 @@
   border: none;
   cursor: pointer;
   background: transparent;
-  transition: background 0.15s, color 0.15s;
+  transition: color 0.15s;
 }
 
 /* Inactive nav icon — var(--tm) = #B8B2AC → 7.5:1 on #2A221A (AAA) */
@@ -64,7 +64,6 @@
 
 .be-rail-btn:hover {
   color: var(--tp);
-  background: rgba(255, 255, 255, 0.06);
 }
 
 .be-rail-btn-active {
