@@ -80,7 +80,6 @@ function Step1({ onNext }) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName]   = useState('')
   const [email, setEmail]         = useState('')
-  const [password, setPassword]   = useState('')
   const [agreed, setAgreed]       = useState(false)
   const [errors, setErrors]       = useState({})
 
@@ -88,14 +87,13 @@ function Step1({ onNext }) {
     const e = {}
     if (!firstName.trim()) e.firstName = true
     if (!email.trim())     e.email = true
-    if (!password)         e.password = true
     if (!agreed)           e.agreed = true
     setErrors(e)
     return Object.keys(e).length === 0
   }
 
   const handleContinue = () => {
-    if (validate()) onNext({ firstName, lastName, email, password })
+    if (validate()) onNext({ firstName, lastName, email })
   }
 
   return (
@@ -148,17 +146,7 @@ function Step1({ onNext }) {
           onChange={(e) => { setEmail(e.target.value); setErrors(ev => ({ ...ev, email: false })) }}
           error={errors.email}
         />
-        <div className="su-field-hint">We'll send your receipt and setup link here.</div>
-      </div>
-
-      {/* Password */}
-      <div className="su-field">
-        <FieldLabel>Password</FieldLabel>
-        <FieldInput
-          type="password" placeholder="At least 8 characters" value={password}
-          onChange={(e) => { setPassword(e.target.value); setErrors(ev => ({ ...ev, password: false })) }}
-          error={errors.password}
-        />
+        <div className="su-field-hint">We'll send a verification code here each time you sign in.</div>
       </div>
 
       {/* Terms */}
