@@ -244,13 +244,13 @@
 
 .be-ring-leg {
   font-size: 11px;
-  color: rgba(225, 240, 235, 0.48);
+  color: var(--tm);
   display: flex;
   align-items: center;
   gap: 7px;
 }
 
-.be-ring-leg--missing { color: rgba(225, 240, 235, 0.2); }
+.be-ring-leg--missing { color: var(--tc); }
 
 .be-ring-leg-dot {
   width: 6px;

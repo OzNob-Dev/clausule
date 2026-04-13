@@ -60,21 +60,22 @@ function EntryRings({ offsets }) {
     <div className="be-entry-rings" aria-hidden="true">
       <svg viewBox="0 0 44 44" width="44" height="44">
         <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(180,140,110,0.12)" strokeWidth="3.5"/>
-        <circle cx="22" cy="22" r="18" fill="none" stroke="#C46B4A" strokeWidth="3.5"
+        <circle cx="22" cy="22" r="18" fill="none" strokeWidth="3.5"
+          style={{ stroke: 'var(--ring-outer)' }}
           strokeDasharray="113.1" strokeDashoffset={outerOff} strokeLinecap="round"
           transform="rotate(-90 22 22)"/>
       </svg>
       <svg viewBox="0 0 44 44" width="44" height="44" className="be-entry-rings-overlay">
-        <circle cx="22" cy="22" r="12" fill="none" stroke="rgba(201,168,76,0.1)" strokeWidth="3.5"/>
-        <circle cx="22" cy="22" r="12" fill="none" stroke="#C9A84C" strokeWidth="3.5"
+        <circle cx="22" cy="22" r="12" fill="none" stroke="rgba(180,140,110,0.1)" strokeWidth="3.5"/>
+        <circle cx="22" cy="22" r="12" fill="none" strokeWidth="3.5"
+          style={{ stroke: 'var(--ring-mid)' }}
           strokeDasharray="75.4" strokeDashoffset={midOff} strokeLinecap="round"
           transform="rotate(-90 22 22)"/>
       </svg>
       <svg viewBox="0 0 44 44" width="44" height="44" className="be-entry-rings-overlay">
         <circle cx="22" cy="22" r="6" fill="none" stroke="rgba(180,140,110,0.1)" strokeWidth="3.5"/>
-        <circle cx="22" cy="22" r="6" fill="none"
-          stroke={innerOff >= 37.7 ? 'rgba(180,140,110,0.18)' : '#8C7B6E'}
-          strokeWidth="3.5"
+        <circle cx="22" cy="22" r="6" fill="none" strokeWidth="3.5"
+          style={{ stroke: innerOff >= 37.7 ? 'rgba(180,140,110,0.18)' : 'var(--ring-inner)' }}
           strokeDasharray="37.7" strokeDashoffset={innerOff} strokeLinecap="round"
           transform="rotate(-90 22 22)"/>
       </svg>
@@ -267,19 +268,22 @@ export default function BragEmployee() {
               <div className="be-sidebar-rings" aria-hidden="true">
                 <svg width="50" height="50" viewBox="0 0 50 50">
                   <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="4"/>
-                  <circle cx="25" cy="25" r="20" fill="none" stroke="#C46B4A" strokeWidth="4"
+                  <circle cx="25" cy="25" r="20" fill="none" strokeWidth="4"
+                    style={{ stroke: 'var(--ring-outer)' }}
                     strokeDasharray="125.7" strokeDashoffset="31" strokeLinecap="round"
                     transform="rotate(-90 25 25)"/>
                 </svg>
                 <svg width="50" height="50" viewBox="0 0 50 50" className="be-sidebar-rings-overlay">
                   <circle cx="25" cy="25" r="13" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4"/>
-                  <circle cx="25" cy="25" r="13" fill="none" stroke="#C9A84C" strokeWidth="4"
+                  <circle cx="25" cy="25" r="13" fill="none" strokeWidth="4"
+                    style={{ stroke: 'var(--ring-mid)' }}
                     strokeDasharray="81.7" strokeDashoffset="20" strokeLinecap="round"
                     transform="rotate(-90 25 25)"/>
                 </svg>
                 <svg width="50" height="50" viewBox="0 0 50 50" className="be-sidebar-rings-overlay">
                   <circle cx="25" cy="25" r="6" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="4"/>
-                  <circle cx="25" cy="25" r="6" fill="none" stroke="#8C7B6E" strokeWidth="4"
+                  <circle cx="25" cy="25" r="6" fill="none" strokeWidth="4"
+                    style={{ stroke: 'var(--ring-inner)' }}
                     strokeDasharray="37.7" strokeDashoffset="9" strokeLinecap="round"
                     transform="rotate(-90 25 25)"/>
                 </svg>
@@ -291,15 +295,15 @@ export default function BragEmployee() {
             </div>
             <ul className="be-ring-legend" aria-label="Evidence type breakdown">
               <li className="be-ring-leg">
-                <span className="be-ring-leg-dot" style={{ background: '#C46B4A' }} aria-hidden="true" />
+                <span className="be-ring-leg-dot" style={{ background: 'var(--ring-outer)' }} aria-hidden="true" />
                 Work artefacts ✓
               </li>
               <li className="be-ring-leg">
-                <span className="be-ring-leg-dot" style={{ background: '#C9A84C' }} aria-hidden="true" />
+                <span className="be-ring-leg-dot" style={{ background: 'var(--ring-mid)' }} aria-hidden="true" />
                 Metrics / data ✓
               </li>
               <li className="be-ring-leg">
-                <span className="be-ring-leg-dot" style={{ background: '#8C7B6E' }} aria-hidden="true" />
+                <span className="be-ring-leg-dot" style={{ background: 'var(--ring-inner)' }} aria-hidden="true" />
                 Peer recognition ✓
               </li>
               <li className="be-ring-leg be-ring-leg--missing">
@@ -359,7 +363,7 @@ export default function BragEmployee() {
                 <div className="be-evidence-row">
                   <EntryRings offsets={entry.ringOffsets} />
                   <div>
-                    <div className="be-strength-word" style={{ color: '#C46B4A' }}>{entry.strength}</div>
+                    <div className="be-strength-word">{entry.strength}</div>
                     <div className="be-strength-hint">{entry.strengthHint}</div>
                     <div className="be-ev-pills" role="list" aria-label="Evidence">
                       {entry.pills.map((pill, i) => (
