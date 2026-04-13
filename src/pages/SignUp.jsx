@@ -142,7 +142,7 @@ function Step1({ onNext }) {
 
       {/* Email */}
       <div className="su-field">
-        <FieldLabel>Work email</FieldLabel>
+        <FieldLabel>Email</FieldLabel>
         <FieldInput
           type="email" placeholder="you@company.com" value={email}
           onChange={(e) => { setEmail(e.target.value); setErrors(ev => ({ ...ev, email: false })) }}
@@ -424,7 +424,7 @@ function Step4({ email }) {
       <div className="su-step-heading">You're in.</div>
       <div className="su-step-sub su-done-sub">
         Your Clausule account is ready. We've sent a confirmation to{' '}
-        <strong>{email || 'you@company.com'}</strong>.
+        <strong>{email || 'you@email.com'}</strong>.
         {' '}Your 14-day trial starts now — no charge until it ends.
       </div>
 

@@ -39,11 +39,11 @@ export default function SignIn() {
             <p className="si-subheading">We'll send a verification code to your email.</p>
 
             <div className="si-field">
-              <label className="si-label" htmlFor="si-email">Work email</label>
+              <label className="si-label" htmlFor="si-email">Email</label>
               <input
                 id="si-email"
                 type="email"
-                placeholder="you@company.com"
+                placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoFocus
