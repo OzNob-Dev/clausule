@@ -584,7 +584,7 @@
 .be-comp-count-input {
   width: 56px;
   font-size: 13px;
-  background: #fff;
+  background: #FAF7F3;
   border: 1px solid rgba(60, 45, 35, 0.14);
   border-radius: 4px;
   color: #2A221A;
@@ -631,7 +631,7 @@
   border-radius: 5px;
   border: none;
   background: var(--acc);
-  color: #fff;
+  color: #FAF7F3;
   cursor: pointer;
   font-family: var(--font-sans);
   transition: opacity 0.15s;
@@ -666,7 +666,7 @@
   font-size: 12px;
   font-weight: 700;
   font-family: var(--font-sans);
-  color: #fff;
+  color: #FAF7F3;
   border-radius: var(--r);
   border: none;
   cursor: pointer;
@@ -691,7 +691,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #fff;
+  background: #FAF7F3;
 }
 
 .be-cv-card {

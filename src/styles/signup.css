@@ -138,7 +138,7 @@
 .su-step-circle--active {
   background: var(--su-acc);
   border-color: var(--su-acc);
-  color: #fff;
+  color: #FAF7F3;
 }
 
 .su-step-label {

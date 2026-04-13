@@ -77,8 +77,7 @@
 
 .kb-card:hover {
   transform: translateY(-2px);
-  border-color: var(--border2);
-  background: #fff;
+  border-color: #FAF7F3;
   box-shadow: 0 4px 16px rgba(60, 45, 35, 0.07);
 }
 

@@ -27,13 +27,13 @@
 
 /* Per-category colours — unselected (tint) and selected (solid) */
 .ec-cat-btn--perf                 { background: rgba(133, 183, 235, 0.14); color: #85B7EB; }
-.ec-cat-btn--perf.ec-cat-btn--sel { background: #85B7EB; color: #fff; }
+.ec-cat-btn--perf.ec-cat-btn--sel { background: #85B7EB; color: #FAF7F3; }
 
 .ec-cat-btn--conduct                 { background: rgba(239, 159, 39, 0.14); color: #EF9F27; }
-.ec-cat-btn--conduct.ec-cat-btn--sel { background: #EF9F27; color: #fff; }
+.ec-cat-btn--conduct.ec-cat-btn--sel { background: #EF9F27; color: #FAF7F3; }
 
 .ec-cat-btn--dev                 { background: rgba(93, 202, 165, 0.14); color: #5DCAA5; }
-.ec-cat-btn--dev.ec-cat-btn--sel { background: #5DCAA5; color: #fff; }
+.ec-cat-btn--dev.ec-cat-btn--sel { background: #5DCAA5; color: #FAF7F3; }
 
 .ec-type-row {
   display: flex;
@@ -104,7 +104,7 @@
   font-family: var(--font-sans);
   border-radius: var(--r);
   background: var(--acc);
-  color: #fff;
+  color: #FAF7F3;
   transition: opacity 0.15s;
   border: none;
   cursor: pointer;

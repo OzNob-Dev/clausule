@@ -170,7 +170,7 @@
   font-weight: 700;
   padding: 5px 12px;
   background: var(--red);
-  color: #fff;
+  color: #FAF7F3;
   border: none;
   border-radius: var(--r);
   cursor: pointer;
@@ -197,7 +197,7 @@
   font-weight: 700;
   padding: 6px 14px;
   background: var(--acc);
-  color: #fff;
+  color: #FAF7F3;
   border: none;
   border-radius: var(--r);
   cursor: pointer;

@@ -254,7 +254,7 @@ body {
 .dash-topbar { padding: 22px 28px 0; flex-shrink: 0; display: flex; align-items: flex-end; justify-content: space-between; }
 .dash-title { font-family: var(--font-sans); font-size: 30px; font-weight: 900; color: var(--tp); letter-spacing: -0.6px; line-height: 1; }
 .dash-sub { font-size: 12px; color: var(--tm); margin-top: 4px; }
-.dash-btn { background: var(--acc); color: #fff; border: none; border-radius: var(--r); font-size: 12px; padding: 8px 16px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; text-decoration: none; }
+.dash-btn { background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); font-size: 12px; padding: 8px 16px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; text-decoration: none; }
 
 .dash-stats { display: flex; align-items: center; padding: 14px 28px 0; gap: 0; flex-shrink: 0; }
 .dash-stat { padding-right: 28px; margin-right: 28px; border-right: 1px solid var(--rule); }
@@ -374,7 +374,7 @@ body {
 .doc-ed-body { font-family: var(--font-sans); font-size: 14px; font-weight: 400; color: var(--tp); line-height: 1.85; background: rgba(255,255,255,0.04); border: 1px solid var(--rule); border-radius: var(--r); padding: 10px 12px; outline: none; width: 100%; resize: none; transition: border-color 0.15s; }
 .doc-ed-body:focus { border-color: var(--bl); }
 .doc-ed-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-.doc-ed-save { font-size: 12px; padding: 6px 16px; background: var(--acc); color: #fff; border: none; border-radius: var(--r); cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
+.doc-ed-save { font-size: 12px; padding: 6px 16px; background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
 .doc-ed-cancel { font-size: 12px; padding: 6px 12px; background: transparent; color: var(--tm); border: none; cursor: pointer; font-family: var(--font-sans); }
 .doc-ed-delete { font-size: 11px; color: var(--rt); background: transparent; border: none; cursor: pointer; font-family: var(--font-sans); display: flex; align-items: center; gap: 5px; opacity: 0.7; transition: opacity 0.15s; }
 .doc-ed-delete:hover { opacity: 1; }
@@ -397,7 +397,7 @@ body {
 .doc-comp-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
 .doc-comp-checks { display: flex; align-items: center; gap: 14px; font-size: 11px; color: var(--ts); }
 .doc-comp-checks input { accent-color: var(--acc); margin-right: 4px; }
-.doc-comp-save { font-size: 12px; padding: 7px 18px; background: var(--acc); color: #fff; border: none; border-radius: var(--r); cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
+.doc-comp-save { font-size: 12px; padding: 7px 18px; background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
 .doc-comp-cancel { font-size: 12px; padding: 7px 12px; background: transparent; color: var(--tm); border: none; cursor: pointer; font-family: var(--font-sans); }
 
 /* Escalate flash */
@@ -434,7 +434,7 @@ body {
 .page-toprow { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
 .page-title { font-family: var(--font-sans); font-size: 36px; font-weight: 900; color: var(--tp); letter-spacing: -0.8px; line-height: 1; }
 .page-sub { font-size: 13px; color: var(--tm); margin-top: 5px; }
-.page-btn { background: var(--acc); color: #fff; border: none; border-radius: var(--r); font-size: 12px; padding: 8px 16px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; text-decoration: none; }
+.page-btn { background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); font-size: 12px; padding: 8px 16px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; text-decoration: none; }
 
 .page-search-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
 .page-sec-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--tm); font-weight: 700; }
@@ -506,7 +506,7 @@ body {
 .form-vis-item input { accent-color: var(--acc); }
 .form-actions { display: flex; align-items: center; justify-content: space-between; padding-top: 4px; }
 .form-cancel { font-size: 12px; color: var(--tm); background: transparent; border: none; cursor: pointer; font-family: var(--font-sans); text-decoration: none; }
-.form-save { background: var(--acc); color: #fff; border: none; border-radius: var(--r); font-size: 12px; padding: 9px 22px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
+.form-save { background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); font-size: 12px; padding: 9px 22px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
 .form-notice { background: var(--gb); border: 1px solid rgba(93,202,165,0.2); border-radius: var(--r); padding: 10px 14px; display: flex; align-items: flex-start; gap: 9px; }
 .form-notice-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gt); margin-top: 4px; flex-shrink: 0; }
 .form-notice-text { font-size: 12px; color: var(--gt); line-height: 1.6; }
@@ -516,7 +516,7 @@ body {
 .btn-delete svg { width: 12px; height: 12px; }
 
 /* Summary save btn */
-.sum-save { font-size: 11px; padding: 4px 12px; background: var(--acc); color: #fff; border: none; border-radius: var(--r); cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
+.sum-save { font-size: 11px; padding: 4px 12px; background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
 .sum-cancel { font-size: 11px; padding: 4px 10px; background: transparent; color: var(--tm); border: none; cursor: pointer; font-family: var(--font-sans); }
 
 /* Escalate pill (inline on entry) */
@@ -700,14 +700,14 @@ body {
   cursor: pointer; font-family: var(--font-sans); font-weight: 700; transition: all 0.12s; background: transparent;
 }
 .bd-comp-ev-type:hover { background: var(--acc-tint); }
-.bd-comp-ev-type.sel { background: var(--acc); color: #fff; border-color: var(--acc); }
+.bd-comp-ev-type.sel { background: var(--acc); color: #FAF7F3; border-color: var(--acc); }
 .bd-comp-count-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--tm); margin-bottom: 8px; font-weight: 700; }
 .bd-comp-count-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .bd-comp-count-input { width: 50px; padding: 5px 8px; font-size: 13px; font-family: var(--font-sans); border: 1px solid var(--rule); border-radius: var(--r); outline: none; text-align: center; color: var(--tp); background: rgba(255,255,255,0.04); }
 .bd-comp-count-hint { font-size: 11px; color: var(--tm); }
 .bd-comp-footer { display: flex; align-items: center; justify-content: space-between; }
 .bd-comp-note { font-size: 11px; color: var(--tm); font-style: italic; }
-.bd-comp-save { background: var(--acc); color: #fff; border: none; border-radius: var(--r); padding: 8px 18px; font-size: 12px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
+.bd-comp-save { background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); padding: 8px 18px; font-size: 12px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; }
 .bd-comp-cancel { font-size: 12px; color: var(--tm); background: transparent; border: none; cursor: pointer; font-family: var(--font-sans); margin-right: 4px; }
 
 /* Manager-approved note banner */
@@ -738,7 +738,7 @@ body {
 .thresh-desc { font-size: 12px; color: var(--ts); margin-top: 3px; line-height: 1.55; }
 .thresh-toggle { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ts); flex-shrink: 0; }
 .toggle-track { width: 36px; height: 20px; border-radius: 20px; background: var(--acc); position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.15s; }
-.toggle-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; position: absolute; top: 2px; right: 2px; transition: right 0.15s; }
+.toggle-thumb { width: 16px; height: 16px; border-radius: 50%; background: #FAF7F3; position: absolute; top: 2px; right: 2px; transition: right 0.15s; }
 .toggle-track.off { background: rgba(255,255,255,0.12); }
 .toggle-track.off .toggle-thumb { right: 18px; }
 
@@ -769,7 +769,7 @@ body {
 .notif-preview-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--acc-text); margin-bottom: 7px; font-weight: 700; }
 .notif-preview-text { font-family: var(--font-sans); font-size: 13px; font-style: italic; font-weight: 400; color: var(--tp); line-height: 1.7; }
 
-.settings-save { background: var(--acc); color: #fff; border: none; border-radius: var(--r); font-size: 12px; padding: 9px 22px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; margin-top: 20px; }
+.settings-save { background: var(--acc); color: #FAF7F3; border: none; border-radius: var(--r); font-size: 12px; padding: 9px 22px; cursor: pointer; font-family: var(--font-sans); font-weight: 700; margin-top: 20px; }
 
 /* ── Resume generator panel ── */
 .resume-panel {
@@ -781,7 +781,7 @@ body {
 .resume-panel-sub { font-size: 12px; color: var(--tm); margin-top: 3px; line-height: 1.55; }
 .resume-gen-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  background: var(--acc); color: #fff; border: none;
+  background: var(--acc); color: #FAF7F3; border: none;
   border-radius: var(--r); padding: 8px 14px; font-size: 11px;
   cursor: pointer; font-family: var(--font-sans); font-weight: 700;
   white-space: nowrap; flex-shrink: 0; transition: opacity 0.15s;
@@ -799,7 +799,7 @@ body {
   color: var(--ts); cursor: pointer; font-family: var(--font-sans); font-weight: 700;
   transition: all 0.12s;
 }
-.resume-fmt-pill.sel { background: var(--acc); color: #fff; border-color: var(--acc); }
+.resume-fmt-pill.sel { background: var(--acc); color: #FAF7F3; border-color: var(--acc); }
 
 /* Output area */
 .resume-output {
