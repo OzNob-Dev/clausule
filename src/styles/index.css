@@ -1,72 +1,51 @@
 @import '../ledger.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ── Minimal reset ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
-@layer base {
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: var(--font-sans);
-    background: var(--canvas);
-    color: var(--tp);
-    min-height: 100vh;
-    transition: background 0.2s, color 0.2s;
-  }
-
-  #root {
-    display: flex;
-    flex: 1;
-    min-height: 100vh;
-    width: 100%;
-  }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--canvas);
+  color: var(--tp);
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+  -webkit-font-smoothing: antialiased;
 }
 
-@layer components {
-  /* Rail navigation */
-  .rail {
-    @apply w-[46px] flex flex-col items-center py-[18px] flex-shrink-0 sticky top-0 h-screen opacity-50 transition-opacity duration-200;
-    background: var(--nav);
-  }
-  .rail:hover {
-    @apply opacity-100;
-  }
-
-  /* Calm signal: pulse animation for pitstop confirm */
-  @keyframes ps-confirm {
-    0%   { transform: scale(1); }
-    40%  { transform: scale(1.12); }
-    100% { transform: scale(1); }
-  }
-  .ps-confirm {
-    animation: ps-confirm 0.3s ease;
-  }
-
-  /* Think animation for search loading */
-  @keyframes think {
-    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-    40%            { opacity: 1;   transform: scale(1);   }
-  }
-  .think-dot {
-    animation: think 1.2s infinite ease-in-out;
-  }
-  .think-dot:nth-child(2) { animation-delay: 0.15s; }
-  .think-dot:nth-child(3) { animation-delay: 0.3s; }
-
-  /* Rail nav item hover — only fires when NOT active */
-  .nav-item:not([aria-current="page"]):hover {
-    background: rgba(255,255,255,0.07);
-    color: var(--ts);
-  }
-
-  /* Custom scrollbar */
-  .kb-col-body::-webkit-scrollbar { width: 3px; }
-  .kb-col-body::-webkit-scrollbar-track { background: transparent; }
-  .kb-col-body::-webkit-scrollbar-thumb { background: var(--tc); @apply rounded-full; }
+#root {
+  display: flex;
+  flex: 1;
+  min-height: 100vh;
+  width: 100%;
 }
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes ps-confirm {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.ps-confirm { animation: ps-confirm 0.3s ease; }
+
+@keyframes think {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1);   }
+}
+.think-dot { animation: think 1.2s infinite ease-in-out; }
+.think-dot:nth-child(2) { animation-delay: 0.15s; }
+.think-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* ── Nav item hover ──────────────────────────────────────────── */
+.nav-item:not([aria-current="page"]):hover {
+  background: rgba(255,255,255,0.07);
+  color: var(--ts);
+}
+
+/* ── Kanban scrollbar ────────────────────────────────────────── */
+.kb-col-body::-webkit-scrollbar { width: 3px; }
+.kb-col-body::-webkit-scrollbar-track { background: transparent; }
+.kb-col-body::-webkit-scrollbar-thumb { background: var(--tc); border-radius: 9999px; }
 
 /* ── Light content surface — all AppShell pages ──────────────── */
 /*
