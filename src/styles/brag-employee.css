@@ -64,6 +64,7 @@
 
 .be-rail-btn-active {
   background: var(--acc-tint);
+  color: var(--acc-text);
 }
 
 .be-rail-btn svg,
