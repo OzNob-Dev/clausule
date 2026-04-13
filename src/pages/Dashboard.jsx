@@ -32,7 +32,7 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {/* Stats strip */}
+        {/* Stats strip + inline search */}
         <div className="db-stats">
           {STATS.map(({ n, l }) => (
             <div key={l} className="db-stat">
@@ -40,17 +40,22 @@ export default function Dashboard() {
               <div className="db-stat__l">{l}</div>
             </div>
           ))}
-        </div>
-
-        {/* Search */}
-        <div className="db-search-wrap">
-          <input
-            type="text"
-            placeholder="Search by name…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="db-search"
-          />
+          <div className="db-stat db-stat--search">
+            <label className="db-search-wrap" htmlFor="db-search">
+              <svg className="db-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <circle cx="6.5" cy="6.5" r="4.5"/>
+                <path d="M10.5 10.5l3 3"/>
+              </svg>
+              <input
+                id="db-search"
+                type="search"
+                placeholder="Search people…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="db-search"
+              />
+            </label>
+          </div>
         </div>
 
         {/* Kanban */}
