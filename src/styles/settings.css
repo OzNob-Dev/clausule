@@ -391,7 +391,7 @@
 
 /* Save + Danger */
 .st-btn-save {
-  margin-top: 20px;
+  margin-top: 30px;
   background: var(--tx-1);
   color: var(--bg-doc);
   border: none;
