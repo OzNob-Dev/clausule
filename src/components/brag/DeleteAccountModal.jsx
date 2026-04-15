@@ -1,0 +1,75 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { storage } from '../../utils/storage'
+
+export default function DeleteAccountModal({ open, onClose }) {
+  const navigate = useNavigate()
+  const [deleteConfirm, setDeleteConfirm] = useState('')
+
+  if (!open) return null
+
+  const confirmReady = deleteConfirm === 'DELETE'
+
+  const handleConfirm = () => {
+    storage.clearAuth()
+    navigate('/')
+  }
+
+  const handleClose = () => {
+    setDeleteConfirm('')
+    onClose()
+  }
+
+  return (
+    <div
+      className="bss-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-modal-title"
+      onClick={(e) => e.target === e.currentTarget && handleClose()}
+    >
+      <div className="bss-modal">
+        <div className="bss-modal-icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" stroke="#B83232" strokeWidth="1.8" strokeLinecap="round">
+            <polyline points="3 6 5 6 17 6"/>
+            <path d="M8 6V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/>
+            <path d="M16 6l-1 11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
+            <line x1="10" y1="11" x2="10" y2="15"/>
+            <line x1="8"  y1="11" x2="8"  y2="15"/>
+            <line x1="12" y1="11" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div className="bss-modal-title" id="delete-modal-title">Delete your account?</div>
+        <div className="bss-modal-body">
+          This will <strong>permanently delete</strong> your brag doc and all associated entries, evidence files, and records from our servers. This action <strong>cannot be undone</strong>.
+        </div>
+        <div className="bss-modal-confirm-wrap">
+          <label className="bss-confirm-label" htmlFor="delete-confirm-input">
+            Type <span>DELETE</span> to confirm
+          </label>
+          <input
+            id="delete-confirm-input"
+            type="text"
+            value={deleteConfirm}
+            onChange={(e) => setDeleteConfirm(e.target.value)}
+            placeholder="DELETE"
+            autoFocus
+            className="bss-confirm-input"
+          />
+        </div>
+        <div className="bss-modal-actions">
+          <button
+            disabled={!confirmReady}
+            onClick={handleConfirm}
+            className={`bss-btn-delete-confirm${confirmReady ? ' bss-btn-delete-confirm--ready' : ''}`}
+          >
+            Yes, permanently delete my account
+          </button>
+          <button className="bss-btn-modal-cancel" onClick={handleClose}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
