@@ -194,7 +194,6 @@ export default function BragSettings() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const targetDevice = devices.find((d) => d.id === removeTarget)
   const confirmReady = deleteConfirm === 'DELETE'
 
   return (
@@ -434,31 +433,63 @@ export default function BragSettings() {
               <p className="bss-empty">No devices registered — add this device to enable biometric sign-in.</p>
             ) : (
               <ul className="bss-device-list" aria-label="Registered biometric devices">
-                {devices.map((device) => (
-                  <li key={device.id} className="bss-device-row">
-                    <div className="bss-device-icon">
-                      <DeviceIcon type={device.type} />
-                    </div>
-                    <div className="bss-device-info">
-                      <div className="bss-device-name">
-                        {device.name}
-                        {device.isCurrent && (
-                          <span className="bss-current-badge">This device</span>
-                        )}
-                      </div>
-                      <div className="bss-device-meta">
-                        {device.method} · Added {formatDate(device.addedAt)}
-                      </div>
-                    </div>
-                    <button
-                      className="bss-remove-btn"
-                      onClick={() => setRemoveTarget(device.id)}
-                      aria-label={`Remove ${device.name}`}
+                {devices.map((device) => {
+                  const confirming = removeTarget === device.id
+                  return (
+                    <li
+                      key={device.id}
+                      className={`bss-device-row${confirming ? ' bss-device-row--confirming' : ''}`}
                     >
-                      Remove
-                    </button>
-                  </li>
-                ))}
+                      <div className="bss-device-icon">
+                        <DeviceIcon type={device.type} />
+                      </div>
+                      <div className="bss-device-info">
+                        <div className="bss-device-name">
+                          {device.name}
+                          {device.isCurrent && (
+                            <span className="bss-current-badge">This device</span>
+                          )}
+                        </div>
+                        <div className="bss-device-meta">
+                          {device.method} · Added {formatDate(device.addedAt)}
+                        </div>
+                      </div>
+                      {confirming ? (
+                        <button
+                          className="bss-remove-btn"
+                          onClick={() => setRemoveTarget(null)}
+                          aria-label="Cancel removal"
+                        >
+                          Cancel
+                        </button>
+                      ) : (
+                        <button
+                          className="bss-remove-btn"
+                          onClick={() => setRemoveTarget(device.id)}
+                          aria-label={`Remove ${device.name}`}
+                        >
+                          Remove
+                        </button>
+                      )}
+
+                      {confirming && (
+                        <div className="bss-remove-confirm" role="alert">
+                          <p className="bss-remove-confirm-text">
+                            {devices.length === 1
+                              ? "This is your only device — you'll need your authenticator app to sign in after removing it."
+                              : `This device will no longer be able to sign in with ${device.method}.`}
+                          </p>
+                          <button
+                            className="bss-btn-confirm-remove-inline"
+                            onClick={() => removeDevice(device.id)}
+                          >
+                            Yes, remove
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  )
+                })}
               </ul>
             )}
 
@@ -519,38 +550,6 @@ export default function BragSettings() {
         </div>
       </main>
 
-      {/* ── Remove device modal ───────────────────────────────── */}
-      {removeTarget && (
-        <div
-          className="bss-overlay"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="remove-modal-title"
-          onClick={(e) => e.target === e.currentTarget && setRemoveTarget(null)}
-        >
-          <div className="bss-modal">
-            <div className="bss-modal-title" id="remove-modal-title">
-              Remove {targetDevice?.name}?
-            </div>
-            <div className="bss-modal-body">
-              {devices.length === 1
-                ? "This is your only registered device. After removing it you'll need your authenticator app to sign in."
-                : `You'll no longer be able to sign in with ${targetDevice?.method} on this device.`}
-            </div>
-            <div className="bss-modal-actions">
-              <button
-                className="bss-btn-confirm-remove"
-                onClick={() => removeDevice(removeTarget)}
-              >
-                Remove device
-              </button>
-              <button className="bss-btn-modal-cancel" onClick={() => setRemoveTarget(null)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── Delete account modal ──────────────────────────────── */}
       {deleteModal && (
