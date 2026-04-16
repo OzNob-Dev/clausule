@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { validateEmail } from '../utils/emailValidation'
 import '../styles/signup.css'
 
 const STEPS = ['You', 'Plan', 'Payment', 'Done']
@@ -60,14 +61,14 @@ function FieldLabel({ children }) {
   return <label className="su-field-label">{children}</label>
 }
 
-function FieldInput({ error, style: extra, ...props }) {
+function FieldInput({ error, onBlur, style: extra, ...props }) {
   const [focused, setFocused] = useState(false)
   return (
     <input
       {...props}
       className={`su-input${error ? ' su-input--error' : ''}${focused ? ' su-input--focused' : ''}`}
       onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
+      onBlur={(e) => { setFocused(false); onBlur?.(e) }}
     />
   )
 }
@@ -77,20 +78,29 @@ function Step1({ onNext }) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName]   = useState('')
   const [email, setEmail]         = useState('')
+  const [emailDirty, setEmailDirty] = useState(false)
   const [agreed, setAgreed]       = useState(false)
-  const [errors, setErrors]       = useState({})
+  const [nameError, setNameError] = useState(false)
+  const [agreedError, setAgreedError] = useState(false)
 
-  const validate = () => {
-    const e = {}
-    if (!firstName.trim()) e.firstName = true
-    if (!email.trim())     e.email = true
-    if (!agreed)           e.agreed = true
-    setErrors(e)
-    return Object.keys(e).length === 0
+  const emailResult = validateEmail(email)
+  const showEmailFeedback = emailDirty && email.trim().length > 0
+
+  const acceptSuggestion = () => {
+    setEmail(emailResult.suggestion)
+    setEmailDirty(false)
   }
 
   const handleContinue = () => {
-    if (validate()) onNext({ firstName, lastName, email })
+    const noName  = !firstName.trim()
+    const badEmail = !emailResult.valid && !emailResult.suggestion
+    const noAgreed = !agreed
+    setNameError(noName)
+    setAgreedError(noAgreed)
+    setEmailDirty(true)
+    if (!noName && !badEmail && !noAgreed) {
+      onNext({ firstName, lastName, email: emailResult.suggestion ?? email.trim() })
+    }
   }
 
   return (
@@ -104,8 +114,8 @@ function Step1({ onNext }) {
           <FieldLabel>First name</FieldLabel>
           <FieldInput
             type="text" placeholder="Jordan" value={firstName}
-            onChange={(e) => { setFirstName(e.target.value); setErrors(ev => ({ ...ev, firstName: false })) }}
-            error={errors.firstName}
+            onChange={(e) => { setFirstName(e.target.value); setNameError(false) }}
+            error={nameError}
           />
         </div>
         <div className="su-name-col">
@@ -122,10 +132,27 @@ function Step1({ onNext }) {
         <FieldLabel>Email</FieldLabel>
         <FieldInput
           type="email" placeholder="you@email.com" value={email}
-          onChange={(e) => { setEmail(e.target.value); setErrors(ev => ({ ...ev, email: false })) }}
-          error={errors.email}
+          onChange={(e) => { setEmail(e.target.value); setEmailDirty(true) }}
+          onBlur={() => setEmailDirty(true)}
+          error={showEmailFeedback && !!emailResult.error}
+          aria-invalid={showEmailFeedback && !emailResult.valid}
+          aria-describedby="su-email-hint"
         />
-        <div className="su-field-hint">We'll send a verification code here each time you sign in.</div>
+        <div id="su-email-hint">
+          {showEmailFeedback && emailResult.error ? (
+            <span className="su-field-hint su-field-hint--error" role="alert">{emailResult.error}</span>
+          ) : showEmailFeedback && emailResult.suggestion ? (
+            <span className="su-field-hint su-field-hint--suggest" role="alert">
+              Did you mean{' '}
+              <button type="button" className="su-suggest-btn" onClick={acceptSuggestion}>
+                {emailResult.suggestion}
+              </button>
+              ?
+            </span>
+          ) : (
+            <span className="su-field-hint">We'll send a verification code here each time you sign in.</span>
+          )}
+        </div>
       </div>
 
       {/* Terms */}
@@ -133,13 +160,13 @@ function Step1({ onNext }) {
         <label className="su-terms-label">
           <input
             type="checkbox" checked={agreed}
-            onChange={(e) => { setAgreed(e.target.checked); setErrors(ev => ({ ...ev, agreed: false })) }}
+            onChange={(e) => { setAgreed(e.target.checked); setAgreedError(false) }}
           />
           I agree to Clausule's{' '}
           <a href="#">Terms of Service</a>{' '}and{' '}
           <a href="#">Privacy Policy</a>
         </label>
-        {errors.agreed && (
+        {agreedError && (
           <div className="su-terms-error">Please agree to continue.</div>
         )}
       </div>

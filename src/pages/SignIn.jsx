@@ -1,17 +1,31 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { storage } from '../utils/storage'
+import { validateEmail } from '../utils/emailValidation'
 import '../styles/signin.css'
 
 export default function SignIn() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
+  const [touched, setTouched] = useState(false)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
+
+  const result = validateEmail(email)
+  const showFeedback = touched || submitAttempted
 
   const sendCode = (e) => {
     e.preventDefault()
-    if (!email.trim()) return
-    storage.setEmail(email.trim())
+    setSubmitAttempted(true)
+    if (!result.valid && !result.suggestion) return
+    const finalEmail = result.suggestion ?? email.trim()
+    storage.setEmail(finalEmail)
     navigate('/mfa-setup')
+  }
+
+  const acceptSuggestion = () => {
+    setEmail(result.suggestion)
+    setTouched(false)
+    setSubmitAttempted(false)
   }
 
   return (
@@ -45,12 +59,29 @@ export default function SignIn() {
                 type="email"
                 placeholder="you@email.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setSubmitAttempted(false) }}
+                onBlur={() => email.trim() && setTouched(true)}
                 autoFocus
                 autoComplete="email"
                 required
-                className="si-input"
+                aria-invalid={showFeedback && !result.valid && !result.suggestion}
+                aria-describedby={showFeedback && (result.error || result.suggestion) ? 'si-email-hint' : undefined}
+                className={`si-input${showFeedback && result.error ? ' si-input--error' : ''}${showFeedback && result.suggestion ? ' si-input--warn' : ''}`}
               />
+              {showFeedback && result.error && (
+                <p id="si-email-hint" className="si-field-hint si-field-hint--error" role="alert">
+                  {result.error}
+                </p>
+              )}
+              {showFeedback && result.suggestion && (
+                <p id="si-email-hint" className="si-field-hint si-field-hint--suggest" role="alert">
+                  Did you mean{' '}
+                  <button type="button" className="si-suggest-btn" onClick={acceptSuggestion}>
+                    {result.suggestion}
+                  </button>
+                  ?
+                </p>
+              )}
             </div>
 
             <button type="submit" className="si-btn-primary" disabled={!email.trim()}>
