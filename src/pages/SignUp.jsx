@@ -6,10 +6,7 @@ const STEPS = ['You', 'Plan', 'Payment', 'Done']
 
 const INCLUDES = [
   'Brag doc with evidence rings and strength scoring',
-  'Resume generator — polished CV from your entries',
-  'Semantic search across all your file notes',
-  'Manager-side file notes for up to 5 team members',
-  'Pattern detection and cross-team insights',
+  'Resume generator. Polished CV from your entries',
 ]
 
 const NEXT_STEPS = [
@@ -101,24 +98,6 @@ function Step1({ onNext }) {
       <div className="su-step-heading">Create your account</div>
       <div className="su-step-sub">Your brag doc, your file. Takes about 2 minutes.</div>
 
-      {/* Social proof */}
-      <div className="su-social-proof">
-        <div className="su-avatars">
-          {[
-            ['SC', '#1A1510'],
-            ['PL', '#5B4E42'],
-            ['AM', '#3D3228'],
-          ].map(([initials, bg]) => (
-            <div key={initials} className="su-proof-avatar" style={{ background: bg }}>
-              {initials}
-            </div>
-          ))}
-        </div>
-        <div className="su-proof-text">
-          Join <strong>214 managers and employees</strong> already using Clausule to build better careers.
-        </div>
-      </div>
-
       {/* Name row */}
       <div className="su-name-row">
         <div className="su-name-col">
@@ -166,7 +145,6 @@ function Step1({ onNext }) {
       </div>
 
       <CtaBtn onClick={handleContinue}>Continue <ArrowIcon /></CtaBtn>
-      <div className="su-no-card-note">No card required until the next step.</div>
     </div>
   )
 }
@@ -174,53 +152,29 @@ function Step1({ onNext }) {
 // ── Step 2: Plan ─────────────────────────────────────────────────
 const PLANS = [
   {
-    id: 'free',
-    name: 'Free',
-    badge: null,
-    desc: 'Your brag doc, unlimited entries, CV generator. No expiry.',
-    amount: '$0',
-    period: 'forever',
-    saves: null,
-  },
-  {
     id: 'monthly',
     name: 'Individual',
-    badge: 'Most popular',
-    badgePopular: true,
-    desc: 'Everything in Free, plus semantic search, pattern detection, and manager file notes.',
-    amount: '$9',
-    period: 'per month',
+    badge: null,
+    desc: 'Brag doc with unlimited entries, CV generator, and evidence rings. Cancel any time.',
+    amount: '$5',
+    period: '/mo',
     saves: null,
-  },
-  {
-    id: 'annual',
-    name: 'Individual',
-    badge: 'Annual',
-    badgePopular: false,
-    desc: 'Everything in Individual, billed yearly. Two months free.',
-    amount: '$7',
-    period: 'per month',
-    saves: 'Save $24/yr',
-  },
+  }
 ]
 
 function Step2({ onNext, onBack }) {
   const [selected, setSelected] = useState('monthly')
 
   const handleContinue = () => {
-    onNext({ plan: selected, skipPayment: selected === 'free' })
+    onNext({ plan: selected })
   }
 
-  const ctaLabel = selected === 'free'
-    ? 'Continue with Free'
-    : selected === 'monthly'
-    ? 'Continue with Individual — $9/mo'
-    : 'Continue with Individual — $7/mo'
+  const ctaLabel = 'Continue with Individual — $5/mo'
 
   return (
     <div>
-      <div className="su-step-heading">Choose your plan</div>
-      <div className="su-step-sub">Start free, upgrade when you're ready. Cancel any time.</div>
+      <div className="su-step-heading">Your plan</div>
+      <div className="su-step-sub">Everything you need to own your career story. Cancel any time.</div>
 
       {/* Plan cards */}
       <div className="su-plans">
@@ -261,7 +215,7 @@ function Step2({ onNext, onBack }) {
 
       {/* What's included */}
       <div className="su-includes">
-        <div className="su-includes-label">Everything in Individual includes</div>
+        <div className="su-includes-label">What's included</div>
         <div className="su-includes-list">
           {INCLUDES.map((item) => (
             <div key={item} className="su-include-item">
@@ -289,19 +243,13 @@ function formatExpiry(val) {
   return v
 }
 
-function trialEndDate() {
-  const d = new Date()
-  d.setDate(d.getDate() + 14)
-  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
-function Step3({ plan, onNext, onBack }) {
+function Step3({ onNext, onBack }) {
   const [cardName, setCardName] = useState('')
   const [cardNum, setCardNum]   = useState('')
   const [expiry, setExpiry]     = useState('')
   const [cvc, setCvc]           = useState('')
 
-  const orderAmount = plan === 'annual' ? '$84.00 / yr' : '$9.00 / mo'
+  const orderAmount = '$5.00 / mo'
 
   return (
     <div>
@@ -315,18 +263,10 @@ function Step3({ plan, onNext, onBack }) {
           <span className="su-order-item">Clausule Individual</span>
           <span className="su-order-val">{orderAmount}</span>
         </div>
-        <div className="su-order-row">
-          <span className="su-order-item">14-day free trial</span>
-          <span className="su-order-val su-order-val--discount">−{plan === 'annual' ? '$84.00' : '$9.00'}</span>
-        </div>
         <div className="su-order-divider" />
         <div className="su-order-row">
           <span className="su-order-total-label">Due today</span>
-          <span className="su-order-total-val">$0.00</span>
-        </div>
-        <div className="su-order-note">
-          Your card won't be charged until your trial ends on{' '}
-          <strong>{trialEndDate()}</strong>. Cancel any time before then.
+          <span className="su-order-total-val">$5.00</span>
         </div>
       </div>
 
@@ -389,10 +329,10 @@ function Step3({ plan, onNext, onBack }) {
         256-bit SSL encryption · PCI DSS compliant · Powered by Stripe
       </div>
 
-      <CtaBtn terra onClick={onNext}>Start free trial <ArrowIcon /></CtaBtn>
+      <CtaBtn terra onClick={onNext}>Subscribe — $5/mo <ArrowIcon /></CtaBtn>
       <BackBtn onClick={onBack} />
       <div className="su-trial-note">
-        By starting your trial you agree to our <a href="#">Subscription Terms</a>. You'll receive an email reminder before your trial ends.
+        By subscribing you agree to our <a href="#">Subscription Terms</a>. Cancel any time from your account settings.
       </div>
     </div>
   )
@@ -413,7 +353,6 @@ function Step4({ email }) {
       <div className="su-step-sub su-done-sub">
         Your Clausule account is ready. We've sent a confirmation to{' '}
         <strong>{email || 'you@email.com'}</strong>.
-        {' '}Your 14-day trial starts now — no charge until it ends.
       </div>
 
       {/* Next steps */}
@@ -477,20 +416,12 @@ function Aside() {
   return (
     <div className="su-aside-wrap">
       <div className="su-aside-card">
-        <div className="su-aside-label">What people say</div>
-        <div className="su-aside-quote">
-          Finally, a tool that feels like it's on my side. My brag doc went from a blank document I never updated to something I actually look forward to adding to.
-        </div>
-        <div className="su-aside-attr">— Software engineer, 4 years exp.</div>
-      </div>
-      <div className="su-aside-card">
         <div className="su-aside-label">What's included</div>
         <div className="su-aside-feature-list">
           {[
             'Brag doc with evidence rings',
             'One-tap CV generator',
             'Semantic search across notes',
-            '14-day free trial, no card needed to start',
           ].map((feat) => (
             <div key={feat} className="su-aside-feature">
               <div className="su-aside-dot" />
@@ -507,7 +438,6 @@ function Aside() {
 export default function SignUp() {
   const [step, setStep]     = useState(1)
   const [userData, setUserData] = useState({})
-  const [planData, setPlanData] = useState({})
 
   const goStep = (n) => {
     setStep(n)
@@ -515,10 +445,7 @@ export default function SignUp() {
   }
 
   const handleStep1 = (data) => { setUserData(data); goStep(2) }
-  const handleStep2 = (data) => {
-    setPlanData(data)
-    goStep(data.skipPayment ? 4 : 3)
-  }
+  const handleStep2 = () => { goStep(3) }
 
   return (
     <div className="su-page">
@@ -559,7 +486,6 @@ export default function SignUp() {
             {step === 2 && <Step2 onNext={handleStep2} onBack={() => goStep(1)} />}
             {step === 3 && (
               <Step3
-                plan={planData.plan}
                 onNext={() => goStep(4)}
                 onBack={() => goStep(2)}
               />
