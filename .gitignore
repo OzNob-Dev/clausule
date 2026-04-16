@@ -3,3 +3,6 @@ node_modules/
 dist/
 dev-mockups/
 CLAUDE.md
+.claudeignore
+.env.local
+.env*.local

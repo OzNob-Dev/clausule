@@ -1,34 +1,53 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../utils/storage'
 
 export default function DeleteAccountModal({ open, onClose }) {
   const navigate = useNavigate()
   const [deleteConfirm, setDeleteConfirm] = useState('')
+  const [visible, setVisible] = useState(false)
+  const inputRef = useRef(null)
 
-  if (!open) return null
+  useEffect(() => {
+    if (open) {
+      requestAnimationFrame(() => setVisible(true))
+    } else {
+      setVisible(false)
+      setDeleteConfirm('')
+    }
+  }, [open])
 
   const confirmReady = deleteConfirm === 'DELETE'
 
   const handleConfirm = () => {
+    if (!confirmReady) {
+      const el = inputRef.current
+      if (el) {
+        el.classList.remove('bss-confirm-input--shake')
+        void el.offsetWidth
+        el.classList.add('bss-confirm-input--shake')
+      }
+      return
+    }
     storage.clearAuth()
     navigate('/')
   }
 
   const handleClose = () => {
-    setDeleteConfirm('')
     onClose()
   }
 
+  if (!open && !visible) return null
+
   return (
     <div
-      className="bss-overlay"
+      className={`bss-overlay${visible ? ' bss-overlay--open' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="delete-modal-title"
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
-      <div className="bss-modal">
+      <div className={`bss-modal${visible ? ' bss-modal--open' : ''}`}>
         <div className="bss-modal-icon-wrap" aria-hidden="true">
           <svg viewBox="0 0 20 20" fill="none" stroke="#B83232" strokeWidth="1.8" strokeLinecap="round">
             <polyline points="3 6 5 6 17 6"/>
@@ -49,6 +68,7 @@ export default function DeleteAccountModal({ open, onClose }) {
           </label>
           <input
             id="delete-confirm-input"
+            ref={inputRef}
             type="text"
             value={deleteConfirm}
             onChange={(e) => setDeleteConfirm(e.target.value)}
@@ -59,7 +79,6 @@ export default function DeleteAccountModal({ open, onClose }) {
         </div>
         <div className="bss-modal-actions">
           <button
-            disabled={!confirmReady}
             onClick={handleConfirm}
             className={`bss-btn-delete-confirm${confirmReady ? ' bss-btn-delete-confirm--ready' : ''}`}
           >

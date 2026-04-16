@@ -116,7 +116,8 @@
   padding: 11px 13px;
   border-radius: 8px;
   background: rgba(60, 45, 35, 0.035);
-  transition: background 0.12s;
+  border: 1px solid transparent;
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .bss-device-row:hover { background: rgba(60, 45, 35, 0.055); }
@@ -184,7 +185,20 @@
 .bss-device-row--confirming {
   flex-wrap: wrap;
   background: rgba(184, 50, 50, 0.04);
-  border: 1px solid rgba(184, 50, 50, 0.14);
+  border-color: rgba(184, 50, 50, 0.18);
+}
+
+@keyframes confirm-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scaleY(0.92);
+    transform-origin: top;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    transform-origin: top;
+  }
 }
 
 .bss-remove-confirm {
@@ -195,7 +209,8 @@
   gap: 12px;
   padding-top: 10px;
   margin-top: 6px;
-  border-top: 1px solid rgba(184, 50, 50, 0.1);
+  border-top: 1px solid rgba(184, 50, 50, 0.12);
+  animation: confirm-expand 0.2s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .bss-remove-confirm-text {
@@ -353,15 +368,30 @@
 .bss-btn-delete:hover { background: #B83232; color: #FAF7F3; }
 
 /* ── Modals ────────────────────────────────────────────────────── */
+@keyframes modal-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
 .bss-overlay {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  pointer-events: none;
+  transition: background 0.2s ease;
+}
+
+.bss-overlay--open {
+  background: rgba(0, 0, 0, 0.55);
+  pointer-events: auto;
 }
 
 .bss-modal {
@@ -371,6 +401,21 @@
   padding: 28px;
   width: 100%;
   max-width: 400px;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bss-modal--open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bss-confirm-input--shake {
+  animation: modal-shake 0.35s ease both;
+  border-color: #B83232 !important;
+  box-shadow: 0 0 0 3px rgba(184, 50, 50, 0.18) !important;
 }
 
 .bss-modal-icon-wrap {

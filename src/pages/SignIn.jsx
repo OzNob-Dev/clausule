@@ -16,9 +16,8 @@ export default function SignIn() {
   const sendCode = (e) => {
     e.preventDefault()
     setSubmitAttempted(true)
-    if (!result.valid && !result.suggestion) return
-    const finalEmail = result.suggestion ?? email.trim()
-    storage.setEmail(finalEmail)
+    if (!result.valid) return
+    storage.setEmail(email.trim())
     navigate('/mfa-setup')
   }
 

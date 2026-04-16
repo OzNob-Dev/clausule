@@ -27,11 +27,15 @@ function closestDomain(typed) {
   const lower = typed.toLowerCase()
   if (COMMON_DOMAINS.includes(lower)) return null
 
+  // Only run typo detection on single-dot domains (no subdomains, no .co.uk etc.)
+  const dotCount = (lower.match(/\./g) || []).length
+  if (dotCount !== 1) return null
+
   let best = null, bestDist = Infinity
   for (const d of COMMON_DOMAINS) {
     const dist = levenshtein(lower, d)
-    // Only suggest if within 2 edits and the domain isn't too short
-    if (dist < bestDist && dist <= 2 && typed.length >= 5) {
+    // Require: within 2 edits, domain is at least 6 chars, and length diff ≤ 2 (avoids acme.com → me.com)
+    if (dist < bestDist && dist <= 2 && lower.length >= 6 && Math.abs(lower.length - d.length) <= 2) {
       best = d
       bestDist = dist
     }
@@ -47,22 +51,22 @@ function closestDomain(typed) {
 export function validateEmail(raw) {
   const email = (raw || '').trim()
 
-  if (!email) return { valid: false, error: 'Enter your email address.', suggestion: null }
+  if (!email) return { valid: false, error: "Pop your email address in here and we'll take it from there.", suggestion: null }
 
   const atCount = (email.match(/@/g) || []).length
-  if (atCount === 0) return { valid: false, error: 'Missing an @ — email addresses need one.', suggestion: null }
-  if (atCount > 1)  return { valid: false, error: 'There can only be one @ in an email address.', suggestion: null }
+  if (atCount === 0) return { valid: false, error: "Looks like the @ is missing — every email needs one (e.g. you@gmail.com).", suggestion: null }
+  if (atCount > 1)  return { valid: false, error: "Oops — there's more than one @ in there. Email addresses only get one!", suggestion: null }
 
   const [local, domain] = email.split('@')
 
-  if (!local) return { valid: false, error: 'Add something before the @.', suggestion: null }
-  if (!domain) return { valid: false, error: 'Add a domain after the @, like gmail.com.', suggestion: null }
+  if (!local) return { valid: false, error: "Don't forget the part before the @ — that's your name or username.", suggestion: null }
+  if (!domain) return { valid: false, error: "Almost! Add the part after the @, like gmail.com or outlook.com.", suggestion: null }
 
   const dotIdx = domain.lastIndexOf('.')
-  if (dotIdx < 1) return { valid: false, error: `"${domain}" doesn't look like a valid domain.`, suggestion: null }
+  if (dotIdx < 1) return { valid: false, error: `Hmm, "${domain}" doesn't look quite right. Try something like gmail.com.`, suggestion: null }
 
   const tld = domain.slice(dotIdx + 1)
-  if (tld.length < 2) return { valid: false, error: 'The part after the last dot looks too short.', suggestion: null }
+  if (tld.length < 2) return { valid: false, error: "The ending looks a bit short — it should be something like .com or .co.uk.", suggestion: null }
 
   // Structural check passes — now look for domain typos
   const fix = closestDomain(domain)

@@ -2,7 +2,10 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { storage } from '../utils/storage'
+import CodeEmail from '../components/ui/CodeEmail'
+import { sendCodeEmail } from '../utils/sendCodeEmail'
 import '../styles/mfa-setup.css'
+import '../styles/code-email.css'
 
 const DEMO_OTP          = '847291'
 const DEMO_TOTP         = '123456'
@@ -68,6 +71,11 @@ export default function MfaSetup() {
 
   const email    = storage.getEmail() || 'your email'
   const totpDone = totpState === 'done'
+
+  // Send OTP email once on mount
+  useEffect(() => {
+    sendCodeEmail(email, DEMO_OTP).catch(() => {})
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Detect platform authenticator once on mount
   useEffect(() => {
@@ -230,9 +238,9 @@ export default function MfaSetup() {
             </div>
             <h1 className="mfa-heading">Check your email</h1>
             <p className="mfa-sub">
-              We sent a 6-digit code to<br /><strong>{email}</strong>
+              We sent a 6-digit code to <strong>{email}</strong>
             </p>
-            <div className="mfa-demo-pill">Demo code: <strong>{DEMO_OTP}</strong></div>
+            <CodeEmail to={email} code={DEMO_OTP} />
             <DigitRow
               digits={otp} inputState={otpState} inputRefs={otpRefs}
               onChange={handleOtpChange} onKeyDown={handleOtpKey} onPaste={handleOtpPaste}

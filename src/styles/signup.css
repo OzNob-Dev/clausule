@@ -403,7 +403,6 @@
 }
 
 .su-plan-card--sel {
-  background: var(--su-canvas);
   border-color: var(--su-tx1);
 }
 
@@ -693,7 +692,7 @@
 .su-questions-note a { color: var(--su-tx3); }
 
 /* Aside panel */
-.su-aside-wrap { flex: 1; padding-top: 58px; }
+.su-aside-wrap { flex: 1; padding-top: 58px; display: flex; flex-direction: column; gap: 12px; }
 
 .su-aside-card {
   background: var(--su-card);
@@ -789,3 +788,62 @@
 }
 
 .su-suggest-btn:hover { color: #5c4100; }
+
+/* Plan summary (inline in step 1) */
+.su-plan-summary {
+  border: 1.5px solid var(--su-border-em);
+  border-radius: var(--su-r);
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  background: var(--su-card);
+}
+
+.su-plan-summary-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--su-tx1);
+  margin-bottom: 12px;
+}
+
+.su-plan-summary-period {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--su-tx3);
+}
+
+.su-plan-summary-includes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.su-plan-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--su-tx2);
+}
+
+/* Aside pricing card */
+.su-aside-price {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--su-tx1);
+  line-height: 1;
+  margin: 8px 0 6px;
+}
+
+.su-aside-price-period {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--su-tx3);
+}
+
+.su-aside-price-note {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--su-tx4);
+  line-height: 1.4;
+}

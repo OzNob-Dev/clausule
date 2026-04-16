@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../utils/emailValidation'
+import { storage } from '../utils/storage'
 import '../styles/signup.css'
 
-const STEPS = ['You', 'Plan', 'Payment', 'Done']
+const STEPS = ['Account', 'Payment', 'Done']
 
 const INCLUDES = [
   'Brag doc with evidence rings and strength scoring',
@@ -73,13 +74,13 @@ function FieldInput({ error, onBlur, style: extra, ...props }) {
   )
 }
 
-// ── Step 1: Account ──────────────────────────────────────────────
-function Step1({ onNext }) {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName]   = useState('')
-  const [email, setEmail]         = useState('')
+// ── Step 1: Account + Plan ────────────────────────────────────────
+function Step1({ onNext, initialData }) {
+  const [firstName, setFirstName] = useState(initialData.firstName)
+  const [lastName, setLastName]   = useState(initialData.lastName)
+  const [email, setEmail]         = useState(initialData.email)
   const [emailDirty, setEmailDirty] = useState(false)
-  const [agreed, setAgreed]       = useState(false)
+  const [agreed, setAgreed]       = useState(initialData.agreed)
   const [nameError, setNameError] = useState(false)
   const [agreedError, setAgreedError] = useState(false)
 
@@ -92,7 +93,7 @@ function Step1({ onNext }) {
   }
 
   const handleContinue = () => {
-    const noName  = !firstName.trim()
+    const noName   = !firstName.trim()
     const badEmail = !emailResult.valid && !emailResult.suggestion
     const noAgreed = !agreed
     setNameError(noName)
@@ -171,95 +172,12 @@ function Step1({ onNext }) {
         )}
       </div>
 
-      <CtaBtn onClick={handleContinue}>Continue <ArrowIcon /></CtaBtn>
+      <CtaBtn onClick={handleContinue}>Continue to payment <ArrowIcon /></CtaBtn>
     </div>
   )
 }
 
-// ── Step 2: Plan ─────────────────────────────────────────────────
-const PLANS = [
-  {
-    id: 'monthly',
-    name: 'Individual',
-    badge: null,
-    desc: 'Brag doc with unlimited entries, CV generator, and evidence rings. Cancel any time.',
-    amount: '$5',
-    period: '/mo',
-    saves: null,
-  }
-]
-
-function Step2({ onNext, onBack }) {
-  const [selected, setSelected] = useState('monthly')
-
-  const handleContinue = () => {
-    onNext({ plan: selected })
-  }
-
-  const ctaLabel = 'Continue with Individual — $5/mo'
-
-  return (
-    <div>
-      <div className="su-step-heading">Your plan</div>
-      <div className="su-step-sub">Everything you need to own your career story. Cancel any time.</div>
-
-      {/* Plan cards */}
-      <div className="su-plans">
-        {PLANS.map((plan) => {
-          const sel = selected === plan.id
-          return (
-            <div
-              key={plan.id}
-              onClick={() => setSelected(plan.id)}
-              className={`su-plan-card${sel ? ' su-plan-card--sel' : ''}`}
-            >
-              {/* Radio */}
-              <div className={`su-plan-radio${sel ? ' su-plan-radio--sel' : ''}`}>
-                {sel && <div className="su-plan-radio-dot" />}
-              </div>
-              {/* Body */}
-              <div className="su-plan-body">
-                <div className="su-plan-name-row">
-                  <span className="su-plan-name">{plan.name}</span>
-                  {plan.badge && (
-                    <span className={`su-plan-badge${plan.badgePopular ? ' su-plan-badge--popular' : ' su-plan-badge--annual'}`}>
-                      {plan.badge}
-                    </span>
-                  )}
-                </div>
-                <div className="su-plan-desc">{plan.desc}</div>
-              </div>
-              {/* Price */}
-              <div className="su-plan-price">
-                <span className="su-plan-amount">{plan.amount}</span>
-                <span className="su-plan-period">{plan.period}</span>
-                {plan.saves && <span className="su-plan-saves">{plan.saves}</span>}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* What's included */}
-      <div className="su-includes">
-        <div className="su-includes-label">What's included</div>
-        <div className="su-includes-list">
-          {INCLUDES.map((item) => (
-            <div key={item} className="su-include-item">
-              <div className="su-check-circle"><CheckIcon /></div>
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <CtaBtn onClick={handleContinue}>{ctaLabel} <ArrowIcon /></CtaBtn>
-      <BackBtn onClick={onBack} />
-    </div>
-  )
-}
-
-// ── Step 3: Payment ───────────────────────────────────────────────
+// ── Step 2: Payment ───────────────────────────────────────────────
 function formatCardNumber(val) {
   return val.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
 }
@@ -270,13 +188,13 @@ function formatExpiry(val) {
   return v
 }
 
-function Step3({ onNext, onBack }) {
-  const [cardName, setCardName] = useState('')
-  const [cardNum, setCardNum]   = useState('')
-  const [expiry, setExpiry]     = useState('')
-  const [cvc, setCvc]           = useState('')
+function Step2({ onNext, onBack, initialData }) {
+  const [cardName, setCardName] = useState(initialData.cardName)
+  const [cardNum, setCardNum]   = useState(initialData.cardNum)
+  const [expiry, setExpiry]     = useState(initialData.expiry)
+  const [cvc, setCvc]           = useState(initialData.cvc)
 
-  const orderAmount = '$5.00 / mo'
+  const save = () => ({ cardName, cardNum, expiry, cvc })
 
   return (
     <div>
@@ -288,7 +206,7 @@ function Step3({ onNext, onBack }) {
         <div className="su-order-label">Order summary</div>
         <div className="su-order-row">
           <span className="su-order-item">Clausule Individual</span>
-          <span className="su-order-val">{orderAmount}</span>
+          <span className="su-order-val">$5.00 / mo</span>
         </div>
         <div className="su-order-divider" />
         <div className="su-order-row">
@@ -356,8 +274,8 @@ function Step3({ onNext, onBack }) {
         256-bit SSL encryption · PCI DSS compliant · Powered by Stripe
       </div>
 
-      <CtaBtn terra onClick={onNext}>Subscribe — $5/mo <ArrowIcon /></CtaBtn>
-      <BackBtn onClick={onBack} />
+      <CtaBtn terra onClick={() => { onNext(save()) }}>Subscribe — $5/mo <ArrowIcon /></CtaBtn>
+      <BackBtn onClick={() => { onBack(save()) }} />
       <div className="su-trial-note">
         By subscribing you agree to our <a href="#">Subscription Terms</a>. Cancel any time from your account settings.
       </div>
@@ -365,8 +283,8 @@ function Step3({ onNext, onBack }) {
   )
 }
 
-// ── Step 4: Done ─────────────────────────────────────────────────
-function Step4({ email }) {
+// ── Step 3: Done ─────────────────────────────────────────────────
+function Step3({ email }) {
   const navigate = useNavigate()
   return (
     <div>
@@ -395,8 +313,8 @@ function Step4({ email }) {
         </div>
       </div>
 
-      <CtaBtn onClick={() => navigate('/brag')}>
-        Go to my brag doc <ArrowIcon />
+      <CtaBtn onClick={() => { storage.setAuthed(); storage.setRole('employee'); navigate('/dashboard') }}>
+        Go to my dashboard <ArrowIcon />
       </CtaBtn>
       <div className="su-questions-note">
         Questions? <a href="mailto:help@clausule.com">help@clausule.com</a>
@@ -438,41 +356,61 @@ function Progress({ step }) {
   )
 }
 
-// ── Aside panel (step 1 only) ─────────────────────────────────────
+// ── Aside cards ───────────────────────────────────────────────────
+function PricingCard() {
+  return (
+    <div className="su-aside-card">
+      <div className="su-aside-label">Individual plan</div>
+      <div className="su-aside-price">
+        $5<span className="su-aside-price-period">/mo</span>
+      </div>
+      <div className="su-aside-price-note">Cancel any time from your account settings.</div>
+    </div>
+  )
+}
+
+function IncludesCard() {
+  return (
+    <div className="su-aside-card">
+      <div className="su-aside-label">What's included</div>
+      <div className="su-aside-feature-list">
+        {INCLUDES.map((feat) => (
+          <div key={feat} className="su-aside-feature">
+            <div className="su-aside-dot" />
+            {feat}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function Aside() {
   return (
     <div className="su-aside-wrap">
-      <div className="su-aside-card">
-        <div className="su-aside-label">What's included</div>
-        <div className="su-aside-feature-list">
-          {[
-            'Brag doc with evidence rings',
-            'One-tap CV generator',
-            'Semantic search across notes',
-          ].map((feat) => (
-            <div key={feat} className="su-aside-feature">
-              <div className="su-aside-dot" />
-              {feat}
-            </div>
-          ))}
-        </div>
-      </div>
+      <PricingCard />
+      <IncludesCard />
     </div>
   )
 }
 
 // ── Root component ─────────────────────────────────────────────────
 export default function SignUp() {
-  const [step, setStep]     = useState(1)
-  const [userData, setUserData] = useState({})
+  const [step, setStep] = useState(1)
+  const [step1Data, setStep1Data] = useState({ firstName: '', lastName: '', email: '', agreed: false })
+  const [step2Data, setStep2Data] = useState({ cardName: '', cardNum: '', expiry: '', cvc: '' })
 
   const goStep = (n) => {
     setStep(n)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleStep1 = (data) => { setUserData(data); goStep(2) }
-  const handleStep2 = () => { goStep(3) }
+  const handleStep1 = (data) => {
+    setStep1Data(data)
+    const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ')
+    setStep2Data(prev => ({ ...prev, cardName: prev.cardName || fullName }))
+    goStep(2)
+  }
 
   return (
     <div className="su-page">
@@ -495,14 +433,14 @@ export default function SignUp() {
       </div>
 
       {/* Progress */}
-      {step < 4 && <Progress step={step} />}
+      {step < 3 && <Progress step={step} />}
 
       {/* Main */}
       <div className="su-main">
         {step === 1 ? (
           <div className="su-step1-layout">
             <div className="su-step1-form">
-              <Step1 onNext={handleStep1} />
+              <Step1 onNext={handleStep1} initialData={step1Data} />
             </div>
             <div className="su-aside">
               <Aside />
@@ -510,14 +448,14 @@ export default function SignUp() {
           </div>
         ) : (
           <div className="su-narrow">
-            {step === 2 && <Step2 onNext={handleStep2} onBack={() => goStep(1)} />}
-            {step === 3 && (
-              <Step3
-                onNext={() => goStep(4)}
-                onBack={() => goStep(2)}
+            {step === 2 && (
+              <Step2
+                onNext={(data) => { setStep2Data(data); goStep(3) }}
+                onBack={(data) => { setStep2Data(data); goStep(1) }}
+                initialData={step2Data}
               />
             )}
-            {step === 4 && <Step4 email={userData.email} />}
+            {step === 3 && <Step3 email={step1Data.email} />}
           </div>
         )}
       </div>
