@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { storage } from '@/utils/storage'
@@ -8,13 +8,23 @@ import { validateEmail } from '@/utils/emailValidation'
 import { sendCodeEmail } from '@/utils/sendCodeEmail'
 import '@/styles/signin.css'
 
+// emailStatus values:
+//   'idle'       — not yet checked
+//   'checking'   — API call in flight
+//   'registered' — account exists → show "Send code"
+//   'new'        — no account    → show "Create account"
+
 export default function SignIn() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [touched, setTouched] = useState(false)
+  const [email, setEmail]               = useState('')
+  const [touched, setTouched]           = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
-  const [sending, setSending] = useState(false)
-  const [sendError, setSendError] = useState('')
+  const [sending, setSending]           = useState(false)
+  const [sendError, setSendError]       = useState('')
+  const [emailStatus, setEmailStatus]   = useState('idle')
+
+  // Track the last email we ran a check on to avoid redundant requests.
+  const lastCheckedRef = useRef('')
 
   useEffect(() => {
     if (storage.isAuthed() && storage.isMfaSetup()) {
@@ -22,20 +32,97 @@ export default function SignIn() {
     }
   }, [router])
 
-  const result = validateEmail(email)
+  const result       = validateEmail(email)
   const showFeedback = touched || submitAttempted
 
-  const sendCode = async (e) => {
+  // Reset status whenever the user edits the email field.
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value)
+    setSubmitAttempted(false)
+    setSendError('')
+    if (emailStatus !== 'idle') setEmailStatus('idle')
+  }
+
+  // Check on blur if the email is valid and differs from the last check.
+  const handleBlur = async () => {
+    const trimmed = email.trim()
+    if (!trimmed) return
+    setTouched(true)
+
+    const v = validateEmail(trimmed)
+    const resolved = v.suggestion ?? (v.valid ? trimmed : null)
+    if (!resolved || resolved === lastCheckedRef.current) return
+
+    lastCheckedRef.current = resolved
+    setEmailStatus('checking')
+
+    try {
+      const res  = await fetch('/api/auth/check-email', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email: resolved }),
+      })
+      const data = await res.json()
+      setEmailStatus(data.exists ? 'registered' : 'new')
+    } catch {
+      // Network error — fall back to 'idle' and let submit handle it.
+      setEmailStatus('idle')
+    }
+  }
+
+  const acceptSuggestion = () => {
+    setEmail(result.suggestion)
+    setTouched(false)
+    setSubmitAttempted(false)
+    setEmailStatus('idle')
+    lastCheckedRef.current = ''
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitAttempted(true)
     setSendError('')
+
     if (!result.valid) return
-    const code = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
-    storage.setEmail(email.trim())
-    storage.setOtp(code)
+
+    const resolved = result.suggestion ?? email.trim()
+
+    // If we haven't checked yet, do it now before deciding what to do.
+    if (emailStatus === 'idle' || emailStatus === 'checking') {
+      setEmailStatus('checking')
+      try {
+        const res  = await fetch('/api/auth/check-email', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email: resolved }),
+        })
+        const data = await res.json()
+        const status = data.exists ? 'registered' : 'new'
+        setEmailStatus(status)
+        if (status === 'new') {
+          router.push(`/signup?email=${encodeURIComponent(resolved)}`)
+          return
+        }
+      } catch {
+        setSendError('Could not reach server — try again')
+        setEmailStatus('idle')
+        return
+      }
+    }
+
+    // Email not registered — redirect to signup.
+    if (emailStatus === 'new') {
+      router.push(`/signup?email=${encodeURIComponent(resolved)}`)
+      return
+    }
+
+    // Email registered — send OTP.
+    storage.setEmail(resolved)
     setSending(true)
     try {
-      await sendCodeEmail(email.trim(), code)
+      const code = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
+      storage.setOtp(code)
+      await sendCodeEmail(resolved, code)
       router.push('/mfa-setup')
     } catch (err) {
       setSendError(err.message || 'Failed to send code — try again')
@@ -44,11 +131,15 @@ export default function SignIn() {
     }
   }
 
-  const acceptSuggestion = () => {
-    setEmail(result.suggestion)
-    setTouched(false)
-    setSubmitAttempted(false)
-  }
+  // Derive button label and style from emailStatus.
+  const isChecking   = emailStatus === 'checking' || sending
+  const isNewAccount = emailStatus === 'new'
+
+  const btnLabel = isChecking
+    ? (sending ? 'Sending…' : 'Checking…')
+    : isNewAccount
+      ? 'Create account →'
+      : 'Send code'
 
   return (
     <div className="si-wrap">
@@ -70,7 +161,7 @@ export default function SignIn() {
 
         {/* Right panel */}
         <div className="si-right">
-          <form className="si-form" onSubmit={sendCode} noValidate>
+          <form className="si-form" onSubmit={handleSubmit} noValidate>
             <h2 className="si-heading">Sign in</h2>
             <p className="si-subheading">We'll send a verification code to your email.</p>
 
@@ -81,43 +172,63 @@ export default function SignIn() {
                 type="email"
                 placeholder="you@email.com"
                 value={email}
-                onChange={(e) => { setEmail(e.target.value); setSubmitAttempted(false) }}
-                onBlur={() => email.trim() && setTouched(true)}
+                onChange={handleEmailChange}
+                onBlur={handleBlur}
                 autoFocus
                 autoComplete="email"
                 required
                 aria-invalid={showFeedback && !result.valid && !result.suggestion}
-                aria-describedby={showFeedback && (result.error || result.suggestion) ? 'si-email-hint' : undefined}
-                className={`si-input${showFeedback && result.error ? ' si-input--error' : ''}${showFeedback && result.suggestion ? ' si-input--warn' : ''}`}
+                aria-describedby="si-email-hint"
+                className={[
+                  'si-input',
+                  showFeedback && result.error   ? 'si-input--error' : '',
+                  showFeedback && result.suggestion ? 'si-input--warn' : '',
+                ].filter(Boolean).join(' ')}
               />
-              {showFeedback && result.error && (
-                <p id="si-email-hint" className="si-field-hint si-field-hint--error" role="alert">
-                  {result.error}
-                </p>
-              )}
-              {showFeedback && result.suggestion && (
-                <p id="si-email-hint" className="si-field-hint si-field-hint--suggest" role="alert">
-                  Did you mean{' '}
-                  <button type="button" className="si-suggest-btn" onClick={acceptSuggestion}>
-                    {result.suggestion}
-                  </button>
-                  ?
-                </p>
-              )}
+
+              <div id="si-email-hint" aria-live="polite">
+                {showFeedback && result.error && (
+                  <p className="si-field-hint si-field-hint--error" role="alert">
+                    {result.error}
+                  </p>
+                )}
+                {showFeedback && result.suggestion && (
+                  <p className="si-field-hint si-field-hint--suggest" role="alert">
+                    Did you mean{' '}
+                    <button type="button" className="si-suggest-btn" onClick={acceptSuggestion}>
+                      {result.suggestion}
+                    </button>
+                    ?
+                  </p>
+                )}
+                {!result.error && !result.suggestion && isNewAccount && (
+                  <p className="si-field-hint si-field-hint--info">
+                    No account found — we'll get you set up.
+                  </p>
+                )}
+              </div>
             </div>
 
             {sendError && (
               <p className="si-field-hint si-field-hint--error" role="alert">{sendError}</p>
             )}
 
-            <button type="submit" className="si-btn-primary" disabled={!email.trim() || sending} aria-busy={sending}>
-              {sending ? 'Sending…' : 'Send code'}
+            <button
+              type="submit"
+              className={`si-btn-primary${isNewAccount ? ' si-btn-primary--signup' : ''}`}
+              disabled={!email.trim() || isChecking}
+              aria-busy={isChecking}
+            >
+              {btnLabel}
             </button>
 
-            <p className="si-footer">
-              No account yet?{' '}
-              <Link href="/signup">Sign up</Link>
-            </p>
+            {/* Hide the static sign-up link once we know it's a new email */}
+            {!isNewAccount && (
+              <p className="si-footer">
+                No account yet?{' '}
+                <Link href="/signup">Sign up</Link>
+              </p>
+            )}
           </form>
         </div>
       </div>

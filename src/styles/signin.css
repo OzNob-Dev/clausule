@@ -166,6 +166,11 @@
 
 .si-btn-primary:hover { opacity: 0.88; }
 
+/* Variant shown when the email has no account — routes to signup */
+.si-btn-primary--signup {
+  background: #2A6B45;
+}
+
 .si-divider {
   display: flex;
   align-items: center;
@@ -247,6 +252,7 @@
 
 .si-field-hint--error   { color: #C0392B; }
 .si-field-hint--suggest { color: #8a6200; }
+.si-field-hint--info    { color: #2A6B45; }
 
 .si-suggest-btn {
   background: none;

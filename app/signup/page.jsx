@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { validateEmail } from '@/utils/emailValidation'
 import { storage } from '@/utils/storage'
 import '@/styles/signup.css'
@@ -398,9 +398,12 @@ function Aside() {
 }
 
 // ── Root component ─────────────────────────────────────────────────
-export default function SignUp() {
+function SignUpInner() {
+  const searchParams = useSearchParams()
+  const prefillEmail = decodeURIComponent(searchParams.get('email') ?? '')
+
   const [step, setStep] = useState(1)
-  const [step1Data, setStep1Data] = useState({ firstName: '', lastName: '', email: '', agreed: false })
+  const [step1Data, setStep1Data] = useState({ firstName: '', lastName: '', email: prefillEmail, agreed: false })
   const [step2Data, setStep2Data] = useState({ cardName: '', cardNum: '', expiry: '', cvc: '' })
 
   const goStep = (n) => {
@@ -463,5 +466,13 @@ export default function SignUp() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function SignUp() {
+  return (
+    <Suspense>
+      <SignUpInner />
+    </Suspense>
   )
 }
