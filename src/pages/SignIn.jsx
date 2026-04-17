@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { storage } from '../utils/storage'
 import { validateEmail } from '../utils/emailValidation'
+import { sendCodeEmail } from '../utils/sendCodeEmail'
 import '../styles/signin.css'
 
 export default function SignIn() {
@@ -9,15 +10,25 @@ export default function SignIn() {
   const [email, setEmail] = useState('')
   const [touched, setTouched] = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
+  const [sending, setSending] = useState(false)
 
   const result = validateEmail(email)
   const showFeedback = touched || submitAttempted
 
-  const sendCode = (e) => {
+  const sendCode = async (e) => {
     e.preventDefault()
     setSubmitAttempted(true)
     if (!result.valid) return
+    const code = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
     storage.setEmail(email.trim())
+    storage.setOtp(code)
+    setSending(true)
+    try {
+      await sendCodeEmail(email.trim(), code)
+    } catch {
+      // non-blocking: proceed even if email fails (dev/offline)
+    }
+    setSending(false)
     navigate('/mfa-setup')
   }
 
@@ -83,8 +94,8 @@ export default function SignIn() {
               )}
             </div>
 
-            <button type="submit" className="si-btn-primary" disabled={!email.trim()}>
-              Send code
+            <button type="submit" className="si-btn-primary" disabled={!email.trim() || sending} aria-busy={sending}>
+              {sending ? 'Sending…' : 'Send code'}
             </button>
 
             <p className="si-footer">

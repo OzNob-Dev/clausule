@@ -4,6 +4,7 @@ const KEY = {
   role:           'clausule-role',
   mfa:            'clausule-mfa',
   email:          'clausule-email',
+  otp:            'clausule-otp',
   escalatedCount: 'clausule-escalated-count',
   pitstop:        (path) => `clausule-ps-${path}`,
 }
@@ -29,6 +30,10 @@ export const storage = {
 
   getEmail: () => localStorage.getItem(KEY.email),
   setEmail: (e) => localStorage.setItem(KEY.email, e),
+
+  getOtp: () => localStorage.getItem(KEY.otp),
+  setOtp: (c) => localStorage.setItem(KEY.otp, c),
+  clearOtp: () => localStorage.removeItem(KEY.otp),
 
   getEscalatedCount: () => parseInt(localStorage.getItem(KEY.escalatedCount) || '3'),
 

@@ -3,11 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { storage } from '../utils/storage'
 import CodeEmail from '../components/ui/CodeEmail'
-import { sendCodeEmail } from '../utils/sendCodeEmail'
 import '../styles/mfa-setup.css'
 import '../styles/code-email.css'
-
-const DEMO_OTP          = '847291'
 const DEMO_TOTP         = '123456'
 const TOTP_SECRET_RAW   = 'JBSWY3DPEHPK3PXP'
 const TOTP_SECRET_DISP  = 'JBSW Y3DP EHPK 3PXP'
@@ -70,12 +67,8 @@ export default function MfaSetup() {
   const [passkeyState, setPasskeyState]         = useState('idle') // idle | loading | done | error
 
   const email    = storage.getEmail() || 'your email'
+  const DEMO_OTP = storage.getOtp() || '------'
   const totpDone = totpState === 'done'
-
-  // Send OTP email once on mount
-  useEffect(() => {
-    sendCodeEmail(email, DEMO_OTP).catch(() => {})
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Detect platform authenticator once on mount
   useEffect(() => {
@@ -103,6 +96,7 @@ export default function MfaSetup() {
     const code = digits.join('')
     if (code === target) {
       setSt('done')
+      storage.clearOtp()
       onMatch()
     } else {
       setSt('error')
