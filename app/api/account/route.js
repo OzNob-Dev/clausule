@@ -17,8 +17,8 @@
 
 import { NextResponse }                       from 'next/server'
 import { requireAuth, unauthorized,
-         clearSessionCookie }                 from '../../_lib/auth.js'
-import { select, deleteUser }                 from '../../_lib/supabase.js'
+         clearAuthCookies }                   from '@api/_lib/auth.js'
+import { select, deleteUser }                 from '@api/_lib/supabase.js'
 
 export async function DELETE(request) {
   const { userId, error: authError } = await requireAuth(request)
@@ -54,8 +54,8 @@ export async function DELETE(request) {
     return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
   }
 
-  // Clear the session cookie.
+  // Clear auth cookies.
   const response = new Response(null, { status: 204 })
-  response.headers.set('Set-Cookie', clearSessionCookie())
+  clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
   return response
 }

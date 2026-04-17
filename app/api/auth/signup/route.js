@@ -11,8 +11,8 @@
  */
 
 import { NextResponse }   from 'next/server'
-import { createUser }     from '../../../_lib/supabase.js'
-import { RateLimiter }    from '../../../_lib/rate-limit.js'
+import { createUser }     from '@api/_lib/supabase.js'
+import { RateLimiter }    from '@api/_lib/rate-limit.js'
 import { validateEmail }  from '@/utils/emailValidation'
 
 // 5 signup attempts per hour per IP (crude; refine with real IP parsing for production).

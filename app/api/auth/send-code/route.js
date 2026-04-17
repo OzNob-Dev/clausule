@@ -16,8 +16,8 @@
 import { NextResponse }  from 'next/server'
 import crypto            from 'node:crypto'
 import { BrevoClient }   from '@getbrevo/brevo'
-import { insert }        from '../../../_lib/supabase.js'
-import { RateLimiter }   from '../../../_lib/rate-limit.js'
+import { insert }        from '@api/_lib/supabase.js'
+import { RateLimiter }   from '@api/_lib/rate-limit.js'
 import { validateEmail } from '@/utils/emailValidation'
 
 // 3 send attempts per 10 minutes per email address.

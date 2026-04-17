@@ -14,8 +14,8 @@
  */
 
 import { NextResponse }  from 'next/server'
-import { requireAuth }   from '../../../_lib/auth.js'
-import { insert, select, update } from '../../../_lib/supabase.js'
+import { requireAuth }   from '@api/_lib/auth.js'
+import { insert, select, update } from '@api/_lib/supabase.js'
 
 const STRIPE_KEY        = process.env.STRIPE_SECRET_KEY
 const STRIPE_API        = 'https://api.stripe.com/v1'

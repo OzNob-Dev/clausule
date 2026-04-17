@@ -10,8 +10,8 @@
  */
 
 import { NextResponse }               from 'next/server'
-import { requireAuth, unauthorized }  from '../../../../_lib/auth.js'
-import { select, del }                from '../../../../_lib/supabase.js'
+import { requireAuth, unauthorized }  from '@api/_lib/auth.js'
+import { select, del }                from '@api/_lib/supabase.js'
 
 export async function DELETE(request, { params }) {
   const { userId, error: authError } = await requireAuth(request)

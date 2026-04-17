@@ -26,8 +26,8 @@
 
 import { NextResponse }               from 'next/server'
 import crypto                         from 'node:crypto'
-import { requireAuth, unauthorized }  from '../../../../../_lib/auth.js'
-import { insert }                     from '../../../../../_lib/supabase.js'
+import { requireAuth, unauthorized }  from '@api/_lib/auth.js'
+import { insert }                     from '@api/_lib/supabase.js'
 import { pendingChallenges }          from '../options/route.js'
 
 const RP_ID     = process.env.NEXT_PUBLIC_RP_ID  ?? 'localhost'

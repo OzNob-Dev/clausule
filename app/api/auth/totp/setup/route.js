@@ -15,8 +15,8 @@
 
 import { NextResponse }               from 'next/server'
 import crypto                         from 'node:crypto'
-import { requireAuth, unauthorized }  from '../../../../_lib/auth.js'
-import { update, select }             from '../../../../_lib/supabase.js'
+import { requireAuth, unauthorized }  from '@api/_lib/auth.js'
+import { update, select }             from '@api/_lib/supabase.js'
 
 // ── Base32 helpers ────────────────────────────────────────────────────────────
 

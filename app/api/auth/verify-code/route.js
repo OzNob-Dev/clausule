@@ -19,13 +19,13 @@
 
 import { NextResponse }                    from 'next/server'
 import crypto                              from 'node:crypto'
-import { select, update, insert }          from '../../../_lib/supabase.js'
+import { select, update, insert }          from '@api/_lib/supabase.js'
 import { signAccessToken,
          generateRefreshToken,
-         REFRESH_TOKEN_TTL_S }             from '../../../_lib/jwt.js'
+         REFRESH_TOKEN_TTL_S }             from '@api/_lib/jwt.js'
 import { accessTokenCookie,
-         refreshTokenCookie }              from '../../../_lib/auth.js'
-import { RateLimiter }                     from '../../../_lib/rate-limit.js'
+         refreshTokenCookie }              from '@api/_lib/auth.js'
+import { RateLimiter }                     from '@api/_lib/rate-limit.js'
 
 // 5 attempts per 10 minutes per email.
 const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })

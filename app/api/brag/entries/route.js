@@ -16,8 +16,8 @@
  */
 
 import { NextResponse }           from 'next/server'
-import { requireAuth, unauthorized } from '../../../_lib/auth.js'
-import { select, insert }         from '../../../_lib/supabase.js'
+import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { select, insert }         from '@api/_lib/supabase.js'
 
 const VALID_EVIDENCE_TYPES = new Set([
   'Work artefact',

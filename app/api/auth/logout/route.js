@@ -10,9 +10,9 @@
 
 import { NextResponse }            from 'next/server'
 import { getRefreshToken,
-         clearAuthCookies }        from '../../../_lib/auth.js'
-import { hashRefreshToken }        from '../../../_lib/jwt.js'
-import { update }                  from '../../../_lib/supabase.js'
+         clearAuthCookies }        from '@api/_lib/auth.js'
+import { hashRefreshToken }        from '@api/_lib/jwt.js'
+import { update }                  from '@api/_lib/supabase.js'
 
 export async function POST(request) {
   const rawToken = getRefreshToken(request)

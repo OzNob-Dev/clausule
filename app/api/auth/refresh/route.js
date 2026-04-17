@@ -17,15 +17,15 @@
  */
 
 import { NextResponse }                    from 'next/server'
-import { select, update, insert, del }     from '../../../_lib/supabase.js'
+import { select, update, insert, del }     from '@api/_lib/supabase.js'
 import { signAccessToken,
          generateRefreshToken,
          hashRefreshToken,
-         REFRESH_TOKEN_TTL_S }             from '../../../_lib/jwt.js'
+         REFRESH_TOKEN_TTL_S }             from '@api/_lib/jwt.js'
 import { getRefreshToken,
          accessTokenCookie,
          refreshTokenCookie,
-         clearAuthCookies }                from '../../../_lib/auth.js'
+         clearAuthCookies }                from '@api/_lib/auth.js'
 
 export async function POST(request) {
   const rawToken = getRefreshToken(request)
