@@ -20,7 +20,6 @@ export default function SignIn() {
   const [touched, setTouched]           = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
   const [sending, setSending]           = useState(false)
-  const [sendError, setSendError]       = useState('')
   const [emailStatus, setEmailStatus]   = useState('idle')
 
   // Track the last email we ran a check on to avoid redundant requests.
@@ -39,7 +38,6 @@ export default function SignIn() {
   const handleEmailChange = (e) => {
     setEmail(e.target.value)
     setSubmitAttempted(false)
-    setSendError('')
     if (emailStatus !== 'idle') setEmailStatus('idle')
   }
 
@@ -81,7 +79,6 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitAttempted(true)
-    setSendError('')
 
     if (!result.valid) return
 
@@ -104,7 +101,6 @@ export default function SignIn() {
           return
         }
       } catch {
-        setSendError('Could not reach server — try again')
         setEmailStatus('idle')
         return
       }
@@ -120,12 +116,9 @@ export default function SignIn() {
     storage.setEmail(resolved)
     setSending(true)
     try {
-      const code = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
-      storage.setOtp(code)
-      await sendCodeEmail(resolved, code)
+      await sendCodeEmail(resolved)
       router.push('/mfa-setup')
     } catch (err) {
-      setSendError(err.message || 'Failed to send code — try again')
     } finally {
       setSending(false)
     }
@@ -203,15 +196,11 @@ export default function SignIn() {
                 )}
                 {!result.error && !result.suggestion && isNewAccount && (
                   <p className="si-field-hint si-field-hint--info">
-                    No account found — we'll get you set up.
+                    No account found - we'll get you set up.
                   </p>
                 )}
               </div>
             </div>
-
-            {sendError && (
-              <p className="si-field-hint si-field-hint--error" role="alert">{sendError}</p>
-            )}
 
             <button
               type="submit"

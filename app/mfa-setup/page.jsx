@@ -70,7 +70,6 @@ export default function MfaSetup() {
   const [passkeyState, setPasskeyState]         = useState('idle') // idle | loading | done | error
 
   const email    = storage.getEmail() || 'your email'
-  const DEMO_OTP = storage.getOtp() || '------'
   const totpDone = totpState === 'done'
 
   // Detect platform authenticator once on mount
@@ -94,12 +93,11 @@ export default function MfaSetup() {
     return () => clearTimeout(id)
   }, [resendTimer])
 
-  // ── Generic digit-box verify ──────────────────────────────────
+  // ── TOTP demo verify (local only) ────────────────────────────
   const verify = useCallback((digits, target, setDig, setSt, onMatch) => {
     const code = digits.join('')
     if (code === target) {
       setSt('done')
-      storage.clearOtp()
       onMatch()
     } else {
       setSt('error')
@@ -110,16 +108,38 @@ export default function MfaSetup() {
     }
   }, [])
 
+  // ── Email OTP: server-side verification ───────────────────────
+  const verifyOtp = useCallback(async (digits) => {
+    const code = digits.join('')
+    try {
+      const res  = await fetch('/api/auth/verify-code', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email, code }),
+      })
+      if (res.ok) {
+        setOtpState('done')
+        setTimeout(() => setStep(2), 500)
+      } else {
+        setOtpState('error')
+        setTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
+      }
+    } catch {
+      setOtpState('error')
+      setTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
+    }
+  }, [email])
+
   // ── OTP handlers ─────────────────────────────────────────────
   const handleOtpChange = useCallback((i, val) => {
     const d = val.replace(/\D/g, '').slice(-1)
     setOtp((prev) => {
       const next = prev.map((v, idx) => idx === i ? d : v)
       if (d && i < 5) setTimeout(() => otpRefs.current[i + 1]?.focus(), 0)
-      if (next.every(Boolean)) verify(next, DEMO_OTP, setOtp, setOtpState, () => setTimeout(() => setStep(2), 500))
+      if (next.every(Boolean)) verifyOtp(next)
       return next
     })
-  }, [verify, DEMO_OTP])
+  }, [verifyOtp])
 
   const handleOtpKey = useCallback((i, e) => {
     if (e.key === 'Backspace') {
@@ -139,8 +159,8 @@ export default function MfaSetup() {
     const next = Array.from({ length: 6 }, (_, i) => text[i] ?? '')
     setOtp(next)
     otpRefs.current[Math.min(text.length, 5)]?.focus()
-    if (next.every(Boolean)) verify(next, DEMO_OTP, setOtp, setOtpState, () => setTimeout(() => setStep(2), 500))
-  }, [verify, DEMO_OTP])
+    if (next.every(Boolean)) verifyOtp(next)
+  }, [verifyOtp])
 
   // ── TOTP handlers ─────────────────────────────────────────────
   const handleTotpChange = useCallback((i, val) => {
@@ -199,7 +219,7 @@ export default function MfaSetup() {
   const enterApp = () => {
     storage.setAuthed()
     storage.setRole('manager')
-    router.push('/dashboard')
+    router.push('/brag')
   }
 
   const stepLabels = ['Verify email', 'Secure account', 'All set']
@@ -236,7 +256,7 @@ export default function MfaSetup() {
             <p className="mfa-sub">
               We sent a 6-digit code to <strong>{email}</strong>
             </p>
-            <CodeEmail to={email} code={DEMO_OTP} />
+            <CodeEmail to={email} />
             <DigitRow
               digits={otp} inputState={otpState} inputRefs={otpRefs}
               onChange={handleOtpChange} onKeyDown={handleOtpKey} onPaste={handleOtpPaste}

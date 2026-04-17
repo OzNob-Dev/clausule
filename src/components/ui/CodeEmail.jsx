@@ -1,4 +1,4 @@
-export default function CodeEmail({ to, code, revealed = false }) {
+export default function CodeEmail({ to, code = '••••••', revealed = false }) {
   return (
     <div className="ce-shell" aria-label="Demo verification email" role="img">
       {/* Email client chrome */}
@@ -26,10 +26,8 @@ export default function CodeEmail({ to, code, revealed = false }) {
         <p className="ce-greeting">Hi there,</p>
         <p className="ce-copy">Use the code below to sign in. It expires in 10 minutes.</p>
         <div className="ce-code-block" aria-label="Verification code sent to your email">
-          {code.split('').map((d, i) => (
-            <span key={i} className={`ce-digit${!revealed ? ' ce-digit--hidden' : ''}`}>
-              {revealed ? d : '•'}
-            </span>
+          {Array.from({ length: 6 }, (_, i) => (
+            <span key={i} className="ce-digit ce-digit--hidden">•</span>
           ))}
         </div>
         <p className="ce-disclaimer">If you didn't request this, you can safely ignore this email.</p>

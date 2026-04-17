@@ -1,4 +1,4 @@
-@import '../ledger.css';
+@import './ledger.css';
 
 /* ── Minimal reset ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }

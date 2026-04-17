@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation'
-import { storage } from '../utils/storage'
+import { storage } from '@/utils/storage'
 
 export function useAuth() {
   const router = useRouter()

@@ -316,7 +316,7 @@ function Step3({ email }) {
         </div>
       </div>
 
-      <CtaBtn onClick={() => { storage.setAuthed(); storage.setRole('employee'); router.push('/dashboard') }}>
+      <CtaBtn onClick={() => { storage.setAuthed(); storage.setRole('employee'); router.push('/brag') }}>
         Go to my dashboard <ArrowIcon />
       </CtaBtn>
       <div className="su-questions-note">

@@ -1,5 +1,5 @@
 import { DM_Sans } from 'next/font/google'
-import BypassGate from './bypass-gate'
+import BypassGate from '@/components/BypassGate'
 import '@/styles/index.css'
 
 const dmSans = DM_Sans({

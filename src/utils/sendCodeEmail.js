@@ -1,11 +1,12 @@
 /**
- * Sends a verification code email via /api/send-code (Brevo, server-side).
+ * Triggers server-side OTP generation and email delivery.
+ * The code is generated server-side; the client never sees it.
  */
-export async function sendCodeEmail(toEmail, code) {
-  const res = await fetch('/api/send-code', {
-    method: 'POST',
+export async function sendCodeEmail(email) {
+  const res = await fetch('/api/auth/send-code', {
+    method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ to: toEmail, code }),
+    body:    JSON.stringify({ email }),
   })
 
   if (!res.ok) {
