@@ -8,6 +8,15 @@ import compression from 'vite-plugin-compression'
 const precompress = process.env.VITE_PRECOMPRESS === 'true'
 
 export default defineConfig({
+  server: {
+    proxy: {
+      // Forward /api requests to the Next.js backend in dev
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
+  },
   plugins: [
     react(),
     // Gzip — served by most CDNs and web servers automatically

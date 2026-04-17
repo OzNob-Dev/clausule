@@ -1,18 +1,15 @@
 import { BrevoClient } from '@getbrevo/brevo'
+import { NextResponse } from 'next/server'
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
-
-  const { to, code } = req.body ?? {}
+export async function POST(request) {
+  const { to, code } = await request.json().catch(() => ({}))
 
   if (!to || !code) {
-    return res.status(400).json({ error: 'Missing to or code' })
+    return NextResponse.json({ error: 'Missing to or code' }, { status: 400 })
   }
 
   if (!process.env.BREVO_API_KEY) {
-    return res.status(500).json({ error: 'BREVO_API_KEY not configured' })
+    return NextResponse.json({ error: 'BREVO_API_KEY not configured' }, { status: 500 })
   }
 
   const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY })
@@ -44,9 +41,9 @@ export default async function handler(req, res) {
         </div>
       `,
     })
-    return res.status(200).json({ ok: true })
+    return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('[send-code] Brevo error:', err?.message ?? err)
-    return res.status(502).json({ error: 'Failed to send email' })
+    return NextResponse.json({ error: 'Failed to send email' }, { status: 502 })
   }
 }
