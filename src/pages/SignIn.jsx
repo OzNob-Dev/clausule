@@ -11,6 +11,7 @@ export default function SignIn() {
   const [touched, setTouched] = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
   const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState('')
 
   const result = validateEmail(email)
   const showFeedback = touched || submitAttempted
@@ -18,6 +19,7 @@ export default function SignIn() {
   const sendCode = async (e) => {
     e.preventDefault()
     setSubmitAttempted(true)
+    setSendError('')
     if (!result.valid) return
     const code = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
     storage.setEmail(email.trim())
@@ -25,11 +27,12 @@ export default function SignIn() {
     setSending(true)
     try {
       await sendCodeEmail(email.trim(), code)
-    } catch {
-      // non-blocking: proceed even if email fails (dev/offline)
+      navigate('/mfa-setup')
+    } catch (err) {
+      setSendError(err.message || 'Failed to send code — try again')
+    } finally {
+      setSending(false)
     }
-    setSending(false)
-    navigate('/mfa-setup')
   }
 
   const acceptSuggestion = () => {
@@ -93,6 +96,10 @@ export default function SignIn() {
                 </p>
               )}
             </div>
+
+            {sendError && (
+              <p className="si-field-hint si-field-hint--error" role="alert">{sendError}</p>
+            )}
 
             <button type="submit" className="si-btn-primary" disabled={!email.trim() || sending} aria-busy={sending}>
               {sending ? 'Sending…' : 'Send code'}
