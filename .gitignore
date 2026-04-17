@@ -6,3 +6,4 @@ CLAUDE.md
 .claudeignore
 .env.local
 .env*.local
+.vercel
