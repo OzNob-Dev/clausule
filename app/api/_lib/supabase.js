@@ -108,25 +108,3 @@ export function createUser({ email, password, user_metadata }) {
 export function deleteUser(userId) {
   return supaFetch(`/auth/v1/admin/users/${userId}`, { method: 'DELETE' })
 }
-
-/**
- * Generate a magic-link sign-in token and return the access + refresh tokens.
- * Used after OTP verification to issue a real Supabase session.
- * @param {string} email
- */
-export async function signInAsUser(email) {
-  // Admin creates a one-time token then exchanges it for a session.
-  const { data: link, error: linkErr } = await supaFetch('/auth/v1/admin/generate_link', {
-    method: 'POST',
-    body: JSON.stringify({ type: 'magiclink', email }),
-  })
-  if (linkErr) return { data: null, error: linkErr }
-
-  // Exchange the token in the link for a real session.
-  const token = new URL(link.action_link).searchParams.get('token')
-  const { data: session, error: sessErr } = await supaFetch(
-    `/auth/v1/verify?token=${token}&type=magiclink`,
-    { method: 'GET' }
-  )
-  return sessErr ? { data: null, error: sessErr } : { data: session, error: null }
-}

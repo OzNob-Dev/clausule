@@ -1,33 +1,36 @@
 /**
  * POST /api/auth/logout
  *
- * Clears the session cookie and revokes the Supabase refresh token.
+ * Revokes the refresh token in the DB and clears both auth cookies.
+ * Best-effort — always responds 200 so the client can proceed to clear
+ * local state regardless of server-side errors.
  *
- * Response 200: { ok: true }
+ * 200: { ok: true }
  */
 
-import { NextResponse }                from 'next/server'
-import { getSessionToken,
-         clearSessionCookie }          from '../../../_lib/auth.js'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY
+import { NextResponse }            from 'next/server'
+import { getRefreshToken,
+         clearAuthCookies }        from '../../../_lib/auth.js'
+import { hashRefreshToken }        from '../../../_lib/jwt.js'
+import { update }                  from '../../../_lib/supabase.js'
 
 export async function POST(request) {
-  const token = getSessionToken(request)
+  const rawToken = getRefreshToken(request)
 
-  if (token) {
-    // Best-effort revoke of the token on Supabase side.
-    await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-      method: 'POST',
-      headers: {
-        apikey:        SERVICE_KEY,
-        Authorization: `Bearer ${token}`,
-      },
-    }).catch(() => { /* ignore network errors on logout */ })
+  if (rawToken) {
+    const tokenHash = hashRefreshToken(rawToken)
+    // Mark the refresh token as used so it cannot be replayed after logout.
+    await update(
+      'refresh_tokens',
+      `token_hash=eq.${tokenHash}&used_at=is.null`,
+      { used_at: new Date().toISOString() }
+    ).catch((err) => {
+      // Non-fatal — cookie expiry handles this if the DB call fails.
+      console.warn('[logout] failed to revoke refresh token:', err?.message)
+    })
   }
 
   const response = NextResponse.json({ ok: true })
-  response.headers.set('Set-Cookie', clearSessionCookie())
+  clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
   return response
 }

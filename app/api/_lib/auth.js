@@ -1,85 +1,118 @@
 /**
- * Server-side session helpers for Next.js App Router API routes.
+ * Server-side auth helpers for Next.js App Router API routes.
  *
- * The session is stored in an httpOnly, Secure, SameSite=Lax cookie named
- * "clausule_session" whose value is the Supabase access token (JWT).
+ * Two httpOnly cookies are used:
+ *   clausule_at  — HS256 JWT access token  (15 min, SameSite=Lax)
+ *   clausule_rt  — opaque refresh token    (30 days, SameSite=Lax)
  *
- * Usage:
- *   const { userId, error } = await requireAuth(request)
- *   if (error) return NextResponse.json({ error }, { status: 401 })
+ * `requireAuth` verifies the access token locally — no DB or Supabase
+ * round-trip on every request.  Use the /api/auth/refresh route to exchange
+ * an expired access token for a fresh pair when the client gets a 401.
  */
 
-import { NextResponse } from 'next/server'
+import { NextResponse }                        from 'next/server'
+import { verifyAccessToken, ACCESS_TOKEN_TTL_S,
+         REFRESH_TOKEN_TTL_S }                 from './jwt.js'
 
-const COOKIE_NAME    = 'clausule_session'
-const SUPABASE_URL   = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SERVICE_KEY    = process.env.SUPABASE_SERVICE_ROLE_KEY
+const IS_PROD = process.env.NODE_ENV === 'production'
 
-/**
- * Verify the session cookie and return the authenticated user's ID.
- * @param {Request} request
- * @returns {Promise<{ userId: string|null, error: string|null }>}
- */
-export async function requireAuth(request) {
-  const token = getSessionToken(request)
-  if (!token) return { userId: null, error: 'Unauthenticated' }
+const COOKIE_AT = 'clausule_at'   // access token
+const COOKIE_RT = 'clausule_rt'   // refresh token
 
-  // Ask Supabase to validate the JWT.
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-    headers: {
-      apikey: SERVICE_KEY,
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  if (!res.ok) return { userId: null, error: 'Invalid or expired session' }
-
-  const user = await res.json()
-  return { userId: user.id, error: null }
-}
+// ── Cookie extraction ─────────────────────────────────────────────────────────
 
 /**
- * Extract the session token from the Cookie header.
+ * Parse a named cookie value from the Cookie header.
  * @param {Request} request
+ * @param {string}  name
  * @returns {string|null}
  */
-export function getSessionToken(request) {
-  const cookieHeader = request.headers.get('cookie') ?? ''
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${COOKIE_NAME}=([^;]+)`))
+function getCookie(request, name) {
+  const header = request.headers.get('cookie') ?? ''
+  const match  = header.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`))
   return match ? decodeURIComponent(match[1]) : null
 }
 
-/**
- * Build the Set-Cookie header string for a session token.
- * @param {string} token - Supabase access_token (JWT)
- * @param {number} maxAgeSeconds
- * @returns {string}
- */
-export function buildSessionCookie(token, maxAgeSeconds = 3600) {
-  const flags = [
-    `${COOKIE_NAME}=${encodeURIComponent(token)}`,
-    `Max-Age=${maxAgeSeconds}`,
+export function getAccessToken(request)  { return getCookie(request, COOKIE_AT) }
+export function getRefreshToken(request) { return getCookie(request, COOKIE_RT) }
+
+// ── Cookie builders ───────────────────────────────────────────────────────────
+
+function cookieFlags(maxAge) {
+  return [
+    `Max-Age=${maxAge}`,
     'Path=/',
     'HttpOnly',
     'SameSite=Lax',
-    // Omit Secure in development to work on http://localhost
-    process.env.NODE_ENV === 'production' ? 'Secure' : '',
-  ].filter(Boolean)
-
-  return flags.join('; ')
+    IS_PROD ? 'Secure' : '',
+  ].filter(Boolean).join('; ')
 }
 
 /**
- * Build a cookie header that immediately expires the session cookie (logout).
+ * Set-Cookie string for the access token.
+ * @param {string} token
  * @returns {string}
  */
-export function clearSessionCookie() {
-  return `${COOKIE_NAME}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`
+export function accessTokenCookie(token) {
+  return `${COOKIE_AT}=${encodeURIComponent(token)}; ${cookieFlags(ACCESS_TOKEN_TTL_S)}`
 }
 
 /**
- * Return a 401 JSON response.
+ * Set-Cookie string for the refresh token.
+ * @param {string} token
+ * @returns {string}
  */
+export function refreshTokenCookie(token) {
+  return `${COOKIE_RT}=${encodeURIComponent(token)}; ${cookieFlags(REFRESH_TOKEN_TTL_S)}`
+}
+
+/**
+ * Pair of Set-Cookie strings that expire both tokens immediately (logout).
+ * @returns {string[]}
+ */
+export function clearAuthCookies() {
+  return [
+    `${COOKIE_AT}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`,
+    `${COOKIE_RT}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`,
+  ]
+}
+
+// ── Auth guard ────────────────────────────────────────────────────────────────
+
+/**
+ * Verify the access-token cookie and return decoded claims.
+ * Returns `{ userId, email, role, error }`.
+ *
+ * On expired / missing token the caller should redirect the client to call
+ * POST /api/auth/refresh, then retry the original request.
+ *
+ * @param {Request} request
+ * @returns {{ userId: string|null, email: string|null, role: string|null, error: string|null }}
+ */
+export function requireAuth(request) {
+  const token = getAccessToken(request)
+
+  if (!token) {
+    return { userId: null, email: null, role: null, error: 'Unauthenticated' }
+  }
+
+  try {
+    const claims = verifyAccessToken(token)
+    return { userId: claims.sub, email: claims.email, role: claims.role, error: null }
+  } catch (err) {
+    // Surface 'Token expired' separately so clients can attempt a refresh.
+    const expired = err.message === 'Token expired'
+    return {
+      userId: null,
+      email:  null,
+      role:   null,
+      error:  expired ? 'Token expired' : 'Invalid token',
+    }
+  }
+}
+
+// ── Standard error responses ─────────────────────────────────────────────────
+
 export function unauthorized(message = 'Unauthenticated') {
   return NextResponse.json({ error: message }, { status: 401 })
 }
