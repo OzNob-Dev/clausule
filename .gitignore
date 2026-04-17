@@ -7,3 +7,4 @@ CLAUDE.md
 .env.local
 .env*.local
 .vercel
+supabase/
