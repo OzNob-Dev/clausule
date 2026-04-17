@@ -1,6 +1,18 @@
 import { BrevoClient } from '@getbrevo/brevo'
 import { NextResponse } from 'next/server'
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    },
+  })
+}
+
 export async function POST(request) {
   const { to, code } = await request.json().catch(() => ({}))
 
