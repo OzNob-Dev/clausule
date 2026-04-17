@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // API-only — no pages, no static output
-}
+const nextConfig = {}
 
 export default nextConfig

@@ -4,14 +4,16 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n frontend,backend -c cyan,magenta \"vite\" \"npm --prefix backend run dev\"",
+    "dev": "concurrently -n frontend,backend -c cyan,magenta \"vite\" \"next dev --port 3001\"",
     "dev:frontend": "vite",
-    "dev:backend": "npm --prefix backend run dev",
+    "dev:backend": "next dev --port 3001",
     "build": "vite build",
     "build:optimized": "VITE_PRECOMPRESS=true vite build && node scripts/build-report.js",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^5.0.4",
+    "next": "^15.3.1",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
