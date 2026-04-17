@@ -36,12 +36,12 @@ export default function App() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
-    const hasBypassParam = queryParams.get('bypassss') === 'true'
+    const hasBypassParam = queryParams.get('bypaxxx') === 'true'
     if (hasBypassParam) {
-      localStorage.setItem('clausule_dev_access', 'granted')
+      localStorage.setItem('clausule_dev_accexx', 'granted')
       window.history.replaceState(null, '', window.location.pathname)
     }
-    const hasAccess = localStorage.getItem('clausule_dev_access') === 'granted'
+    const hasAccess = localStorage.getItem('clausule_dev_accexx') === 'granted'
     setIsBypassed(hasAccess)
   }, [])
 
