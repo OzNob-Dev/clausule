@@ -1,12 +1,14 @@
-import { useNavigate } from 'react-router-dom'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { storage } from '../../utils/storage'
 
 export default function BragRail({ activePage }) {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const logout = () => {
     storage.clearAuth()
-    navigate('/')
+    router.push('/')
   }
 
   return (
@@ -15,7 +17,7 @@ export default function BragRail({ activePage }) {
       <nav className="be-rail-nav" aria-label="Primary">
         <button
           className={activePage === 'brag' ? 'be-rail-btn-active' : 'be-rail-btn'}
-          onClick={activePage !== 'brag' ? () => navigate('/brag') : undefined}
+          onClick={activePage !== 'brag' ? () => router.push('/brag') : undefined}
           aria-label="Brag doc"
           aria-current={activePage === 'brag' ? 'page' : undefined}
         >
@@ -26,7 +28,7 @@ export default function BragRail({ activePage }) {
         </button>
         <button
           className={activePage === 'settings' ? 'be-rail-btn-active' : 'be-rail-btn'}
-          onClick={activePage !== 'settings' ? () => navigate('/brag/settings') : undefined}
+          onClick={activePage !== 'settings' ? () => router.push('/brag/settings') : undefined}
           aria-label="Settings"
           aria-current={activePage === 'settings' ? 'page' : undefined}
         >

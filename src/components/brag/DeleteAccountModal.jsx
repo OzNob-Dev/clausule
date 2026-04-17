@@ -1,9 +1,11 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { storage } from '../../utils/storage'
 
 export default function DeleteAccountModal({ open, onClose }) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [visible, setVisible] = useState(false)
   const inputRef = useRef(null)
@@ -30,7 +32,7 @@ export default function DeleteAccountModal({ open, onClose }) {
       return
     }
     storage.clearAuth()
-    navigate('/')
+    router.push('/')
   }
 
   const handleClose = () => {

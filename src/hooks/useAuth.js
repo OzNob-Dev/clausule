@@ -1,18 +1,18 @@
+import { useRouter } from 'next/navigation'
 import { storage } from '../utils/storage'
-import { useNavigate } from 'react-router-dom'
 
 export function useAuth() {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const signIn = (role) => {
     storage.setAuthed()
     storage.setRole(role)
-    navigate(role === 'employee' ? '/brag' : '/dashboard')
+    router.push(role === 'employee' ? '/brag' : '/dashboard')
   }
 
   const logout = () => {
     storage.clearAuth()
-    navigate('/')
+    router.push('/')
   }
 
   return {

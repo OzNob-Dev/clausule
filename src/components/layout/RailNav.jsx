@@ -1,4 +1,7 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { storage } from '../../utils/storage'
 import '../../styles/rail-nav.css'
 
@@ -45,12 +48,13 @@ const navItems = [
 ]
 
 export function RailNav() {
-  const navigate = useNavigate()
-  const escalatedCount = storage.getEscalatedCount()
+  const pathname        = usePathname()
+  const router          = useRouter()
+  const escalatedCount  = storage.getEscalatedCount()
 
   const logout = () => {
     storage.clearAuth()
-    navigate('/')
+    router.push('/')
   }
 
   return (
@@ -65,19 +69,17 @@ export function RailNav() {
       {/* Nav items */}
       <nav className="rail-items">
         {navItems.map(({ to, tip, icon, badge }) => (
-          <NavLink
+          <Link
             key={to}
-            to={to}
+            href={to}
             title={tip}
-            className={({ isActive }) =>
-              `nav-item${isActive ? ' nav-item--active' : ''}`
-            }
+            className={`nav-item${pathname === to ? ' nav-item--active' : ''}`}
           >
             {icon}
             {badge && escalatedCount > 0 && (
               <span className="rn-badge" aria-hidden="true" />
             )}
-          </NavLink>
+          </Link>
         ))}
       </nav>
 

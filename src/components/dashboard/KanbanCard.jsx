@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import { Avatar } from '../ui/Avatar'
 import { relativeTime } from '../../utils/relativeTime'
 
 export function KanbanCard({ emp }) {
   return (
-    <Link to="/profile" className="kb-card">
+    <Link href="/profile" className="kb-card">
       <div className="kb-card-head">
         <Avatar initials={emp.av} bg={emp.avBg} color={emp.avCol} size="sm" />
         <div className="kb-card-info">
