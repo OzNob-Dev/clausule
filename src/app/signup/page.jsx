@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { validateEmail } from '@/utils/emailValidation'
@@ -462,11 +462,8 @@ function SignUpInner() {
   const searchParams = useSearchParams()
   const { step, setStep, step1Data, setStep1Data, step2Data, setStep2Data, completePayment } = useSignup()
 
-  // Hydrate email from query param on first render only
-  useEffect(() => {
-    const prefill = decodeURIComponent(searchParams.get('email') ?? '')
-    if (prefill) setStep1Data((prev) => ({ ...prev, email: prefill }))
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const emailPrefill = decodeURIComponent(searchParams.get('email') ?? '')
+  const step1Initial = emailPrefill ? { ...step1Data, email: emailPrefill } : step1Data
 
   const goStep = (n) => {
     setStep(n)
@@ -508,7 +505,7 @@ function SignUpInner() {
         {step === 1 ? (
           <div className="su-step1-layout">
             <div className="su-step1-form">
-              <Step1 onNext={handleStep1} initialData={step1Data} />
+              <Step1 onNext={handleStep1} initialData={step1Initial} />
             </div>
             <div className="su-aside">
               <Aside />
