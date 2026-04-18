@@ -22,6 +22,7 @@ import {
   useCallback,
 } from 'react'
 import { useRouter } from 'next/navigation'
+import { useProfileStore } from '@/stores/useProfileStore'
 
 const AuthContext = createContext(null)
 
@@ -93,6 +94,7 @@ export function AuthProvider({ children }) {
     } catch {
       // Best-effort — navigate regardless of network errors.
     }
+    useProfileStore.getState().clearProfile()
     setUser(null)
     router.push('/')
   }, [router])

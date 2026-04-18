@@ -1,23 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProfileStore } from '@/stores/useProfileStore'
 
 export default function BragRail({ activePage }) {
   const router = useRouter()
   const { logout } = useAuth()
-  const [initials, setInitials] = useState('')
-
-  useEffect(() => {
-    fetch('/api/auth/profile', { credentials: 'same-origin' })
-      .then((r) => r.ok ? r.json() : {})
-      .then((d) => {
-        const i = ((d.firstName?.[0] ?? '') + (d.lastName?.[0] ?? '')).toUpperCase()
-        setInitials(i || d.email?.[0]?.toUpperCase() || '')
-      })
-      .catch(() => {})
-  }, [])
+  const profile = useProfileStore((state) => state.profile)
+  const initials =
+    ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
+    profile.email?.[0]?.toUpperCase() ||
+    ''
 
   return (
     <aside className="be-rail be-sidebar" aria-label="App navigation">

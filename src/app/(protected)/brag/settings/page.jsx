@@ -1,14 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import BragRail from '@/components/brag/BragRail'
 import TotpSetupPanel from '@/components/brag/TotpSetupPanel'
 import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
+import { useProfileStore } from '@/stores/useProfileStore'
 import '@/styles/brag-employee.css'
 import '@/styles/brag-settings.css'
 
 export default function BragSettings() {
-  const [profile, setProfile] = useState({ firstName: '', lastName: '', email: '' })
+  const profile = useProfileStore((state) => state.profile)
+  const setProfile = useProfileStore((state) => state.setProfile)
 
   const [totpConfigured, setTotpConfigured] = useState(false)
   const [totpLoading, setTotpLoading]       = useState(true)
@@ -21,7 +23,7 @@ export default function BragSettings() {
       .then((r) => r.ok ? r.json() : {})
       .then((data) => setProfile({ firstName: data.firstName ?? '', lastName: data.lastName ?? '', email: data.email ?? '' }))
       .catch(() => {})
-  }, [])
+  }, [setProfile])
 
   useEffect(() => {
     fetch('/api/auth/totp/status', { credentials: 'same-origin' })

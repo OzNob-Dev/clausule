@@ -7,6 +7,7 @@ import { validateEmail } from '@/utils/emailValidation'
 import { storage } from '@/utils/storage'
 import { sendCodeEmail } from '@/utils/sendCodeEmail'
 import { SignupProvider, useSignup } from '@/contexts/SignupContext'
+import { useProfileStore } from '@/stores/useProfileStore'
 import '@/styles/signup.css'
 
 const STEPS = ['Account', 'Payment', 'Done']
@@ -457,6 +458,7 @@ function Aside() {
 function SignUpInner() {
   const searchParams = useSearchParams()
   const { step, setStep, step1Data, setStep1Data, step2Data, setStep2Data, completePayment } = useSignup()
+  const setProfile = useProfileStore((state) => state.setProfile)
 
   const emailPrefill = decodeURIComponent(searchParams.get('email') ?? '')
   const step1Initial = emailPrefill ? { ...step1Data, email: emailPrefill } : step1Data
@@ -468,6 +470,11 @@ function SignUpInner() {
 
   const handleStep1 = (data) => {
     setStep1Data(data)
+    setProfile({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+    })
     const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ')
     setStep2Data((prev) => ({ ...prev, cardName: prev.cardName || fullName }))
     goStep(2)

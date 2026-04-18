@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTheme } from '@/hooks/useTheme'
 import BragRail from '@/components/brag/BragRail'
 import EntryCard from '@/components/brag/EntryCard'
 import EntryComposer from '@/components/brag/EntryComposer'
 import ResumeTab from '@/components/brag/ResumeTab'
+import { useProfileStore } from '@/stores/useProfileStore'
 import '@/styles/brag-employee.css'
 
 const MANAGER_NOTE =
@@ -46,7 +47,8 @@ const INITIAL_ENTRIES = [
 
 export default function BragEmployee() {
   useTheme()
-  const [profile, setProfile] = useState({ firstName: '', lastName: '', email: '' })
+  const profile = useProfileStore((state) => state.profile)
+  const setProfile = useProfileStore((state) => state.setProfile)
   const [tab, setTab]                   = useState('brag')
   const [entries, setEntries]           = useState(INITIAL_ENTRIES)
   const [composerOpen, setComposerOpen] = useState(false)
@@ -56,7 +58,7 @@ export default function BragEmployee() {
       .then((r) => r.ok ? r.json() : {})
       .then((d) => setProfile({ firstName: d.firstName ?? '', lastName: d.lastName ?? '', email: d.email ?? '' }))
       .catch(() => {})
-  }, [])
+  }, [setProfile])
 
   const saveEntry = (entry) => {
     setEntries((prev) => [entry, ...prev])
