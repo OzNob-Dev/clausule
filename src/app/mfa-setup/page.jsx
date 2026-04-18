@@ -75,7 +75,7 @@ function DigitRow({ digits, inputState, inputRefs, onChange, onKeyDown, onPaste 
           aria-label={`Digit ${i + 1} of 6`}
           autoFocus={i === 0}
           autoComplete={i === 0 ? 'one-time-code' : 'off'}
-          disabled={inputState === 'done'}
+          disabled={inputState === 'done' || inputState === 'checking'}
         />
       ))}
     </div>
@@ -148,6 +148,7 @@ export default function MfaSetup() {
   // ── Email OTP: server-side verification ───────────────────────
   const verifyOtp = useCallback(async (digits) => {
     const code = digits.join('')
+    setOtpState('checking')
     try {
       const res = await fetch('/api/auth/verify-code', {
         method:  'POST',
@@ -176,6 +177,7 @@ export default function MfaSetup() {
   const verifyTotp = useCallback(async (digits) => {
     const code = digits.join('')
     if (!totpSecret) return
+    setTotpState('checking')
     try {
       const res = await fetch('/api/auth/totp/setup', {
         method:  'POST',
