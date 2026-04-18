@@ -136,18 +136,10 @@ export default function MfaSetup() {
       .finally(() => setTotpLoading(false))
   }, [step, totpSecret])
 
-  // Detect platform authenticator availability
+  // WebAuthn API presence = passkeys supported; browser presents all available
+  // authenticators (platform biometrics, password managers, hardware keys).
   useEffect(() => {
-    if (
-      typeof PublicKeyCredential !== 'undefined' &&
-      typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function'
-    ) {
-      PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-        .then(setPasskeyAvailable)
-        .catch(() => setPasskeyAvailable(false))
-    } else {
-      setPasskeyAvailable(false)
-    }
+    setPasskeyAvailable(typeof PublicKeyCredential !== 'undefined')
   }, [])
 
   // Resend countdown
