@@ -106,6 +106,11 @@ export function upsert(table, body, onConflict = 'id') {
 export function createUser({ email, password, user_metadata }) {
   return supaFetch('/auth/v1/admin/users', {
     method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+      'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({
       email,
       password: password ?? undefined,
