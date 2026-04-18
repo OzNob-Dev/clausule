@@ -1,32 +1,55 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { storage } from '@/utils/storage'
 import { validateEmail } from '@/utils/emailValidation'
 import { sendCodeEmail } from '@/utils/sendCodeEmail'
 import { apiFetch } from '@/utils/api'
+import { useSixDigitCode } from '@/hooks/useSixDigitCode'
+import MfaLoginEmailStep from '@/components/mfa/MfaLoginEmailStep'
+import MfaLoginAppStep from '@/components/mfa/MfaLoginAppStep'
 import '@/styles/signin.css'
+import '@/styles/mfa-layout.css'
 
-// emailStatus values:
-//   'idle'       — not yet checked
-//   'checking'   — API call in flight
-//   'registered' — account exists → show "Send code"
-//   'new'        — no account    → show "Create account"
+// step values: 'email' | 'otp' | 'app'
+
+const OTP_TTL_SECONDS = 600
 
 export default function SignIn() {
   const router = useRouter()
-  const [email, setEmail]               = useState('')
-  const [touched, setTouched]           = useState(false)
+
+  // ── Shared state ──────────────────────────────────────────────────
+  const [step, setStep]           = useState('email')
+  const [email, setEmail]         = useState('')
+  const [touched, setTouched]     = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
-  const [sending, setSending]           = useState(false)
-  const [emailStatus, setEmailStatus]   = useState('idle')
+  const [sending, setSending]     = useState(false)
+  const [emailStatus, setEmailStatus] = useState('idle')
+  const lastCheckedRef            = useRef('')
 
-  // Track the last email we ran a check on to avoid redundant requests.
-  const lastCheckedRef = useRef('')
+  const [expirySeconds, setExpirySeconds] = useState(OTP_TTL_SECONDS)
+  const [resendTimer, setResendTimer]     = useState(30)
+  const [verifyError, setVerifyError]     = useState(null)
 
-  // Redirect already-authenticated users to the app.
+  const codeRefs    = useRef([])
+  const timeoutRefs = useRef([])
+
+  const scheduleTimeout = useCallback((fn, delay) => {
+    const id = setTimeout(fn, delay)
+    timeoutRefs.current.push(id)
+    return id
+  }, [])
+
+  useEffect(() => () => {
+    timeoutRefs.current.forEach(clearTimeout)
+    timeoutRefs.current = []
+  }, [])
+
+  const code = useSixDigitCode({ inputRefs: codeRefs, scheduleTimeout })
+
+  // Redirect already-authenticated users.
   useEffect(() => {
     apiFetch('/api/auth/me')
       .then(async (res) => {
@@ -38,17 +61,90 @@ export default function SignIn() {
       .catch(() => {})
   }, [router])
 
+  // Expiry countdown (OTP step only).
+  useEffect(() => {
+    if (step !== 'otp' || expirySeconds <= 0) return
+    const id = setTimeout(() => setExpirySeconds((n) => n - 1), 1000)
+    return () => clearTimeout(id)
+  }, [step, expirySeconds])
+
+  // Resend cooldown (OTP step only).
+  useEffect(() => {
+    if (step !== 'otp' || resendTimer <= 0) return
+    const id = setTimeout(() => setResendTimer((n) => n - 1), 1000)
+    return () => clearTimeout(id)
+  }, [step, resendTimer])
+
+  // ── Verify handlers (defined before auto-verify effect) ───────────
+  const verifyOtp = useCallback(async (digits) => {
+    const otp = digits.join('')
+    if (otp.length !== 6) return
+    code.setState('checking')
+    setVerifyError(null)
+    try {
+      const res = await fetch('/api/auth/verify-code', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email: storage.getEmail(), code: otp }),
+      })
+      if (res.ok) {
+        code.setState('done')
+        const { role } = await res.json()
+        scheduleTimeout(() => router.replace(role === 'employee' ? '/brag' : '/dashboard'), 400)
+      } else {
+        code.setError()
+        setVerifyError('Incorrect code — try again')
+      }
+    } catch {
+      code.setError()
+      setVerifyError('Something went wrong — try again')
+    }
+  }, [code, router, scheduleTimeout])
+
+  const verifyApp = useCallback(async (digits) => {
+    const otp = digits.join('')
+    if (otp.length !== 6) return
+    code.setState('checking')
+    setVerifyError(null)
+    try {
+      const res = await fetch('/api/auth/totp/verify', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email: storage.getEmail(), code: otp }),
+      })
+      if (res.ok) {
+        code.setState('done')
+        const { role } = await res.json()
+        scheduleTimeout(() => router.replace(role === 'employee' ? '/brag' : '/dashboard'), 400)
+      } else {
+        code.setError()
+        setVerifyError('Incorrect code — try again')
+      }
+    } catch {
+      code.setError()
+      setVerifyError('Something went wrong — try again')
+    }
+  }, [code, router, scheduleTimeout])
+
+  // Auto-verify when all 6 digits are filled.
+  useEffect(() => {
+    if (step !== 'otp' && step !== 'app') return
+    if (code.state !== 'idle') return
+    if (!code.digits.every(Boolean)) return
+    if (step === 'otp') verifyOtp(code.digits)
+    else verifyApp(code.digits)
+  }, [code.digits, code.state, step, verifyOtp, verifyApp])
+
+  // ── Email step logic ──────────────────────────────────────────────
   const result       = validateEmail(email)
   const showFeedback = touched || submitAttempted
 
-  // Reset status whenever the user edits the email field.
   const handleEmailChange = (e) => {
     setEmail(e.target.value)
     setSubmitAttempted(false)
     if (emailStatus !== 'idle') setEmailStatus('idle')
   }
 
-  // Core submit logic — shared by form submit, blur, and paste.
   const doSubmit = async (rawEmail) => {
     const trimmed = rawEmail.trim()
     if (!trimmed) return
@@ -71,7 +167,12 @@ export default function SignIn() {
           body:    JSON.stringify({ email: resolved }),
         })
         const data = await res.json()
-        status = data.exists ? 'registered' : 'new'
+        if (!data.exists) {
+          setEmailStatus('new')
+          router.push(`/signup?email=${encodeURIComponent(resolved)}`)
+          return
+        }
+        status = data.hasMfa ? 'mfa' : 'registered'
         setEmailStatus(status)
       } catch {
         setEmailStatus('idle')
@@ -79,18 +180,23 @@ export default function SignIn() {
       }
     }
 
-    if (status === 'new') {
-      router.push(`/signup?email=${encodeURIComponent(resolved)}`)
+    storage.setEmail(resolved)
+
+    if (status === 'mfa') {
+      setStep('app')
       return
     }
 
-    // Email registered — send OTP.
-    storage.setEmail(resolved)
+    // No TOTP — send email OTP.
     setSending(true)
     try {
       await sendCodeEmail(resolved)
-      router.push('/mfa-setup')
+      setExpirySeconds(OTP_TTL_SECONDS)
+      setResendTimer(30)
+      code.setState('idle')
+      setStep('otp')
     } catch {
+      // stay on email step
     } finally {
       setSending(false)
     }
@@ -100,10 +206,7 @@ export default function SignIn() {
 
   const handlePaste = (e) => {
     const pasted = e.clipboardData?.getData('text') ?? ''
-    if (pasted.trim()) {
-      // Let React update state first, then submit with the pasted value.
-      setTimeout(() => doSubmit(pasted), 0)
-    }
+    if (pasted.trim()) setTimeout(() => doSubmit(pasted), 0)
   }
 
   const acceptSuggestion = () => {
@@ -114,12 +217,18 @@ export default function SignIn() {
     lastCheckedRef.current = ''
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    doSubmit(email)
+  const handleSubmit = (e) => { e.preventDefault(); doSubmit(email) }
+
+  const handleResend = async () => {
+    try {
+      await sendCodeEmail(storage.getEmail() ?? email)
+      setExpirySeconds(OTP_TTL_SECONDS)
+      setResendTimer(30)
+      code.setState('idle')
+      setVerifyError(null)
+    } catch { /* ignore */ }
   }
 
-  // Derive button label and style from emailStatus.
   const isChecking   = emailStatus === 'checking' || sending
   const isNewAccount = emailStatus === 'new'
 
@@ -128,6 +237,56 @@ export default function SignIn() {
     : isNewAccount
       ? 'Create account →'
       : 'Send code'
+
+  // ── Render ────────────────────────────────────────────────────────
+  if (step === 'otp' || step === 'app') {
+    const resolvedEmail = storage.getEmail() ?? email
+
+    return (
+      <div className="mfa-wrap">
+        <div className="mfa-card" role="main">
+          <button
+            className="mfa-back-btn"
+            onClick={() => { setStep('email'); code.setState('idle'); setVerifyError(null) }}
+            aria-label="Back to sign in"
+          >
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <polyline points="10 4 6 8 10 12" />
+            </svg>
+            Back
+          </button>
+
+          {step === 'otp' ? (
+            <MfaLoginEmailStep
+              email={resolvedEmail}
+              otp={code.digits}
+              otpRefs={codeRefs}
+              otpState={code.state}
+              expirySeconds={expirySeconds}
+              resendTimer={resendTimer}
+              onChange={code.handleChange}
+              onKeyDown={code.handleKeyDown}
+              onPaste={code.handlePaste}
+              onVerify={() => verifyOtp(code.digits)}
+              onResend={handleResend}
+            />
+          ) : (
+            <MfaLoginAppStep
+              email={resolvedEmail}
+              otp={code.digits}
+              otpRefs={codeRefs}
+              otpState={code.state}
+              onChange={code.handleChange}
+              onKeyDown={code.handleKeyDown}
+              onPaste={code.handlePaste}
+              onVerify={() => verifyApp(code.digits)}
+              onUseRecovery={null}
+            />
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="si-wrap">
@@ -170,8 +329,8 @@ export default function SignIn() {
                 aria-describedby="si-email-hint"
                 className={[
                   'si-input',
-                  showFeedback && result.error   ? 'si-input--error' : '',
-                  showFeedback && result.suggestion ? 'si-input--warn' : '',
+                  showFeedback && result.error      ? 'si-input--error' : '',
+                  showFeedback && result.suggestion ? 'si-input--warn'  : '',
                 ].filter(Boolean).join(' ')}
               />
 
@@ -192,7 +351,7 @@ export default function SignIn() {
                 )}
                 {!result.error && !result.suggestion && isNewAccount && (
                   <p className="si-field-hint si-field-hint--info">
-                    No account found - we'll get you set up.
+                    No account found — we'll get you set up.
                   </p>
                 )}
               </div>
@@ -207,7 +366,6 @@ export default function SignIn() {
               {btnLabel}
             </button>
 
-            {/* Hide the static sign-up link once we know it's a new email */}
             {!isNewAccount && (
               <p className="si-footer">
                 No account yet?{' '}

@@ -339,3 +339,122 @@
 
 .mfa-enter-btn:hover { opacity: 0.85; }
 
+/* ── Back button ─────────────────────────────────────────────────── */
+.mfa-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #786B5F;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  padding: 0;
+  margin-bottom: 28px;
+  transition: color 0.12s;
+}
+
+.mfa-back-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.mfa-back-btn:hover { color: #2A221A; }
+
+/* ── Login-flow pane ─────────────────────────────────────────────── */
+.mfa-login-pane {
+  align-items: stretch;
+  text-align: left;
+}
+
+.mfa-login-heading {
+  text-align: left;
+}
+
+.mfa-login-btn {
+  margin-bottom: 16px;
+}
+
+/* Security indicator row */
+.mfa-sec-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(60, 45, 35, 0.06);
+  border-radius: 10px;
+  margin-bottom: 28px;
+}
+
+.mfa-sec-row--accent {
+  background: rgba(208, 90, 52, 0.07);
+}
+
+.mfa-sec-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(60, 45, 35, 0.07);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mfa-sec-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mfa-sec-icon--accent {
+  background: rgba(208, 90, 52, 0.15);
+}
+
+.mfa-sec-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5B4E42;
+  line-height: 1.45;
+}
+
+.mfa-sec-text strong {
+  color: #2A221A;
+  font-weight: 700;
+}
+
+/* Expiry countdown */
+.mfa-expiry-note {
+  font-size: 11px;
+  font-weight: 600;
+  color: #786B5F;
+  margin-bottom: 28px;
+}
+
+.mfa-expiry-expired {
+  color: #D94040;
+}
+
+.mfa-expiry-bar {
+  height: 3px;
+  background: rgba(60, 45, 35, 0.14);
+  border-radius: 2px;
+  margin-top: 7px;
+  overflow: hidden;
+}
+
+.mfa-expiry-fill {
+  height: 100%;
+  background: #2A221A;
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+
+/* Footer link group */
+.mfa-login-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+

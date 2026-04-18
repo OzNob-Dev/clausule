@@ -1,11 +1,12 @@
 /**
  * POST /api/auth/check-email
  *
- * Returns whether an email address has a registered account.
- * Used by the sign-in page to branch between "Send code" and "Create account".
+ * Returns whether an email address has a registered account and whether
+ * that account has TOTP configured — used by the sign-in page to route
+ * the user to the correct MFA step.
  *
  * Body:     { email: string }
- * Response: { exists: boolean }
+ * Response: { exists: boolean, hasMfa: boolean }
  */
 
 import { NextResponse }   from 'next/server'
@@ -31,7 +32,10 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
 
-  const { data } = await select('profiles', `email=eq.${email}&select=id&limit=1`)
+  const { data } = await select('profiles', `email=eq.${email}&select=id,totp_secret&limit=1`)
 
-  return NextResponse.json({ exists: Array.isArray(data) && data.length > 0 })
+  const exists = Array.isArray(data) && data.length > 0
+  const hasMfa = exists && Boolean(data[0]?.totp_secret)
+
+  return NextResponse.json({ exists, hasMfa })
 }
