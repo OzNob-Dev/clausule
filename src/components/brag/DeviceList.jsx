@@ -89,9 +89,7 @@ export default function DeviceList({ devices, passkeyAvailable, registering, reg
       )}
 
       {registerError && (
-        <p className="bss-error" role="alert">
-          Registration failed — check your device settings or try a different browser.
-        </p>
+        <p className="bss-error" role="alert">{registerError}</p>
       )}
 
       {passkeyAvailable === false && (

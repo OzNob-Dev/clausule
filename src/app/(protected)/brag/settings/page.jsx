@@ -29,10 +29,12 @@ function inferDevice() {
 }
 
 export default function BragSettings() {
+  const [profile, setProfile] = useState({ firstName: '', lastName: '', email: '' })
+
   const [devices, setDevices]             = useState([])
   const [devicesLoading, setDevicesLoading] = useState(true)
   const [registering, setRegistering]     = useState(false)
-  const [registerError, setRegisterError] = useState(false)
+  const [registerError, setRegisterError] = useState(null)
   const [passkeyAvailable, setPasskeyAvailable] = useState(null)
 
   const [totpConfigured, setTotpConfigured] = useState(false)
@@ -40,6 +42,13 @@ export default function BragSettings() {
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
   const [deleteModal, setDeleteModal] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/auth/profile', { credentials: 'same-origin' })
+      .then((r) => r.ok ? r.json() : {})
+      .then((data) => setProfile({ firstName: data.firstName ?? '', lastName: data.lastName ?? '', email: data.email ?? '' }))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (
@@ -72,7 +81,7 @@ export default function BragSettings() {
 
   const registerDevice = async () => {
     setRegistering(true)
-    setRegisterError(false)
+    setRegisterError(null)
     try {
       const optRes = await fetch('/api/auth/passkeys/register/options', {
         method: 'POST',
@@ -129,7 +138,7 @@ export default function BragSettings() {
         setDevices(Array.isArray(data) ? data : [])
       }
     } catch (err) {
-      if (err?.name !== 'NotAllowedError') setRegisterError(true)
+      if (err?.name !== 'NotAllowedError') setRegisterError(err?.message ?? 'Registration failed')
     } finally {
       setRegistering(false)
     }
@@ -164,9 +173,15 @@ export default function BragSettings() {
         </div>
         <div className="be-sidebar-body">
           <div>
-            <div className="be-sidebar-avatar" aria-hidden="true">JE</div>
-            <div className="be-sidebar-name">Jordan Ellis</div>
-            <div className="be-sidebar-role">Senior engineer · Platform</div>
+            <div className="be-sidebar-avatar" aria-hidden="true">
+              {(profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '') || profile.email?.[0]?.toUpperCase() || '?'}
+            </div>
+            <div className="be-sidebar-name">
+              {profile.firstName || profile.lastName
+                ? `${profile.firstName} ${profile.lastName}`.trim()
+                : profile.email}
+            </div>
+            <div className="be-sidebar-role">{profile.email}</div>
           </div>
           <div className="be-divider" role="separator" />
           <div>
