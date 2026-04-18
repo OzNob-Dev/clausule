@@ -8,45 +8,6 @@ import CodeEmail from '@/components/ui/CodeEmail'
 import '@/styles/mfa-setup.css'
 import '@/styles/code-email.css'
 
-// ── WebAuthn helpers ──────────────────────────────────────────────
-function b64urlToUint8(str) {
-  const padded = str + '='.repeat((4 - (str.length % 4)) % 4)
-  return Uint8Array.from(
-    atob(padded.replace(/-/g, '+').replace(/_/g, '/')),
-    (c) => c.charCodeAt(0)
-  )
-}
-
-function bufToB64url(buf) {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
-
-function detectDevice() {
-  if (typeof navigator === 'undefined') return { type: 'laptop', method: 'Passkey' }
-  const ua = navigator.userAgent
-  if (/iPhone|iPod/.test(ua)) return { type: 'phone',  method: 'Face ID / Touch ID' }
-  if (/iPad/.test(ua))        return { type: 'tablet', method: 'Face ID / Touch ID' }
-  if (/Android/.test(ua))     return { type: 'phone',  method: 'Biometrics' }
-  if (/Win/.test(ua))         return { type: 'laptop', method: 'Windows Hello' }
-  if (/Mac/.test(ua))         return { type: 'laptop', method: 'Touch ID' }
-  return { type: 'laptop', method: 'Passkey' }
-}
-
-function getDeviceName() {
-  if (typeof navigator === 'undefined') return 'My device'
-  const ua = navigator.userAgent
-  if (/iPhone/.test(ua))  return 'iPhone'
-  if (/iPad/.test(ua))    return 'iPad'
-  if (/Android/.test(ua)) {
-    const m = ua.match(/Android[^;]*;\s*([^)]+)\)/)
-    return m ? m[1].trim() : 'Android device'
-  }
-  if (/Win/.test(ua)) return 'Windows PC'
-  if (/Mac/.test(ua)) return 'Mac'
-  return 'My device'
-}
-
 // ── 6-box digit input ─────────────────────────────────────────────
 function DigitRow({ digits, inputState, inputRefs, onChange, onKeyDown, onPaste }) {
   return (
@@ -103,24 +64,14 @@ export default function MfaSetup() {
   const [copied, setCopied]                 = useState(false)
   const totpRefs = useRef([])
 
-  // Step 2 — biometrics
-  const [passkeyAvailable, setPasskeyAvailable] = useState(null)
-  const [passkeyState, setPasskeyState]         = useState('idle')
-  const [passkeyError, setPasskeyError]         = useState('')
-
-  // Computed once on client
-  const [deviceInfo] = useState(() => detectDevice())
-
   const email    = storage.getEmail() || 'your email'
   const totpDone = totpState === 'done'
-
-  // No on-mount redirect — OTP verification (step 1) must happen first to establish auth cookies.
 
   // Fetch real TOTP secret when entering step 2
   useEffect(() => {
     if (step !== 2 || totpSecret) return
     setTotpLoading(true)
-    fetch('/api/auth/totp/setup')
+    fetch('/api/auth/totp/setup', { credentials: 'same-origin' })
       .then((r) => r.json())
       .then(({ secret, uri }) => {
         if (!secret) return
@@ -131,12 +82,6 @@ export default function MfaSetup() {
       .catch(() => {})
       .finally(() => setTotpLoading(false))
   }, [step, totpSecret])
-
-  // WebAuthn API presence = passkeys supported; browser presents all available
-  // authenticators (platform biometrics, password managers, hardware keys).
-  useEffect(() => {
-    setPasskeyAvailable(typeof PublicKeyCredential !== 'undefined')
-  }, [])
 
   // Resend countdown
   useEffect(() => {
@@ -157,7 +102,6 @@ export default function MfaSetup() {
       })
       if (res.ok) {
         setOtpState('done')
-        // Auth cookies are now set. If MFA already configured, skip setup.
         if (storage.getMfaSetup()) {
           setTimeout(() => router.replace('/brag'), 500)
         } else {
@@ -182,6 +126,7 @@ export default function MfaSetup() {
       const res = await fetch('/api/auth/totp/setup', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body:    JSON.stringify({ code, secret: totpSecret }),
       })
       if (res.ok) {
@@ -260,84 +205,6 @@ export default function MfaSetup() {
     if (next.every(Boolean)) verifyTotp(next)
   }, [verifyTotp])
 
-  // ── Passkey: real WebAuthn registration ───────────────────────
-  const setupPasskey = async () => {
-    setPasskeyState('loading')
-    setPasskeyError('')
-    try {
-      // 1. Get signed challenge from server
-      const optRes = await fetch('/api/auth/passkeys/register/options', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({}),
-      })
-      if (!optRes.ok) throw new Error('Failed to get registration options')
-      const { options, _signedChallenge } = await optRes.json()
-
-      // 2. Convert base64url fields → ArrayBuffer for browser API
-      const createOptions = {
-        ...options,
-        challenge: b64urlToUint8(options.challenge),
-        user: {
-          ...options.user,
-          id: b64urlToUint8(options.user.id),
-        },
-        excludeCredentials: (options.excludeCredentials ?? []).map((c) => ({
-          ...c,
-          id: b64urlToUint8(c.id),
-        })),
-      }
-
-      // 3. Invoke platform authenticator (biometric prompt)
-      const credential = await navigator.credentials.create({ publicKey: createOptions })
-      if (!credential) throw new Error('No credential returned')
-
-      // 4. Serialize credential response (ArrayBuffer → base64url) for the server
-      // getAuthenticatorData() is preferred; .authenticatorData property absent in some implementations
-      const authDataBuf = credential.response.getAuthenticatorData?.()
-        ?? credential.response.authenticatorData
-      if (!authDataBuf) throw new Error('authenticatorData unavailable on this device')
-
-      const credJSON = {
-        id:    credential.id,
-        rawId: bufToB64url(credential.rawId),
-        type:  credential.type,
-        response: {
-          clientDataJSON:    bufToB64url(credential.response.clientDataJSON),
-          authenticatorData: bufToB64url(authDataBuf),
-          attestationObject: bufToB64url(credential.response.attestationObject),
-        },
-      }
-
-      // 5. Verify and persist on server
-      const verifyRes = await fetch('/api/auth/passkeys/register/verify', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          credential:       credJSON,
-          _signedChallenge,
-          deviceName:       getDeviceName(),
-          deviceType:       deviceInfo.type,
-          method:           deviceInfo.method,
-        }),
-      })
-      if (!verifyRes.ok) {
-        const { error } = await verifyRes.json().catch(() => ({}))
-        throw new Error(error ?? 'Verification failed')
-      }
-
-      setPasskeyState('done')
-    } catch (err) {
-      if (err?.name === 'NotAllowedError') {
-        // User cancelled or timed out — not a hard error
-        setPasskeyState('idle')
-      } else {
-        setPasskeyError(err?.message ?? 'Setup failed')
-        setPasskeyState('error')
-      }
-    }
-  }
-
   const copySecret = () => {
     navigator.clipboard?.writeText(totpSecret).catch(() => {})
     setCopied(true)
@@ -399,13 +266,12 @@ export default function MfaSetup() {
           </div>
         )}
 
-        {/* ── Step 2: Authenticator + Biometrics ────────────── */}
+        {/* ── Step 2: Authenticator ─────────────────────────── */}
         {step === 2 && (
           <div className="mfa-pane mfa-pane--factors" key="factors">
             <h1 className="mfa-heading">Secure your account</h1>
-            <p className="mfa-sub">Set up an authenticator app, then optionally add biometrics.</p>
+            <p className="mfa-sub">Set up an authenticator app to protect your account.</p>
 
-            {/* Card 1 — Authenticator */}
             <div className={`mfa-factor-card${totpDone ? ' mfa-factor-card--done' : ''}`}>
               <div className="mfa-factor-head">
                 <div className={`mfa-factor-badge${totpDone ? ' mfa-factor-badge--done' : ''}`}>
@@ -460,78 +326,6 @@ export default function MfaSetup() {
               )}
             </div>
 
-            {/* Card 2 — Biometrics (locked until TOTP done) */}
-            <div
-              className={[
-                'mfa-factor-card',
-                passkeyState === 'done' ? 'mfa-factor-card--done' : '',
-              ].join(' ')}
-            >
-              <div className="mfa-factor-head">
-                <div className={[
-                  'mfa-factor-badge',
-                  passkeyState === 'done' ? 'mfa-factor-badge--done' : '',
-                ].join(' ')}>
-                  {passkeyState === 'done'
-                    ? <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M2 6l3 3 5-5"/></svg>
-                    : '2'}
-                </div>
-                <div>
-                  <div className="mfa-factor-title">Biometrics / Passkey</div>
-                  <div className="mfa-factor-sub">
-                    {passkeyState === 'done'
-                      ? 'Registered on this device'
-                      : passkeyAvailable === false
-                        ? 'Not supported on this device'
-                        : deviceInfo.method}
-                  </div>
-                </div>
-              </div>
-
-              {passkeyState !== 'done' && (
-                <div className="mfa-factor-body">
-                  {passkeyAvailable === null && (
-                    <p className="mfa-factor-instruction">Checking device…</p>
-                  )}
-                  {passkeyAvailable === true && (
-                    <>
-                      <p className="mfa-factor-instruction">
-                        Add biometric login for faster, phishing-resistant sign-in on this device.
-                      </p>
-                      <button
-                        className="mfa-passkey-btn"
-                        onClick={setupPasskey}
-                        disabled={passkeyState === 'loading'}
-                        aria-busy={passkeyState === 'loading'}
-                      >
-                        {passkeyState === 'loading'
-                          ? <><span className="mfa-spinner" aria-hidden="true" />Waiting for device…</>
-                          : <>
-                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                                <ellipse cx="9" cy="16" rx="5" ry="5"/>
-                                <path d="M14 16h6M17 14v4"/>
-                                <path d="M9 11V4.5a2.5 2.5 0 0 1 5 0"/>
-                              </svg>
-                              {`Set up ${deviceInfo.method}`}
-                            </>}
-                      </button>
-                      {passkeyState === 'error' && (
-                        <p className="mfa-error" role="alert">
-                          {passkeyError || 'Setup failed — you can skip and add it later'}
-                        </p>
-                      )}
-                    </>
-                  )}
-                  {passkeyAvailable === false && (
-                    <p className="mfa-factor-instruction">
-                      Biometrics aren't available here. You can add a passkey later from Settings.
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Continue (visible once TOTP verified) */}
             {totpDone && (
               <div className="mfa-factor-actions">
                 <button className="mfa-enter-btn" onClick={finishSetup}>
@@ -540,9 +334,6 @@ export default function MfaSetup() {
                     <path d="M3 8h10M9 4l4 4-4 4" />
                   </svg>
                 </button>
-                {passkeyAvailable === true && passkeyState === 'idle' && (
-                  <button className="mfa-skip-btn" onClick={finishSetup}>Skip biometrics for now</button>
-                )}
               </div>
             )}
           </div>

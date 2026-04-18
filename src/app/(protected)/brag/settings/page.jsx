@@ -3,39 +3,12 @@
 import { useState, useEffect } from 'react'
 import BragRail from '@/components/brag/BragRail'
 import TotpSetupPanel from '@/components/brag/TotpSetupPanel'
-import DeviceList from '@/components/brag/DeviceList'
 import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
 import '@/styles/brag-employee.css'
 import '@/styles/brag-settings.css'
 
-function b64urlToUint8(str) {
-  const padded = str + '='.repeat((4 - (str.length % 4)) % 4)
-  return Uint8Array.from(atob(padded.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))
-}
-
-function bufToB64url(buf) {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
-
-function inferDevice() {
-  const ua = navigator.userAgent
-  if (/iPhone|iPod/.test(ua)) return { name: 'iPhone',       type: 'phone',  method: 'Face ID / Touch ID' }
-  if (/iPad/.test(ua))        return { name: 'iPad',          type: 'tablet', method: 'Face ID / Touch ID' }
-  if (/Android/.test(ua))     return { name: 'Android device', type: 'phone',  method: 'Biometrics' }
-  if (/Win/.test(ua))         return { name: 'Windows PC',    type: 'laptop', method: 'Windows Hello' }
-  if (/Mac/.test(ua))         return { name: 'Mac',           type: 'laptop', method: 'Touch ID' }
-  return                             { name: 'My device',     type: 'laptop', method: 'Passkey' }
-}
-
 export default function BragSettings() {
   const [profile, setProfile] = useState({ firstName: '', lastName: '', email: '' })
-
-  const [devices, setDevices]             = useState([])
-  const [devicesLoading, setDevicesLoading] = useState(true)
-  const [registering, setRegistering]     = useState(false)
-  const [registerError, setRegisterError] = useState(null)
-  const [passkeyAvailable, setPasskeyAvailable] = useState(null)
 
   const [totpConfigured, setTotpConfigured] = useState(false)
   const [totpLoading, setTotpLoading]       = useState(true)
@@ -51,112 +24,12 @@ export default function BragSettings() {
   }, [])
 
   useEffect(() => {
-    if (
-      typeof PublicKeyCredential !== 'undefined' &&
-      typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function'
-    ) {
-      PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-        .then(setPasskeyAvailable)
-        .catch(() => setPasskeyAvailable(false))
-    } else {
-      setPasskeyAvailable(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetch('/api/auth/passkeys', { credentials: 'same-origin' })
-      .then((r) => r.ok ? r.json() : [])
-      .then((data) => setDevices(Array.isArray(data) ? data : []))
-      .catch(() => setDevices([]))
-      .finally(() => setDevicesLoading(false))
-  }, [])
-
-  useEffect(() => {
     fetch('/api/auth/totp/status', { credentials: 'same-origin' })
       .then((r) => r.ok ? r.json() : { configured: false })
       .then((data) => setTotpConfigured(data.configured ?? false))
       .catch(() => setTotpConfigured(false))
       .finally(() => setTotpLoading(false))
   }, [])
-
-  const registerDevice = async () => {
-    setRegistering(true)
-    setRegisterError(null)
-    try {
-      const optRes = await fetch('/api/auth/passkeys/register/options', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({}),
-      })
-      if (!optRes.ok) throw new Error('Failed to get registration options')
-      const { options, _signedChallenge } = await optRes.json()
-
-      const createOptions = {
-        ...options,
-        rp: { ...options.rp, id: window.location.hostname },
-        challenge: b64urlToUint8(options.challenge),
-        user: { ...options.user, id: b64urlToUint8(options.user.id) },
-        excludeCredentials: (options.excludeCredentials ?? []).map((c) => ({
-          ...c, id: b64urlToUint8(c.id),
-        })),
-      }
-
-      const credential = await navigator.credentials.create({ publicKey: createOptions })
-      if (!credential) throw new Error('No credential returned')
-
-      const authDataBuf = credential.response.getAuthenticatorData?.()
-        ?? credential.response.authenticatorData
-      if (!authDataBuf) throw new Error('authenticatorData unavailable')
-
-      const credJSON = {
-        id:    credential.id,
-        rawId: bufToB64url(credential.rawId),
-        type:  credential.type,
-        response: {
-          clientDataJSON:    bufToB64url(credential.response.clientDataJSON),
-          authenticatorData: bufToB64url(authDataBuf),
-          attestationObject: bufToB64url(credential.response.attestationObject),
-        },
-      }
-
-      const { name, type, method } = inferDevice()
-      const verifyRes = await fetch('/api/auth/passkeys/register/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ credential: credJSON, _signedChallenge, deviceName: name, deviceType: type, method }),
-      })
-      if (!verifyRes.ok) {
-        const { error } = await verifyRes.json().catch(() => ({}))
-        throw new Error(error ?? 'Verification failed')
-      }
-
-      // Refresh device list from DB to get accurate record
-      const listRes = await fetch('/api/auth/passkeys', { credentials: 'same-origin' })
-      if (listRes.ok) {
-        const data = await listRes.json()
-        setDevices(Array.isArray(data) ? data : [])
-      }
-    } catch (err) {
-      if (err?.name !== 'NotAllowedError') setRegisterError(err?.message ?? 'Registration failed')
-    } finally {
-      setRegistering(false)
-    }
-  }
-
-  const removeDevice = async (id) => {
-    setDevices((prev) => prev.filter((d) => d.id !== id))
-    try {
-      await fetch(`/api/auth/passkeys/${id}`, { method: 'DELETE', credentials: 'same-origin' })
-    } catch {
-      // Refresh from DB on failure to restore accurate state.
-      fetch('/api/auth/passkeys', { credentials: 'same-origin' })
-        .then((r) => r.ok ? r.json() : [])
-        .then((data) => setDevices(Array.isArray(data) ? data : []))
-        .catch(() => {})
-    }
-  }
 
   const handleTotpDone = () => {
     setTotpConfigured(true)
@@ -188,7 +61,7 @@ export default function BragSettings() {
           <div>
             <div className="be-notes-label">Account security</div>
             <p className="bss-identity-note">
-              Manage two-factor authentication and biometric devices for phishing-resistant sign-in.
+              Manage two-factor authentication for secure sign-in.
             </p>
           </div>
         </div>
@@ -255,40 +128,6 @@ export default function BragSettings() {
             {totpExpanded && (
               <TotpSetupPanel onDone={handleTotpDone} onCancel={() => setTotpExpanded(false)} />
             )}
-          </div>
-
-          {/* Biometric devices */}
-          <div className="bss-section-label">Biometric login</div>
-          <div className="bss-card">
-            {devicesLoading ? (
-              <div className="bss-loading" aria-busy="true" aria-label="Loading devices">
-                <span className="bss-spinner" aria-hidden="true" />
-              </div>
-            ) : (
-              <DeviceList
-                devices={devices}
-                passkeyAvailable={passkeyAvailable}
-                registering={registering}
-                registerError={registerError}
-                onAdd={registerDevice}
-                onRemove={removeDevice}
-              />
-            )}
-          </div>
-
-          {/* Callout */}
-          <div className="bss-callout">
-            <svg className="bss-callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-              <path d="M12 2a5 5 0 0 1 5 5v2H7V7a5 5 0 0 1 5-5z"/>
-              <rect x="3" y="9" width="18" height="13" rx="2"/>
-              <circle cx="12" cy="15.5" r="1.5"/>
-            </svg>
-            <div>
-              <div className="bss-callout-title">Phishing-resistant sign-in</div>
-              <div className="bss-callout-body">
-                Passkeys are cryptographically bound to clausule.app — they can't be stolen or replayed on fake login pages. Register each device you use regularly to skip the password entirely on that device.
-              </div>
-            </div>
           </div>
 
           {/* Danger zone */}
