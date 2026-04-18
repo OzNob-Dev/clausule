@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import BragRail from '@/components/brag/BragRail'
 import TotpSetupPanel from '@/components/brag/TotpSetupPanel'
 import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
@@ -10,46 +10,23 @@ import '@/styles/brag-settings.css'
 
 export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
-  const setProfile = useProfileStore((state) => state.setProfile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
   const setSecurity = useProfileStore((state) => state.setSecurity)
+  const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
 
-  const [totpLoading, setTotpLoading]       = useState(true)
-  const [totpError, setTotpError]           = useState(false)
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
   const [deleteModal, setDeleteModal] = useState(false)
 
-  useEffect(() => {
-    fetch('/api/auth/profile', { credentials: 'same-origin' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (!data) return
-        setProfile({ firstName: data.firstName ?? '', lastName: data.lastName ?? '', email: data.email ?? '' })
-      })
-      .catch(() => {})
-  }, [setProfile])
-
-  useEffect(() => {
-    fetch('/api/auth/totp/status', { credentials: 'same-origin' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (!data) {
-          setTotpError(true)
-          return
-        }
-        setSecurity({ authenticatorAppConfigured: data.configured ?? false })
-        setTotpError(false)
-      })
-      .catch(() => setTotpError(true))
-      .finally(() => setTotpLoading(false))
-  }, [setSecurity])
-
   const handleTotpDone = () => {
     setSecurity({ authenticatorAppConfigured: true })
-    setTotpError(false)
     setTotpExpanded(false)
   }
+
+  const displayName =
+    profile.firstName || profile.lastName
+      ? `${profile.firstName} ${profile.lastName}`.trim()
+      : profile.email || 'Your profile'
 
   const avatarInitials =
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
@@ -70,11 +47,7 @@ export default function BragSettings() {
             <div key={avatarInitials} className="be-sidebar-avatar be-avatar-pop" aria-hidden="true">
               {avatarInitials}
             </div>
-            <div className="be-sidebar-name">
-              {profile.firstName || profile.lastName
-                ? `${profile.firstName} ${profile.lastName}`.trim()
-                : profile.email}
-            </div>
+            <div className="be-sidebar-name">{displayName}</div>
             <div className="be-sidebar-role">{profile.email}</div>
           </div>
           <div className="be-divider" role="separator" />
@@ -133,7 +106,7 @@ export default function BragSettings() {
                     : 'Not configured — add an authenticator app for a second factor.'}
                 </div>
               </div>
-              {!totpLoading && !totpError && (
+              {hasSecuritySnapshot && (
                 <span
                   className={`bss-mfa-status${authenticatorAppConfigured ? ' bss-mfa-status--on' : ''}`}
                   aria-label={authenticatorAppConfigured ? 'Authenticator app is active' : 'Authenticator app is not set up'}
@@ -141,7 +114,7 @@ export default function BragSettings() {
                   {authenticatorAppConfigured ? 'Active' : 'Empty'}
                 </span>
               )}
-              {!totpLoading && !totpError && (
+              {hasSecuritySnapshot && (
                 <button
                   className="bss-mfa-reconfig-btn"
                   onClick={() => setTotpExpanded((v) => !v)}
@@ -153,13 +126,14 @@ export default function BragSettings() {
               )}
             </div>
 
-            {!totpLoading && totpError && (
-              <div className="bss-error" role="alert">
-                We couldn&apos;t load your authenticator app status right now. Refresh and try again.
+            {!hasSecuritySnapshot && (
+              <div className="bss-loading-state" aria-busy="true">
+                <span className="bss-loading-state__dot" aria-hidden="true" />
+                Loading authenticator status…
               </div>
             )}
 
-            {!totpLoading && !totpError && !authenticatorAppConfigured && !totpExpanded && (
+            {hasSecuritySnapshot && !authenticatorAppConfigured && !totpExpanded && (
               <div className="bss-totp-empty" role="status" aria-live="polite">
                 <div className="bss-totp-empty-title">No authenticator app connected yet</div>
                 <p className="bss-totp-empty-copy">
@@ -168,7 +142,7 @@ export default function BragSettings() {
               </div>
             )}
 
-            {totpExpanded && (
+            {totpExpanded && hasSecuritySnapshot && (
               <TotpSetupPanel onDone={handleTotpDone} onCancel={() => setTotpExpanded(false)} />
             )}
           </div>

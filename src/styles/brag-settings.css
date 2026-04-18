@@ -617,6 +617,28 @@
   border-color: rgba(208, 90, 52, 0.22);
 }
 
+.bss-loading-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 11px;
+  color: #8A7E76;
+}
+
+.bss-loading-state__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(208, 90, 52, 0.55);
+  animation: bss-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes bss-pulse {
+  from { transform: scale(0.9); opacity: 0.55; }
+  to { transform: scale(1.1); opacity: 1; }
+}
+
 .bss-totp-empty {
   margin-top: 14px;
   padding: 14px 16px;

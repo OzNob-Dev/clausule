@@ -13,11 +13,16 @@ const EMPTY_SECURITY = {
   authenticatorAppConfigured: false,
 }
 
+const EMPTY_META = {
+  hasSecuritySnapshot: false,
+}
+
 export const useProfileStore = create(
   persist(
     (set) => ({
       profile: EMPTY_PROFILE,
       security: EMPTY_SECURITY,
+      ...EMPTY_META,
       setProfile: (nextProfile) =>
         set((state) => ({
           profile: {
@@ -33,11 +38,13 @@ export const useProfileStore = create(
             ...EMPTY_SECURITY,
             ...nextSecurity,
           },
+          hasSecuritySnapshot: true,
         })),
       clearProfile: () =>
         set({
           profile: EMPTY_PROFILE,
           security: EMPTY_SECURITY,
+          ...EMPTY_META,
         }),
     }),
     {

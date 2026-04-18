@@ -10,10 +10,24 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
   const [digits, setDigits]       = useState(['', '', '', '', '', ''])
   const [totpState, setTotpState] = useState('idle') // idle | checking | error | done
   const totpRefs                  = useRef([])
+  const timeoutRefs               = useRef([])
+
+  const scheduleTimeout = useCallback((fn, delay) => {
+    const id = setTimeout(fn, delay)
+    timeoutRefs.current.push(id)
+    return id
+  }, [])
+
+  useEffect(() => () => {
+    timeoutRefs.current.forEach(clearTimeout)
+    timeoutRefs.current = []
+  }, [])
 
   const loadSetup = useCallback(() => {
     setLoading(true)
     setLoadError(false)
+    setSecret('')
+    setUri('')
     fetch('/api/auth/totp/setup', { credentials: 'same-origin' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
@@ -47,10 +61,10 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
       })
       if (res.ok) {
         setTotpState('done')
-        setTimeout(onDone, 600)
+        scheduleTimeout(onDone, 600)
       } else {
         setTotpState('error')
-        setTimeout(() => {
+        scheduleTimeout(() => {
           setDigits(['', '', '', '', '', ''])
           setTotpState('idle')
           totpRefs.current[0]?.focus()
@@ -58,30 +72,30 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
       }
     } catch {
       setTotpState('error')
-      setTimeout(() => { setDigits(['', '', '', '', '', '']); setTotpState('idle') }, 700)
+      scheduleTimeout(() => { setDigits(['', '', '', '', '', '']); setTotpState('idle') }, 700)
     }
-  }, [secret, onDone])
+  }, [scheduleTimeout, secret, onDone])
 
   const handleChange = useCallback((i, val) => {
     const d = val.replace(/\D/g, '').slice(-1)
     setDigits((prev) => {
       const next = prev.map((v, idx) => idx === i ? d : v)
-      if (d && i < 5) setTimeout(() => totpRefs.current[i + 1]?.focus(), 0)
+      if (d && i < 5) scheduleTimeout(() => totpRefs.current[i + 1]?.focus(), 0)
       if (next.every(Boolean)) verifyTotp(next)
       return next
     })
-  }, [verifyTotp])
+  }, [scheduleTimeout, verifyTotp])
 
   const handleKey = useCallback((i, e) => {
     if (e.key === 'Backspace') {
       setDigits((prev) => {
         if (prev[i]) return prev.map((v, idx) => idx === i ? '' : v)
-        if (i > 0) setTimeout(() => totpRefs.current[i - 1]?.focus(), 0)
+        if (i > 0) scheduleTimeout(() => totpRefs.current[i - 1]?.focus(), 0)
         return prev
       })
     } else if (e.key === 'ArrowLeft'  && i > 0) totpRefs.current[i - 1]?.focus()
       else if (e.key === 'ArrowRight' && i < 5) totpRefs.current[i + 1]?.focus()
-  }, [])
+  }, [scheduleTimeout])
 
   const handlePaste = useCallback((e) => {
     e.preventDefault()
@@ -96,7 +110,7 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
   const copySecret = () => {
     navigator.clipboard?.writeText(secret).catch(() => {})
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    scheduleTimeout(() => setCopied(false), 2000)
   }
 
   const disabled = totpState === 'done' || totpState === 'checking'

@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 import ComingSoon from '@/components/ComingSoon'
 
 export default function BypassGate({ children }) {
-  const [checked, setChecked]   = useState(false)
-  const [bypassed, setBypassed] = useState(false)
+  const [bypassed, setBypassed] = useState(true)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -14,10 +13,8 @@ export default function BypassGate({ children }) {
       window.history.replaceState(null, '', window.location.pathname)
     }
     setBypassed(localStorage.getItem('clausule_dev_accexx') === 'granted')
-    setChecked(true)
   }, [])
 
-  if (!checked) return null
   if (!bypassed) return <ComingSoon />
   return children
 }

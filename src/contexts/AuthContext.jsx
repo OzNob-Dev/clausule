@@ -34,10 +34,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
+    const { setProfile, setSecurity, clearProfile } = useProfileStore.getState()
 
     async function hydrate() {
       try {
-        let res = await fetch('/api/auth/me', { credentials: 'same-origin', signal })
+        let res = await fetch('/api/auth/bootstrap', { credentials: 'same-origin', signal })
 
         if (res.status === 401) {
           // Attempt silent access-token refresh using the refresh-token cookie.
@@ -48,8 +49,9 @@ export function AuthProvider({ children }) {
           })
 
           if (refresh.ok) {
-            res = await fetch('/api/auth/me', { credentials: 'same-origin', signal })
+            res = await fetch('/api/auth/bootstrap', { credentials: 'same-origin', signal })
           } else {
+            clearProfile()
             setUser(null)
             setLoading(false)
             return
@@ -57,15 +59,19 @@ export function AuthProvider({ children }) {
         }
 
         if (res.ok) {
-          const { user: userData } = await res.json()
+          const { user: userData, profile, security } = await res.json()
           setUser(userData)
+          setProfile(profile)
+          setSecurity(security)
         } else {
+          clearProfile()
           setUser(null)
         }
         setLoading(false)
       } catch (err) {
         // AbortError means cleanup ran (Strict Mode remount or unmount) — skip state update.
         if (err.name !== 'AbortError') {
+          clearProfile()
           setUser(null)
           setLoading(false)
         }

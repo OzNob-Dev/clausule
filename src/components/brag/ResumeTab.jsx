@@ -1,58 +1,111 @@
-import { useState, useRef } from 'react'
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+const GENERATED_BULLETS = [
+  'Led observability guild session for cross-functional engineering team — drove adoption across 2 teams and received peer recognition for knowledge sharing impact',
+  'Facilitated platform migration architecture review; produced formal decision record and secured sign-off from 4 teams with zero rollback events on go-live',
+  'Delivered Q3 platform migration ahead of schedule with measurable improvement to system reliability across dependent services',
+]
+
+const INITIAL_CV = {
+  name: 'Jordan Ellis',
+  tagline: 'Senior software engineer — platform infrastructure, distributed systems, technical leadership',
+  contact: 'jordan.ellis@acmecorp.com · Platform team · Acme Corp',
+  jobTitle: 'Senior engineer',
+  jobMeta: 'Acme Corp · Mar 2022–present',
+  company: 'Platform team',
+  education: 'Bachelor of Computer Science',
+  educationDates: '2018–2022',
+  institution: 'University of Technology · Click to edit',
+  bullets: GENERATED_BULLETS,
+}
 
 export default function ResumeTab() {
-  const [cvVisible, setCvVisible]   = useState(false)
+  const [cvVisible, setCvVisible] = useState(false)
   const [generating, setGenerating] = useState(false)
-  const [cvBullets, setCvBullets]   = useState([])
+  const [cvData, setCvData] = useState(INITIAL_CV)
   const [cvAutosaved, setCvAutosaved] = useState(false)
-  const [cvCopied, setCvCopied]     = useState(false)
-  const autosaveTimer               = useRef(null)
+  const [cvCopied, setCvCopied] = useState(false)
+
+  const generateTimerRef = useRef(null)
+  const autosaveTimerRef = useRef(null)
+  const autosaveHideTimerRef = useRef(null)
+  const copyTimerRef = useRef(null)
+
+  useEffect(() => () => {
+    if (generateTimerRef.current) clearTimeout(generateTimerRef.current)
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+    if (autosaveHideTimerRef.current) clearTimeout(autosaveHideTimerRef.current)
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+  }, [])
+
+  const scheduleAutosave = useCallback(() => {
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+    if (autosaveHideTimerRef.current) clearTimeout(autosaveHideTimerRef.current)
+
+    autosaveTimerRef.current = setTimeout(() => {
+      setCvAutosaved(true)
+      autosaveHideTimerRef.current = setTimeout(() => setCvAutosaved(false), 2200)
+    }, 1200)
+  }, [])
+
+  const handleFieldInput = useCallback((field) => (event) => {
+    const nextValue = event.currentTarget.textContent ?? ''
+    setCvData((prev) => (prev[field] === nextValue ? prev : { ...prev, [field]: nextValue }))
+    scheduleAutosave()
+  }, [scheduleAutosave])
+
+  const handleBulletInput = useCallback((index) => (event) => {
+    const nextValue = event.currentTarget.textContent ?? ''
+    setCvData((prev) => ({
+      ...prev,
+      bullets: prev.bullets.map((bullet, bulletIndex) => (bulletIndex === index ? nextValue : bullet)),
+    }))
+    scheduleAutosave()
+  }, [scheduleAutosave])
 
   const generateCV = () => {
     setGenerating(true)
-    setTimeout(() => {
+    if (generateTimerRef.current) clearTimeout(generateTimerRef.current)
+
+    generateTimerRef.current = setTimeout(() => {
       setGenerating(false)
-      setCvBullets([
-        'Led observability guild session for cross-functional engineering team — drove adoption across 2 teams and received peer recognition for knowledge sharing impact',
-        'Facilitated platform migration architecture review; produced formal decision record and secured sign-off from 4 teams with zero rollback events on go-live',
-        'Delivered Q3 platform migration ahead of schedule with measurable improvement to system reliability across dependent services',
-      ])
+      setCvData((prev) => ({ ...prev, bullets: GENERATED_BULLETS }))
       setCvVisible(true)
     }, 1400)
   }
 
-  const scheduleAutosave = () => {
-    clearTimeout(autosaveTimer.current)
-    autosaveTimer.current = setTimeout(() => {
-      setCvAutosaved(true)
-      setTimeout(() => setCvAutosaved(false), 2200)
-    }, 1200)
-  }
-
-  const getCVText = () => {
-    const name     = document.getElementById('cv-name')?.textContent     || 'Jordan Ellis'
-    const tagline  = document.getElementById('cv-tagline')?.textContent  || ''
-    const contact  = document.getElementById('cv-contact')?.textContent  || ''
-    const jobTitle = document.getElementById('cv-job-title')?.textContent || ''
-    const jobMeta  = document.getElementById('cv-job-meta')?.textContent  || ''
-    const company  = document.getElementById('cv-company')?.textContent  || ''
-    const bullets  = [...(document.querySelectorAll('.be-cv-bullet-li') || [])].map((li) => '• ' + li.textContent).join('\n')
-    return `${name}\n${tagline}\n${contact}\n\nEXPERIENCE\n${jobTitle} — ${company} · ${jobMeta}\n${bullets}`
-  }
+  const getCVText = () => [
+    cvData.name,
+    cvData.tagline,
+    cvData.contact,
+    '',
+    'EXPERIENCE',
+    `${cvData.jobTitle} — ${cvData.company} · ${cvData.jobMeta}`,
+    ...cvData.bullets.map((bullet) => `• ${bullet}`),
+    '',
+    'EDUCATION',
+    `${cvData.education} · ${cvData.educationDates}`,
+    cvData.institution,
+  ].join('\n')
 
   const copyCV = () => {
     navigator.clipboard.writeText(getCVText()).catch(() => {})
     setCvCopied(true)
-    setTimeout(() => setCvCopied(false), 2000)
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+    copyTimerRef.current = setTimeout(() => setCvCopied(false), 2000)
   }
 
   const downloadCV = () => {
-    const name = (document.getElementById('cv-name')?.textContent || 'resume').replace(/\s+/g, '-').toLowerCase()
+    const filename = (cvData.name || 'resume').replace(/\s+/g, '-').toLowerCase()
     const blob = new Blob([getCVText()], { type: 'text/plain' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `${name}-resume.txt`
-    a.click()
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `${filename}-resume.txt`
+    anchor.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -91,24 +144,24 @@ export default function ResumeTab() {
               Autosaved
             </div>
 
-            <span id="cv-name" contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-name" role="textbox" aria-label="Full name" aria-multiline="false">Jordan Ellis</span>
-            <span id="cv-tagline" contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-tagline" role="textbox" aria-label="Professional tagline" aria-multiline="false">Senior software engineer — platform infrastructure, distributed systems, technical leadership</span>
-            <span id="cv-contact" contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-contact" role="textbox" aria-label="Contact info" aria-multiline="false">jordan.ellis@acmecorp.com · Platform team · Acme Corp</span>
+            <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('name')} className="be-cv-name" role="textbox" aria-label="Full name" aria-multiline="false">{cvData.name}</span>
+            <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('tagline')} className="be-cv-tagline" role="textbox" aria-label="Professional tagline" aria-multiline="false">{cvData.tagline}</span>
+            <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('contact')} className="be-cv-contact" role="textbox" aria-label="Contact info" aria-multiline="false">{cvData.contact}</span>
 
             <div className="be-cv-rule" aria-hidden="true" />
             <div className="be-cv-section-label">Experience</div>
 
             <div className="be-cv-job">
               <div className="be-cv-job-header">
-                <span id="cv-job-title" contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-job-title" role="textbox" aria-label="Job title" aria-multiline="false">Senior engineer</span>
-                <span id="cv-job-meta" contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-dates" role="textbox" aria-label="Employment dates" aria-multiline="false">Acme Corp · Mar 2022–present</span>
+                <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('jobTitle')} className="be-cv-job-title" role="textbox" aria-label="Job title" aria-multiline="false">{cvData.jobTitle}</span>
+                <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('jobMeta')} className="be-cv-dates" role="textbox" aria-label="Employment dates" aria-multiline="false">{cvData.jobMeta}</span>
               </div>
-              <span id="cv-company" contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-company" role="textbox" aria-label="Company" aria-multiline="false">Platform team</span>
+              <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('company')} className="be-cv-company" role="textbox" aria-label="Company" aria-multiline="false">{cvData.company}</span>
               <ul className="be-cv-bullets" aria-label="Accomplishments">
-                {cvBullets.map((b, i) => (
-                  <li key={i} contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-bullet be-cv-bullet-li">
+                {cvData.bullets.map((bullet, index) => (
+                  <li key={index} contentEditable suppressContentEditableWarning onInput={handleBulletInput(index)} className="be-cv-bullet be-cv-bullet-li">
                     <span className="be-cv-bullet-marker" aria-hidden="true">·</span>
-                    {b}
+                    {bullet}
                   </li>
                 ))}
               </ul>
@@ -118,10 +171,10 @@ export default function ResumeTab() {
             <div className="be-cv-section-label">Education</div>
 
             <div className="be-cv-job-header">
-              <span contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-job-title" role="textbox" aria-label="Degree" aria-multiline="false">Bachelor of Computer Science</span>
-              <span contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-dates" role="textbox" aria-label="Study dates" aria-multiline="false">2018–2022</span>
+              <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('education')} className="be-cv-job-title" role="textbox" aria-label="Degree" aria-multiline="false">{cvData.education}</span>
+              <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('educationDates')} className="be-cv-dates" role="textbox" aria-label="Study dates" aria-multiline="false">{cvData.educationDates}</span>
             </div>
-            <span contentEditable suppressContentEditableWarning onInput={scheduleAutosave} className="be-cv-company" role="textbox" aria-label="Institution" aria-multiline="false">University of Technology · Click to edit</span>
+            <span contentEditable suppressContentEditableWarning onInput={handleFieldInput('institution')} className="be-cv-company" role="textbox" aria-label="Institution" aria-multiline="false">{cvData.institution}</span>
           </div>
 
           <div className="be-cv-actions">

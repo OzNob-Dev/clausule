@@ -47,6 +47,8 @@ function DigitRow({ digits, inputState, inputRefs, onChange, onKeyDown, onPaste 
 export default function MfaSetup() {
   const router = useRouter()
   const [step, setStep] = useState(1)
+  const [email, setEmail] = useState('your email')
+  const [hasMfaSetup, setHasMfaSetup] = useState(false)
 
   // Step 1 — email OTP
   const [otp, setOtp]                 = useState(['','','','','',''])
@@ -63,9 +65,24 @@ export default function MfaSetup() {
   const [totpLoading, setTotpLoading]       = useState(false)
   const [copied, setCopied]                 = useState(false)
   const totpRefs = useRef([])
-
-  const email    = storage.getEmail() || 'your email'
   const totpDone = totpState === 'done'
+  const timeoutRefs = useRef([])
+
+  const scheduleTimeout = useCallback((fn, delay) => {
+    const id = setTimeout(fn, delay)
+    timeoutRefs.current.push(id)
+    return id
+  }, [])
+
+  useEffect(() => {
+    setEmail(storage.getEmail() || 'your email')
+    setHasMfaSetup(storage.getMfaSetup())
+  }, [])
+
+  useEffect(() => () => {
+    timeoutRefs.current.forEach(clearTimeout)
+    timeoutRefs.current = []
+  }, [])
 
   // Fetch real TOTP secret when entering step 2
   useEffect(() => {
@@ -102,20 +119,20 @@ export default function MfaSetup() {
       })
       if (res.ok) {
         setOtpState('done')
-        if (storage.getMfaSetup()) {
-          setTimeout(() => router.replace('/brag'), 500)
+        if (hasMfaSetup) {
+          scheduleTimeout(() => router.replace('/brag'), 500)
         } else {
-          setTimeout(() => setStep(2), 500)
+          scheduleTimeout(() => setStep(2), 500)
         }
       } else {
         setOtpState('error')
-        setTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
+        scheduleTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
       }
     } catch {
       setOtpState('error')
-      setTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
+      scheduleTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
     }
-  }, [email, router])
+  }, [email, hasMfaSetup, router, scheduleTimeout])
 
   // ── TOTP: server-side verification ────────────────────────────
   const verifyTotp = useCallback(async (digits) => {
@@ -133,35 +150,35 @@ export default function MfaSetup() {
         setTotpState('done')
       } else {
         setTotpState('error')
-        setTimeout(() => { setTotp(['','','','','','']); setTotpState('idle') }, 700)
+        scheduleTimeout(() => { setTotp(['','','','','','']); setTotpState('idle') }, 700)
       }
     } catch {
       setTotpState('error')
-      setTimeout(() => { setTotp(['','','','','','']); setTotpState('idle') }, 700)
+      scheduleTimeout(() => { setTotp(['','','','','','']); setTotpState('idle') }, 700)
     }
-  }, [totpSecret])
+  }, [scheduleTimeout, totpSecret])
 
   // ── OTP handlers ──────────────────────────────────────────────
   const handleOtpChange = useCallback((i, val) => {
     const d = val.replace(/\D/g, '').slice(-1)
     setOtp((prev) => {
       const next = prev.map((v, idx) => idx === i ? d : v)
-      if (d && i < 5) setTimeout(() => otpRefs.current[i + 1]?.focus(), 0)
+      if (d && i < 5) scheduleTimeout(() => otpRefs.current[i + 1]?.focus(), 0)
       if (next.every(Boolean)) verifyOtp(next)
       return next
     })
-  }, [verifyOtp])
+  }, [scheduleTimeout, verifyOtp])
 
   const handleOtpKey = useCallback((i, e) => {
     if (e.key === 'Backspace') {
       setOtp((prev) => {
         if (prev[i]) return prev.map((v, idx) => idx === i ? '' : v)
-        if (i > 0) setTimeout(() => otpRefs.current[i - 1]?.focus(), 0)
+        if (i > 0) scheduleTimeout(() => otpRefs.current[i - 1]?.focus(), 0)
         return prev
       })
     } else if (e.key === 'ArrowLeft'  && i > 0) otpRefs.current[i - 1]?.focus()
       else if (e.key === 'ArrowRight' && i < 5) otpRefs.current[i + 1]?.focus()
-  }, [])
+  }, [scheduleTimeout])
 
   const handleOtpPaste = useCallback((e) => {
     e.preventDefault()
@@ -178,22 +195,22 @@ export default function MfaSetup() {
     const d = val.replace(/\D/g, '').slice(-1)
     setTotp((prev) => {
       const next = prev.map((v, idx) => idx === i ? d : v)
-      if (d && i < 5) setTimeout(() => totpRefs.current[i + 1]?.focus(), 0)
+      if (d && i < 5) scheduleTimeout(() => totpRefs.current[i + 1]?.focus(), 0)
       if (next.every(Boolean)) verifyTotp(next)
       return next
     })
-  }, [verifyTotp])
+  }, [scheduleTimeout, verifyTotp])
 
   const handleTotpKey = useCallback((i, e) => {
     if (e.key === 'Backspace') {
       setTotp((prev) => {
         if (prev[i]) return prev.map((v, idx) => idx === i ? '' : v)
-        if (i > 0) setTimeout(() => totpRefs.current[i - 1]?.focus(), 0)
+        if (i > 0) scheduleTimeout(() => totpRefs.current[i - 1]?.focus(), 0)
         return prev
       })
     } else if (e.key === 'ArrowLeft'  && i > 0) totpRefs.current[i - 1]?.focus()
       else if (e.key === 'ArrowRight' && i < 5) totpRefs.current[i + 1]?.focus()
-  }, [])
+  }, [scheduleTimeout])
 
   const handleTotpPaste = useCallback((e) => {
     e.preventDefault()
@@ -208,11 +225,12 @@ export default function MfaSetup() {
   const copySecret = () => {
     navigator.clipboard?.writeText(totpSecret).catch(() => {})
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    scheduleTimeout(() => setCopied(false), 2000)
   }
 
   const finishSetup = () => {
     storage.setMfaSetup(true)
+    setHasMfaSetup(true)
     setStep(3)
   }
 

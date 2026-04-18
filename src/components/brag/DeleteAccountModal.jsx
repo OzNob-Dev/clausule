@@ -8,13 +8,17 @@ export default function DeleteAccountModal({ open, onClose }) {
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [visible, setVisible] = useState(false)
   const inputRef = useRef(null)
+  const frameRef = useRef(null)
 
   useEffect(() => {
     if (open) {
-      requestAnimationFrame(() => setVisible(true))
+      frameRef.current = requestAnimationFrame(() => setVisible(true))
     } else {
       setVisible(false)
       setDeleteConfirm('')
+    }
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current)
     }
   }, [open])
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { storage } from '../../utils/storage'
 import { useAuth } from '@/contexts/AuthContext'
 import '../../styles/rail-nav.css'
@@ -49,9 +50,13 @@ const navItems = [
 ]
 
 export function RailNav() {
-  const pathname        = usePathname()
-  const escalatedCount  = storage.getEscalatedCount()
-  const { logout }      = useAuth()
+    const pathname        = usePathname()
+    const [escalatedCount, setEscalatedCount] = useState(0)
+    const { logout }      = useAuth()
+
+    useEffect(() => {
+      setEscalatedCount(storage.getEscalatedCount())
+    }, [])
 
   return (
     <aside className="rail-aside">
