@@ -8,12 +8,45 @@ import CodeEmail from '@/components/ui/CodeEmail'
 import '@/styles/mfa-setup.css'
 import '@/styles/code-email.css'
 
-const DEMO_TOTP        = '123456'
-const TOTP_SECRET_RAW  = 'JBSWY3DPEHPK3PXP'
-const TOTP_SECRET_DISP = 'JBSW Y3DP EHPK 3PXP'
-const TOTP_URI         = `otpauth://totp/Clausule:demo%40clausule.com?secret=${TOTP_SECRET_RAW}&issuer=Clausule&algorithm=SHA1&digits=6&period=30`
+// ── WebAuthn helpers ──────────────────────────────────────────────
+function b64urlToUint8(str) {
+  return Uint8Array.from(
+    atob(str.replace(/-/g, '+').replace(/_/g, '/')),
+    (c) => c.charCodeAt(0)
+  )
+}
 
-// ── 6-box digit input ────────────────────────────────────────────
+function bufToB64url(buf) {
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+}
+
+function detectDevice() {
+  if (typeof navigator === 'undefined') return { type: 'laptop', method: 'Passkey' }
+  const ua = navigator.userAgent
+  if (/iPhone|iPod/.test(ua)) return { type: 'phone',  method: 'Face ID / Touch ID' }
+  if (/iPad/.test(ua))        return { type: 'tablet', method: 'Face ID / Touch ID' }
+  if (/Android/.test(ua))     return { type: 'phone',  method: 'Biometrics' }
+  if (/Win/.test(ua))         return { type: 'laptop', method: 'Windows Hello' }
+  if (/Mac/.test(ua))         return { type: 'laptop', method: 'Touch ID' }
+  return { type: 'laptop', method: 'Passkey' }
+}
+
+function getDeviceName() {
+  if (typeof navigator === 'undefined') return 'My device'
+  const ua = navigator.userAgent
+  if (/iPhone/.test(ua))  return 'iPhone'
+  if (/iPad/.test(ua))    return 'iPad'
+  if (/Android/.test(ua)) {
+    const m = ua.match(/Android[^;]*;\s*([^)]+)\)/)
+    return m ? m[1].trim() : 'Android device'
+  }
+  if (/Win/.test(ua)) return 'Windows PC'
+  if (/Mac/.test(ua)) return 'Mac'
+  return 'My device'
+}
+
+// ── 6-box digit input ─────────────────────────────────────────────
 function DigitRow({ digits, inputState, inputRefs, onChange, onKeyDown, onPaste }) {
   return (
     <div
@@ -48,26 +81,34 @@ function DigitRow({ digits, inputState, inputRefs, onChange, onKeyDown, onPaste 
   )
 }
 
-// ── Main component ───────────────────────────────────────────────
+// ── Main component ────────────────────────────────────────────────
 export default function MfaSetup() {
   const router = useRouter()
   const [step, setStep] = useState(1)
 
   // Step 1 — email OTP
-  const [otp, setOtp]             = useState(['','','','','',''])
-  const [otpState, setOtpState]   = useState('idle') // idle | error | done
+  const [otp, setOtp]                 = useState(['','','','','',''])
+  const [otpState, setOtpState]       = useState('idle')
   const [resendTimer, setResendTimer] = useState(30)
   const otpRefs = useRef([])
 
   // Step 2 — authenticator TOTP
-  const [totp, setTotp]           = useState(['','','','','',''])
-  const [totpState, setTotpState] = useState('idle') // idle | error | done
-  const [copied, setCopied]       = useState(false)
+  const [totp, setTotp]                     = useState(['','','','','',''])
+  const [totpState, setTotpState]           = useState('idle')
+  const [totpSecret, setTotpSecret]         = useState('')
+  const [totpUri, setTotpUri]               = useState('')
+  const [totpSecretDisp, setTotpSecretDisp] = useState('')
+  const [totpLoading, setTotpLoading]       = useState(false)
+  const [copied, setCopied]                 = useState(false)
   const totpRefs = useRef([])
 
   // Step 2 — biometrics
   const [passkeyAvailable, setPasskeyAvailable] = useState(null)
-  const [passkeyState, setPasskeyState]         = useState('idle') // idle | loading | done | error
+  const [passkeyState, setPasskeyState]         = useState('idle')
+  const [passkeyError, setPasskeyError]         = useState('')
+
+  // Computed once on client
+  const [deviceInfo] = useState(() => detectDevice())
 
   const email    = storage.getEmail() || 'your email'
   const totpDone = totpState === 'done'
@@ -81,7 +122,23 @@ export default function MfaSetup() {
     }
   }, [router])
 
-  // Detect platform authenticator once on mount
+  // Fetch real TOTP secret when entering step 2
+  useEffect(() => {
+    if (step !== 2 || totpSecret) return
+    setTotpLoading(true)
+    fetch('/api/auth/totp/setup')
+      .then((r) => r.json())
+      .then(({ secret, uri }) => {
+        if (!secret) return
+        setTotpSecret(secret)
+        setTotpUri(uri)
+        setTotpSecretDisp(secret.match(/.{1,4}/g)?.join(' ') ?? secret)
+      })
+      .catch(() => {})
+      .finally(() => setTotpLoading(false))
+  }, [step, totpSecret])
+
+  // Detect platform authenticator availability
   useEffect(() => {
     if (
       typeof PublicKeyCredential !== 'undefined' &&
@@ -102,26 +159,11 @@ export default function MfaSetup() {
     return () => clearTimeout(id)
   }, [resendTimer])
 
-  // ── TOTP demo verify (local only) ────────────────────────────
-  const verify = useCallback((digits, target, setDig, setSt, onMatch) => {
-    const code = digits.join('')
-    if (code === target) {
-      setSt('done')
-      onMatch()
-    } else {
-      setSt('error')
-      setTimeout(() => {
-        setDig(['','','','','',''])
-        setSt('idle')
-      }, 700)
-    }
-  }, [])
-
   // ── Email OTP: server-side verification ───────────────────────
   const verifyOtp = useCallback(async (digits) => {
     const code = digits.join('')
     try {
-      const res  = await fetch('/api/auth/verify-code', {
+      const res = await fetch('/api/auth/verify-code', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ email, code }),
@@ -139,7 +181,29 @@ export default function MfaSetup() {
     }
   }, [email])
 
-  // ── OTP handlers ─────────────────────────────────────────────
+  // ── TOTP: server-side verification ────────────────────────────
+  const verifyTotp = useCallback(async (digits) => {
+    const code = digits.join('')
+    if (!totpSecret) return
+    try {
+      const res = await fetch('/api/auth/totp/setup', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ code, secret: totpSecret }),
+      })
+      if (res.ok) {
+        setTotpState('done')
+      } else {
+        setTotpState('error')
+        setTimeout(() => { setTotp(['','','','','','']); setTotpState('idle') }, 700)
+      }
+    } catch {
+      setTotpState('error')
+      setTimeout(() => { setTotp(['','','','','','']); setTotpState('idle') }, 700)
+    }
+  }, [totpSecret])
+
+  // ── OTP handlers ──────────────────────────────────────────────
   const handleOtpChange = useCallback((i, val) => {
     const d = val.replace(/\D/g, '').slice(-1)
     setOtp((prev) => {
@@ -157,7 +221,7 @@ export default function MfaSetup() {
         if (i > 0) setTimeout(() => otpRefs.current[i - 1]?.focus(), 0)
         return prev
       })
-    } else if (e.key === 'ArrowLeft' && i > 0)  otpRefs.current[i - 1]?.focus()
+    } else if (e.key === 'ArrowLeft'  && i > 0) otpRefs.current[i - 1]?.focus()
       else if (e.key === 'ArrowRight' && i < 5) otpRefs.current[i + 1]?.focus()
   }, [])
 
@@ -165,7 +229,7 @@ export default function MfaSetup() {
     e.preventDefault()
     const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
     if (!text) return
-    const next = Array.from({ length: 6 }, (_, i) => text[i] ?? '')
+    const next = Array.from({ length: 6 }, (_, idx) => text[idx] ?? '')
     setOtp(next)
     otpRefs.current[Math.min(text.length, 5)]?.focus()
     if (next.every(Boolean)) verifyOtp(next)
@@ -177,10 +241,10 @@ export default function MfaSetup() {
     setTotp((prev) => {
       const next = prev.map((v, idx) => idx === i ? d : v)
       if (d && i < 5) setTimeout(() => totpRefs.current[i + 1]?.focus(), 0)
-      if (next.every(Boolean)) verify(next, DEMO_TOTP, setTotp, setTotpState, () => {})
+      if (next.every(Boolean)) verifyTotp(next)
       return next
     })
-  }, [verify])
+  }, [verifyTotp])
 
   const handleTotpKey = useCallback((i, e) => {
     if (e.key === 'Backspace') {
@@ -189,7 +253,7 @@ export default function MfaSetup() {
         if (i > 0) setTimeout(() => totpRefs.current[i - 1]?.focus(), 0)
         return prev
       })
-    } else if (e.key === 'ArrowLeft' && i > 0)  totpRefs.current[i - 1]?.focus()
+    } else if (e.key === 'ArrowLeft'  && i > 0) totpRefs.current[i - 1]?.focus()
       else if (e.key === 'ArrowRight' && i < 5) totpRefs.current[i + 1]?.focus()
   }, [])
 
@@ -197,25 +261,87 @@ export default function MfaSetup() {
     e.preventDefault()
     const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
     if (!text) return
-    const next = Array.from({ length: 6 }, (_, i) => text[i] ?? '')
+    const next = Array.from({ length: 6 }, (_, idx) => text[idx] ?? '')
     setTotp(next)
     totpRefs.current[Math.min(text.length, 5)]?.focus()
-    if (next.every(Boolean)) verify(next, DEMO_TOTP, setTotp, setTotpState, () => {})
-  }, [verify])
+    if (next.every(Boolean)) verifyTotp(next)
+  }, [verifyTotp])
 
-  // ── Passkey ───────────────────────────────────────────────────
+  // ── Passkey: real WebAuthn registration ───────────────────────
   const setupPasskey = async () => {
     setPasskeyState('loading')
+    setPasskeyError('')
     try {
-      await new Promise((r) => setTimeout(r, 1800))
+      // 1. Get signed challenge from server
+      const optRes = await fetch('/api/auth/passkeys/register/options', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({}),
+      })
+      if (!optRes.ok) throw new Error('Failed to get registration options')
+      const { options, _signedChallenge } = await optRes.json()
+
+      // 2. Convert base64url fields → ArrayBuffer for browser API
+      const createOptions = {
+        ...options,
+        challenge: b64urlToUint8(options.challenge),
+        user: {
+          ...options.user,
+          id: b64urlToUint8(options.user.id),
+        },
+        excludeCredentials: (options.excludeCredentials ?? []).map((c) => ({
+          ...c,
+          id: b64urlToUint8(c.id),
+        })),
+      }
+
+      // 3. Invoke platform authenticator (biometric prompt)
+      const credential = await navigator.credentials.create({ publicKey: createOptions })
+      if (!credential) throw new Error('No credential returned')
+
+      // 4. Serialize credential response (ArrayBuffer → base64url) for the server
+      const credJSON = {
+        id:    credential.id,
+        rawId: bufToB64url(credential.rawId),
+        type:  credential.type,
+        response: {
+          clientDataJSON:    bufToB64url(credential.response.clientDataJSON),
+          authenticatorData: bufToB64url(credential.response.authenticatorData),
+          attestationObject: bufToB64url(credential.response.attestationObject),
+        },
+      }
+
+      // 5. Verify and persist on server
+      const verifyRes = await fetch('/api/auth/passkeys/register/verify', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          credential:       credJSON,
+          _signedChallenge,
+          deviceName:       getDeviceName(),
+          deviceType:       deviceInfo.type,
+          method:           deviceInfo.method,
+        }),
+      })
+      if (!verifyRes.ok) {
+        const { error } = await verifyRes.json().catch(() => ({}))
+        throw new Error(error ?? 'Verification failed')
+      }
+
       setPasskeyState('done')
-    } catch {
-      setPasskeyState('error')
+    } catch (err) {
+      if (err?.name === 'NotAllowedError') {
+        // User cancelled or timed out — not a hard error
+        setPasskeyState('idle')
+      } else {
+        setPasskeyError(err?.message ?? 'Setup failed')
+        setPasskeyState('error')
+      }
     }
   }
 
   const copySecret = () => {
-    navigator.clipboard?.writeText(TOTP_SECRET_RAW).catch(() => {})
+    navigator.clipboard?.writeText(totpSecret).catch(() => {})
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -225,9 +351,7 @@ export default function MfaSetup() {
     setStep(3)
   }
 
-  const enterApp = () => {
-    router.push('/brag')
-  }
+  const enterApp = () => router.push('/brag')
 
   const stepLabels = ['Verify email', 'Secure account', 'All set']
 
@@ -242,7 +366,7 @@ export default function MfaSetup() {
               key={n}
               className={[
                 'mfa-seg',
-                step > n  ? 'mfa-seg--done'   : '',
+                step > n   ? 'mfa-seg--done'   : '',
                 step === n ? 'mfa-seg--active' : '',
               ].join(' ')}
               aria-label={`Step ${n}: ${stepLabels[n - 1]}${step > n ? ' (complete)' : step === n ? ' (current)' : ''}`}
@@ -301,32 +425,39 @@ export default function MfaSetup() {
 
               {!totpDone && (
                 <div className="mfa-factor-body">
-                  <p className="mfa-factor-instruction">
-                    Scan with your authenticator app, or copy the key below for manual entry.
-                  </p>
-                  <div className="mfa-qr-wrap" aria-label="QR code for authenticator app">
-                    <QRCodeSVG
-                      value={TOTP_URI}
-                      size={148}
-                      bgColor="#FAF7F3"
-                      fgColor="#2A221A"
-                      level="M"
-                    />
-                  </div>
-                  <div className="mfa-secret-row">
-                    <code className="mfa-secret">{TOTP_SECRET_DISP}</code>
-                    <button className="mfa-copy-btn" onClick={copySecret} aria-label="Copy secret key">
-                      {copied
-                        ? <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 7l3.5 3.5L12 3"/></svg>
-                        : <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="4" width="8" height="8" rx="1"/><path d="M2 10V3a1 1 0 0 1 1-1h7"/></svg>}
-                    </button>
-                  </div>
-                  <div className="mfa-demo-pill mfa-demo-pill--sm">Demo code: <strong>{DEMO_TOTP}</strong></div>
-                  <DigitRow
-                    digits={totp} inputState={totpState} inputRefs={totpRefs}
-                    onChange={handleTotpChange} onKeyDown={handleTotpKey} onPaste={handleTotpPaste}
-                  />
-                  {totpState === 'error' && <p className="mfa-error" role="alert">Incorrect code — try again</p>}
+                  {totpLoading ? (
+                    <p className="mfa-factor-instruction">Generating secret…</p>
+                  ) : (
+                    <>
+                      <p className="mfa-factor-instruction">
+                        Scan with your authenticator app, or copy the key below for manual entry.
+                      </p>
+                      {totpUri && (
+                        <div className="mfa-qr-wrap" aria-label="QR code for authenticator app">
+                          <QRCodeSVG
+                            value={totpUri}
+                            size={148}
+                            bgColor="#FAF7F3"
+                            fgColor="#2A221A"
+                            level="M"
+                          />
+                        </div>
+                      )}
+                      <div className="mfa-secret-row">
+                        <code className="mfa-secret">{totpSecretDisp}</code>
+                        <button className="mfa-copy-btn" onClick={copySecret} aria-label="Copy secret key">
+                          {copied
+                            ? <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 7l3.5 3.5L12 3"/></svg>
+                            : <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="4" width="8" height="8" rx="1"/><path d="M2 10V3a1 1 0 0 1 1-1h7"/></svg>}
+                        </button>
+                      </div>
+                      <DigitRow
+                        digits={totp} inputState={totpState} inputRefs={totpRefs}
+                        onChange={handleTotpChange} onKeyDown={handleTotpKey} onPaste={handleTotpPaste}
+                      />
+                      {totpState === 'error' && <p className="mfa-error" role="alert">Incorrect code — try again</p>}
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -335,8 +466,8 @@ export default function MfaSetup() {
             <div
               className={[
                 'mfa-factor-card',
-                !totpDone         ? 'mfa-factor-card--locked' : '',
-                passkeyState === 'done' ? 'mfa-factor-card--done' : '',
+                !totpDone               ? 'mfa-factor-card--locked' : '',
+                passkeyState === 'done' ? 'mfa-factor-card--done'   : '',
               ].join(' ')}
               aria-disabled={!totpDone}
             >
@@ -361,7 +492,7 @@ export default function MfaSetup() {
                         ? 'Registered on this device'
                         : passkeyAvailable === false
                           ? 'Not supported on this device'
-                          : 'Face ID, Touch ID, Windows Hello'}
+                          : deviceInfo.method}
                   </div>
                 </div>
               </div>
@@ -390,11 +521,13 @@ export default function MfaSetup() {
                                 <path d="M14 16h6M17 14v4"/>
                                 <path d="M9 11V4.5a2.5 2.5 0 0 1 5 0"/>
                               </svg>
-                              Set up Face ID / Touch ID / Passkey
+                              {`Set up ${deviceInfo.method}`}
                             </>}
                       </button>
                       {passkeyState === 'error' && (
-                        <p className="mfa-error" role="alert">Setup failed — you can skip and add it later</p>
+                        <p className="mfa-error" role="alert">
+                          {passkeyError || 'Setup failed — you can skip and add it later'}
+                        </p>
                       )}
                     </>
                   )}
