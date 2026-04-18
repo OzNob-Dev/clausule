@@ -30,9 +30,20 @@ import { requireAuth, unauthorized }  from '@api/_lib/auth.js'
 import { insert }                     from '@api/_lib/supabase.js'
 import { pendingChallenges }          from '../options/route.js'
 
-const RP_ID     = process.env.NEXT_PUBLIC_RP_ID  ?? 'localhost'
-const ORIGIN    = process.env.NEXT_PUBLIC_ORIGIN ?? 'http://localhost:3000'
-const SECRET    = process.env.WEBAUTHN_CHALLENGE_SECRET ?? ''
+const SECRET = process.env.WEBAUTHN_CHALLENGE_SECRET ?? ''
+
+function getRpId(request) {
+  if (process.env.NEXT_PUBLIC_RP_ID) return process.env.NEXT_PUBLIC_RP_ID
+  const host = request.headers.get('host') ?? 'localhost'
+  return host.split(':')[0]
+}
+
+function getExpectedOrigin(request) {
+  if (process.env.NEXT_PUBLIC_ORIGIN) return process.env.NEXT_PUBLIC_ORIGIN
+  const host = request.headers.get('host') ?? 'localhost:3000'
+  const proto = /^(localhost|127\.|0\.0\.0\.0)/.test(host) ? 'http' : 'https'
+  return `${proto}://${host}`
+}
 
 /**
  * Verify an HMAC-signed challenge token.
@@ -62,6 +73,9 @@ function fromB64url(str) {
 export async function POST(request) {
   const { userId, error: authError } = await requireAuth(request)
   if (authError) return unauthorized()
+
+  const rpId           = getRpId(request)
+  const expectedOrigin = getExpectedOrigin(request)
 
   const body = await request.json().catch(() => ({}))
   const { credential, _signedChallenge, deviceName, deviceType, method } = body
@@ -113,9 +127,9 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Challenge in clientDataJSON does not match' }, { status: 400 })
   }
 
-  if (clientData.origin !== ORIGIN) {
+  if (clientData.origin !== expectedOrigin) {
     return NextResponse.json(
-      { error: `Origin mismatch: expected ${ORIGIN}` },
+      { error: `Origin mismatch: expected ${expectedOrigin}` },
       { status: 400 }
     )
   }
@@ -124,7 +138,7 @@ export async function POST(request) {
   const authData = fromB64url(credential.response.authenticatorData)
 
   // Bytes 0–31: SHA-256 hash of rpId.
-  const expectedRpIdHash = crypto.createHash('sha256').update(RP_ID).digest()
+  const expectedRpIdHash = crypto.createHash('sha256').update(rpId).digest()
   const rpIdHash         = authData.subarray(0, 32)
 
   if (!crypto.timingSafeEqual(rpIdHash, expectedRpIdHash)) {

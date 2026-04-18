@@ -19,8 +19,14 @@ import crypto                         from 'node:crypto'
 import { requireAuth, unauthorized }  from '@api/_lib/auth.js'
 import { select }                     from '@api/_lib/supabase.js'
 
-const RP_ID   = process.env.NEXT_PUBLIC_RP_ID   ?? 'localhost'
 const RP_NAME = process.env.NEXT_PUBLIC_RP_NAME ?? 'Clausule'
+
+/** Derive rpId from request host when env var is absent — strips port. */
+function getRpId(request) {
+  if (process.env.NEXT_PUBLIC_RP_ID) return process.env.NEXT_PUBLIC_RP_ID
+  const host = request.headers.get('host') ?? 'localhost'
+  return host.split(':')[0]
+}
 
 // Issued challenges are cached in memory for 5 minutes.
 // Production: move to Redis or a DB table to survive restarts.
@@ -46,6 +52,8 @@ function signChallenge(challengeBytes) {
 export async function POST(request) {
   const { userId, error: authError } = await requireAuth(request)
   if (authError) return unauthorized()
+
+  const rpId = getRpId(request)
 
   // Fetch user info for the credential descriptor.
   const { data: profiles } = await select(
@@ -79,7 +87,7 @@ export async function POST(request) {
   /** @type {PublicKeyCredentialCreationOptionsJSON} */
   const options = {
     rp: {
-      id:   RP_ID,
+      id:   rpId,
       name: RP_NAME,
     },
     user: {
@@ -95,9 +103,10 @@ export async function POST(request) {
     timeout: 60_000,
     attestation: 'none',
     authenticatorSelection: {
-      authenticatorAttachment: 'platform',
-      userVerification:        'required',
-      residentKey:             'required',
+      // No authenticatorAttachment restriction — allows both platform (Touch ID,
+      // Windows Hello) and cross-platform (1Password, hardware keys).
+      userVerification: 'required',
+      residentKey:      'required',
     },
     // Exclude credentials already registered on this account to prevent duplicates.
     // In production: load from a `passkeys` table and list each credentialId.
