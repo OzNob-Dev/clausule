@@ -8,17 +8,6 @@ import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
 import '@/styles/brag-employee.css'
 import '@/styles/brag-settings.css'
 
-const INITIAL_DEVICES = [
-  {
-    id: 'bio-seed-1',
-    name: 'MacBook Pro',
-    type: 'laptop',
-    method: 'Touch ID',
-    addedAt: '2025-11-12',
-    isCurrent: true,
-  },
-]
-
 function inferDevice() {
   const ua = navigator.userAgent
   if (/iPhone/.test(ua))  return { name: 'iPhone',        type: 'phone',  method: 'Face ID' }
@@ -29,12 +18,14 @@ function inferDevice() {
 }
 
 export default function BragSettings() {
-  const [devices, setDevices]             = useState(INITIAL_DEVICES)
+  const [devices, setDevices]             = useState([])
+  const [devicesLoading, setDevicesLoading] = useState(true)
   const [registering, setRegistering]     = useState(false)
   const [registerError, setRegisterError] = useState(false)
   const [passkeyAvailable, setPasskeyAvailable] = useState(null)
 
-  const [totpConfigured, setTotpConfigured] = useState(true)
+  const [totpConfigured, setTotpConfigured] = useState(false)
+  const [totpLoading, setTotpLoading]       = useState(true)
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
   const [deleteModal, setDeleteModal] = useState(false)
@@ -50,6 +41,22 @@ export default function BragSettings() {
     } else {
       setPasskeyAvailable(false)
     }
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/auth/passkeys', { credentials: 'same-origin' })
+      .then((r) => r.ok ? r.json() : [])
+      .then((data) => setDevices(Array.isArray(data) ? data : []))
+      .catch(() => setDevices([]))
+      .finally(() => setDevicesLoading(false))
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/auth/totp/status', { credentials: 'same-origin' })
+      .then((r) => r.ok ? r.json() : { configured: false })
+      .then((data) => setTotpConfigured(data.configured ?? false))
+      .catch(() => setTotpConfigured(false))
+      .finally(() => setTotpLoading(false))
   }, [])
 
   const registerDevice = async () => {
@@ -77,7 +84,18 @@ export default function BragSettings() {
     }
   }
 
-  const removeDevice = (id) => setDevices((prev) => prev.filter((d) => d.id !== id))
+  const removeDevice = async (id) => {
+    setDevices((prev) => prev.filter((d) => d.id !== id))
+    try {
+      await fetch(`/api/auth/passkeys/${id}`, { method: 'DELETE', credentials: 'same-origin' })
+    } catch {
+      // Refresh from DB on failure to restore accurate state.
+      fetch('/api/auth/passkeys', { credentials: 'same-origin' })
+        .then((r) => r.ok ? r.json() : [])
+        .then((data) => setDevices(Array.isArray(data) ? data : []))
+        .catch(() => {})
+    }
+  }
 
   const handleTotpDone = () => {
     setTotpConfigured(true)
@@ -155,14 +173,16 @@ export default function BragSettings() {
                     : 'Not configured — add an authenticator app for a second factor.'}
                 </div>
               </div>
-              <button
-                className="bss-mfa-reconfig-btn"
-                onClick={() => setTotpExpanded((v) => !v)}
-                aria-expanded={totpExpanded}
-                aria-controls="totp-setup"
-              >
-                {totpExpanded ? 'Cancel' : totpConfigured ? 'Reconfigure' : 'Set up'}
-              </button>
+              {!totpLoading && (
+                <button
+                  className="bss-mfa-reconfig-btn"
+                  onClick={() => setTotpExpanded((v) => !v)}
+                  aria-expanded={totpExpanded}
+                  aria-controls="totp-setup"
+                >
+                  {totpExpanded ? 'Cancel' : totpConfigured ? 'Reconfigure' : 'Set up'}
+                </button>
+              )}
             </div>
 
             {totpExpanded && (
@@ -173,14 +193,20 @@ export default function BragSettings() {
           {/* Biometric devices */}
           <div className="bss-section-label">Biometric login</div>
           <div className="bss-card">
-            <DeviceList
-              devices={devices}
-              passkeyAvailable={passkeyAvailable}
-              registering={registering}
-              registerError={registerError}
-              onAdd={registerDevice}
-              onRemove={removeDevice}
-            />
+            {devicesLoading ? (
+              <div className="bss-loading" aria-busy="true" aria-label="Loading devices">
+                <span className="bss-spinner" aria-hidden="true" />
+              </div>
+            ) : (
+              <DeviceList
+                devices={devices}
+                passkeyAvailable={passkeyAvailable}
+                registering={registering}
+                registerError={registerError}
+                onAdd={registerDevice}
+                onRemove={removeDevice}
+              />
+            )}
           </div>
 
           {/* Callout */}
