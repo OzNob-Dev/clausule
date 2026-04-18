@@ -11,8 +11,9 @@ import '@/styles/brag-settings.css'
 export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
   const setProfile = useProfileStore((state) => state.setProfile)
+  const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+  const setSecurity = useProfileStore((state) => state.setSecurity)
 
-  const [totpConfigured, setTotpConfigured] = useState(false)
   const [totpLoading, setTotpLoading]       = useState(true)
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
@@ -28,13 +29,13 @@ export default function BragSettings() {
   useEffect(() => {
     fetch('/api/auth/totp/status', { credentials: 'same-origin' })
       .then((r) => r.ok ? r.json() : { configured: false })
-      .then((data) => setTotpConfigured(data.configured ?? false))
-      .catch(() => setTotpConfigured(false))
+      .then((data) => setSecurity({ authenticatorAppConfigured: data.configured ?? false }))
+      .catch(() => setSecurity({ authenticatorAppConfigured: false }))
       .finally(() => setTotpLoading(false))
-  }, [])
+  }, [setSecurity])
 
   const handleTotpDone = () => {
-    setTotpConfigured(true)
+    setSecurity({ authenticatorAppConfigured: true })
     setTotpExpanded(false)
   }
 
@@ -105,7 +106,7 @@ export default function BragSettings() {
 
             {/* Authenticator app row */}
             <div className="bss-mfa-row">
-              <div className={`bss-mfa-icon${totpConfigured ? ' bss-mfa-icon--on' : ''}`} aria-hidden="true">
+              <div className={`bss-mfa-icon${authenticatorAppConfigured ? ' bss-mfa-icon--on' : ''}`} aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="5" y="2" width="14" height="20" rx="2"/>
                   <rect x="8" y="7" width="8" height="6" rx="1"/>
@@ -115,11 +116,19 @@ export default function BragSettings() {
               <div className="bss-mfa-info">
                 <div className="bss-mfa-title">Authenticator app</div>
                 <div className="bss-mfa-sub">
-                  {totpConfigured
+                  {authenticatorAppConfigured
                     ? 'Verified — Google Authenticator, Authy, 1Password, etc.'
                     : 'Not configured — add an authenticator app for a second factor.'}
                 </div>
               </div>
+              {!totpLoading && (
+                <span
+                  className={`bss-mfa-status${authenticatorAppConfigured ? ' bss-mfa-status--on' : ''}`}
+                  aria-label={authenticatorAppConfigured ? 'Authenticator app is active' : 'Authenticator app is not set up'}
+                >
+                  {authenticatorAppConfigured ? 'Active' : 'Empty'}
+                </span>
+              )}
               {!totpLoading && (
                 <button
                   className="bss-mfa-reconfig-btn"
@@ -127,10 +136,19 @@ export default function BragSettings() {
                   aria-expanded={totpExpanded}
                   aria-controls="totp-setup"
                 >
-                  {totpExpanded ? 'Cancel' : totpConfigured ? 'Reconfigure' : 'Set up'}
+                  {totpExpanded ? 'Cancel' : authenticatorAppConfigured ? 'Reconfigure' : 'Set up'}
                 </button>
               )}
             </div>
+
+            {!totpLoading && !authenticatorAppConfigured && !totpExpanded && (
+              <div className="bss-totp-empty" role="status" aria-live="polite">
+                <div className="bss-totp-empty-title">No authenticator app connected yet</div>
+                <p className="bss-totp-empty-copy">
+                  Set one up to add a second sign-in factor beyond email codes.
+                </p>
+              </div>
+            )}
 
             {totpExpanded && (
               <TotpSetupPanel onDone={handleTotpDone} onCancel={() => setTotpExpanded(false)} />

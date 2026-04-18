@@ -617,6 +617,27 @@
   border-color: rgba(208, 90, 52, 0.22);
 }
 
+.bss-totp-empty {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px dashed rgba(60, 45, 35, 0.16);
+  background: rgba(60, 45, 35, 0.03);
+}
+
+.bss-totp-empty-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2A221A;
+}
+
+.bss-totp-empty-copy {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #8A7E76;
+}
+
 /* TOTP expanded body */
 .bss-totp-body {
   margin-top: 16px;
