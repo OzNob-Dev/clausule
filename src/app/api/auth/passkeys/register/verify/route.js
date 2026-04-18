@@ -71,6 +71,15 @@ function fromB64url(str) {
 }
 
 export async function POST(request) {
+  try {
+    return await handlePost(request)
+  } catch (err) {
+    console.error('[passkeys/register/verify] unhandled error:', err)
+    return NextResponse.json({ error: err?.message ?? 'Internal error' }, { status: 500 })
+  }
+}
+
+async function handlePost(request) {
   const { userId, error: authError } = await requireAuth(request)
   if (authError) return unauthorized()
 
@@ -129,7 +138,7 @@ export async function POST(request) {
 
   if (clientData.origin !== expectedOrigin) {
     return NextResponse.json(
-      { error: `Origin mismatch: expected ${expectedOrigin}` },
+      { error: `Origin mismatch: got ${clientData.origin}, expected ${expectedOrigin}` },
       { status: 400 }
     )
   }
@@ -137,11 +146,16 @@ export async function POST(request) {
   // ── 3. AuthenticatorData verification ────────────────────────────────────
   const authData = fromB64url(credential.response.authenticatorData)
 
+  if (authData.length < 55) {
+    return NextResponse.json({ error: 'AuthenticatorData too short' }, { status: 400 })
+  }
+
   // Bytes 0–31: SHA-256 hash of rpId.
   const expectedRpIdHash = crypto.createHash('sha256').update(rpId).digest()
   const rpIdHash         = authData.subarray(0, 32)
 
-  if (!crypto.timingSafeEqual(rpIdHash, expectedRpIdHash)) {
+  if (rpIdHash.length !== expectedRpIdHash.length ||
+      !crypto.timingSafeEqual(rpIdHash, expectedRpIdHash)) {
     return NextResponse.json({ error: 'RP ID hash mismatch' }, { status: 400 })
   }
 
@@ -160,7 +174,7 @@ export async function POST(request) {
   }
 
   // Bytes 37–53: AAGUID (16 bytes), then 2-byte credentialIdLength.
-  const credIdLen = authData.readUInt16BE(53)
+  const credIdLen    = authData.readUInt16BE(53)
   const credentialId = authData.subarray(55, 55 + credIdLen)
   // Remaining bytes: CBOR-encoded COSE public key.
   const coseKey = authData.subarray(55 + credIdLen)
@@ -185,10 +199,11 @@ export async function POST(request) {
       return NextResponse.json({ error: 'This device is already registered' }, { status: 409 })
     }
     console.error('[passkeys/register/verify] insert error:', insertError)
-    return NextResponse.json({ error: 'Failed to save passkey' }, { status: 500 })
+    return NextResponse.json({ error: `Failed to save passkey: ${insertError.message ?? JSON.stringify(insertError)}` }, { status: 500 })
   }
 
-  return NextResponse.json({ ok: true, deviceId: rows[0].id }, { status: 201 })
+  const deviceId = rows?.[0]?.id ?? null
+  return NextResponse.json({ ok: true, deviceId }, { status: 201 })
 }
 
 /*

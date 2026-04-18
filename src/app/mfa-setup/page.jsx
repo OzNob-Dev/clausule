@@ -10,8 +10,9 @@ import '@/styles/code-email.css'
 
 // ── WebAuthn helpers ──────────────────────────────────────────────
 function b64urlToUint8(str) {
+  const padded = str + '='.repeat((4 - (str.length % 4)) % 4)
   return Uint8Array.from(
-    atob(str.replace(/-/g, '+').replace(/_/g, '/')),
+    atob(padded.replace(/-/g, '+').replace(/_/g, '/')),
     (c) => c.charCodeAt(0)
   )
 }
