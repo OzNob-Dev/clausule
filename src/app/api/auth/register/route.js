@@ -48,7 +48,11 @@ export async function POST(request) {
       })
       if (createErr) {
         console.error('[register] createUser error:', createErr)
-        return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 })
+        console.error('[register] Full createUser error:', JSON.stringify(createErr, null, 2))
+        console.error('[register] Error message:', createErr.message)
+        console.error('[register] Error details:', createErr.details)
+        // return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 })
+        return NextResponse.json({ error: `createUser failed: ${createErr.message || JSON.stringify(createErr)}` }, { status: 500 })
       }
       userId = created.id
     }
