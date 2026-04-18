@@ -72,6 +72,15 @@ export default function MfaSetup() {
   const email    = storage.getEmail() || 'your email'
   const totpDone = totpState === 'done'
 
+  // Redirect if MFA already configured; otherwise skip email-verify step
+  useEffect(() => {
+    if (storage.getMfaSetup()) {
+      router.replace('/brag')
+    } else {
+      setStep(2)
+    }
+  }, [router])
+
   // Detect platform authenticator once on mount
   useEffect(() => {
     if (
@@ -212,6 +221,7 @@ export default function MfaSetup() {
   }
 
   const finishSetup = () => {
+    storage.setMfaSetup(true)
     setStep(3)
   }
 

@@ -1,6 +1,7 @@
 const KEY = {
   theme:          'clausule-theme',
   email:          'clausule-email',
+  mfaSetup:       'clausule-mfa-setup',
   escalatedCount: 'clausule-escalated-count',
   pitstop:        (path) => `clausule-ps-${path}`,
 }
@@ -14,6 +15,9 @@ export const storage = {
   // by the server expiring the auth cookies.
   getEmail: () => localStorage.getItem(KEY.email),
   setEmail: (e) => localStorage.setItem(KEY.email, e),
+
+  getMfaSetup: () => localStorage.getItem(KEY.mfaSetup) === 'true',
+  setMfaSetup: (v) => localStorage.setItem(KEY.mfaSetup, String(v)),
 
   getEscalatedCount: () => parseInt(localStorage.getItem(KEY.escalatedCount) || '3'),
 
