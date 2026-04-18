@@ -31,42 +31,48 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let cancelled = false
+    const controller = new AbortController()
+    const { signal } = controller
 
     async function hydrate() {
       try {
-        let res = await fetch('/api/auth/me', { credentials: 'same-origin' })
+        let res = await fetch('/api/auth/me', { credentials: 'same-origin', signal })
 
         if (res.status === 401) {
           // Attempt silent access-token refresh using the refresh-token cookie.
           const refresh = await fetch('/api/auth/refresh', {
             method:      'POST',
             credentials: 'same-origin',
+            signal,
           })
 
           if (refresh.ok) {
-            res = await fetch('/api/auth/me', { credentials: 'same-origin' })
+            res = await fetch('/api/auth/me', { credentials: 'same-origin', signal })
           } else {
-            if (!cancelled) { setUser(null); setLoading(false) }
+            setUser(null)
+            setLoading(false)
             return
           }
         }
 
         if (res.ok) {
           const { user: userData } = await res.json()
-          if (!cancelled) setUser(userData)
+          setUser(userData)
         } else {
-          if (!cancelled) setUser(null)
+          setUser(null)
         }
-      } catch {
-        if (!cancelled) setUser(null)
-      } finally {
-        if (!cancelled) setLoading(false)
+        setLoading(false)
+      } catch (err) {
+        // AbortError means cleanup ran (Strict Mode remount or unmount) — skip state update.
+        if (err.name !== 'AbortError') {
+          setUser(null)
+          setLoading(false)
+        }
       }
     }
 
     hydrate()
-    return () => { cancelled = true }
+    return () => controller.abort()
   }, [])
 
   /**
