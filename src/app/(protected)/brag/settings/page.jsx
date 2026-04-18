@@ -36,6 +36,11 @@ export default function BragSettings() {
     setTotpExpanded(false)
   }
 
+  const avatarInitials =
+    ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
+    profile.email?.[0]?.toUpperCase() ||
+    '?'
+
   return (
     <div className="be-page">
       <BragRail activePage="settings" />
@@ -47,8 +52,8 @@ export default function BragSettings() {
         </div>
         <div className="be-sidebar-body">
           <div>
-            <div className="be-sidebar-avatar" aria-hidden="true">
-              {(profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '') || profile.email?.[0]?.toUpperCase() || '?'}
+            <div key={avatarInitials} className="be-sidebar-avatar be-avatar-pop" aria-hidden="true">
+              {avatarInitials}
             </div>
             <div className="be-sidebar-name">
               {profile.firstName || profile.lastName

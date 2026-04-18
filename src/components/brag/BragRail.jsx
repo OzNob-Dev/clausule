@@ -13,7 +13,7 @@ export default function BragRail({ activePage }) {
     fetch('/api/auth/profile', { credentials: 'same-origin' })
       .then((r) => r.ok ? r.json() : {})
       .then((d) => {
-        const i = (d.firstName?.[0] ?? '') + (d.lastName?.[0] ?? '')
+        const i = ((d.firstName?.[0] ?? '') + (d.lastName?.[0] ?? '')).toUpperCase()
         setInitials(i || d.email?.[0]?.toUpperCase() || '')
       })
       .catch(() => {})
@@ -47,7 +47,7 @@ export default function BragRail({ activePage }) {
         </button>
       </nav>
       <div className="be-rail-foot">
-        <div className="be-rail-avatar" aria-hidden="true">{initials}</div>
+        <div key={initials || 'avatar-empty'} className="be-rail-avatar be-avatar-pop be-avatar-pop--rail" aria-hidden="true">{initials}</div>
         <button onClick={logout} className="be-rail-icon-btn" aria-label="Sign out">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>
