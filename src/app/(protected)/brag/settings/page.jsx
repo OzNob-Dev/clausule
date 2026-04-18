@@ -15,27 +15,39 @@ export default function BragSettings() {
   const setSecurity = useProfileStore((state) => state.setSecurity)
 
   const [totpLoading, setTotpLoading]       = useState(true)
+  const [totpError, setTotpError]           = useState(false)
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
   const [deleteModal, setDeleteModal] = useState(false)
 
   useEffect(() => {
     fetch('/api/auth/profile', { credentials: 'same-origin' })
-      .then((r) => r.ok ? r.json() : {})
-      .then((data) => setProfile({ firstName: data.firstName ?? '', lastName: data.lastName ?? '', email: data.email ?? '' }))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data) return
+        setProfile({ firstName: data.firstName ?? '', lastName: data.lastName ?? '', email: data.email ?? '' })
+      })
       .catch(() => {})
   }, [setProfile])
 
   useEffect(() => {
     fetch('/api/auth/totp/status', { credentials: 'same-origin' })
-      .then((r) => r.ok ? r.json() : { configured: false })
-      .then((data) => setSecurity({ authenticatorAppConfigured: data.configured ?? false }))
-      .catch(() => setSecurity({ authenticatorAppConfigured: false }))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data) {
+          setTotpError(true)
+          return
+        }
+        setSecurity({ authenticatorAppConfigured: data.configured ?? false })
+        setTotpError(false)
+      })
+      .catch(() => setTotpError(true))
       .finally(() => setTotpLoading(false))
   }, [setSecurity])
 
   const handleTotpDone = () => {
     setSecurity({ authenticatorAppConfigured: true })
+    setTotpError(false)
     setTotpExpanded(false)
   }
 
@@ -121,7 +133,7 @@ export default function BragSettings() {
                     : 'Not configured — add an authenticator app for a second factor.'}
                 </div>
               </div>
-              {!totpLoading && (
+              {!totpLoading && !totpError && (
                 <span
                   className={`bss-mfa-status${authenticatorAppConfigured ? ' bss-mfa-status--on' : ''}`}
                   aria-label={authenticatorAppConfigured ? 'Authenticator app is active' : 'Authenticator app is not set up'}
@@ -129,7 +141,7 @@ export default function BragSettings() {
                   {authenticatorAppConfigured ? 'Active' : 'Empty'}
                 </span>
               )}
-              {!totpLoading && (
+              {!totpLoading && !totpError && (
                 <button
                   className="bss-mfa-reconfig-btn"
                   onClick={() => setTotpExpanded((v) => !v)}
@@ -141,7 +153,13 @@ export default function BragSettings() {
               )}
             </div>
 
-            {!totpLoading && !authenticatorAppConfigured && !totpExpanded && (
+            {!totpLoading && totpError && (
+              <div className="bss-error" role="alert">
+                We couldn&apos;t load your authenticator app status right now. Refresh and try again.
+              </div>
+            )}
+
+            {!totpLoading && !totpError && !authenticatorAppConfigured && !totpExpanded && (
               <div className="bss-totp-empty" role="status" aria-live="polite">
                 <div className="bss-totp-empty-title">No authenticator app connected yet</div>
                 <p className="bss-totp-empty-copy">

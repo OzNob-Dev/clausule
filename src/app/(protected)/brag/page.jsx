@@ -55,8 +55,11 @@ export default function BragEmployee() {
 
   useEffect(() => {
     fetch('/api/auth/profile', { credentials: 'same-origin' })
-      .then((r) => r.ok ? r.json() : {})
-      .then((d) => setProfile({ firstName: d.firstName ?? '', lastName: d.lastName ?? '', email: d.email ?? '' }))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d) return
+        setProfile({ firstName: d.firstName ?? '', lastName: d.lastName ?? '', email: d.email ?? '' })
+      })
       .catch(() => {})
   }, [setProfile])
 

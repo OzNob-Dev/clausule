@@ -5,20 +5,32 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
   const [secret, setSecret]       = useState('')
   const [uri, setUri]             = useState('')
   const [loading, setLoading]     = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [copied, setCopied]       = useState(false)
   const [digits, setDigits]       = useState(['', '', '', '', '', ''])
   const [totpState, setTotpState] = useState('idle') // idle | checking | error | done
   const totpRefs                  = useRef([])
 
-  useEffect(() => {
+  const loadSetup = useCallback(() => {
+    setLoading(true)
+    setLoadError(false)
     fetch('/api/auth/totp/setup', { credentials: 'same-origin' })
-      .then((r) => r.ok ? r.json() : null)
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data?.secret) { setSecret(data.secret); setUri(data.uri ?? '') }
+        if (!data?.secret) {
+          setLoadError(true)
+          return
+        }
+        setSecret(data.secret)
+        setUri(data.uri ?? '')
       })
-      .catch(() => {})
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    loadSetup()
+  }, [loadSetup])
 
   const secretDisp = secret.match(/.{1,4}/g)?.join(' ') ?? secret
 
@@ -99,6 +111,13 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
       {loading ? (
         <div className="bss-loading" aria-busy="true" aria-label="Generating secret">
           <span className="bss-spinner" aria-hidden="true" />
+        </div>
+      ) : loadError ? (
+        <div className="bss-error" role="alert">
+          We couldn&apos;t generate your authenticator setup right now.
+          <div className="bss-totp-actions">
+            <button className="bss-mfa-reconfig-btn" onClick={loadSetup}>Try again</button>
+          </div>
         </div>
       ) : (
         <>
