@@ -60,9 +60,6 @@ export default function NotFound() {
         </p>
 
         <div className="nf-actions">
-          <Link href="/dashboard" className="nf-btn-primary">
-            Back to dashboard
-          </Link>
           <button
             type="button"
             className="nf-btn-secondary"
