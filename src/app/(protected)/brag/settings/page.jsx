@@ -8,13 +8,24 @@ import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
 import '@/styles/brag-employee.css'
 import '@/styles/brag-settings.css'
 
+function b64urlToUint8(str) {
+  const padded = str + '='.repeat((4 - (str.length % 4)) % 4)
+  return Uint8Array.from(atob(padded.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))
+}
+
+function bufToB64url(buf) {
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+}
+
 function inferDevice() {
   const ua = navigator.userAgent
-  if (/iPhone/.test(ua))  return { name: 'iPhone',        type: 'phone',  method: 'Face ID' }
-  if (/iPad/.test(ua))    return { name: 'iPad',           type: 'tablet', method: 'Face ID' }
-  if (/Android/.test(ua)) return { name: 'Android phone',  type: 'phone',  method: 'Fingerprint' }
-  if (/Windows/.test(ua)) return { name: 'Windows PC',     type: 'laptop', method: 'Windows Hello' }
-  return                         { name: 'MacBook',         type: 'laptop', method: 'Touch ID' }
+  if (/iPhone|iPod/.test(ua)) return { name: 'iPhone',       type: 'phone',  method: 'Face ID / Touch ID' }
+  if (/iPad/.test(ua))        return { name: 'iPad',          type: 'tablet', method: 'Face ID / Touch ID' }
+  if (/Android/.test(ua))     return { name: 'Android device', type: 'phone',  method: 'Biometrics' }
+  if (/Win/.test(ua))         return { name: 'Windows PC',    type: 'laptop', method: 'Windows Hello' }
+  if (/Mac/.test(ua))         return { name: 'Mac',           type: 'laptop', method: 'Touch ID' }
+  return                             { name: 'My device',     type: 'laptop', method: 'Passkey' }
 }
 
 export default function BragSettings() {
@@ -63,22 +74,62 @@ export default function BragSettings() {
     setRegistering(true)
     setRegisterError(false)
     try {
-      await new Promise((r) => setTimeout(r, 1800))
-      const { name, type, method } = inferDevice()
-      const suffix = devices.filter((d) => d.name === name).length + 1
-      setDevices((prev) => [
-        ...prev,
-        {
-          id: `bio-${Date.now()}`,
-          name: suffix > 1 ? `${name} (${suffix})` : name,
-          type,
-          method,
-          addedAt: new Date().toISOString().slice(0, 10),
-          isCurrent: false,
+      const optRes = await fetch('/api/auth/passkeys/register/options', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({}),
+      })
+      if (!optRes.ok) throw new Error('Failed to get registration options')
+      const { options, _signedChallenge } = await optRes.json()
+
+      const createOptions = {
+        ...options,
+        challenge: b64urlToUint8(options.challenge),
+        user: { ...options.user, id: b64urlToUint8(options.user.id) },
+        excludeCredentials: (options.excludeCredentials ?? []).map((c) => ({
+          ...c, id: b64urlToUint8(c.id),
+        })),
+      }
+
+      const credential = await navigator.credentials.create({ publicKey: createOptions })
+      if (!credential) throw new Error('No credential returned')
+
+      const authDataBuf = credential.response.getAuthenticatorData?.()
+        ?? credential.response.authenticatorData
+      if (!authDataBuf) throw new Error('authenticatorData unavailable')
+
+      const credJSON = {
+        id:    credential.id,
+        rawId: bufToB64url(credential.rawId),
+        type:  credential.type,
+        response: {
+          clientDataJSON:    bufToB64url(credential.response.clientDataJSON),
+          authenticatorData: bufToB64url(authDataBuf),
+          attestationObject: bufToB64url(credential.response.attestationObject),
         },
-      ])
-    } catch {
-      setRegisterError(true)
+      }
+
+      const { name, type, method } = inferDevice()
+      const verifyRes = await fetch('/api/auth/passkeys/register/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ credential: credJSON, _signedChallenge, deviceName: name, deviceType: type, method }),
+      })
+      if (!verifyRes.ok) {
+        const { error } = await verifyRes.json().catch(() => ({}))
+        throw new Error(error ?? 'Verification failed')
+      }
+
+      // Refresh device list from DB to get accurate record
+      const listRes = await fetch('/api/auth/passkeys', { credentials: 'same-origin' })
+      if (listRes.ok) {
+        const data = await listRes.json()
+        setDevices(Array.isArray(data) ? data : [])
+      }
+    } catch (err) {
+      if (err?.name !== 'NotAllowedError') setRegisterError(true)
     } finally {
       setRegistering(false)
     }
