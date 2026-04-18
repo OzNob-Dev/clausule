@@ -94,6 +94,7 @@ export default function BragSettings() {
 
       const createOptions = {
         ...options,
+        rp: { ...options.rp, id: window.location.hostname },
         challenge: b64urlToUint8(options.challenge),
         user: { ...options.user, id: b64urlToUint8(options.user.id) },
         excludeCredentials: (options.excludeCredentials ?? []).map((c) => ({
