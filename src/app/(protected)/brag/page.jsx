@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTheme } from '@/hooks/useTheme'
 import BragRail from '@/components/brag/BragRail'
 import EntryCard from '@/components/brag/EntryCard'
@@ -46,9 +46,17 @@ const INITIAL_ENTRIES = [
 
 export default function BragEmployee() {
   useTheme()
+  const [profile, setProfile] = useState({ firstName: '', lastName: '', email: '' })
   const [tab, setTab]                   = useState('brag')
   const [entries, setEntries]           = useState(INITIAL_ENTRIES)
   const [composerOpen, setComposerOpen] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/auth/profile', { credentials: 'same-origin' })
+      .then((r) => r.ok ? r.json() : {})
+      .then((d) => setProfile({ firstName: d.firstName ?? '', lastName: d.lastName ?? '', email: d.email ?? '' }))
+      .catch(() => {})
+  }, [])
 
   const saveEntry = (entry) => {
     setEntries((prev) => [entry, ...prev])
@@ -66,9 +74,15 @@ export default function BragEmployee() {
         </div>
         <div className="be-sidebar-body">
           <div>
-            <div className="be-sidebar-avatar" aria-hidden="true">JE</div>
-            <div className="be-sidebar-name">Jordan Ellis</div>
-            <div className="be-sidebar-role">Senior engineer · Platform</div>
+            <div className="be-sidebar-avatar" aria-hidden="true">
+              {(profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '') || profile.email?.[0]?.toUpperCase() || '?'}
+            </div>
+            <div className="be-sidebar-name">
+              {profile.firstName || profile.lastName
+                ? `${profile.firstName} ${profile.lastName}`.trim()
+                : profile.email}
+            </div>
+            <div className="be-sidebar-role">{profile.email}</div>
           </div>
 
           <div className="be-divider" role="separator" />
