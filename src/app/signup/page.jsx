@@ -336,11 +336,7 @@ function Step3({ email }) {
   const handleEnter = async () => {
     setBusy(true)
     try {
-      // Store email so the MFA setup page can display it.
-      storage.setEmail(email)
-      // Send OTP so the user can complete sign-in via the standard flow.
-      await sendCodeEmail(email)
-      router.push('/mfa-setup')
+      router.push('/brag')
     } catch {
       // On failure fall back to sign-in page where the user can retry.
       router.push('/')
@@ -377,7 +373,7 @@ function Step3({ email }) {
       </div>
 
       <CtaBtn onClick={handleEnter} disabled={busy}>
-        {busy ? 'Sending code…' : 'Go to my dashboard'} <ArrowIcon />
+        {busy ? 'Loading ...' : 'Go to my dashboard'} <ArrowIcon />
       </CtaBtn>
       <div className="su-questions-note">
         Questions? <a href="mailto:help@clausule.com">help@clausule.com</a>
