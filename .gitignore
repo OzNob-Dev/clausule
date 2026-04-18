@@ -10,3 +10,6 @@ CLAUDE.md
 supabase/
 .next
 .git
+test-results/
+playwright-report/
+coverage/
