@@ -213,20 +213,19 @@ function Step2({ onNext, onBack, initialData, accountData }) {
     setBusy(true)
     setApiError('')
     try {
-      const res = await fetch('/api/payments/subscribe', {
+      const res = await fetch('/api/auth/register', {
         method:      'POST',
         credentials: 'same-origin',
         headers:     { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          paymentMethodId: 'pm_card_visa', // replace with Stripe.js token in production
-          email:           accountData.email,
-          firstName:       accountData.firstName,
-          lastName:        accountData.lastName,
+          email:     accountData.email,
+          firstName: accountData.firstName,
+          lastName:  accountData.lastName,
         }),
       })
       const json = await res.json()
       if (!res.ok) {
-        setApiError(json.error ?? 'Payment failed — please try again.')
+        setApiError(json.error ?? 'Registration failed — please try again.')
         return
       }
       onNext(save())
