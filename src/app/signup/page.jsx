@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { validateEmail } from '@/utils/emailValidation'
 import { storage } from '@/utils/storage'
 import { sendCodeEmail } from '@/utils/sendCodeEmail'
+import { SignupProvider, useSignup } from '@/contexts/SignupContext'
 import '@/styles/signup.css'
 
 const STEPS = ['Account', 'Payment', 'Done']
@@ -192,13 +193,49 @@ function formatExpiry(val) {
   return v
 }
 
-function Step2({ onNext, onBack, initialData }) {
+function Step2({ onNext, onBack, initialData, accountData }) {
   const [cardName, setCardName] = useState(initialData.cardName)
   const [cardNum, setCardNum]   = useState(initialData.cardNum)
   const [expiry, setExpiry]     = useState(initialData.expiry)
   const [cvc, setCvc]           = useState(initialData.cvc)
+  const [busy, setBusy]         = useState(false)
+  const [apiError, setApiError] = useState('')
 
   const save = () => ({ cardName, cardNum, expiry, cvc })
+
+  /**
+   * In production this should use Stripe.js Elements to tokenise the card
+   * and obtain a real PaymentMethod ID — never send raw card data to your server.
+   * The paymentMethodId below is a placeholder; replace with the value returned
+   * by stripe.createPaymentMethod() in a Stripe Elements integration.
+   */
+  const handleSubscribe = async () => {
+    setBusy(true)
+    setApiError('')
+    try {
+      const res = await fetch('/api/payments/subscribe', {
+        method:      'POST',
+        credentials: 'same-origin',
+        headers:     { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentMethodId: 'pm_card_visa', // replace with Stripe.js token in production
+          email:           accountData.email,
+          firstName:       accountData.firstName,
+          lastName:        accountData.lastName,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        setApiError(json.error ?? 'Payment failed — please try again.')
+        return
+      }
+      onNext(save())
+    } catch {
+      setApiError('Network error — please check your connection and try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
 
   return (
     <div>
@@ -278,7 +315,12 @@ function Step2({ onNext, onBack, initialData }) {
         256-bit SSL encryption · PCI DSS compliant · Powered by Stripe
       </div>
 
-      <CtaBtn terra onClick={() => { onNext(save()) }}>Subscribe — $5/mo <ArrowIcon /></CtaBtn>
+      {apiError && (
+        <div className="su-api-error" role="alert">{apiError}</div>
+      )}
+      <CtaBtn terra onClick={handleSubscribe} disabled={busy}>
+        {busy ? 'Processing…' : <>Subscribe — $5/mo <ArrowIcon /></>}
+      </CtaBtn>
       <BackBtn onClick={() => { onBack(save()) }} />
       <div className="su-trial-note">
         By subscribing you agree to our <a href="#">Subscription Terms</a>. Cancel any time from your account settings.
@@ -419,11 +461,13 @@ function Aside() {
 // ── Root component ─────────────────────────────────────────────────
 function SignUpInner() {
   const searchParams = useSearchParams()
-  const prefillEmail = decodeURIComponent(searchParams.get('email') ?? '')
+  const { step, setStep, step1Data, setStep1Data, step2Data, setStep2Data, completePayment } = useSignup()
 
-  const [step, setStep] = useState(1)
-  const [step1Data, setStep1Data] = useState({ firstName: '', lastName: '', email: prefillEmail, agreed: false })
-  const [step2Data, setStep2Data] = useState({ cardName: '', cardNum: '', expiry: '', cvc: '' })
+  // Hydrate email from query param on first render only
+  useEffect(() => {
+    const prefill = decodeURIComponent(searchParams.get('email') ?? '')
+    if (prefill) setStep1Data((prev) => ({ ...prev, email: prefill }))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const goStep = (n) => {
     setStep(n)
@@ -433,7 +477,7 @@ function SignUpInner() {
   const handleStep1 = (data) => {
     setStep1Data(data)
     const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ')
-    setStep2Data(prev => ({ ...prev, cardName: prev.cardName || fullName }))
+    setStep2Data((prev) => ({ ...prev, cardName: prev.cardName || fullName }))
     goStep(2)
   }
 
@@ -475,9 +519,10 @@ function SignUpInner() {
           <div className="su-narrow">
             {step === 2 && (
               <Step2
-                onNext={(data) => { setStep2Data(data); goStep(3) }}
+                onNext={(data) => { setStep2Data(data); completePayment() }}
                 onBack={(data) => { setStep2Data(data); goStep(1) }}
                 initialData={step2Data}
+                accountData={step1Data}
               />
             )}
             {step === 3 && <Step3 email={step1Data.email} />}
@@ -490,8 +535,10 @@ function SignUpInner() {
 
 export default function SignUp() {
   return (
-    <Suspense>
-      <SignUpInner />
-    </Suspense>
+    <SignupProvider>
+      <Suspense>
+        <SignUpInner />
+      </Suspense>
+    </SignupProvider>
   )
 }

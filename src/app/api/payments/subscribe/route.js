@@ -5,17 +5,30 @@
  * Expects the frontend to use Stripe.js to tokenize the card (PaymentMethod ID),
  * NOT raw card numbers.  See: https://stripe.com/docs/payments/accept-a-payment
  *
+ * Supports two call contexts:
+ *   - Authenticated (JWT cookie present): userId is taken from the token.
+ *   - Signup (no JWT): email + firstName + lastName are used to look up or create
+ *     the user — enables payment before the first OTP/MFA step.
+ *
+ * On success, issues httpOnly JWT access + refresh token cookies so the user
+ * is immediately authenticated without a separate OTP step.
+ *
  * Required env vars:
  *   STRIPE_SECRET_KEY
+ *   JWT_SECRET
  *
- * Body: { paymentMethodId: string, email: string, name: string }
- * Response 200: { ok: true, subscriptionId: string, clientSecret: string }
+ * Body: { paymentMethodId: string, email: string, firstName: string, lastName?: string }
+ * Response 200: { ok: true, subscriptionId: string, clientSecret: string, role: string }
  * Response 400: { error: string }
  */
 
-import { NextResponse }  from 'next/server'
-import { requireAuth }   from '@api/_lib/auth.js'
-import { insert, select, update } from '@api/_lib/supabase.js'
+import { NextResponse }                     from 'next/server'
+import { requireAuth, accessTokenCookie,
+         refreshTokenCookie }               from '@api/_lib/auth.js'
+import { signAccessToken, generateRefreshToken,
+         REFRESH_TOKEN_TTL_S }              from '@api/_lib/jwt.js'
+import { insert, select, upsert,
+         createUser }                       from '@api/_lib/supabase.js'
 
 const STRIPE_KEY        = process.env.STRIPE_SECRET_KEY
 const STRIPE_API        = 'https://api.stripe.com/v1'
@@ -47,17 +60,48 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Payment system not configured' }, { status: 500 })
   }
 
-  // Require an authenticated session.
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return NextResponse.json({ error: authError }, { status: 401 })
-
   const body            = await request.json().catch(() => ({}))
   const paymentMethodId = (body.paymentMethodId ?? '').trim()
-  const email           = (body.email ?? '').trim().toLowerCase()
-  const name            = (body.name  ?? '').trim()
+  const email           = (body.email     ?? '').trim().toLowerCase()
+  const firstName       = (body.firstName ?? '').trim()
+  const lastName        = (body.lastName  ?? '').trim()
+  const fullName        = [firstName, lastName].filter(Boolean).join(' ')
 
   if (!paymentMethodId || !email) {
     return NextResponse.json({ error: 'paymentMethodId and email are required' }, { status: 400 })
+  }
+  if (!firstName) {
+    return NextResponse.json({ error: 'firstName is required' }, { status: 400 })
+  }
+
+  // ── Resolve userId ─────────────────────────────────────────────────────────
+  // Use the JWT session when present (authenticated upgrade path).
+  // Fall back to email lookup / user creation for the initial signup path.
+  let userId
+  const { userId: authedId, error: authError } = requireAuth(request)
+
+  if (!authError && authedId) {
+    userId = authedId
+  } else {
+    // Signup path: look up an existing user by email.
+    const { data: profiles } = await select(
+      'profiles',
+      new URLSearchParams({ email: `eq.${email}`, select: 'id', limit: '1' }).toString()
+    )
+    if (profiles?.length) {
+      userId = profiles[0].id
+    } else {
+      // User doesn't exist yet — create them now.
+      const { data: created, error: createErr } = await createUser({
+        email,
+        user_metadata: { first_name: firstName, last_name: lastName || undefined },
+      })
+      if (createErr) {
+        console.error('[subscribe] createUser error:', createErr)
+        return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 })
+      }
+      userId = created.id
+    }
   }
 
   try {
@@ -71,7 +115,7 @@ export async function POST(request) {
     }
 
     // 1. Create Stripe customer.
-    const customerParams = new URLSearchParams({ email, name })
+    const customerParams = new URLSearchParams({ email, name: fullName })
     const customer = await stripe('/customers', customerParams)
 
     // 2. Attach the payment method to the customer.
@@ -113,14 +157,47 @@ export async function POST(request) {
       current_period_end:     new Date(subscription.current_period_end   * 1000).toISOString(),
     })
 
+    // 6. Store/update the user's profile now that payment is confirmed.
+    const { data: upserted } = await upsert('profiles', {
+      id:         userId,
+      email,
+      first_name: firstName,
+      last_name:  lastName || null,
+    })
+
+    // 7. Issue JWT session so the user is immediately authenticated.
+    //    Role from upserted profile row; default to 'employee' for new users.
+    const role        = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? 'employee'
+    const accessToken = signAccessToken({ userId, email, role })
+
+    const { token: refreshToken, hash: refreshHash } = generateRefreshToken()
+    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_S * 1000).toISOString()
+
+    const { error: rtError } = await insert('refresh_tokens', {
+      user_id:    userId,
+      token_hash: refreshHash,
+      expires_at: expiresAt,
+    })
+
+    if (rtError) {
+      // Payment succeeded — don't fail the whole response, but log it.
+      console.error('[subscribe] refresh token insert failed:', rtError)
+    }
+
     const clientSecret =
       subscription.latest_invoice?.payment_intent?.client_secret ?? null
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       ok:             true,
       subscriptionId: subscription.id,
       clientSecret,
+      role,
     })
+    response.headers.append('Set-Cookie', accessTokenCookie(accessToken))
+    if (!rtError) {
+      response.headers.append('Set-Cookie', refreshTokenCookie(refreshToken))
+    }
+    return response
   } catch (err) {
     console.error('[subscribe] Stripe error:', err.message)
     return NextResponse.json({ error: err.message }, { status: 402 })

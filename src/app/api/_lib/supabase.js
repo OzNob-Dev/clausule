@@ -83,6 +83,20 @@ export function del(table, query) {
   return supaFetch(`/rest/v1/${table}?${query}`, { method: 'DELETE' })
 }
 
+/**
+ * Upsert a row — insert or update on conflict.
+ * @param {string} table
+ * @param {object} body
+ * @param {string} [onConflict] - comma-separated column(s) to match on (default: 'id')
+ */
+export function upsert(table, body, onConflict = 'id') {
+  return supaFetch(`/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { Prefer: `resolution=merge-duplicates,return=representation` },
+    body: JSON.stringify(body),
+  })
+}
+
 // ── Supabase Auth Admin endpoints ────────────────────────────────────────────
 
 /**
