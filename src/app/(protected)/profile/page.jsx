@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { AppShell } from '@/components/layout/AppShell'
 import { EscalationModal } from '@/components/profile/EscalationModal'
-import { EntryCard } from '@/components/entries/EntryCard'
-import { EntryComposer } from '@/components/entries/EntryComposer'
+import ProfileEntryFeed from '@/components/profile/ProfileEntryFeed'
+import ProfileSidebar from '@/components/profile/ProfileSidebar'
 import { usePitstop } from '@/hooks/usePitstop'
 import { draftSummary } from '@/utils/api'
 import { SAMPLE_ENTRIES } from '@/data/employees'
-import '@/styles/profile.css'
+import '@/styles/profile-sidebar.css'
+import '@/styles/profile-content.css'
 
 const EMPLOYEE = {
   name: 'Jordan Ellis',
@@ -56,207 +56,43 @@ export default function Profile() {
   const handleFilterDot = (cat) => setFilterCat((prev) => (prev === cat ? null : cat))
   const addEntry = (entry) => setEntries((prev) => [entry, ...prev])
   const deleteEntry = (id) => setEntries((prev) => prev.filter((e) => e.id !== id))
-
-  const PITSTOP_OPTIONS = [
-    { value: 'g', label: 'Going well'    },
-    { value: 'y', label: 'Working on it' },
-    { value: 'r', label: 'Needs work'    },
-  ]
-
   return (
     <AppShell>
       <div className="pf-page">
+        <ProfileSidebar
+          draftText={draftText}
+          editingSummary={editingSummary}
+          employee={EMPLOYEE}
+          entriesCount={entries.length}
+          escalated={escalated}
+          onDraftChange={setDraftText}
+          onDraftWithAi={handleDraftAI}
+          onOpenEscalation={() => setEscalateOpen(true)}
+          onSaveSummary={saveSummary}
+          onSetEditingSummary={(nextEditing) => {
+            if (nextEditing) {
+              setDraftText(summaryText)
+            }
+            setEditingSummary(nextEditing)
+          }}
+          onSetPitstop={setPs}
+          pitstop={ps}
+          pitstopSaved={psSaved}
+          summaryLoading={summaryLoading}
+          summarySaved={summarySaved}
+          summaryText={summaryText}
+        />
 
-        {/* ── Identity panel ── */}
-        <div className="pf-panel">
-          {/* Back link */}
-          <div className="pf-back-row">
-            <Link href="/dashboard" className="pf-back-link">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="10 4 6 8 10 12"/>
-              </svg>
-              Dashboard
-            </Link>
-          </div>
-
-          {/* Panel body */}
-          <div className="pf-body">
-
-            {/* Avatar + name */}
-            <div>
-              <div className="pf-avatar">{EMPLOYEE.av}</div>
-              <div className="pf-name">{EMPLOYEE.name}</div>
-              <div className="pf-role">{EMPLOYEE.role} · {EMPLOYEE.team}</div>
-            </div>
-
-            <div className="pf-divider" />
-
-            {/* Meta */}
-            <div className="pf-meta-list">
-              {[
-                { label: 'Manager', val: 'A. Diente' },
-                { label: 'Entries', val: `${entries.length} total` },
-              ].map(({ label, val }) => (
-                <div key={label}>
-                  <div className="pf-section-label">{label}</div>
-                  <div className="pf-meta-val">{val}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="pf-divider" />
-
-            {/* Pitstop */}
-            <div>
-              <div className="pf-pitstop-label">Pitstop</div>
-              <div className="pf-pitstop-options">
-                {PITSTOP_OPTIONS.map(({ value, label }) => {
-                  const isSel = ps === value
-                  return (
-                    <button
-                      key={value}
-                      onClick={() => setPs(value)}
-                      className={`pf-pitstop-btn pf-pitstop-btn--${value}${isSel ? ' pf-pitstop-btn--sel' : ''}`}
-                    >
-                      <span className="pf-pitstop-dot" />
-                      {label}
-                    </button>
-                  )
-                })}
-              </div>
-              {psSaved && (
-                <div className="pf-saved">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <polyline points="3 8 6 11 13 4"/>
-                  </svg>
-                  Saved
-                </div>
-              )}
-            </div>
-
-            <div className="pf-divider" />
-
-            {/* Escalate */}
-            {!escalated ? (
-              <button onClick={() => setEscalateOpen(true)} className="pf-escalate-btn">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
-                </svg>
-                Escalate to HR
-              </button>
-            ) : (
-              <div className="pf-escalated-indicator">
-                <svg viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
-                </svg>
-                Escalated
-              </div>
-            )}
-
-            <div className="pf-divider" />
-
-            {/* Manager summary */}
-            <div>
-              <div className="pf-summary-label">Manager summary</div>
-              {editingSummary ? (
-                <>
-                  <textarea
-                    value={draftText}
-                    onChange={(e) => setDraftText(e.target.value)}
-                    rows={5}
-                    className="pf-summary-textarea"
-                  />
-                  <div className="pf-summary-actions">
-                    <button
-                      onClick={handleDraftAI}
-                      disabled={summaryLoading}
-                      className="pf-btn-ai-draft"
-                    >
-                      {summaryLoading ? 'Drafting…' : 'AI draft'}
-                    </button>
-                    <button onClick={() => setEditingSummary(false)} className="pf-btn-summary-cancel">
-                      Cancel
-                    </button>
-                    <button onClick={saveSummary} className="pf-btn-summary-save">
-                      Save
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div
-                    onClick={() => { setDraftText(summaryText); setEditingSummary(true) }}
-                    className="pf-summary-view"
-                  >
-                    {summaryText}
-                  </div>
-                  <div className="pf-summary-hint">Click to edit · auto-saves</div>
-                  {summarySaved && (
-                    <div className="pf-auto-saved">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <polyline points="3 8 6 11 13 4"/>
-                      </svg>
-                      Auto-saved
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Document content area ── */}
-        <div className="pf-doc">
-
-          {/* Filter pills + meta */}
-          <div className="pf-filter-row">
-            <div className="pf-filter-pills">
-              {[
-                { key: null, label: 'All' },
-                { key: 'perf', label: 'Performance' },
-                { key: 'conduct', label: 'Conduct' },
-                { key: 'dev', label: 'Development' },
-              ].map(({ key, label }) => (
-                <button
-                  key={label}
-                  onClick={() => setFilterCat(key)}
-                  className={`pf-filter-btn${filterCat === key ? ' pf-filter-btn--active' : ''}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <span className="pf-entry-count">{entries.length} entries</span>
-          </div>
-
-          {/* Composer trigger */}
-          {!composerOpen && (
-            <div
-              onClick={() => setComposerOpen(true)}
-              className="pf-composer-trigger"
-            >
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/>
-              </svg>
-              Add entry
-            </div>
-          )}
-
-          {composerOpen && (
-            <EntryComposer onSave={addEntry} onClose={() => setComposerOpen(false)} />
-          )}
-
-          {/* Entry list */}
-          {entries.map((entry) => (
-            <EntryCard
-              key={entry.id}
-              entry={entry}
-              onDelete={deleteEntry}
-              filterActive={handleFilterDot}
-              isFiltered={filterCat !== null && filterCat !== entry.cat}
-            />
-          ))}
-        </div>
+        <ProfileEntryFeed
+          composerOpen={composerOpen}
+          entries={entries}
+          filterCat={filterCat}
+          onAddEntry={addEntry}
+          onDeleteEntry={deleteEntry}
+          onFilterDot={handleFilterDot}
+          onSetComposerOpen={setComposerOpen}
+          onSetFilterCat={setFilterCat}
+        />
       </div>
 
       <EscalationModal

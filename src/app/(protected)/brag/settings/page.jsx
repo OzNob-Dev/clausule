@@ -5,8 +5,9 @@ import BragRail from '@/components/brag/BragRail'
 import TotpSetupPanel from '@/components/brag/TotpSetupPanel'
 import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
 import { useProfileStore } from '@/stores/useProfileStore'
-import '@/styles/brag-employee.css'
-import '@/styles/brag-settings.css'
+import '@/styles/brag-shell.css'
+import '@/styles/brag-settings-core.css'
+import '@/styles/brag-settings-totp.css'
 
 export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)

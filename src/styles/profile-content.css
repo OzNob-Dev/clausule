@@ -1,0 +1,86 @@
+/* Document area — light content surface */
+.pf-doc {
+  flex: 1;
+  overflow-y: auto;
+  background: #EDE8DF;
+  padding: 24px 32px;
+}
+
+.pf-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.pf-filter-pills { display: flex; gap: 6px; }
+
+.pf-filter-btn {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border2);
+  font-family: var(--font);
+  cursor: pointer;
+  background: transparent;
+  color: var(--tx-3);
+  transition: all 0.15s;
+}
+
+.pf-filter-btn--active {
+  background: var(--acc-bg);
+  border-color: var(--acc-border);
+  color: var(--acc-text);
+}
+
+.pf-entry-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tx-3);
+}
+
+.pf-composer-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tx-3);
+  padding: 14px 0;
+  border-top: 1px dashed var(--border2);
+  margin-top: 4px;
+  transition: color 0.15s;
+}
+
+.pf-composer-trigger:hover { color: var(--acc-text); }
+
+.pf-composer-trigger svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .pf-page {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .pf-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow-y: visible;
+  }
+
+  .pf-doc {
+    overflow-y: visible;
+    padding: 20px 16px;
+  }
+
+  .pf-back-row { padding: 12px 16px; }
+
+  .pf-body { padding: 16px; }
+}

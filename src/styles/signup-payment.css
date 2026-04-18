@@ -1,0 +1,118 @@
+/* ── Sign Up payment step ─────────────────────────────────────── */
+.su-order-summary {
+  background: var(--su-panel);
+  border-radius: var(--su-r2);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.su-order-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--su-tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 14px;
+}
+
+.su-order-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.su-order-item {
+  font-size: 13px;
+  color: var(--su-tx2);
+  font-weight: 500;
+}
+
+.su-order-val {
+  font-size: 13px;
+  color: var(--su-tx1);
+  font-weight: 700;
+}
+
+.su-order-divider {
+  height: 1px;
+  background: var(--su-border-em);
+  margin: 12px 0;
+}
+
+.su-order-total-label,
+.su-order-total-val {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--su-tx1);
+}
+
+.su-pay-field { margin-bottom: 18px; }
+.su-card-input-wrap { position: relative; }
+
+.su-card-icons {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.su-card-icon {
+  width: 30px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--su-panel);
+  border: 1px solid var(--su-border-em);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.su-expiry-cvc-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.su-expiry-cvc-row > div { flex: 1; }
+
+.su-secure-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--su-tx4);
+  margin-bottom: 20px;
+}
+
+.su-trial-note {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--su-tx4);
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+.su-trial-note a { color: var(--su-tx3); }
+
+.su-api-error {
+  font-size: 13px;
+  font-weight: 500;
+  color: #E05050;
+  background: rgba(224, 80, 80, 0.08);
+  border: 1px solid rgba(224, 80, 80, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .su-expiry-cvc-row { flex-direction: column; gap: 0; }
+  .su-expiry-cvc-row > div { flex: none; margin-bottom: 18px; }
+}

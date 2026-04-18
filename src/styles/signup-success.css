@@ -1,0 +1,23 @@
+/* ── Sign Up success step ─────────────────────────────────────── */
+.su-success-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--su-tx1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.su-done-sub strong { color: var(--su-tx1); }
+
+.su-questions-note {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--su-tx4);
+  text-align: center;
+  margin-top: 14px;
+}
+
+.su-questions-note a { color: var(--su-tx3); }
