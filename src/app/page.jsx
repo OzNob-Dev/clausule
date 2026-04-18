@@ -47,30 +47,61 @@ export default function SignIn() {
     if (emailStatus !== 'idle') setEmailStatus('idle')
   }
 
-  // Check on blur if the email is valid and differs from the last check.
-  const handleBlur = async () => {
-    const trimmed = email.trim()
+  // Core submit logic — shared by form submit, blur, and paste.
+  const doSubmit = async (rawEmail) => {
+    const trimmed = rawEmail.trim()
     if (!trimmed) return
-    setTouched(true)
 
     const v = validateEmail(trimmed)
-    const resolved = v.suggestion ?? (v.valid ? trimmed : null)
-    if (!resolved || resolved === lastCheckedRef.current) return
+    if (!v.valid && !v.suggestion) return
+    const resolved = v.suggestion ?? trimmed
 
-    lastCheckedRef.current = resolved
-    setEmailStatus('checking')
+    setSubmitAttempted(true)
+    setTouched(true)
 
+    let status = emailStatus
+    if (status === 'idle' || status === 'checking' || resolved !== lastCheckedRef.current) {
+      lastCheckedRef.current = resolved
+      setEmailStatus('checking')
+      try {
+        const res  = await fetch('/api/auth/check-email', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email: resolved }),
+        })
+        const data = await res.json()
+        status = data.exists ? 'registered' : 'new'
+        setEmailStatus(status)
+      } catch {
+        setEmailStatus('idle')
+        return
+      }
+    }
+
+    if (status === 'new') {
+      router.push(`/signup?email=${encodeURIComponent(resolved)}`)
+      return
+    }
+
+    // Email registered — send OTP.
+    storage.setEmail(resolved)
+    setSending(true)
     try {
-      const res  = await fetch('/api/auth/check-email', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email: resolved }),
-      })
-      const data = await res.json()
-      setEmailStatus(data.exists ? 'registered' : 'new')
+      await sendCodeEmail(resolved)
+      router.push('/mfa-setup')
     } catch {
-      // Network error — fall back to 'idle' and let submit handle it.
-      setEmailStatus('idle')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const handleBlur = () => doSubmit(email)
+
+  const handlePaste = (e) => {
+    const pasted = e.clipboardData?.getData('text') ?? ''
+    if (pasted.trim()) {
+      // Let React update state first, then submit with the pasted value.
+      setTimeout(() => doSubmit(pasted), 0)
     }
   }
 
@@ -82,52 +113,9 @@ export default function SignIn() {
     lastCheckedRef.current = ''
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setSubmitAttempted(true)
-
-    if (!result.valid) return
-
-    const resolved = result.suggestion ?? email.trim()
-
-    // If we haven't checked yet, do it now before deciding what to do.
-    if (emailStatus === 'idle' || emailStatus === 'checking') {
-      setEmailStatus('checking')
-      try {
-        const res  = await fetch('/api/auth/check-email', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email: resolved }),
-        })
-        const data = await res.json()
-        const status = data.exists ? 'registered' : 'new'
-        setEmailStatus(status)
-        if (status === 'new') {
-          router.push(`/signup?email=${encodeURIComponent(resolved)}`)
-          return
-        }
-      } catch {
-        setEmailStatus('idle')
-        return
-      }
-    }
-
-    // Email not registered — redirect to signup.
-    if (emailStatus === 'new') {
-      router.push(`/signup?email=${encodeURIComponent(resolved)}`)
-      return
-    }
-
-    // Email registered — send OTP.
-    storage.setEmail(resolved)
-    setSending(true)
-    try {
-      await sendCodeEmail(resolved)
-      router.push('/mfa-setup')
-    } catch (err) {
-    } finally {
-      setSending(false)
-    }
+    doSubmit(email)
   }
 
   // Derive button label and style from emailStatus.
@@ -173,6 +161,7 @@ export default function SignIn() {
                 value={email}
                 onChange={handleEmailChange}
                 onBlur={handleBlur}
+                onPaste={handlePaste}
                 autoFocus
                 autoComplete="email"
                 required
