@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { storage } from '@/utils/storage'
 import { validateEmail } from '@/utils/emailValidation'
 import { sendCodeEmail } from '@/utils/sendCodeEmail'
+import { apiFetch } from '@/utils/api'
 import '@/styles/signin.css'
 
 // emailStatus values:
@@ -27,7 +28,7 @@ export default function SignIn() {
 
   // Redirect already-authenticated users to the app.
   useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'same-origin' })
+    apiFetch('/api/auth/me')
       .then(async (res) => {
         if (res.ok) {
           const { user } = await res.json()

@@ -23,6 +23,7 @@ import {
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { useProfileStore } from '@/stores/useProfileStore'
+import { apiFetch } from '@/utils/api'
 
 const AuthContext = createContext(null)
 
@@ -38,25 +39,7 @@ export function AuthProvider({ children }) {
 
     async function hydrate() {
       try {
-        let res = await fetch('/api/auth/bootstrap', { credentials: 'same-origin', signal })
-
-        if (res.status === 401) {
-          // Attempt silent access-token refresh using the refresh-token cookie.
-          const refresh = await fetch('/api/auth/refresh', {
-            method:      'POST',
-            credentials: 'same-origin',
-            signal,
-          })
-
-          if (refresh.ok) {
-            res = await fetch('/api/auth/bootstrap', { credentials: 'same-origin', signal })
-          } else {
-            clearProfile()
-            setUser(null)
-            setLoading(false)
-            return
-          }
-        }
+        const res = await apiFetch('/api/auth/bootstrap', { signal })
 
         if (res.ok) {
           const { user: userData, profile, security } = await res.json()

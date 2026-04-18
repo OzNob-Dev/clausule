@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
+import { apiFetch } from '@/utils/api'
 
 export default function TotpSetupPanel({ onDone, onCancel }) {
   const [secret, setSecret]       = useState('')
@@ -28,7 +29,7 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
     setLoadError(false)
     setSecret('')
     setUri('')
-    fetch('/api/auth/totp/setup', { credentials: 'same-origin' })
+    apiFetch('/api/auth/totp/setup')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data?.secret) {
@@ -53,10 +54,9 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
     if (!secret) return
     setTotpState('checking')
     try {
-      const res = await fetch('/api/auth/totp/setup', {
+      const res = await apiFetch('/api/auth/totp/setup', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
         body: JSON.stringify({ code, secret }),
       })
       if (res.ok) {

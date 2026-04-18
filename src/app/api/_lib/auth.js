@@ -44,6 +44,7 @@ function cookieFlags(maxAge) {
     'Path=/',
     'HttpOnly',
     'SameSite=Lax',
+    'Priority=High',
     IS_PROD ? 'Secure' : '',
   ].filter(Boolean).join('; ')
 }
@@ -72,8 +73,8 @@ export function refreshTokenCookie(token) {
  */
 export function clearAuthCookies() {
   return [
-    `${COOKIE_AT}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`,
-    `${COOKIE_RT}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`,
+    `${COOKIE_AT}=; ${cookieFlags(0)}`,
+    `${COOKIE_RT}=; ${cookieFlags(0)}`,
   ]
 }
 

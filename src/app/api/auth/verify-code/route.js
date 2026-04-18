@@ -19,12 +19,9 @@
 
 import { NextResponse }                    from 'next/server'
 import crypto                              from 'node:crypto'
-import { select, update, insert }          from '@api/_lib/supabase.js'
-import { signAccessToken,
-         generateRefreshToken,
-         REFRESH_TOKEN_TTL_S }             from '@api/_lib/jwt.js'
-import { accessTokenCookie,
-         refreshTokenCookie }              from '@api/_lib/auth.js'
+import { select, update }                  from '@api/_lib/supabase.js'
+import { appendSessionCookies,
+         createPersistentSession }         from '@api/_lib/session.js'
 import { RateLimiter }                     from '@api/_lib/rate-limit.js'
 
 // 5 attempts per 10 minutes per email.
@@ -104,29 +101,12 @@ export async function POST(request) {
 
   const { id: userId, role } = profiles[0]
 
-  // ── 4. Issue tokens ────────────────────────────────────────────────────────
-  // Access token: short-lived JWT verified locally on each request.
-  const accessToken = signAccessToken({ userId, email, role })
-
-  // Refresh token: opaque random value, hash stored in DB for rotation/revocation.
-  const { token: refreshToken, hash: refreshHash } = generateRefreshToken()
-
-  const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_S * 1000).toISOString()
-
-  const { error: rtError } = await insert('refresh_tokens', {
-    user_id:    userId,
-    token_hash: refreshHash,
-    expires_at: expiresAt,
-  })
-
-  if (rtError) {
-    console.error('[verify-code] refresh token insert failed:', rtError)
+  try {
+    const response = NextResponse.json({ ok: true, role })
+    const session = await createPersistentSession({ userId, email, role })
+    return appendSessionCookies(response, session)
+  } catch (err) {
+    console.error('[verify-code] refresh token insert failed:', err)
     return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
   }
-
-  // ── 5. Set httpOnly cookies and respond ────────────────────────────────────
-  const response = NextResponse.json({ ok: true, role })
-  response.headers.append('Set-Cookie', accessTokenCookie(accessToken))
-  response.headers.append('Set-Cookie', refreshTokenCookie(refreshToken))
-  return response
 }

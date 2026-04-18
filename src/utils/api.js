@@ -3,6 +3,22 @@
  * Heavy/secret work runs through server routes — no API keys in this file.
  */
 
+export async function apiFetch(input, init = {}, options = {}) {
+  const { retryOnUnauthorized = true } = options
+  const requestInit = { credentials: 'same-origin', ...init }
+  let res = await fetch(input, requestInit)
+
+  if (res.status !== 401 || !retryOnUnauthorized) return res
+
+  const refresh = await fetch('/api/auth/refresh', {
+    method: 'POST',
+    credentials: 'same-origin',
+  })
+
+  if (!refresh.ok) return res
+  return fetch(input, requestInit)
+}
+
 /**
  * Request an AI-drafted manager summary via the server-side proxy.
  * @param {string} employeeName
@@ -10,7 +26,7 @@
  * @returns {Promise<string>} summary text
  */
 export async function draftSummary(employeeName, entries) {
-  const res = await fetch('/api/ai/draft-summary', {
+  const res = await apiFetch('/api/ai/draft-summary', {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({ employeeName, entries }),

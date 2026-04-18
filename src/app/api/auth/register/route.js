@@ -14,11 +14,9 @@
  */
 
 import { NextResponse }                     from 'next/server'
-import { accessTokenCookie,
-         refreshTokenCookie }               from '@api/_lib/auth.js'
-import { signAccessToken, generateRefreshToken,
-         REFRESH_TOKEN_TTL_S }              from '@api/_lib/jwt.js'
-import { insert, select, upsert,
+import { appendSessionCookies,
+         createPersistentSession }          from '@api/_lib/session.js'
+import { select, upsert,
          createUser }                       from '@api/_lib/supabase.js'
 
 export async function POST(request) {
@@ -63,27 +61,9 @@ export async function POST(request) {
 
     const role = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? 'employee'
 
-    // ── Issue JWT session ───────────────────────────────────────────────────
-    const accessToken = signAccessToken({ userId, email, role })
-
-    const { token: refreshToken, hash: refreshHash } = generateRefreshToken()
-    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_S * 1000).toISOString()
-
-    const { error: rtError } = await insert('refresh_tokens', {
-      user_id:    userId,
-      token_hash: refreshHash,
-      expires_at: expiresAt,
-    })
-
-    if (rtError) {
-      console.error('[register] refresh token insert failed:', rtError)
-      return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
-    }
-
     const response = NextResponse.json({ ok: true, role })
-    response.headers.append('Set-Cookie', accessTokenCookie(accessToken))
-    response.headers.append('Set-Cookie', refreshTokenCookie(refreshToken))
-    return response
+    const session = await createPersistentSession({ userId, email, role })
+    return appendSessionCookies(response, session)
   } catch (err) {
     console.error('[register] error:', err.message)
     return NextResponse.json({ error: err.message }, { status: 500 })

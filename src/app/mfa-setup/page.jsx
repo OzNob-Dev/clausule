@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { storage } from '@/utils/storage'
+import { apiFetch } from '@/utils/api'
 import { useSixDigitCode } from '@/hooks/useSixDigitCode'
 import MfaOtpStep from '@/components/mfa/MfaOtpStep'
 import MfaSuccessStep from '@/components/mfa/MfaSuccessStep'
@@ -49,7 +50,7 @@ export default function MfaSetup() {
   useEffect(() => {
     if (step !== 2 || totpSecret) return
     setTotpLoading(true)
-    fetch('/api/auth/totp/setup', { credentials: 'same-origin' })
+    apiFetch('/api/auth/totp/setup')
       .then((r) => r.json())
       .then(({ secret, uri }) => {
         if (!secret) return
@@ -108,10 +109,9 @@ export default function MfaSetup() {
     if (!totpSecret) return
     totpCode.setState('checking')
     try {
-      const res = await fetch('/api/auth/totp/setup', {
+      const res = await apiFetch('/api/auth/totp/setup', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
         body:    JSON.stringify({ code, secret: totpSecret }),
       })
       if (res.ok) {

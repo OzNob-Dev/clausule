@@ -23,10 +23,9 @@
  */
 
 import { NextResponse }                     from 'next/server'
-import { requireAuth, accessTokenCookie,
-         refreshTokenCookie }               from '@api/_lib/auth.js'
-import { signAccessToken, generateRefreshToken,
-         REFRESH_TOKEN_TTL_S }              from '@api/_lib/jwt.js'
+import { requireAuth }                      from '@api/_lib/auth.js'
+import { appendSessionCookies,
+         createPersistentSession }          from '@api/_lib/session.js'
 import { insert, select, upsert,
          createUser }                       from '@api/_lib/supabase.js'
 
@@ -165,24 +164,7 @@ export async function POST(request) {
       last_name:  lastName || null,
     })
 
-    // 7. Issue JWT session so the user is immediately authenticated.
-    //    Role from upserted profile row; default to 'employee' for new users.
-    const role        = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? 'employee'
-    const accessToken = signAccessToken({ userId, email, role })
-
-    const { token: refreshToken, hash: refreshHash } = generateRefreshToken()
-    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_S * 1000).toISOString()
-
-    const { error: rtError } = await insert('refresh_tokens', {
-      user_id:    userId,
-      token_hash: refreshHash,
-      expires_at: expiresAt,
-    })
-
-    if (rtError) {
-      // Payment succeeded — don't fail the whole response, but log it.
-      console.error('[subscribe] refresh token insert failed:', rtError)
-    }
+    const role = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? 'employee'
 
     const clientSecret =
       subscription.latest_invoice?.payment_intent?.client_secret ?? null
@@ -193,11 +175,8 @@ export async function POST(request) {
       clientSecret,
       role,
     })
-    response.headers.append('Set-Cookie', accessTokenCookie(accessToken))
-    if (!rtError) {
-      response.headers.append('Set-Cookie', refreshTokenCookie(refreshToken))
-    }
-    return response
+    const session = await createPersistentSession({ userId, email, role })
+    return appendSessionCookies(response, session)
   } catch (err) {
     console.error('[subscribe] Stripe error:', err.message)
     return NextResponse.json({ error: err.message }, { status: 402 })

@@ -17,21 +17,20 @@
  */
 
 import { NextResponse }                    from 'next/server'
-import { select, update, insert, del }     from '@api/_lib/supabase.js'
-import { signAccessToken,
-         generateRefreshToken,
-         hashRefreshToken,
-         REFRESH_TOKEN_TTL_S }             from '@api/_lib/jwt.js'
+import { select, update, del }             from '@api/_lib/supabase.js'
+import { hashRefreshToken }                from '@api/_lib/jwt.js'
 import { getRefreshToken,
-         accessTokenCookie,
-         refreshTokenCookie,
          clearAuthCookies }                from '@api/_lib/auth.js'
+import { appendSessionCookies,
+         createPersistentSession }         from '@api/_lib/session.js'
 
 export async function POST(request) {
   const rawToken = getRefreshToken(request)
 
   if (!rawToken) {
-    return NextResponse.json({ error: 'No refresh token' }, { status: 401 })
+    const response = NextResponse.json({ error: 'No refresh token' }, { status: 401 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
   }
 
   const tokenHash = hashRefreshToken(rawToken)
@@ -46,7 +45,9 @@ export async function POST(request) {
 
   if (!row) {
     // Token not found — either never issued or already family-revoked.
-    return NextResponse.json({ error: 'Invalid refresh token' }, { status: 401 })
+    const response = NextResponse.json({ error: 'Invalid refresh token' }, { status: 401 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
   }
 
   // ── 2. Replay detection ────────────────────────────────────────────────────
@@ -67,7 +68,9 @@ export async function POST(request) {
   // ── 3. Check expiry ────────────────────────────────────────────────────────
   if (new Date(row.expires_at) <= new Date()) {
     await update('refresh_tokens', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
-    return NextResponse.json({ error: 'Refresh token expired — please sign in again' }, { status: 401 })
+    const response = NextResponse.json({ error: 'Refresh token expired — please sign in again' }, { status: 401 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
   }
 
   // ── 4. Load user profile ───────────────────────────────────────────────────
@@ -77,7 +80,10 @@ export async function POST(request) {
   )
 
   if (!profiles?.length) {
-    return NextResponse.json({ error: 'User not found' }, { status: 401 })
+    await del('refresh_tokens', `user_id=eq.${row.user_id}`)
+    const response = NextResponse.json({ error: 'User not found' }, { status: 401 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
   }
 
   const { id: userId, email, role } = profiles[0]
@@ -85,29 +91,27 @@ export async function POST(request) {
   // ── 5. Rotate: mark current token used, issue new pair ────────────────────
   // Mark the old refresh token as used — must happen before issuing new one
   // so a crash between the two steps leaves the user in a known state.
-  await update('refresh_tokens', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
+  const { error: revokeError } = await update(
+    'refresh_tokens',
+    `id=eq.${row.id}&used_at=is.null`,
+    { used_at: new Date().toISOString() }
+  )
 
-  // New access token.
-  const accessToken = signAccessToken({ userId, email, role })
-
-  // New refresh token.
-  const { token: newRefreshToken, hash: newRefreshHash } = generateRefreshToken()
-  const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_S * 1000).toISOString()
-
-  const { error: rtError } = await insert('refresh_tokens', {
-    user_id:    userId,
-    token_hash: newRefreshHash,
-    expires_at: expiresAt,
-  })
-
-  if (rtError) {
-    console.error('[refresh] failed to insert new refresh token:', rtError)
-    return NextResponse.json({ error: 'Failed to rotate session' }, { status: 500 })
+  if (revokeError) {
+    console.error('[refresh] failed to revoke current refresh token:', revokeError)
+    const response = NextResponse.json({ error: 'Failed to rotate session' }, { status: 500 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
   }
 
-  // ── 6. Respond with new cookies ────────────────────────────────────────────
-  const response = NextResponse.json({ ok: true, role })
-  response.headers.append('Set-Cookie', accessTokenCookie(accessToken))
-  response.headers.append('Set-Cookie', refreshTokenCookie(newRefreshToken))
-  return response
+  try {
+    const response = NextResponse.json({ ok: true, role })
+    const session = await createPersistentSession({ userId, email, role })
+    return appendSessionCookies(response, session)
+  } catch (err) {
+    console.error('[refresh] failed to insert rotated refresh token:', err)
+    const response = NextResponse.json({ error: 'Failed to rotate session' }, { status: 500 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
+  }
 }
