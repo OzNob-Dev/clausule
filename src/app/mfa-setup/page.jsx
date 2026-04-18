@@ -117,8 +117,6 @@ export default function MfaSetup() {
   useEffect(() => {
     if (storage.getMfaSetup()) {
       router.replace('/brag')
-    } else {
-      setStep(2)
     }
   }, [router])
 
@@ -466,38 +464,31 @@ export default function MfaSetup() {
             <div
               className={[
                 'mfa-factor-card',
-                !totpDone               ? 'mfa-factor-card--locked' : '',
-                passkeyState === 'done' ? 'mfa-factor-card--done'   : '',
+                passkeyState === 'done' ? 'mfa-factor-card--done' : '',
               ].join(' ')}
-              aria-disabled={!totpDone}
             >
               <div className="mfa-factor-head">
                 <div className={[
                   'mfa-factor-badge',
-                  !totpDone               ? 'mfa-factor-badge--locked' : '',
-                  passkeyState === 'done' ? 'mfa-factor-badge--done'   : '',
+                  passkeyState === 'done' ? 'mfa-factor-badge--done' : '',
                 ].join(' ')}>
                   {passkeyState === 'done'
                     ? <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M2 6l3 3 5-5"/></svg>
-                    : !totpDone
-                      ? <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="2.5" y="5" width="7" height="5.5" rx="1"/><path d="M4 5V3.5a2 2 0 0 1 4 0V5"/></svg>
-                      : '2'}
+                    : '2'}
                 </div>
                 <div>
                   <div className="mfa-factor-title">Biometrics / Passkey</div>
                   <div className="mfa-factor-sub">
-                    {!totpDone
-                      ? 'Complete step 1 to unlock'
-                      : passkeyState === 'done'
-                        ? 'Registered on this device'
-                        : passkeyAvailable === false
-                          ? 'Not supported on this device'
-                          : deviceInfo.method}
+                    {passkeyState === 'done'
+                      ? 'Registered on this device'
+                      : passkeyAvailable === false
+                        ? 'Not supported on this device'
+                        : deviceInfo.method}
                   </div>
                 </div>
               </div>
 
-              {totpDone && passkeyState !== 'done' && (
+              {passkeyState !== 'done' && (
                 <div className="mfa-factor-body">
                   {passkeyAvailable === null && (
                     <p className="mfa-factor-instruction">Checking device…</p>
