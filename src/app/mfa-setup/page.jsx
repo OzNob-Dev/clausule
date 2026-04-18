@@ -212,13 +212,10 @@ export default function MfaSetup() {
   }
 
   const finishSetup = () => {
-    storage.setMfaSetup()
     setStep(3)
   }
 
   const enterApp = () => {
-    storage.setAuthed()
-    storage.setRole('manager')
     router.push('/brag')
   }
 

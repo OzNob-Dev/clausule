@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { validateEmail } from '@/utils/emailValidation'
 import { storage } from '@/utils/storage'
+import { sendCodeEmail } from '@/utils/sendCodeEmail'
 import '@/styles/signup.css'
 
 const STEPS = ['Account', 'Payment', 'Done']
@@ -288,7 +289,25 @@ function Step2({ onNext, onBack, initialData }) {
 
 // ── Step 3: Done ─────────────────────────────────────────────────
 function Step3({ email }) {
-  const router = useRouter()
+  const router       = useRouter()
+  const [busy, setBusy] = useState(false)
+
+  const handleEnter = async () => {
+    setBusy(true)
+    try {
+      // Store email so the MFA setup page can display it.
+      storage.setEmail(email)
+      // Send OTP so the user can complete sign-in via the standard flow.
+      await sendCodeEmail(email)
+      router.push('/mfa-setup')
+    } catch {
+      // On failure fall back to sign-in page where the user can retry.
+      router.push('/')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <div>
       <div className="su-success-ring">
@@ -316,8 +335,8 @@ function Step3({ email }) {
         </div>
       </div>
 
-      <CtaBtn onClick={() => { storage.setAuthed(); storage.setRole('employee'); router.push('/brag') }}>
-        Go to my dashboard <ArrowIcon />
+      <CtaBtn onClick={handleEnter} disabled={busy}>
+        {busy ? 'Sending code…' : 'Go to my dashboard'} <ArrowIcon />
       </CtaBtn>
       <div className="su-questions-note">
         Questions? <a href="mailto:help@clausule.com">help@clausule.com</a>

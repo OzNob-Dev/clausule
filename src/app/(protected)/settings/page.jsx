@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { AppShell } from '@/components/layout/AppShell'
 import { storage } from '@/utils/storage'
+import { useAuth } from '@/contexts/AuthContext'
 import '@/styles/settings.css'
 
 const WINDOWS = ['30 days', '60 days', '90 days', '6 months']
@@ -14,7 +14,7 @@ const FLAGGED = [
 ]
 
 export default function Settings() {
-  const router = useRouter()
+  const { logout } = useAuth()
   const [deleteModal, setDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [combined, setCombined] = useState(true)
@@ -225,7 +225,7 @@ export default function Settings() {
             <div className="st-modal-actions">
               <button
                 disabled={!confirmReady}
-                onClick={() => { storage.clearAuth(); router.push('/') }}
+                onClick={() => logout()}
                 className={`st-btn-confirm${confirmReady ? ' st-btn-confirm--ready' : ''}`}
               >
                 Yes, permanently delete my account

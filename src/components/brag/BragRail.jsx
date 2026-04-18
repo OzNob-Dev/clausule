@@ -1,15 +1,11 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { storage } from '../../utils/storage'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function BragRail({ activePage }) {
   const router = useRouter()
-
-  const logout = () => {
-    storage.clearAuth()
-    router.push('/')
-  }
+  const { logout } = useAuth()
 
   return (
     <aside className="be-rail be-sidebar" aria-label="App navigation">

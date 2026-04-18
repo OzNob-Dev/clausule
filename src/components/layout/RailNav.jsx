@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { storage } from '../../utils/storage'
+import { useAuth } from '@/contexts/AuthContext'
 import '../../styles/rail-nav.css'
 
 const navItems = [
@@ -49,13 +50,8 @@ const navItems = [
 
 export function RailNav() {
   const pathname        = usePathname()
-  const router          = useRouter()
   const escalatedCount  = storage.getEscalatedCount()
-
-  const logout = () => {
-    storage.clearAuth()
-    router.push('/')
-  }
+  const { logout }      = useAuth()
 
   return (
     <aside className="rail-aside">

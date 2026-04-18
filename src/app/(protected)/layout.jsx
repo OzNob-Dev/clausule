@@ -1,21 +1,32 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { storage } from '@/utils/storage'
+import { useEffect }                    from 'react'
+import { useRouter }                    from 'next/navigation'
+import { AuthProvider, useAuth }        from '@/contexts/AuthContext'
 
-export default function ProtectedLayout({ children }) {
-  const router  = useRouter()
-  const [ready, setReady] = useState(false)
+/**
+ * Inner guard — consumes AuthContext to redirect unauthenticated visitors.
+ * Rendered inside AuthProvider so it can access the context.
+ */
+function AuthGuard({ children }) {
+  const router          = useRouter()
+  const { user, loading } = useAuth()
 
   useEffect(() => {
-    if (!storage.isAuthed() || !storage.isMfaSetup()) {
+    if (!loading && !user) {
       router.replace('/')
-    } else {
-      setReady(true)
     }
-  }, [router])
+  }, [loading, user, router])
 
-  if (!ready) return null
+  // Suppress render until we know the user is authenticated.
+  if (loading || !user) return null
   return children
+}
+
+export default function ProtectedLayout({ children }) {
+  return (
+    <AuthProvider>
+      <AuthGuard>{children}</AuthGuard>
+    </AuthProvider>
+  )
 }

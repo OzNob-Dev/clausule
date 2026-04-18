@@ -25,10 +25,16 @@ export default function SignIn() {
   // Track the last email we ran a check on to avoid redundant requests.
   const lastCheckedRef = useRef('')
 
+  // Redirect already-authenticated users to the app.
   useEffect(() => {
-    if (storage.isAuthed() && storage.isMfaSetup()) {
-      router.replace('/dashboard')
-    }
+    fetch('/api/auth/me', { credentials: 'same-origin' })
+      .then(async (res) => {
+        if (res.ok) {
+          const { user } = await res.json()
+          router.replace(user.role === 'employee' ? '/brag' : '/dashboard')
+        }
+      })
+      .catch(() => {})
   }, [router])
 
   const result       = validateEmail(email)
