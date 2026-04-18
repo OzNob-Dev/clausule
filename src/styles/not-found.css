@@ -1,5 +1,6 @@
 /* ── 404 Not Found page ──────────────────────────────────────── */
 .nf-wrap {
+  width: 100vw;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -7,7 +8,8 @@
   justify-content: center;
   padding: 48px 24px;
   background: #F5F0EA;
-  position: relative;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
 }
 
