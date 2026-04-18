@@ -291,13 +291,18 @@ export default function MfaSetup() {
       if (!credential) throw new Error('No credential returned')
 
       // 4. Serialize credential response (ArrayBuffer → base64url) for the server
+      // getAuthenticatorData() is preferred; .authenticatorData property absent in some implementations
+      const authDataBuf = credential.response.getAuthenticatorData?.()
+        ?? credential.response.authenticatorData
+      if (!authDataBuf) throw new Error('authenticatorData unavailable on this device')
+
       const credJSON = {
         id:    credential.id,
         rawId: bufToB64url(credential.rawId),
         type:  credential.type,
         response: {
           clientDataJSON:    bufToB64url(credential.response.clientDataJSON),
-          authenticatorData: bufToB64url(credential.response.authenticatorData),
+          authenticatorData: bufToB64url(authDataBuf),
           attestationObject: bufToB64url(credential.response.attestationObject),
         },
       }
