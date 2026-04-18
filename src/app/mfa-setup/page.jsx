@@ -114,12 +114,7 @@ export default function MfaSetup() {
   const email    = storage.getEmail() || 'your email'
   const totpDone = totpState === 'done'
 
-  // Redirect if MFA already configured; otherwise skip email-verify step
-  useEffect(() => {
-    if (storage.getMfaSetup()) {
-      router.replace('/brag')
-    }
-  }, [router])
+  // No on-mount redirect — OTP verification (step 1) must happen first to establish auth cookies.
 
   // Fetch real TOTP secret when entering step 2
   useEffect(() => {
@@ -161,7 +156,12 @@ export default function MfaSetup() {
       })
       if (res.ok) {
         setOtpState('done')
-        setTimeout(() => setStep(2), 500)
+        // Auth cookies are now set. If MFA already configured, skip setup.
+        if (storage.getMfaSetup()) {
+          setTimeout(() => router.replace('/brag'), 500)
+        } else {
+          setTimeout(() => setStep(2), 500)
+        }
       } else {
         setOtpState('error')
         setTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
@@ -170,7 +170,7 @@ export default function MfaSetup() {
       setOtpState('error')
       setTimeout(() => { setOtp(['','','','','','']); setOtpState('idle') }, 700)
     }
-  }, [email])
+  }, [email, router])
 
   // ── TOTP: server-side verification ────────────────────────────
   const verifyTotp = useCallback(async (digits) => {
