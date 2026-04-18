@@ -1,0 +1,222 @@
+/* ── 404 Not Found page ──────────────────────────────────────── */
+.nf-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background: #F5F0EA;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ruled paper lines */
+.nf-ruled {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent, transparent 47px,
+    rgba(26,21,16,0.03) 47px, rgba(26,21,16,0.03) 48px
+  );
+}
+
+/* Floating brag entries */
+.nf-floats {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.nf-fe {
+  position: absolute;
+  background: #FDFCFA;
+  border: 1px solid rgba(26,21,16,0.1);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #786B5F;
+  white-space: nowrap;
+  opacity: 0;
+  animation: nf-float-up linear infinite;
+}
+
+@keyframes nf-float-up {
+  0%   { opacity: 0; transform: translateY(80px) rotate(var(--rot)); }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-80px) rotate(var(--rot)); }
+}
+
+.nf-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc, #D05A34);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* Logo */
+.nf-logo {
+  position: fixed;
+  top: 20px;
+  left: 28px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+}
+
+.nf-logo-bug {
+  width: 28px;
+  height: 28px;
+  background: #1A1510;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nf-logo-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1A1510;
+  letter-spacing: -0.3px;
+}
+
+/* Main content */
+.nf-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 440px;
+}
+
+/* 404 number */
+.nf-num {
+  font-size: 140px;
+  font-weight: 900;
+  color: #1A1510;
+  letter-spacing: -8px;
+  line-height: 0.9;
+  display: flex;
+  align-items: center;
+}
+
+/* Document icon replacing the zero */
+.nf-doc {
+  width: 72px;
+  height: 90px;
+  border-radius: 8px;
+  background: #1A1510;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  padding: 14px 12px;
+  position: relative;
+  transform: translateY(-4px);
+}
+
+.nf-doc-corner {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  background: #F5F0EA;
+  border-radius: 0 8px 0 0;
+}
+
+.nf-doc-corner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  background: #3D3228;
+  border-radius: 0 8px 0 6px;
+}
+
+.nf-doc-line {
+  height: 4px;
+  border-radius: 2px;
+  background: #F5F0EA;
+}
+
+.nf-doc-line:nth-child(2) { width: 100%; }
+.nf-doc-line:nth-child(3) { width: 72%; }
+.nf-doc-line:nth-child(4) { width: 44%; background: var(--acc, #D05A34); }
+
+.nf-heading {
+  font-size: 26px;
+  font-weight: 900;
+  color: #1A1510;
+  letter-spacing: -0.6px;
+  margin-top: 28px;
+  margin-bottom: 8px;
+}
+
+.nf-sub {
+  font-size: 15px;
+  color: #5B4E42;
+  line-height: 1.65;
+  margin-bottom: 32px;
+}
+
+.nf-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.nf-btn-primary {
+  background: #1A1510;
+  color: #F5F0EA;
+  border: none;
+  border-radius: var(--r, 10px);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 24px;
+  cursor: pointer;
+  font-family: var(--font-sans, 'DM Sans', sans-serif);
+  letter-spacing: -0.2px;
+  transition: opacity 0.15s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nf-btn-primary:hover { opacity: 0.85; }
+
+.nf-btn-secondary {
+  background: transparent;
+  border: 1.5px solid rgba(26,21,16,0.18);
+  border-radius: var(--r, 10px);
+  font-size: 14px;
+  font-weight: 700;
+  color: #3D3228;
+  padding: 12px 22px;
+  cursor: pointer;
+  font-family: var(--font-sans, 'DM Sans', sans-serif);
+  transition: border-color 0.15s;
+}
+
+.nf-btn-secondary:hover { border-color: rgba(26,21,16,0.5); }
+
+@media (max-width: 480px) {
+  .nf-num { font-size: 100px; letter-spacing: -5px; }
+  .nf-doc { width: 52px; height: 66px; }
+}
