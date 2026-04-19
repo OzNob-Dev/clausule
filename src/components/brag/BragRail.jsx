@@ -8,6 +8,9 @@ export default function BragRail({ activePage }) {
   const router = useRouter()
   const { logout } = useAuth()
   const profile = useProfileStore((state) => state.profile)
+  const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+  const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
+  const mfaSetupRequired = hasSecuritySnapshot && !authenticatorAppConfigured
   const initials =
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
     profile.email?.[0]?.toUpperCase() ||
@@ -17,17 +20,19 @@ export default function BragRail({ activePage }) {
     <aside className="be-rail be-sidebar" aria-label="App navigation">
       <div className="be-rail-logo" aria-hidden="true">CLS</div>
       <nav className="be-rail-nav" aria-label="Primary">
-        <button
-          className={activePage === 'brag' ? 'be-rail-btn-active' : 'be-rail-btn'}
-          onClick={activePage !== 'brag' ? () => router.push('/brag') : undefined}
-          aria-label="Brag doc"
-          aria-current={activePage === 'brag' ? 'page' : undefined}
-        >
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-            <path d="M8 2l1 2.5L11.5 5l-2 2 .5 3L8 8.5 5.5 10l.5-3-2-2L6.5 4.5z"/>
-            <circle cx="13" cy="12" r="1.5"/>
-          </svg>
-        </button>
+        {!mfaSetupRequired && (
+          <button
+            className={activePage === 'brag' ? 'be-rail-btn-active' : 'be-rail-btn'}
+            onClick={activePage !== 'brag' ? () => router.push('/brag') : undefined}
+            aria-label="Brag doc"
+            aria-current={activePage === 'brag' ? 'page' : undefined}
+          >
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <path d="M8 2l1 2.5L11.5 5l-2 2 .5 3L8 8.5 5.5 10l.5-3-2-2L6.5 4.5z"/>
+              <circle cx="13" cy="12" r="1.5"/>
+            </svg>
+          </button>
+        )}
         <button
           className={activePage === 'settings' ? 'be-rail-btn-active' : 'be-rail-btn'}
           onClick={activePage !== 'settings' ? () => router.push('/brag/settings') : undefined}

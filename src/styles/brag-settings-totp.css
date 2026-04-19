@@ -5,6 +5,14 @@
   gap: 12px;
 }
 
+.bss-mfa-row--needs-setup {
+  margin: -8px -10px;
+  padding: 12px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(45, 140, 104, 0.28);
+  background: rgba(93, 202, 165, 0.1);
+}
+
 .bss-mfa-divider {
   height: 1px;
   background: rgba(60, 45, 35, 0.08);
@@ -104,22 +112,22 @@
 .bss-totp-empty {
   margin-top: 14px;
   padding: 14px 16px;
-  border-radius: 10px;
-  border: 1px dashed rgba(60, 45, 35, 0.16);
-  background: rgba(60, 45, 35, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(45, 140, 104, 0.28);
+  background: rgba(93, 202, 165, 0.1);
 }
 
 .bss-totp-empty-title {
   font-size: 12px;
   font-weight: 700;
-  color: #2A221A;
+  color: #225F3D;
 }
 
 .bss-totp-empty-copy {
   margin: 4px 0 0;
   font-size: 11px;
   line-height: 1.6;
-  color: #8A7E76;
+  color: #225F3D;
 }
 
 /* TOTP expanded body */

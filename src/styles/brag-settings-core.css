@@ -72,10 +72,6 @@
 .bss-sso-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 13px 16px;
-  background: #F5F0EA;
-  border: 1.5px solid rgba(60, 45, 35, 0.14);
   border-radius: 8px;
 }
 

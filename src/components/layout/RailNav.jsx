@@ -5,7 +5,15 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { storage } from '../../utils/storage'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProfileStore } from '@/stores/useProfileStore'
 import '../../styles/rail-nav.css'
+
+const settingsIcon = (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <circle cx="8" cy="8" r="2.5"/>
+    <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/>
+  </svg>
+)
 
 const navItems = [
   {
@@ -40,12 +48,15 @@ const navItems = [
   {
     to: '/settings',
     tip: 'Settings',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <circle cx="8" cy="8" r="2.5"/>
-        <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/>
-      </svg>
-    ),
+    icon: settingsIcon,
+  },
+]
+
+const mfaSetupNavItems = [
+  {
+    to: '/brag/settings',
+    tip: 'Security settings',
+    icon: settingsIcon,
   },
 ]
 
@@ -53,6 +64,9 @@ export function RailNav() {
     const pathname        = usePathname()
     const [escalatedCount, setEscalatedCount] = useState(0)
     const { logout }      = useAuth()
+    const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+    const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
+    const items = hasSecuritySnapshot && !authenticatorAppConfigured ? mfaSetupNavItems : navItems
 
     useEffect(() => {
       setEscalatedCount(storage.getEscalatedCount())
@@ -68,12 +82,13 @@ export function RailNav() {
       </div>
 
       {/* Nav items */}
-      <nav className="rail-items">
-        {navItems.map(({ to, tip, icon, badge }) => (
+      <nav className="rail-items" aria-label="Primary">
+        {items.map(({ to, tip, icon, badge }) => (
           <Link
             key={to}
             href={to}
             title={tip}
+            aria-label={tip}
             className={`nav-item${pathname === to ? ' nav-item--active' : ''}`}
           >
             {icon}

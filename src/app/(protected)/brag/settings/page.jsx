@@ -98,8 +98,8 @@ export default function BragSettings() {
             <div className="bss-mfa-divider" />
 
             {/* Authenticator app row */}
-            <div className="bss-mfa-row">
-              <div className={`bss-mfa-icon${authenticatorAppConfigured ? ' bss-mfa-icon--on' : ''}`} aria-hidden="true">
+            <div className={`bss-mfa-row${hasSecuritySnapshot && !authenticatorAppConfigured ? ' bss-mfa-row--needs-setup' : ''}`}>
+              <div className={`bss-mfa-icon${authenticatorAppConfigured || hasSecuritySnapshot ? ' bss-mfa-icon--on' : ''}`} aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="5" y="2" width="14" height="20" rx="2"/>
                   <rect x="8" y="7" width="8" height="6" rx="1"/>
@@ -111,15 +111,15 @@ export default function BragSettings() {
                 <div className="bss-mfa-sub">
                   {authenticatorAppConfigured
                     ? 'Verified — Google Authenticator, Authy, 1Password, etc.'
-                    : 'Not configured — add an authenticator app for a second factor.'}
+                    : 'Required — set up an authenticator app to unlock the rest of Clausule.'}
                 </div>
               </div>
-              {hasSecuritySnapshot && (
+              {hasSecuritySnapshot && authenticatorAppConfigured && (
                 <span
                   className={`bss-mfa-status${authenticatorAppConfigured ? ' bss-mfa-status--on' : ''}`}
                   aria-label={authenticatorAppConfigured ? 'Authenticator app is active' : 'Authenticator app is not set up'}
                 >
-                  {authenticatorAppConfigured ? 'Active' : 'Empty'}
+                  {authenticatorAppConfigured ? 'Active' : ''}
                 </span>
               )}
               {hasSecuritySnapshot && (
@@ -143,9 +143,9 @@ export default function BragSettings() {
 
             {hasSecuritySnapshot && !authenticatorAppConfigured && !totpExpanded && (
               <div className="bss-totp-empty" role="status" aria-live="polite">
-                <div className="bss-totp-empty-title">No authenticator app connected yet</div>
+                <div className="bss-totp-empty-title">Authenticator setup required</div>
                 <p className="bss-totp-empty-copy">
-                  Set one up to add a second sign-in factor beyond email codes.
+                  This keeps your account protected. Set it up now to continue using the app.
                 </p>
               </div>
             )}

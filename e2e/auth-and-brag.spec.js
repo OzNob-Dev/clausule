@@ -42,7 +42,7 @@ test('protected brag page hydrates profile and shows shared avatar initials', as
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false },
+        security: { authenticatorAppConfigured: true },
       }),
     })
   })
@@ -54,7 +54,27 @@ test('protected brag page hydrates profile and shows shared avatar initials', as
   await expect(page.getByText('AL').first()).toBeVisible()
 })
 
-test('brag settings shows authenticator empty state when not configured', async ({ page }) => {
+test('protected app redirects to brag settings until authenticator setup is complete', async ({ page }) => {
+  await page.route('**/api/auth/bootstrap', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+        profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
+        security: { authenticatorAppConfigured: false },
+      }),
+    })
+  })
+
+  await page.goto('/brag')
+
+  await expect(page).toHaveURL(/\/brag\/settings/)
+  await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
+  await expect(page.getByRole('button', { name: /brag doc/i })).toHaveCount(0)
+})
+
+test('brag settings highlights authenticator setup when not configured', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({
       status: 200,
@@ -69,7 +89,9 @@ test('brag settings shows authenticator empty state when not configured', async 
 
   await page.goto('/brag/settings')
 
-  await expect(page.getByText(/no authenticator app connected yet/i)).toBeVisible()
+  await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
+  await expect(page.getByLabel('Authenticator app is not set up')).toHaveCount(0)
+  await expect(page.getByText('Empty')).toHaveCount(0)
   await expect(page.getByRole('button', { name: /set up/i })).toBeVisible()
 })
 

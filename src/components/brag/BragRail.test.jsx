@@ -52,4 +52,13 @@ describe('BragRail integration', () => {
 
     expect(logout).toHaveBeenCalledTimes(1)
   })
+
+  it('hides app navigation until authenticator setup is complete', () => {
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
+
+    render(<BragRail activePage="settings" />)
+
+    expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /settings/i })).toHaveAttribute('aria-current', 'page')
+  })
 })
