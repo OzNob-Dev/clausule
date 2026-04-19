@@ -1,6 +1,6 @@
 import { DM_Sans } from 'next/font/google'
-import BypassGate from '@/components/BypassGate'
-import '@/styles/index.css'
+import BypassGate from '@features/landing/components/BypassGate'
+import '@shared/styles/globals.css'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],

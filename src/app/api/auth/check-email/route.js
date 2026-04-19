@@ -13,7 +13,7 @@ import { NextResponse }   from 'next/server'
 import { getAuthUser,
          select }         from '@api/_lib/supabase.js'
 import { RateLimiter }    from '@api/_lib/rate-limit.js'
-import { validateEmail }  from '@/utils/emailValidation'
+import { validateEmail }  from '@shared/utils/emailValidation'
 
 // 20 checks per minute per IP — enough for normal use, tight for enumeration.
 const limiter = new RateLimiter({ limit: 20, windowMs: 60 * 1000 })

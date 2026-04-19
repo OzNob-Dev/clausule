@@ -18,7 +18,7 @@ import crypto            from 'node:crypto'
 import { BrevoClient }   from '@getbrevo/brevo'
 import { insert }        from '@api/_lib/supabase.js'
 import { RateLimiter }   from '@api/_lib/rate-limit.js'
-import { validateEmail } from '@/utils/emailValidation'
+import { validateEmail } from '@shared/utils/emailValidation'
 
 // 3 send attempts per 10 minutes per email address.
 const limiter = new RateLimiter({ limit: 3, windowMs: 10 * 60 * 1000 })

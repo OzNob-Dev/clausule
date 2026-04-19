@@ -17,7 +17,7 @@ import { select }                       from '@api/_lib/supabase.js'
 import { appendSessionCookies,
          createPersistentSession }      from '@api/_lib/session.js'
 import { RateLimiter }                  from '@api/_lib/rate-limit.js'
-import { validateEmail }                from '@/utils/emailValidation'
+import { validateEmail }                from '@shared/utils/emailValidation'
 
 // 5 attempts per 10 minutes per email — matches verify-code policy.
 const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })

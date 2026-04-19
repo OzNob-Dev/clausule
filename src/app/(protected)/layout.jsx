@@ -2,8 +2,8 @@
 
 import { useEffect }                    from 'react'
 import { usePathname, useRouter }       from 'next/navigation'
-import { AuthProvider, useAuth }        from '@/contexts/AuthContext'
-import { useProfileStore }              from '@/stores/useProfileStore'
+import { AuthProvider, useAuth }        from '@features/auth/context/AuthContext'
+import { useProfileStore }              from '@features/auth/store/useProfileStore'
 
 /**
  * Inner guard — consumes AuthContext to redirect unauthenticated visitors.

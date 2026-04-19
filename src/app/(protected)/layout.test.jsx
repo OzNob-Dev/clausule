@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import ProtectedLayout from './layout'
-import { useProfileStore } from '@/stores/useProfileStore'
+import { useProfileStore } from '@features/auth/store/useProfileStore'
 
 const replace = vi.fn()
 let pathname = '/brag'
@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace }),
 }))
 
-vi.mock('@/contexts/AuthContext', () => ({
+vi.mock('@features/auth/context/AuthContext', () => ({
   AuthProvider: ({ children }) => <>{children}</>,
   useAuth: () => auth,
 }))

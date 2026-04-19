@@ -13,7 +13,7 @@
 import { NextResponse }   from 'next/server'
 import { createUser }     from '@api/_lib/supabase.js'
 import { RateLimiter }    from '@api/_lib/rate-limit.js'
-import { validateEmail }  from '@/utils/emailValidation'
+import { validateEmail }  from '@shared/utils/emailValidation'
 
 // 5 signup attempts per hour per IP (crude; refine with real IP parsing for production).
 const limiter = new RateLimiter({ limit: 5, windowMs: 60 * 60 * 1000 })
