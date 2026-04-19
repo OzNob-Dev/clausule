@@ -21,7 +21,7 @@ function SsoArrow() {
   )
 }
 
-export default function SignupStepAccount({ initialData, onNext }) {
+export default function SignupStepAccount({ emailLocked = false, hideSso = false, initialData, onNext }) {
   const [firstName, setFirstName] = useState(initialData.firstName)
   const [lastName, setLastName] = useState(initialData.lastName)
   const [email, setEmail] = useState(initialData.email)
@@ -60,10 +60,10 @@ export default function SignupStepAccount({ initialData, onNext }) {
     <div>
       <div className="su-step-heading">Create your account</div>
       <div className="su-step-sub">
-        {ANY_SSO ? 'Continue with your existing account — no new password needed.' : 'Your brag doc, your file. Takes about 2 minutes.'}
+        {!hideSso && ANY_SSO ? 'Continue with your existing account — no new password needed.' : 'Your brag doc, your file. Takes about 2 minutes.'}
       </div>
 
-      {ANY_SSO && (
+      {!hideSso && ANY_SSO && (
         <>
           {SSO.google && (
             <button type="button" className="su-sso-provider" onClick={() => { window.location.href = '/api/auth/sso/google' }}>
@@ -147,10 +147,13 @@ export default function SignupStepAccount({ initialData, onNext }) {
           placeholder="you@email.com"
           value={email}
           onChange={(event) => {
+            if (emailLocked) return
             setEmail(event.target.value)
             setEmailDirty(true)
           }}
           onBlur={() => setEmailDirty(true)}
+          readOnly={emailLocked}
+          className={emailLocked ? 'su-input--locked' : ''}
           error={showEmailFeedback && !!emailResult.error}
           aria-invalid={showEmailFeedback && !emailResult.valid}
           aria-describedby="su-email-hint"
@@ -167,7 +170,9 @@ export default function SignupStepAccount({ initialData, onNext }) {
               ?
             </span>
           ) : (
-            <span className="su-field-hint">We'll send a verification code here each time you sign in.</span>
+            <span className="su-field-hint">
+              {emailLocked ? 'Email carried over from sign in.' : "We'll send a verification code here each time you sign in."}
+            </span>
           )}
         </div>
       </div>

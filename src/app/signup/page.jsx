@@ -25,7 +25,7 @@ function SignUpInner() {
   const emailPrefill     = decodeURIComponent(searchParams.get('email')     ?? '')
   const firstNamePrefill = decodeURIComponent(searchParams.get('firstName') ?? '')
   const lastNamePrefill  = decodeURIComponent(searchParams.get('lastName')  ?? '')
-  const ssoProvider      = searchParams.get('sso') ?? ''
+  const redirectedFromSignIn = Boolean(emailPrefill)
 
   const step1Initial = {
     ...step1Data,
@@ -74,7 +74,12 @@ function SignUpInner() {
 
           {/* Right light panel — su-page scopes the --su-* design tokens */}
           <div className="su-shell-right su-page">
-            <SignupStepAccount onNext={handleStep1} initialData={step1Initial} />
+            <SignupStepAccount
+              emailLocked={redirectedFromSignIn}
+              hideSso={redirectedFromSignIn}
+              onNext={handleStep1}
+              initialData={step1Initial}
+            />
             <p className="su-shell-signin-note">
               Already have an account?{' '}
               <Link href="/">Sign in</Link>

@@ -60,4 +60,32 @@ describe('SignupStepAccount integration', () => {
     expect(screen.getByPlaceholderText('Ellis')).toHaveValue('Lovelace')
     expect(screen.getByPlaceholderText('you@email.com')).toHaveValue('ada@example.com')
   })
+
+  it('locks redirected email and hides the email signup divider', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <SignupStepAccount
+        emailLocked
+        hideSso
+        initialData={{
+          firstName: '',
+          lastName: '',
+          email: 'newperson@example.com',
+          agreed: false,
+        }}
+        onNext={vi.fn()}
+      />
+    )
+
+    const email = screen.getByPlaceholderText('you@email.com')
+
+    expect(email).toHaveValue('newperson@example.com')
+    expect(email).toHaveAttribute('readonly')
+    expect(screen.queryByText(/or sign up with email/i)).not.toBeInTheDocument()
+
+    await user.type(email, 'edited')
+
+    expect(email).toHaveValue('newperson@example.com')
+  })
 })

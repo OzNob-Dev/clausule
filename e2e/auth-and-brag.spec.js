@@ -20,6 +20,9 @@ test('new visitor can route from sign in to signup when email is unknown', async
 
   await expect(page).toHaveURL(/\/signup\?email=newperson%40example\.com/)
   await expect(page.getByText(/create your account/i)).toBeVisible()
+  await expect(page.getByPlaceholder('you@email.com')).toHaveValue('newperson@example.com')
+  await expect(page.getByPlaceholder('you@email.com')).toHaveAttribute('readonly', '')
+  await expect(page.getByText(/or sign up with email/i)).toHaveCount(0)
 })
 
 test('signup preloads SSO profile fields from redirect params', async ({ page }) => {
