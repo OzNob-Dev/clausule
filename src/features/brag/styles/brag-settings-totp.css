@@ -286,8 +286,6 @@
 
 /* ── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .bss-card-head    { flex-direction: column; gap: 12px; }
-  .bss-add-btn      { align-self: flex-start; }
   .bss-danger-row   { flex-direction: column; gap: 14px; }
   .bss-btn-delete   { width: 100%; text-align: center; }
 }

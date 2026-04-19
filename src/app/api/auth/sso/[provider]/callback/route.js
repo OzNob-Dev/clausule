@@ -22,6 +22,7 @@ import { select }                                from '@api/_lib/supabase.js'
 import { createPersistentSession,
          appendSessionCookies }                  from '@api/_lib/session.js'
 import { clearAuthCookies }                      from '@api/_lib/auth.js'
+import { homePathForRole }                       from '@shared/utils/routes'
 
 // ── Entry points ──────────────────────────────────────────────────────────────
 
@@ -158,7 +159,7 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
   // ── 4. Existing user — issue session ──────────────────────────────────────
   try {
     const { id: userId, role = 'employee' } = existingProfile
-    const dest = `${origin}${role === 'employee' ? '/brag' : '/dashboard'}`
+    const dest = `${origin}${homePathForRole(role)}`
     const res  = NextResponse.redirect(dest)
 
     res.headers.append('Set-Cookie', 'sso_state=; HttpOnly; Path=/; Max-Age=0')

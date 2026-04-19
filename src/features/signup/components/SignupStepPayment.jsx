@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { formatCardNumber, formatExpiry } from '@features/signup/utils/signupFormatting'
 import { useSubscriptionStore } from '@features/signup/store/useSubscriptionStore'
+import { jsonRequest } from '@shared/utils/api'
 import { BackBtn, CtaBtn } from './SignupButtons'
 import { FieldInput, FieldLabel } from './SignupFormField'
 import { ArrowIcon } from './SignupIcons'
@@ -26,17 +27,12 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
     setApiError('')
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const response = await fetch('/api/auth/register', jsonRequest({
           email: accountData.email,
           firstName: accountData.firstName,
           lastName: accountData.lastName,
           subscription: { amountCents: plan.amountCents, currency: plan.currency, interval: plan.interval },
-        }),
-      })
+        }, { method: 'POST', credentials: 'same-origin' }))
 
       const json = await response.json()
       if (!response.ok) {

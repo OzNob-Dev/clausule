@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { apiFetch } from '@shared/utils/api'
+import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 import DigitRow from '@features/mfa/components/DigitRow'
 import TotpSecretBlock from '@features/mfa/components/TotpSecretBlock'
@@ -55,11 +55,7 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
     if (!secret) return
     totpCode.setState('checking')
     try {
-      const res = await apiFetch('/api/auth/totp/setup', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, secret }),
-      })
+      const res = await apiFetch('/api/auth/totp/setup', jsonRequest({ code, secret }, { method: 'POST' }))
       if (res.ok) {
         totpCode.setState('done')
         scheduleTimeout(onDone, 600)

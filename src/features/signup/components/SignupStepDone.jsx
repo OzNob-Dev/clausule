@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ROUTES } from '@shared/utils/routes'
 import { CtaBtn } from './SignupButtons'
 import { ArrowIcon, CheckIcon } from './SignupIcons'
 
@@ -18,7 +19,7 @@ export default function SignupStepDone({ email }) {
   const handleEnter = async () => {
     setBusy(true)
     try {
-      router.push('/brag/settings')
+      router.push(ROUTES.bragSettings)
     } catch {
       router.push('/')
     } finally {

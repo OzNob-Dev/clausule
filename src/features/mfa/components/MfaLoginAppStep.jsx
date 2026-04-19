@@ -1,11 +1,5 @@
 import DigitRow from './DigitRow'
-
-function maskEmail(email) {
-  const [name = '', domain = ''] = String(email).split('@')
-  if (!name || !domain) return '**'
-  const visible = name.length <= 2 ? name[0] : name.slice(0, 2)
-  return `${visible}***@${domain}`
-}
+import { maskEmail } from '@features/mfa/utils/maskEmail'
 
 export default function MfaLoginAppStep({
   email,

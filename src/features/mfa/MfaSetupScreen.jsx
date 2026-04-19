@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { storage } from '@shared/utils/storage'
-import { apiFetch } from '@shared/utils/api'
+import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 import MfaOtpStep from '@features/mfa/components/MfaOtpStep'
 import MfaSuccessStep from '@features/mfa/components/MfaSuccessStep'
@@ -84,11 +84,7 @@ export default function MfaSetup() {
     const code = digits.join('')
     otpCode.setState('checking')
     try {
-      const res = await fetch('/api/auth/verify-code', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email, code }),
-      })
+      const res = await fetch('/api/auth/verify-code', jsonRequest({ email, code }, { method: 'POST' }))
       if (res.ok) {
         otpCode.setState('done')
         if (hasMfaSetup) {
@@ -109,11 +105,7 @@ export default function MfaSetup() {
     if (!totpSecret) return
     totpCode.setState('checking')
     try {
-      const res = await apiFetch('/api/auth/totp/setup', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ code, secret: totpSecret }),
-      })
+      const res = await apiFetch('/api/auth/totp/setup', jsonRequest({ code, secret: totpSecret }, { method: 'POST' }))
       if (res.ok) {
         totpCode.setState('done')
       } else {

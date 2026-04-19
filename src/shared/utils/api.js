@@ -19,6 +19,14 @@ export async function apiFetch(input, init = {}, options = {}) {
   return fetch(input, requestInit)
 }
 
+export function jsonRequest(body, init = {}) {
+  return {
+    ...init,
+    headers: { 'Content-Type': 'application/json', ...init.headers },
+    body: JSON.stringify(body),
+  }
+}
+
 /**
  * Request an AI-drafted manager summary via the server-side proxy.
  * @param {string} employeeName
@@ -26,11 +34,7 @@ export async function apiFetch(input, init = {}, options = {}) {
  * @returns {Promise<string>} summary text
  */
 export async function draftSummary(employeeName, entries) {
-  const res = await apiFetch('/api/ai/draft-summary', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ employeeName, entries }),
-  })
+  const res = await apiFetch('/api/ai/draft-summary', jsonRequest({ employeeName, entries }, { method: 'POST' }))
 
   if (!res.ok) throw new Error('API request failed')
   const data = await res.json()

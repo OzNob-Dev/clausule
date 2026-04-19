@@ -4,6 +4,7 @@ import { useEffect }                    from 'react'
 import { usePathname, useRouter }       from 'next/navigation'
 import { AuthProvider, useAuth }        from '@features/auth/context/AuthContext'
 import { useProfileStore }              from '@features/auth/store/useProfileStore'
+import { ROUTES }                       from '@shared/utils/routes'
 
 /**
  * Inner guard — consumes AuthContext to redirect unauthenticated visitors.
@@ -25,14 +26,14 @@ function AuthGuard({ children }) {
   }, [loading, user, router])
 
   useEffect(() => {
-    if (!loading && user && mfaSetupRequired && pathname !== '/brag/settings') {
-      router.replace('/brag/settings')
+    if (!loading && user && mfaSetupRequired && pathname !== ROUTES.bragSettings) {
+      router.replace(ROUTES.bragSettings)
     }
   }, [loading, mfaSetupRequired, pathname, router, user])
 
   // Suppress render until we know the user is authenticated.
   if (loading || !user) return null
-  if (mfaSetupRequired && pathname !== '/brag/settings') return null
+  if (mfaSetupRequired && pathname !== ROUTES.bragSettings) return null
   return children
 }
 

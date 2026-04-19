@@ -12,61 +12,18 @@
  */
 
 import { NextResponse }                 from 'next/server'
-import crypto                           from 'node:crypto'
 import { select }                       from '@api/_lib/supabase.js'
 import { appendSessionCookies,
          createPersistentSession }      from '@api/_lib/session.js'
 import { RateLimiter }                  from '@api/_lib/rate-limit.js'
+import { verifyTotp }                   from '@api/_lib/totp.js'
 import { validateEmail }                from '@shared/utils/emailValidation'
 
 // 5 attempts per 10 minutes per email — matches verify-code policy.
 const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
 
-const BASE32_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
-
 function profileQuery(email) {
   return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role,totp_secret', limit: '1' }).toString()
-}
-
-function base32Decode(input) {
-  const str    = input.toUpperCase().replace(/=+$/, '')
-  const bytes  = []
-  let buffer   = 0
-  let bitsLeft = 0
-  for (const char of str) {
-    const val = BASE32_CHARS.indexOf(char)
-    if (val === -1) continue
-    buffer    = (buffer << 5) | val
-    bitsLeft += 5
-    if (bitsLeft >= 8) {
-      bitsLeft -= 8
-      bytes.push((buffer >> bitsLeft) & 0xff)
-    }
-  }
-  return Buffer.from(bytes)
-}
-
-function totpCode(secret, counter) {
-  const key     = base32Decode(secret)
-  const message = Buffer.alloc(8)
-  let c = counter
-  for (let i = 7; i >= 0; i--) { message[i] = c & 0xff; c = Math.floor(c / 256) }
-  const hmac   = crypto.createHmac('sha1', key).update(message).digest()
-  const offset = hmac[19] & 0x0f
-  const code   =
-    ((hmac[offset]     & 0x7f) << 24) |
-    ((hmac[offset + 1] & 0xff) << 16) |
-    ((hmac[offset + 2] & 0xff) <<  8) |
-     (hmac[offset + 3] & 0xff)
-  return String(code % 1_000_000).padStart(6, '0')
-}
-
-function verifyTotp(secret, code) {
-  const counter = Math.floor(Date.now() / 1000 / 30)
-  for (const delta of [-1, 0, 1]) {
-    if (totpCode(secret, counter + delta) === code) return true
-  }
-  return false
 }
 
 export async function POST(request) {

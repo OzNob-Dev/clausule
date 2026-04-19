@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { ROUTES } from '@shared/utils/routes'
 
 export default function BragRail({ activePage }) {
   const router = useRouter()
@@ -36,7 +37,7 @@ export default function BragRail({ activePage }) {
             </button>
             <button
               className={activePage === 'settings' ? 'be-rail-btn-active' : 'be-rail-btn'}
-              onClick={activePage !== 'settings' ? () => router.push('/brag/settings') : undefined}
+              onClick={activePage !== 'settings' ? () => router.push(ROUTES.bragSettings) : undefined}
               aria-label="Settings"
               aria-current={activePage === 'settings' ? 'page' : undefined}
             >

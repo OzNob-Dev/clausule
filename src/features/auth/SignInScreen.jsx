@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { storage } from '@shared/utils/storage'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { sendCodeEmail } from '@features/auth/api-client/sendCodeEmail'
-import { apiFetch } from '@shared/utils/api'
+import { apiFetch, jsonRequest } from '@shared/utils/api'
+import { homePathForRole } from '@shared/utils/routes'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 import MfaLoginEmailStep from '@features/mfa/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@features/mfa/components/MfaLoginAppStep'
@@ -77,7 +78,7 @@ export default function SignIn() {
       .then(async (res) => {
         if (res.ok) {
           const { user } = await res.json()
-          router.replace(user.role === 'employee' ? '/brag' : '/dashboard')
+          router.replace(homePathForRole(user.role))
         }
       })
       .catch(() => {})
@@ -109,21 +110,17 @@ export default function SignIn() {
   }, [step, resendTimer])
 
   // ── Verify handlers (defined before auto-verify effect) ───────────
-  const verifyOtp = useCallback(async (digits) => {
+  const verifySignInCode = useCallback(async (endpoint, digits) => {
     const otp = digits.join('')
     if (otp.length !== 6) return
     code.setState('checking')
     setVerifyError(null)
     try {
-      const res = await fetch('/api/auth/verify-code', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email: storage.getEmail(), code: otp }),
-      })
+      const res = await fetch(endpoint, jsonRequest({ email: storage.getEmail(), code: otp }, { method: 'POST' }))
       if (res.ok) {
         code.setState('done')
         const { role } = await res.json()
-        scheduleTimeout(() => router.replace(role === 'employee' ? '/brag' : '/dashboard'), 400)
+        scheduleTimeout(() => router.replace(homePathForRole(role)), 400)
       } else {
         code.setError()
         setVerifyError('Incorrect code — try again')
@@ -134,30 +131,8 @@ export default function SignIn() {
     }
   }, [code, router, scheduleTimeout])
 
-  const verifyApp = useCallback(async (digits) => {
-    const otp = digits.join('')
-    if (otp.length !== 6) return
-    code.setState('checking')
-    setVerifyError(null)
-    try {
-      const res = await fetch('/api/auth/totp/verify', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email: storage.getEmail(), code: otp }),
-      })
-      if (res.ok) {
-        code.setState('done')
-        const { role } = await res.json()
-        scheduleTimeout(() => router.replace(role === 'employee' ? '/brag' : '/dashboard'), 400)
-      } else {
-        code.setError()
-        setVerifyError('Incorrect code — try again')
-      }
-    } catch {
-      code.setError()
-      setVerifyError('Something went wrong — try again')
-    }
-  }, [code, router, scheduleTimeout])
+  const verifyOtp = useCallback((digits) => verifySignInCode('/api/auth/verify-code', digits), [verifySignInCode])
+  const verifyApp = useCallback((digits) => verifySignInCode('/api/auth/totp/verify', digits), [verifySignInCode])
 
   // Auto-verify when all 6 digits are filled.
   useEffect(() => {
@@ -194,11 +169,7 @@ export default function SignIn() {
       lastCheckedRef.current = resolved
       setEmailStatus('checking')
       try {
-        const res  = await fetch('/api/auth/check-email', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email: resolved }),
-        })
+        const res  = await fetch('/api/auth/check-email', jsonRequest({ email: resolved }, { method: 'POST' }))
         if (!res.ok) throw new Error('Email check failed')
         const data = await res.json()
         if (!data.exists) {
