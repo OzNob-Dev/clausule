@@ -1,0 +1,84 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { requireAuth } from '@api/_lib/auth.js'
+import { getAuthUser, select } from '@api/_lib/supabase.js'
+import { GET } from './route.js'
+
+vi.mock('@api/_lib/auth.js', () => ({
+  requireAuth: vi.fn(),
+  unauthorized: vi.fn((message = 'Unauthenticated') => Response.json({ error: message }, { status: 401 })),
+}))
+
+vi.mock('@api/_lib/supabase.js', () => ({
+  getAuthUser: vi.fn(),
+  select: vi.fn(),
+}))
+
+function bootstrapRequest() {
+  return new Request('http://localhost/api/auth/bootstrap')
+}
+
+describe('auth bootstrap route', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    requireAuth.mockReturnValue({
+      userId: 'user-1',
+      email: 'ada@example.com',
+      role: 'employee',
+      authMethod: 'otp',
+      error: null,
+    })
+    select.mockResolvedValue({
+      data: [{
+        first_name: 'Ada',
+        last_name: 'Lovelace',
+        email: 'ada@example.com',
+        totp_secret: null,
+      }],
+    })
+  })
+
+  it('sets SSO state from Supabase Auth identities', async () => {
+    getAuthUser.mockResolvedValue({
+      data: {
+        app_metadata: { provider: 'google' },
+        identities: [{ provider: 'email' }, { provider: 'google' }],
+      },
+    })
+
+    const response = await GET(bootstrapRequest())
+    const json = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(json.security).toEqual({
+      authenticatorAppConfigured: false,
+      authenticatedWithOtp: true,
+      ssoConfigured: true,
+    })
+  })
+
+  it('sets authenticator state from the profile row', async () => {
+    select.mockResolvedValue({
+      data: [{
+        first_name: 'Ada',
+        last_name: 'Lovelace',
+        email: 'ada@example.com',
+        totp_secret: 'SECRET',
+      }],
+    })
+    getAuthUser.mockResolvedValue({
+      data: {
+        app_metadata: { provider: 'email' },
+        identities: [{ provider: 'email' }],
+      },
+    })
+
+    const response = await GET(bootstrapRequest())
+    const json = await response.json()
+
+    expect(json.security).toEqual({
+      authenticatorAppConfigured: true,
+      authenticatedWithOtp: true,
+      ssoConfigured: false,
+    })
+  })
+})

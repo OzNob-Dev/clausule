@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { storage } from '../../utils/storage'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/useProfileStore'
-import { getActiveSsoProviders, ssoConfigFromEnv } from '@/components/brag/SsoStatusSection'
 import '../../styles/rail-nav.css'
 
 const settingsIcon = (
@@ -67,9 +66,9 @@ export function RailNav() {
     const { logout }      = useAuth()
     const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
     const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
+    const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
     const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-    const ssoEnabled = getActiveSsoProviders(ssoConfigFromEnv).length > 0
-    const items = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured && !ssoEnabled ? mfaSetupNavItems : navItems
+    const items = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured && !ssoConfigured ? mfaSetupNavItems : navItems
 
     useEffect(() => {
       setEscalatedCount(storage.getEscalatedCount())

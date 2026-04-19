@@ -6,9 +6,9 @@ import { CtaBtn } from './SignupButtons'
 import { ArrowIcon, CheckIcon } from './SignupIcons'
 
 const NEXT_STEPS = [
-  { label: 'Add your first brag doc entry', desc: '— log a win from this week, with evidence.' },
-  { label: 'Generate your resume', desc: '— your CV is ready the moment you have entries.' },
-  { label: 'Invite your manager', desc: '— they can add file notes on their side, you see nothing confidential.' },
+  { label: 'Set up MFA', desc: '- ensure your account is secure.' },
+  { label: 'Add your first brag doc entry', desc: '- log a win from this week, with evidence.' },
+  { label: 'Generate your resume', desc: '- your CV is ready the moment you have entries.' },
 ]
 
 export default function SignupStepDone({ email }) {
@@ -18,7 +18,7 @@ export default function SignupStepDone({ email }) {
   const handleEnter = async () => {
     setBusy(true)
     try {
-      router.push('/brag')
+      router.push('/brag/settings')
     } catch {
       router.push('/')
     } finally {
@@ -52,7 +52,7 @@ export default function SignupStepDone({ email }) {
       </div>
 
       <CtaBtn onClick={handleEnter} disabled={busy}>
-        {busy ? 'Loading ...' : 'Go to my dashboard'} <ArrowIcon />
+        {busy ? 'Loading ...' : 'Setup Multi-Factor Authentication'} <ArrowIcon />
       </CtaBtn>
       <div className="su-questions-note">
         Questions? <a href="mailto:help@clausule.com">help@clausule.com</a>

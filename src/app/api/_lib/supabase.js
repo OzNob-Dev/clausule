@@ -121,6 +121,14 @@ export function createUser({ email, password, user_metadata }) {
 }
 
 /**
+ * Fetch a Supabase Auth user by id via the Admin API.
+ * @param {string} userId - UUID
+ */
+export function getAuthUser(userId) {
+  return supaFetch(`/auth/v1/admin/users/${userId}`)
+}
+
+/**
  * Delete a user account (and all cascaded rows via DB triggers).
  * @param {string} userId - UUID
  */

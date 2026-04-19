@@ -73,9 +73,8 @@ describe('BragRail integration', () => {
     expect(screen.getByRole('button', { name: /brag doc/i })).toBeInTheDocument()
   })
 
-  it('keeps app navigation visible when SSO is enabled', () => {
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'true'
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+  it('keeps app navigation visible when SSO is configured', () => {
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<BragRail activePage="settings" />)
 

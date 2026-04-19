@@ -54,7 +54,7 @@ test('protected brag page hydrates profile and shows shared avatar initials', as
   await expect(page.getByText('AL').first()).toBeVisible()
 })
 
-test('protected app remains available when SSO is enabled without authenticator setup', async ({ page }) => {
+test('protected app remains available when SSO is configured without authenticator setup', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({
       status: 200,
@@ -62,7 +62,7 @@ test('protected app remains available when SSO is enabled without authenticator 
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true },
       }),
     })
   })
@@ -74,7 +74,7 @@ test('protected app remains available when SSO is enabled without authenticator 
   await expect(page.getByRole('button', { name: /brag doc/i })).toBeVisible()
 })
 
-test('brag settings hides authenticator setup when SSO is enabled', async ({ page }) => {
+test('brag settings hides authenticator setup when SSO is configured', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({
       status: 200,
@@ -82,7 +82,7 @@ test('brag settings hides authenticator setup when SSO is enabled', async ({ pag
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true },
       }),
     })
   })

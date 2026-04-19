@@ -55,9 +55,8 @@ describe('RailNav MFA lock', () => {
     expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
   })
 
-  it('shows app links when SSO is enabled', () => {
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'true'
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+  it('shows app links when SSO is configured', () => {
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<RailNav />)
 

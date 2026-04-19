@@ -30,7 +30,7 @@ describe('BragSettings integration', () => {
       lastName: 'Lovelace',
       email: 'ada@example.com',
     })
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
@@ -47,7 +47,6 @@ describe('BragSettings integration', () => {
   })
 
   it('renders MFA setup when SSO and authenticator MFA are not configured', async () => {
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
     const { useProfileStore } = await import('@/stores/useProfileStore')
     useProfileStore.getState().setProfile({
       firstName: 'Ada',

@@ -4,7 +4,6 @@ import { useEffect }                    from 'react'
 import { usePathname, useRouter }       from 'next/navigation'
 import { AuthProvider, useAuth }        from '@/contexts/AuthContext'
 import { useProfileStore }              from '@/stores/useProfileStore'
-import { getActiveSsoProviders, ssoConfigFromEnv } from '@/components/brag/SsoStatusSection'
 
 /**
  * Inner guard — consumes AuthContext to redirect unauthenticated visitors.
@@ -16,9 +15,9 @@ function AuthGuard({ children }) {
   const { user, loading } = useAuth()
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
   const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
+  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const ssoEnabled = getActiveSsoProviders(ssoConfigFromEnv).length > 0
-  const mfaSetupRequired = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured && !ssoEnabled
+  const mfaSetupRequired = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured && !ssoConfigured
 
   useEffect(() => {
     if (!loading && !user) {

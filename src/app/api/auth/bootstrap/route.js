@@ -7,7 +7,13 @@
 
 import { NextResponse } from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
-import { select } from '@api/_lib/supabase.js'
+import { getAuthUser, select } from '@api/_lib/supabase.js'
+
+function hasSsoIdentity(user) {
+  const provider = user?.app_metadata?.provider
+  if (provider && provider !== 'email') return true
+  return (user?.identities ?? []).some((identity) => identity?.provider && identity.provider !== 'email')
+}
 
 export async function GET(request) {
   const { userId, email, role, authMethod, error: authError } = requireAuth(request)
@@ -31,6 +37,12 @@ export async function GET(request) {
   }
 
   const row = rows?.[0]
+  const { data: authUser, error: authUserError } = await getAuthUser(userId)
+
+  if (authUserError) {
+    console.error('[auth/bootstrap auth user GET]', authUserError)
+    return NextResponse.json({ error: 'Failed to fetch auth state' }, { status: 500 })
+  }
 
   return NextResponse.json({
     user: {
@@ -46,6 +58,7 @@ export async function GET(request) {
     security: {
       authenticatorAppConfigured: Boolean(row?.totp_secret),
       authenticatedWithOtp: authMethod === 'otp',
+      ssoConfigured: hasSsoIdentity(authUser?.user ?? authUser),
     },
   })
 }

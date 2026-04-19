@@ -12,6 +12,7 @@ const EMPTY_PROFILE = {
 const EMPTY_SECURITY = {
   authenticatorAppConfigured: false,
   authenticatedWithOtp: false,
+  ssoConfigured: false,
 }
 
 const EMPTY_META = {

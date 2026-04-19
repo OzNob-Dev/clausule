@@ -67,9 +67,8 @@ describe('ProtectedLayout MFA lock', () => {
     expect(replace).not.toHaveBeenCalled()
   })
 
-  it('allows app access when SSO is enabled', () => {
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'true'
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+  it('allows app access when SSO is configured', () => {
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<ProtectedLayout><div>SSO enabled app</div></ProtectedLayout>)
 

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import BragRail from '@/components/brag/BragRail'
 import TotpSetupPanel from '@/components/brag/TotpSetupPanel'
 import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
-import SsoStatusSection, { getActiveSsoProviders, ssoConfigFromEnv } from '@/components/brag/SsoStatusSection'
+import SsoStatusSection from '@/components/brag/SsoStatusSection'
 import { useProfileStore } from '@/stores/useProfileStore'
 import '@/styles/brag-shell.css'
 import '@/styles/brag-settings-core.css'
@@ -14,11 +14,11 @@ export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
   const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
+  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const setSecurity = useProfileStore((state) => state.setSecurity)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const ssoEnabled = getActiveSsoProviders(ssoConfigFromEnv).length > 0
-  const mfaSetup = authenticatorAppConfigured || ssoEnabled
-  const mfaRestrictionEnabled = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured
+  const mfaSetup = authenticatorAppConfigured || ssoConfigured
+  const mfaRestrictionEnabled = hasSecuritySnapshot && authenticatedWithOtp && !mfaSetup
 
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
