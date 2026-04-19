@@ -24,6 +24,10 @@ const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
 
 const BASE32_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
 
+function profileQuery(email) {
+  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role,totp_secret', limit: '1' }).toString()
+}
+
 function base32Decode(input) {
   const str    = input.toUpperCase().replace(/=+$/, '')
   const bytes  = []
@@ -84,7 +88,7 @@ export async function POST(request) {
 
   const { data: profiles, error: dbError } = await select(
     'profiles',
-    `email=eq.${email}&select=id,role,totp_secret&limit=1`
+    profileQuery(email)
   )
 
   if (dbError || !profiles?.length || !profiles[0].totp_secret) {
