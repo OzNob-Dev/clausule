@@ -27,6 +27,10 @@ import { RateLimiter }                     from '@api/_lib/rate-limit.js'
 // 5 attempts per 10 minutes per email.
 const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
 
+function profileQuery(email) {
+  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role', limit: '1' }).toString()
+}
+
 function safeEqual(a, b) {
   if (a.length !== b.length) return false
   return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
@@ -91,7 +95,7 @@ export async function POST(request) {
   // ── 3. Load user profile ───────────────────────────────────────────────────
   const { data: profiles, error: profileError } = await select(
     'profiles',
-    `email=eq.${email}&select=id,role&limit=1`
+    profileQuery(email)
   )
 
   if (profileError || !profiles?.length) {
