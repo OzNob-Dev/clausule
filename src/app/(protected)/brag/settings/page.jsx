@@ -4,6 +4,7 @@ import { useState } from 'react'
 import BragRail from '@/components/brag/BragRail'
 import TotpSetupPanel from '@/components/brag/TotpSetupPanel'
 import DeleteAccountModal from '@/components/brag/DeleteAccountModal'
+import SsoStatusSection from '@/components/brag/SsoStatusSection'
 import { useProfileStore } from '@/stores/useProfileStore'
 import '@/styles/brag-shell.css'
 import '@/styles/brag-settings-core.css'
@@ -68,6 +69,12 @@ export default function BragSettings() {
           <div className="bss-heading">Security settings</div>
           <div className="bss-subheading">Manage how you sign in to Clausule.</div>
           <div className="bss-divider" />
+
+          <SsoStatusSection
+            avatarInitials={avatarInitials}
+            displayName={displayName}
+            email={profile.email}
+          />
 
           {/* Two-factor authentication */}
           <div className="bss-section-label">Two-factor authentication</div>

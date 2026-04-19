@@ -72,3 +72,25 @@ test('brag settings shows authenticator empty state when not configured', async 
   await expect(page.getByText(/no authenticator app connected yet/i)).toBeVisible()
   await expect(page.getByRole('button', { name: /set up/i })).toBeVisible()
 })
+
+test('brag settings shows active SSO status for enabled providers', async ({ page }) => {
+  await page.route('**/api/auth/bootstrap', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+        profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
+        security: { authenticatorAppConfigured: false },
+      }),
+    })
+  })
+
+  await page.goto('/brag/settings')
+
+  const row = page.locator('.bss-sso-row').filter({ hasText: 'Google' })
+  await expect(page.getByText('Single sign-on')).toBeVisible()
+  await expect(row).toContainText('Ada Lovelace')
+  await expect(row).toContainText('ada@example.com')
+  await expect(row.getByLabel('Google single sign-on is active')).toHaveText('Active')
+})

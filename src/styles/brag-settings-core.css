@@ -62,6 +62,90 @@
   max-width: 320px;
 }
 
+/* SSO status */
+.bss-sso-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bss-sso-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  background: #F5F0EA;
+  border: 1.5px solid rgba(60, 45, 35, 0.14);
+  border-radius: 8px;
+}
+
+.bss-sso-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(66, 133, 244, 0.12);
+  color: #185FA5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.bss-sso-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bss-sso-name {
+  color: #2A221A;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bss-sso-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+  color: #5C5048;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.bss-sso-provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bss-sso-logo {
+  width: 13px;
+  height: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bss-sso-logo svg {
+  width: 12px;
+  height: 12px;
+}
+
+.bss-sso-status {
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #E8F5EE;
+  color: #225F3D;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
 /* Add device button */
 .bss-add-btn {
   display: inline-flex;
@@ -535,4 +619,3 @@
 }
 
 .bss-btn-modal-cancel:hover { border-color: #2A221A; }
-
