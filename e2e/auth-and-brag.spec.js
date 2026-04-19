@@ -104,9 +104,9 @@ test('login sends known non-SSO accounts to the authenticator app screen', async
   await expect(page.getByText('Enter your code')).toBeVisible()
   await expect(page.getByText(/open your authenticator app/i)).toBeVisible()
   await expect(page.getByText(/signing in as/i)).toBeVisible()
-  await expect(page.getByText('op**@example.com')).toBeVisible()
+  await expect(page.getByText('ot***@example.com')).toBeVisible()
   await expect(page.getByText('otp@example.com')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /verify/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /verify authentication code/i })).toBeDisabled()
 })
 
 test('login sends known OTP accounts to the email code screen', async ({ page }) => {

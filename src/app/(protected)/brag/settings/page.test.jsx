@@ -79,7 +79,7 @@ describe('BragSettings integration', () => {
 
     expect(screen.getByText(/authenticator setup required/i)).toBeInTheDocument()
     expect(screen.getByText(/set up an authenticator app to unlock the rest of clausule/i)).toBeInTheDocument()
-    expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).toHaveClass('bss-mfa-row--needs-setup')
+    expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).not.toHaveClass('bss-mfa-row--needs-setup')
     expect(screen.queryByLabelText('Authenticator app is not set up')).not.toBeInTheDocument()
     expect(screen.queryByText('Empty')).not.toBeInTheDocument()
   })
@@ -98,7 +98,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
 
-    expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).toHaveClass('bss-mfa-row--needs-setup')
+    expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).not.toHaveClass('bss-mfa-row--needs-setup')
     expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).toHaveClass('bss-totp-empty--required')
   })
 

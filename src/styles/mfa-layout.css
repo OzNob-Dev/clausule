@@ -1,5 +1,6 @@
 /* ── MFA Login App ─────────────────────────────────────────────── */
 .mfa-app-wrap {
+  position: relative;
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -7,47 +8,158 @@
   justify-content: center;
   background: #F5F0EA;
   padding: 24px;
+  overflow: hidden;
 }
 
-.mfa-app-shell { width: 100%; max-width: 400px; }
+.mfa-app-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 47px, rgba(26, 21, 16, 0.028) 47px, rgba(26, 21, 16, 0.028) 48px);
+}
+
+.mfa-app-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 780px;
+  max-width: 100%;
+  overflow: hidden;
+  background: #FDFCFA;
+  border: 1px solid rgba(26, 21, 16, 0.18);
+  border-radius: 8px;
+  animation: mfa-in 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.mfa-app-left {
+  width: 256px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+  background: #2A221A;
+  padding: 32px 28px;
+}
 
 .mfa-app-logo {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-bottom: 36px;
 }
 
 .mfa-app-logo-bug {
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: #1A1510;
-  color: #F5F0EA;
+  background: #C94F2A;
+  color: #FBF7F2;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
-.mfa-app-logo-bug svg { width: 14px; height: 14px; }
+.mfa-app-logo-bug svg { width: 15px; height: 15px; }
 
 .mfa-app-logo-name {
   font-size: 15px;
-  font-weight: 800;
-  color: #1A1510;
+  font-weight: 900;
+  color: #FBF7F2;
+  letter-spacing: 0;
+}
+
+.mfa-app-left-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mfa-app-left-body h1 {
+  color: #FBF7F2;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.mfa-app-left-body em { color: #C94F2A; }
+
+.mfa-app-left-body p {
+  color: #B8B2AC;
+  font-size: 12.5px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.mfa-app-totp-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.mfa-app-totp-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: #B8B2AC;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.mfa-app-totp-item strong {
+  color: #FBF7F2;
+  font-weight: 700;
+}
+
+.mfa-app-totp-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #C94F2A;
+  background: rgba(201, 79, 42, 0.2);
+  border-radius: 5px;
+  margin-top: 1px;
+}
+
+.mfa-app-totp-icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+.mfa-app-right {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #FDFCFA;
+  padding: 36px 32px;
 }
 
 .mfa-app-back {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  align-self: flex-start;
+  font-size: 11.5px;
   font-weight: 700;
   color: #786B5F;
   background: transparent;
   border: 0;
+  border-radius: 4px;
   padding: 0;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
   cursor: pointer;
   font-family: var(--font);
 }
@@ -55,97 +167,147 @@
 .mfa-app-back:hover,
 .mfa-app-back:focus-visible { color: #1A1510; }
 
+.mfa-app-back:focus-visible,
+.mfa-app-btn:focus-visible,
+.mfa-app-link:focus-visible {
+  outline: 2px solid #C94F2A;
+  outline-offset: 3px;
+}
+
 .mfa-app-back svg { width: 13px; height: 13px; }
 
 .mfa-app-sec-row {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: #EAF7EF;
-  border-radius: 8px;
-  margin-bottom: 28px;
+  align-self: flex-start;
+  gap: 8px;
+  padding: 7px 12px 7px 8px;
+  background: #1A1510;
+  border-radius: 100px;
+  margin-bottom: 24px;
 }
 
 .mfa-app-sec-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  color: #1D7A45;
-  background: rgba(29, 122, 69, 0.14);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #F5F0EA;
+  background: rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.mfa-app-sec-icon svg { width: 16px; height: 16px; }
+.mfa-app-sec-icon svg { width: 10px; height: 10px; }
 
 .mfa-app-sec-text {
-  font-size: 12px;
-  font-weight: 600;
-  color: #5B4E42;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(245, 240, 234, 0.85);
   line-height: 1.45;
   margin: 0;
 }
 
 .mfa-app-sec-text strong {
-  color: #1A1510;
+  color: #F5F0EA;
   font-weight: 700;
 }
 
 .mfa-app-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 900;
   color: #1A1510;
-  margin: 0 0 6px;
+  letter-spacing: 0;
+  margin: 0 0 4px;
 }
 
 .mfa-app-sub {
-  font-size: 14px;
+  font-size: 13px;
   color: #5B4E42;
   line-height: 1.65;
-  margin: 0 0 12px;
+  margin: 0 0 26px;
 }
 
-.mfa-app-sample {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 1px solid #C7B8A9;
-  border-radius: 8px;
-  color: #3D3228;
-  font-size: 13px;
+.mfa-app-otp-label {
+  width: calc(6 * 40px + 5 * 6px);
+  max-width: 100%;
+  align-self: center;
+  color: #786B5F;
+  font-size: 10px;
   font-weight: 700;
-  margin-bottom: 28px;
+  letter-spacing: 0;
+  margin-bottom: 8px;
+  text-align: left;
+  text-transform: uppercase;
 }
 
-.mfa-app-sample strong {
+.mfa-app-right .mfa-otp-row {
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 26px;
+}
+
+.mfa-app-right .mfa-otp-box {
+  width: 40px;
+  height: 44px;
+  flex: none;
   color: #1A1510;
-  letter-spacing: 0;
+  background: #F5F0EA;
+  border: 1.5px solid rgba(26, 21, 16, 0.18);
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.mfa-app-right .mfa-otp-box:focus {
+  border-color: #C94F2A;
+  box-shadow: 0 0 0 3px rgba(201, 79, 42, 0.13);
+}
+
+.mfa-app-right .mfa-otp-row--valid .mfa-otp-box {
+  border-color: #1A1510;
+  background: #F5F0EA;
+}
+
+.mfa-app-right .mfa-otp-row--error .mfa-otp-box {
+  border-color: #C0392B;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.13);
 }
 
 .mfa-app-btn {
   width: 100%;
-  background: #1A1510;
-  color: #F5F0EA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #FFFFFF;
+  background: #C94F2A;
   border: 0;
   border-radius: 8px;
-  font-size: 15px;
-  font-weight: 800;
-  padding: 15px;
-  cursor: pointer;
+  padding: 13px;
   font-family: var(--font);
-  margin: 14px 0 16px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+  cursor: pointer;
+  margin-bottom: 14px;
 }
 
-.mfa-app-btn:hover:not(:disabled) { opacity: 0.85; }
+.mfa-app-btn:hover:not(:disabled) {
+  opacity: 0.87;
+  transform: translateY(-1px);
+}
 
 .mfa-app-btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.mfa-app-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
 }
 
 .mfa-app-footer {
@@ -153,7 +315,7 @@
   font-weight: 600;
   color: #786B5F;
   text-align: center;
-  margin: 0;
+  margin: 0 0 14px;
 }
 
 .mfa-app-link {
@@ -161,13 +323,82 @@
   text-decoration: underline;
   background: transparent;
   border: 0;
+  border-radius: 2px;
   padding: 0;
   cursor: pointer;
   font: inherit;
 }
 
 .mfa-app-link:hover,
-.mfa-app-link:focus-visible { color: #1A1510; }
+.mfa-app-link:focus-visible { color: #C94F2A; }
+
+.mfa-app-trust-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(26, 21, 16, 0.1);
+  margin-top: 4px;
+}
+
+.mfa-app-trust-strip span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #786B5F;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.mfa-app-trust-strip svg {
+  width: 10px;
+  height: 10px;
+  opacity: 0.55;
+}
+
+.mfa-app-trust-strip i {
+  width: 3px;
+  height: 3px;
+  background: rgba(26, 21, 16, 0.18);
+  border-radius: 50%;
+}
+
+@media (max-width: 720px) {
+  .mfa-app-shell {
+    display: block;
+  }
+
+  .mfa-app-left {
+    width: 100%;
+    gap: 22px;
+    padding: 24px;
+  }
+
+  .mfa-app-right {
+    padding: 28px 22px 32px;
+  }
+}
+
+@media (max-width: 420px) {
+  .mfa-app-wrap {
+    padding: 12px;
+  }
+
+  .mfa-app-right .mfa-otp-box {
+    width: 36px;
+    height: 42px;
+  }
+
+  .mfa-app-otp-label {
+    width: calc(6 * 36px + 5 * 6px);
+  }
+
+  .mfa-app-trust-strip {
+    gap: 8px;
+  }
+}
 
 /* ── MFA Login Email ────────────────────────────────────────────── */
 .mfa-email-wrap {
