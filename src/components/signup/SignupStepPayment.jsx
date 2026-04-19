@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { formatCardNumber, formatExpiry } from '@/utils/signupFormatting'
+import { useSubscriptionStore } from '@/stores/useSubscriptionStore'
 import { BackBtn, CtaBtn } from './SignupButtons'
 import { FieldInput, FieldLabel } from './SignupFormField'
 import { ArrowIcon } from './SignupIcons'
 
 export default function SignupStepPayment({ accountData, initialData, onBack, onNext }) {
+  const setMonthlyIndividualPlan = useSubscriptionStore((state) => state.setMonthlyIndividualPlan)
   const [cardName, setCardName] = useState(initialData.cardName)
   const [cardNum, setCardNum] = useState(initialData.cardNum)
   const [expiry, setExpiry] = useState(initialData.expiry)
@@ -18,6 +20,8 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
 
   // Keep the mocked payment step isolated until a Stripe Elements flow is wired in.
   const handleSubscribe = async () => {
+    setMonthlyIndividualPlan()
+    const plan = useSubscriptionStore.getState()
     setBusy(true)
     setApiError('')
 
@@ -30,6 +34,7 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
           email: accountData.email,
           firstName: accountData.firstName,
           lastName: accountData.lastName,
+          subscription: { amountCents: plan.amountCents, currency: plan.currency, interval: plan.interval },
         }),
       })
 
