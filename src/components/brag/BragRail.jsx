@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/useProfileStore'
+import { getActiveSsoProviders, ssoConfigFromEnv } from '@/components/brag/SsoStatusSection'
 
 export default function BragRail({ activePage }) {
   const router = useRouter()
@@ -11,7 +12,8 @@ export default function BragRail({ activePage }) {
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
   const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const mfaSetupRequired = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured
+  const ssoEnabled = getActiveSsoProviders(ssoConfigFromEnv).length > 0
+  const mfaSetupRequired = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured && !ssoEnabled
   const initials =
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
     profile.email?.[0]?.toUpperCase() ||

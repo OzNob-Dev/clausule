@@ -20,6 +20,9 @@ describe('BragRail integration', () => {
   beforeEach(() => {
     push.mockClear()
     logout.mockClear()
+    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
+    process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED = 'false'
+    process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED = 'false'
     useProfileStore.getState().clearProfile()
   })
 
@@ -64,6 +67,15 @@ describe('BragRail integration', () => {
 
   it('keeps app navigation visible when MFA is missing after non-OTP auth', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
+
+    render(<BragRail activePage="settings" />)
+
+    expect(screen.getByRole('button', { name: /brag doc/i })).toBeInTheDocument()
+  })
+
+  it('keeps app navigation visible when SSO is enabled', () => {
+    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'true'
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
 
     render(<BragRail activePage="settings" />)
 

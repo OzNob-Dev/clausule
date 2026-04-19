@@ -24,6 +24,9 @@ describe('ProtectedLayout MFA lock', () => {
     auth = { user: { id: 'user-1', email: 'ada@example.com', role: 'employee' }, loading: false }
     replace.mockClear()
     localStorage.clear()
+    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
+    process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED = 'false'
+    process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED = 'false'
     useProfileStore.getState().clearProfile()
   })
 
@@ -61,6 +64,16 @@ describe('ProtectedLayout MFA lock', () => {
     render(<ProtectedLayout><div>SSO app</div></ProtectedLayout>)
 
     expect(screen.getByText('SSO app')).toBeInTheDocument()
+    expect(replace).not.toHaveBeenCalled()
+  })
+
+  it('allows app access when SSO is enabled', () => {
+    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'true'
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+
+    render(<ProtectedLayout><div>SSO enabled app</div></ProtectedLayout>)
+
+    expect(screen.getByText('SSO enabled app')).toBeInTheDocument()
     expect(replace).not.toHaveBeenCalled()
   })
 })

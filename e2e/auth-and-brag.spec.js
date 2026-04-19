@@ -54,7 +54,7 @@ test('protected brag page hydrates profile and shows shared avatar initials', as
   await expect(page.getByText('AL').first()).toBeVisible()
 })
 
-test('protected app redirects to brag settings until authenticator setup is complete', async ({ page }) => {
+test('protected app remains available when SSO is enabled without authenticator setup', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({
       status: 200,
@@ -69,12 +69,12 @@ test('protected app redirects to brag settings until authenticator setup is comp
 
   await page.goto('/brag')
 
-  await expect(page).toHaveURL(/\/brag\/settings/)
-  await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
-  await expect(page.getByRole('button', { name: /brag doc/i })).toHaveCount(0)
+  await expect(page).toHaveURL(/\/brag$/)
+  await expect(page.getByText('Ada Lovelace')).toBeVisible()
+  await expect(page.getByRole('button', { name: /brag doc/i })).toBeVisible()
 })
 
-test('brag settings highlights authenticator setup when not configured', async ({ page }) => {
+test('brag settings hides authenticator setup when SSO is enabled', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({
       status: 200,
@@ -89,11 +89,12 @@ test('brag settings highlights authenticator setup when not configured', async (
 
   await page.goto('/brag/settings')
 
-  await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
-  await expect(page.locator('.bss-totp-empty--required')).toBeVisible()
+  await expect(page.getByText('Single sign-on')).toBeVisible()
+  await expect(page.getByText(/authenticator setup required/i)).toHaveCount(0)
+  await expect(page.locator('.bss-totp-empty--required')).toHaveCount(0)
   await expect(page.getByLabel('Authenticator app is not set up')).toHaveCount(0)
   await expect(page.getByText('Empty')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /set up/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /set up/i })).toHaveCount(0)
 })
 
 test('brag settings does not highlight authenticator setup after non-OTP auth', async ({ page }) => {
@@ -113,7 +114,7 @@ test('brag settings does not highlight authenticator setup after non-OTP auth', 
 
   await expect(page).toHaveURL(/\/brag$/)
   await page.goto('/brag/settings')
-  await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
+  await expect(page.getByText(/authenticator setup required/i)).toHaveCount(0)
   await expect(page.locator('.bss-totp-empty--required')).toHaveCount(0)
   await expect(page.getByRole('button', { name: /brag doc/i })).toBeVisible()
 })

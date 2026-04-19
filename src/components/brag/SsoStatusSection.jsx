@@ -37,9 +37,9 @@ export const SSO_PROVIDER_DEFS = [
 ]
 
 export const ssoConfigFromEnv = {
-  google:    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED    === 'true',
-  microsoft: process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED === 'true',
-  apple:     process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED     === 'true',
+  get google()    { return process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED    === 'true' },
+  get microsoft() { return process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED === 'true' },
+  get apple()     { return process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED     === 'true' },
 }
 
 export function getActiveSsoProviders(config = ssoConfigFromEnv) {
