@@ -103,7 +103,7 @@ export async function POST(request) {
 
   try {
     const response = NextResponse.json({ ok: true, role })
-    const session = await createPersistentSession({ userId, email, role })
+    const session = await createPersistentSession({ userId, email, role, authMethod: 'otp' })
     return appendSessionCookies(response, session)
   } catch (err) {
     console.error('[verify-code] refresh token insert failed:', err)

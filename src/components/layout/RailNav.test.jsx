@@ -24,7 +24,7 @@ describe('RailNav MFA lock', () => {
   })
 
   it('hides app links and keeps security settings available when MFA is missing', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
 
     render(<RailNav />)
 
@@ -35,7 +35,16 @@ describe('RailNav MFA lock', () => {
   })
 
   it('shows app links after MFA is configured', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+
+    render(<RailNav />)
+
+    expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/dashboard')
+    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
+  })
+
+  it('shows app links when MFA is missing after non-OTP auth', () => {
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
 
     render(<RailNav />)
 

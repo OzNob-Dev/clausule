@@ -65,8 +65,9 @@ export function RailNav() {
     const [escalatedCount, setEscalatedCount] = useState(0)
     const { logout }      = useAuth()
     const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+    const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
     const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-    const items = hasSecuritySnapshot && !authenticatorAppConfigured ? mfaSetupNavItems : navItems
+    const items = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured ? mfaSetupNavItems : navItems
 
     useEffect(() => {
       setEscalatedCount(storage.getEscalatedCount())

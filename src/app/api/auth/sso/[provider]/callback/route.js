@@ -162,7 +162,7 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
 
     res.headers.append('Set-Cookie', 'sso_state=; HttpOnly; Path=/; Max-Age=0')
 
-    const session = await createPersistentSession({ userId, email: userInfo.email, role })
+    const session = await createPersistentSession({ userId, email: userInfo.email, role, authMethod: 'sso' })
     return appendSessionCookies(res, session)
   } catch (err) {
     console.error(`[sso/${provider}] session creation:`, err.message)

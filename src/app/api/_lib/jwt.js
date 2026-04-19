@@ -13,6 +13,7 @@
  *   sub   {string}  user UUID
  *   email {string}  user email
  *   role  {string}  'employee' | 'manager'
+ *   amr   {string}  auth method: 'otp' | 'totp' | 'sso' | 'unknown'
  *   jti   {string}  unique token ID (for future revocation)
  *   iat   {number}  issued-at (Unix seconds)
  *   exp   {number}  expiry    (Unix seconds)
@@ -48,10 +49,10 @@ function fromB64url(str) {
 /**
  * Sign a new access token.
  *
- * @param {{ userId: string, email: string, role: string }} claims
+ * @param {{ userId: string, email: string, role: string, authMethod?: string }} claims
  * @returns {string} compact JWT
  */
-export function signAccessToken({ userId, email, role }) {
+export function signAccessToken({ userId, email, role, authMethod = 'unknown' }) {
   const now = Math.floor(Date.now() / 1000)
 
   const header  = b64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
@@ -59,6 +60,7 @@ export function signAccessToken({ userId, email, role }) {
     sub:   userId,
     email,
     role,
+    amr:   authMethod,
     jti:   crypto.randomBytes(16).toString('hex'),
     iat:   now,
     exp:   now + ACCESS_TOKEN_TTL_S,
@@ -79,7 +81,7 @@ export function signAccessToken({ userId, email, role }) {
  * Throws on invalid signature, wrong type, or expiry.
  *
  * @param {string} token
- * @returns {{ sub: string, email: string, role: string, jti: string, exp: number }}
+ * @returns {{ sub: string, email: string, role: string, amr: string, jti: string, exp: number }}
  */
 export function verifyAccessToken(token) {
   const parts = token.split('.')

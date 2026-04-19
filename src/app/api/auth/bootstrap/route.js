@@ -10,7 +10,7 @@ import { requireAuth, unauthorized } from '@api/_lib/auth.js'
 import { select } from '@api/_lib/supabase.js'
 
 export async function GET(request) {
-  const { userId, email, role, error: authError } = requireAuth(request)
+  const { userId, email, role, authMethod, error: authError } = requireAuth(request)
 
   if (authError === 'Token expired') {
     return NextResponse.json({ error: 'Token expired' }, { status: 401 })
@@ -45,6 +45,7 @@ export async function GET(request) {
     },
     security: {
       authenticatorAppConfigured: Boolean(row?.totp_secret),
+      authenticatedWithOtp: authMethod === 'otp',
     },
   })
 }

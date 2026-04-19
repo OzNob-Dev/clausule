@@ -42,7 +42,7 @@ test('protected brag page hydrates profile and shows shared avatar initials', as
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: true },
+        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true },
       }),
     })
   })
@@ -62,7 +62,7 @@ test('protected app redirects to brag settings until authenticator setup is comp
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true },
       }),
     })
   })
@@ -82,7 +82,7 @@ test('brag settings highlights authenticator setup when not configured', async (
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true },
       }),
     })
   })
@@ -90,9 +90,53 @@ test('brag settings highlights authenticator setup when not configured', async (
   await page.goto('/brag/settings')
 
   await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
+  await expect(page.locator('.bss-totp-empty--required')).toBeVisible()
   await expect(page.getByLabel('Authenticator app is not set up')).toHaveCount(0)
   await expect(page.getByText('Empty')).toHaveCount(0)
   await expect(page.getByRole('button', { name: /set up/i })).toBeVisible()
+})
+
+test('brag settings does not highlight authenticator setup after non-OTP auth', async ({ page }) => {
+  await page.route('**/api/auth/bootstrap', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+        profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false },
+      }),
+    })
+  })
+
+  await page.goto('/brag')
+
+  await expect(page).toHaveURL(/\/brag$/)
+  await page.goto('/brag/settings')
+  await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
+  await expect(page.locator('.bss-totp-empty--required')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /brag doc/i })).toBeVisible()
+})
+
+test('brag settings hides two-factor setup when authenticator MFA is enabled', async ({ page }) => {
+  await page.route('**/api/auth/bootstrap', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+        profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
+        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true },
+      }),
+    })
+  })
+
+  await page.goto('/brag/settings')
+
+  await expect(page.getByText('Single sign-on')).toBeVisible()
+  await expect(page.getByText('Two-factor authentication', { exact: true })).toHaveCount(0)
+  await expect(page.getByText('Authenticator app', { exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /reconfigure/i })).toHaveCount(0)
 })
 
 test('brag settings shows active SSO status for enabled providers', async ({ page }) => {
@@ -103,7 +147,7 @@ test('brag settings shows active SSO status for enabled providers', async ({ pag
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false },
       }),
     })
   })

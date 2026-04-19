@@ -54,11 +54,19 @@ describe('BragRail integration', () => {
   })
 
   it('hides app navigation until authenticator setup is complete', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
 
     render(<BragRail activePage="settings" />)
 
     expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /settings/i })).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('keeps app navigation visible when MFA is missing after non-OTP auth', () => {
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
+
+    render(<BragRail activePage="settings" />)
+
+    expect(screen.getByRole('button', { name: /brag doc/i })).toBeInTheDocument()
   })
 })

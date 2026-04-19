@@ -30,7 +30,7 @@ describe('BragSettings integration', () => {
       lastName: 'Lovelace',
       email: 'ada@example.com',
     })
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
 
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
@@ -47,5 +47,38 @@ describe('BragSettings integration', () => {
     expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).toHaveClass('bss-mfa-row--needs-setup')
     expect(screen.queryByLabelText('Authenticator app is not set up')).not.toBeInTheDocument()
     expect(screen.queryByText('Empty')).not.toBeInTheDocument()
+  })
+
+  it('does not green-highlight MFA setup when restriction is not enabled', async () => {
+    const { useProfileStore } = await import('@/stores/useProfileStore')
+    useProfileStore.getState().setProfile({
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      email: 'ada@example.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
+
+    const { default: BragSettings } = await import('./page')
+    render(<BragSettings />)
+
+    expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).not.toHaveClass('bss-mfa-row--needs-setup')
+    expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).not.toHaveClass('bss-totp-empty--required')
+  })
+
+  it('hides two-factor authentication when authenticator MFA is enabled', async () => {
+    const { useProfileStore } = await import('@/stores/useProfileStore')
+    useProfileStore.getState().setProfile({
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      email: 'ada@example.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+
+    const { default: BragSettings } = await import('./page')
+    render(<BragSettings />)
+
+    expect(screen.queryByText('Two-factor authentication')).not.toBeInTheDocument()
+    expect(screen.queryByText('Authenticator app')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /reconfigure/i })).not.toBeInTheDocument()
   })
 })

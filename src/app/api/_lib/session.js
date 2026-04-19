@@ -2,8 +2,8 @@ import { accessTokenCookie, refreshTokenCookie } from './auth.js'
 import { generateRefreshToken, signAccessToken, REFRESH_TOKEN_TTL_S } from './jwt.js'
 import { insert } from './supabase.js'
 
-export async function createPersistentSession({ userId, email, role }) {
-  const accessToken = signAccessToken({ userId, email, role })
+export async function createPersistentSession({ userId, email, role, authMethod = 'unknown' }) {
+  const accessToken = signAccessToken({ userId, email, role, authMethod })
   const { token: refreshToken, hash: refreshHash } = generateRefreshToken()
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_S * 1000).toISOString()
   const { error } = await insert('refresh_tokens', {

@@ -82,24 +82,24 @@ export function clearAuthCookies() {
 
 /**
  * Verify the access-token cookie and return decoded claims.
- * Returns `{ userId, email, role, error }`.
+ * Returns `{ userId, email, role, authMethod, error }`.
  *
  * On expired / missing token the caller should redirect the client to call
  * POST /api/auth/refresh, then retry the original request.
  *
  * @param {Request} request
- * @returns {{ userId: string|null, email: string|null, role: string|null, error: string|null }}
+ * @returns {{ userId: string|null, email: string|null, role: string|null, authMethod: string|null, error: string|null }}
  */
 export function requireAuth(request) {
   const token = getAccessToken(request)
 
   if (!token) {
-    return { userId: null, email: null, role: null, error: 'Unauthenticated' }
+    return { userId: null, email: null, role: null, authMethod: null, error: 'Unauthenticated' }
   }
 
   try {
     const claims = verifyAccessToken(token)
-    return { userId: claims.sub, email: claims.email, role: claims.role, error: null }
+    return { userId: claims.sub, email: claims.email, role: claims.role, authMethod: claims.amr ?? 'unknown', error: null }
   } catch (err) {
     // Surface 'Token expired' separately so clients can attempt a refresh.
     const expired = err.message === 'Token expired'
@@ -107,6 +107,7 @@ export function requireAuth(request) {
       userId: null,
       email:  null,
       role:   null,
+      authMethod: null,
       error:  expired ? 'Token expired' : 'Invalid token',
     }
   }

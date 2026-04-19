@@ -14,8 +14,9 @@ function AuthGuard({ children }) {
   const pathname        = usePathname()
   const { user, loading } = useAuth()
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+  const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const mfaSetupRequired = hasSecuritySnapshot && !authenticatorAppConfigured
+  const mfaSetupRequired = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured
 
   useEffect(() => {
     if (!loading && !user) {

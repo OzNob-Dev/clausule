@@ -78,6 +78,7 @@ describe('Google SSO callback', () => {
       userId: 'user-1',
       email: 'ada@example.com',
       role: 'employee',
+      authMethod: 'sso',
     })
   })
 })
