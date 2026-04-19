@@ -90,7 +90,7 @@ test('login sends known non-SSO accounts to the authenticator app screen', async
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ exists: true, hasMfa: true, hasSso: false, ssoProvider: null, hasPaid: true }),
+      body: JSON.stringify({ exists: true, isActive: true, isDeleted: false, hasMfa: true, hasSso: false, ssoProvider: null, hasPaid: true }),
     })
   })
   await page.route('**/api/auth/send-code', async (route) => {
@@ -116,7 +116,7 @@ test('login routes known SSO accounts through SSO provider sign-in', async ({ pa
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true }),
+      body: JSON.stringify({ exists: true, isActive: true, isDeleted: false, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true }),
     })
   })
   await page.route('**/api/auth/sso/google', async (route) => {

@@ -57,12 +57,18 @@ describe('register route', () => {
       email: 'ada@example.com',
       first_name: 'Ada',
       last_name: 'Lovelace',
+      is_deleted: false,
     })
     expect(insert).toHaveBeenCalledWith('subscriptions', expect.objectContaining({
       user_id: 'user-1',
       status: 'active',
       plan: 'individual',
       amount_cents: 500,
+    }))
+    expect(upsert).toHaveBeenCalledWith('profiles', expect.objectContaining({
+      id: 'user-1',
+      is_active: true,
+      is_deleted: false,
     }))
     expect(sendTransacEmail).toHaveBeenCalledWith(expect.objectContaining({
       subject: expect.stringContaining('Your Clausule invoice'),
@@ -90,6 +96,7 @@ describe('register route', () => {
       email: 'ada@example.com',
       first_name: 'Ada',
       last_name: 'Lovelace',
+      is_deleted: false,
     })
     expect(sendTransacEmail).toHaveBeenCalled()
   })
@@ -106,6 +113,7 @@ describe('register route', () => {
       email: 'ada@example.com',
       first_name: 'Ada',
       last_name: 'Lovelace',
+      is_deleted: false,
     })
     expect(insert).toHaveBeenCalledWith('subscriptions', expect.objectContaining({ user_id: 'user-4' }))
     expect(sendTransacEmail).toHaveBeenCalled()

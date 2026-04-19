@@ -206,6 +206,11 @@ export default function SignIn() {
           router.push(`/signup?email=${encodeURIComponent(resolved)}`)
           return
         }
+        if (data.isDeleted || !data.isActive) {
+          setEmailStatus('new')
+          router.push(`/signup?email=${encodeURIComponent(resolved)}`)
+          return
+        }
         if (data.hasSso && data.ssoProvider) {
           storage.setEmail(resolved)
           window.location.href = `/api/auth/sso/${data.ssoProvider}`

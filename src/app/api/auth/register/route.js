@@ -115,6 +115,7 @@ export async function POST(request) {
       email,
       first_name: firstName,
       last_name:  lastName || null,
+      is_deleted: false,
     })
 
     if (profileError) {
@@ -139,6 +140,20 @@ export async function POST(request) {
     if (subscriptionError) {
       console.error('[register] subscription insert error:', subscriptionError)
       return NextResponse.json({ error: 'Failed to create subscription' }, { status: 500 })
+    }
+
+    const { error: activationError } = await upsert('profiles', {
+      id: userId,
+      email,
+      first_name: firstName,
+      last_name: lastName || null,
+      is_active: true,
+      is_deleted: false,
+    })
+
+    if (activationError) {
+      console.error('[register] profile activation error:', activationError)
+      return NextResponse.json({ error: 'Failed to activate profile' }, { status: 500 })
     }
 
     try {

@@ -19,7 +19,7 @@ import { validateEmail }  from '@/utils/emailValidation'
 const limiter = new RateLimiter({ limit: 20, windowMs: 60 * 1000 })
 
 function profileQuery(email) {
-  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,totp_secret', limit: '1' }).toString()
+  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,totp_secret,is_active,is_deleted', limit: '1' }).toString()
 }
 
 function paidQuery(userId) {
@@ -60,24 +60,26 @@ export async function POST(request) {
 
   const exists = Array.isArray(data) && data.length > 0
   if (!exists) {
-    return NextResponse.json({ exists: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: false })
+    return NextResponse.json({ exists: false, isActive: false, isDeleted: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: false })
   }
 
-  const { data: paidRows, error: paidError } = await select('subscriptions', paidQuery(data[0].id))
+  const profile = data[0]
+  const { data: paidRows, error: paidError } = await select('subscriptions', paidQuery(profile.id))
   if (paidError) {
     console.error('[check-email] subscription lookup failed:', paidError)
     return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
   }
 
-  const hasMfa = exists && Boolean(data[0]?.totp_secret)
-  const { data: authUser, error: authError } = await getAuthUser(data[0].id)
+  const isDeleted = Boolean(profile.is_deleted)
+  const isActive = Boolean(profile.is_active)
+  const hasMfa = exists && Boolean(profile.totp_secret)
+  const { data: authUser, error: authError } = await getAuthUser(profile.id)
   if (authError) {
     console.error('[check-email] auth user lookup failed:', authError)
     return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
   }
   const provider = ssoProvider(authUser?.user ?? authUser)
   const hasPaid = Array.isArray(paidRows) && paidRows.length > 0
-  const hasValidLogin = hasPaid && (hasMfa || Boolean(provider))
 
-  return NextResponse.json({ exists: hasValidLogin, hasMfa, hasSso: Boolean(provider), ssoProvider: provider, hasPaid })
+  return NextResponse.json({ exists, isActive, isDeleted, hasMfa, hasSso: Boolean(provider), ssoProvider: provider, hasPaid })
 }
