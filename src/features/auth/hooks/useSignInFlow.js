@@ -10,7 +10,6 @@ import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { homePathForRole } from '@shared/utils/routes'
 import { ssoAuthPath } from '@shared/utils/sso'
-import { storage } from '@shared/utils/storage'
 
 const OTP_TTL_SECONDS = 600
 const RESEND_COOLDOWN_SECONDS = 30
@@ -89,7 +88,7 @@ export function useSignInFlow() {
     setVerifyError(null)
 
     try {
-      const res = await fetch(endpoint, jsonRequest({ email: storage.getEmail(), code: otp }, { method: 'POST' }))
+      const res = await fetch(endpoint, jsonRequest({ email, code: otp }, { method: 'POST' }))
       if (!res.ok) {
         code.setError()
         setVerifyError('Incorrect code — try again')
@@ -103,7 +102,7 @@ export function useSignInFlow() {
       code.setError()
       setVerifyError('Something went wrong — try again')
     }
-  }, [code, router, scheduleTimeout])
+  }, [code, email, router, scheduleTimeout])
 
   const verifyOtp = useCallback((digits) => verifySignInCode('/api/auth/verify-code', digits), [verifySignInCode])
   const verifyApp = useCallback((digits) => verifySignInCode('/api/auth/totp/verify', digits), [verifySignInCode])
@@ -161,7 +160,6 @@ export function useSignInFlow() {
         }
 
         if (data.hasSso && data.ssoProvider) {
-          storage.setEmail(resolved)
           window.location.href = ssoAuthPath(data.ssoProvider)
           return
         }
@@ -174,9 +172,8 @@ export function useSignInFlow() {
       }
     }
 
-    storage.setEmail(resolved)
-
     if (status === 'mfa') {
+      setEmail(resolved)
       setStep('app')
       return
     }
@@ -207,7 +204,7 @@ export function useSignInFlow() {
 
   const handleResend = useCallback(async () => {
     try {
-      await sendCodeEmail(storage.getEmail() ?? email)
+      await sendCodeEmail(email)
       resetExpirySeconds()
       resetResendTimer()
       code.reset()
@@ -220,7 +217,7 @@ export function useSignInFlow() {
   const isChecking = emailStatus === 'checking' || sending
   const isNewAccount = emailStatus === 'new'
   const btnLabel = isChecking ? (sending ? 'Sending…' : 'Checking…') : isNewAccount ? 'Create account →' : 'Login'
-  const resolvedEmail = storage.getEmail() ?? email
+  const resolvedEmail = email
 
   return {
     btnLabel,

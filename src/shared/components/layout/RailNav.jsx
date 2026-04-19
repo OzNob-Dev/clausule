@@ -2,8 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { storage } from '../../utils/storage'
 import '../../styles/rail-nav.css'
 
 const settingsIcon = (
@@ -52,12 +50,7 @@ const navItems = [
 
 export function RailNav({ items = navItems, locked = false, onLogout, userInitials = 'AD', userTitle = 'Adrian Diente' }) {
     const pathname        = usePathname()
-    const [escalatedCount, setEscalatedCount] = useState(0)
     const visibleItems = locked ? [] : items
-
-    useEffect(() => {
-      setEscalatedCount(storage.getEscalatedCount())
-    }, [])
 
   return (
     <aside className="rail-aside">
@@ -79,7 +72,7 @@ export function RailNav({ items = navItems, locked = false, onLogout, userInitia
             className={`nav-item${pathname === to ? ' nav-item--active' : ''}`}
           >
             {icon}
-            {badge && escalatedCount > 0 && (
+            {badge && (
               <span className="rn-badge" aria-hidden="true" />
             )}
           </Link>

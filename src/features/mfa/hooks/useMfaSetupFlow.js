@@ -6,7 +6,6 @@ import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { ROUTES } from '@shared/utils/routes'
-import { storage } from '@shared/utils/storage'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 
 export function useMfaSetupFlow() {
@@ -29,8 +28,18 @@ export function useMfaSetupFlow() {
   const totpCode = useSixDigitCode({ inputRefs: totpRefs, scheduleTimeout })
 
   useEffect(() => {
-    setEmail(storage.getEmail() || 'your email')
-    setHasMfaSetup(storage.getMfaSetup())
+    const controller = new AbortController()
+
+    apiFetch('/api/auth/bootstrap', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!data) return
+        setEmail(data.profile?.email || data.user?.email || 'your email')
+        setHasMfaSetup(Boolean(data.security?.authenticatorAppConfigured))
+      })
+      .catch(() => {})
+
+    return () => controller.abort()
   }, [])
 
   useEffect(() => {
@@ -96,7 +105,6 @@ export function useMfaSetupFlow() {
   }, [scheduleTimeout, totpSecret])
 
   const finishSetup = useCallback(() => {
-    storage.setMfaSetup(true)
     setHasMfaSetup(true)
     setStep(3)
   }, [])
