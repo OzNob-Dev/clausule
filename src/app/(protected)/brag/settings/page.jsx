@@ -13,6 +13,7 @@ import '@/styles/brag-settings-totp.css'
 export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const setSecurity = useProfileStore((state) => state.setSecurity)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
   const mfaRestrictionEnabled = hasSecuritySnapshot && !authenticatorAppConfigured
@@ -71,11 +72,13 @@ export default function BragSettings() {
           <div className="bss-subheading">Manage how you sign in to Clausule.</div>
           <div className="bss-divider" />
 
-          <SsoStatusSection
-            avatarInitials={avatarInitials}
-            displayName={displayName}
-            email={profile.email}
-          />
+          {ssoConfigured && (
+            <SsoStatusSection
+              avatarInitials={avatarInitials}
+              displayName={displayName}
+              email={profile.email}
+            />
+          )}
 
           {!authenticatorAppConfigured && (
             <>
@@ -101,7 +104,7 @@ export default function BragSettings() {
                 <div className="bss-mfa-divider" />
 
                 {/* Authenticator app row */}
-                <div className={`bss-mfa-row${mfaRestrictionEnabled ? ' bss-mfa-row--needs-setup' : ''}`}>
+                <div className="bss-mfa-row bss-mfa-row--needs-setup">
                   <div className={`bss-mfa-icon${authenticatorAppConfigured || hasSecuritySnapshot ? ' bss-mfa-icon--on' : ''}`} aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <rect x="5" y="2" width="14" height="20" rx="2"/>

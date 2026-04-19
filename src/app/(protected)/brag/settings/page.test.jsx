@@ -31,6 +31,7 @@ describe('BragSettings integration', () => {
       email: 'ada@example.com',
     })
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
@@ -46,6 +47,23 @@ describe('BragSettings integration', () => {
     expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).toHaveClass('bss-totp-empty--required')
   })
 
+  it('hides SSO status when the account did not use SSO', async () => {
+    const { useProfileStore } = await import('@/stores/useProfileStore')
+    useProfileStore.getState().setProfile({
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      email: 'ada@example.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
+
+    const { default: BragSettings } = await import('./page')
+    render(<BragSettings />)
+
+    expect(screen.queryByText('Single sign-on')).not.toBeInTheDocument()
+    expect(screen.queryByText('Google')).not.toBeInTheDocument()
+  })
+
   it('renders MFA setup when SSO and authenticator MFA are not configured', async () => {
     const { useProfileStore } = await import('@/stores/useProfileStore')
     useProfileStore.getState().setProfile({
@@ -54,6 +72,7 @@ describe('BragSettings integration', () => {
       email: 'ada@example.com',
     })
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
@@ -74,6 +93,7 @@ describe('BragSettings integration', () => {
       email: 'ada@example.com',
     })
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
@@ -90,6 +110,7 @@ describe('BragSettings integration', () => {
       email: 'ada@example.com',
     })
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)

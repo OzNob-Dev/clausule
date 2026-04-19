@@ -42,7 +42,7 @@ test('protected brag page hydrates profile and shows shared avatar initials', as
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true },
+        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: true },
       }),
     })
   })
@@ -107,7 +107,7 @@ test('protected app redirects after non-OTP auth until authenticator setup is co
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false, ssoConfigured: true },
       }),
     })
   })
@@ -128,7 +128,7 @@ test('brag settings hides two-factor setup when authenticator MFA is enabled', a
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true },
+        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: true },
       }),
     })
   })
@@ -149,7 +149,7 @@ test('brag settings shows active SSO status for enabled providers', async ({ pag
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false, ssoConfigured: true },
       }),
     })
   })
@@ -161,4 +161,23 @@ test('brag settings shows active SSO status for enabled providers', async ({ pag
   await expect(row).toContainText('Ada Lovelace')
   await expect(row).toContainText('ada@example.com')
   await expect(row.getByLabel('Google single sign-on is active')).toHaveText('Active')
+})
+
+test('brag settings hides active SSO status for non-SSO accounts', async ({ page }) => {
+  await page.route('**/api/auth/bootstrap', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+        profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false, ssoConfigured: false },
+      }),
+    })
+  })
+
+  await page.goto('/brag/settings')
+
+  await expect(page.getByText('Single sign-on')).toHaveCount(0)
+  await expect(page.locator('.bss-sso-row')).toHaveCount(0)
 })
