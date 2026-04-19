@@ -1,90 +1,125 @@
 /* ── Sign In page ─────────────────────────────────────────────── */
 .si-wrap {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
-  background: #D4C5B2;
+  padding: 24px;
+  background: #F5F0EA;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 47px,
+    rgba(26, 21, 16, 0.028) 47px,
+    rgba(26, 21, 16, 0.028) 48px
+  );
+  font-family: var(--font-sans);
+  color: #1A1510;
 }
 
 .si-card {
   display: flex;
   width: 820px;
   max-width: 100%;
+  border: 1px solid rgba(26, 21, 16, 0.18);
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid var(--rule-em);
-  border-radius: var(--r2);
+  position: relative;
+  z-index: 1;
 }
 
-/* Left panel */
+/* Left dark brand panel */
 .si-left {
-  width: 300px;
+  width: 268px;
   flex-shrink: 0;
+  background: #2A221A;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 2.5rem;
-  background: var(--nav);
-  padding: 36px 30px;
+  justify-content: space-between;
+  padding: 32px 28px;
 }
 
 .si-logo {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: var(--acc-text);
+  display: flex;
+  align-items: center;
+  gap: 9px;
 }
 
-.si-logo-accent { color: var(--acc); }
+.si-logo-bug {
+  width: 28px;
+  height: 28px;
+  background: #D05A34;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.si-brand-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #FBF7F2;
+  letter-spacing: -0.3px;
+}
+
+.si-left-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 .si-tagline {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 900;
-  line-height: 1.2;
-  letter-spacing: -0.4px;
-  color: var(--tp);
-  margin-bottom: 12px;
+  color: #FBF7F2;
+  letter-spacing: -0.8px;
+  line-height: 1.15;
+  margin: 0;
 }
 
 .si-tagline-sub {
-  font-size: 14px;
-  font-style: italic;
-  line-height: 1.75;
-  color: var(--ts);
+  font-size: 13px;
+  color: #B8B2AC;
+  line-height: 1.7;
+  font-style: normal;
+  margin: 0;
 }
 
-/* Right panel — light form surface */
+.si-left-footer {
+  font-size: 11px;
+  color: #786B5F;
+}
+
+/* Right light panel */
 .si-right {
   flex: 1;
+  background: #FDFCFA;
+  padding: 40px 36px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  background: #EDE8DF;
-  padding: 48px 44px;
 
-  /* Scope light-palette vars to the form panel */
-  --tp:      #2A221A;
-  --ts:      #5C5048;
-  --tm:      #8A7E76;
-  --tc:      #9A9490;
-  --rule:    rgba(60, 45, 35, 0.10);
-  --rule-em: rgba(60, 45, 35, 0.16);
-  --acc-text: var(--acc);
+  --tp:      #1A1510;
+  --ts:      #3D3228;
+  --tm:      #786B5F;
+  --rule:    rgba(26, 21, 16, 0.1);
+  --rule-em: rgba(26, 21, 16, 0.18);
+  --acc:     #D05A34;
+  --acc-text: #D05A34;
+  --bl:      #D05A34;
+  --r:       10px;
 }
 
 .si-form {
   width: 100%;
-  max-width: 340px;
 }
 
 .si-heading {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 900;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.5px;
   color: var(--tp);
   margin-bottom: 4px;
 }
@@ -92,7 +127,8 @@
 .si-subheading {
   font-size: 13px;
   color: var(--tm);
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  line-height: 1.6;
 }
 
 .si-field { margin-bottom: 20px; }
@@ -110,17 +146,20 @@
 
 .si-input {
   width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1.5px solid var(--rule-em);
+  background: #F5F0EA;
+  border: 1.5px solid var(--rule-em);
+  border-radius: var(--r);
   outline: none;
-  padding: 8px 0;
+  padding: 11px 13px;
   font-size: 15px;
+  font-weight: 500;
   color: var(--tp);
-  font-family: var(--font);
+  font-family: var(--font-sans);
+  transition: border-color 0.2s;
 }
 
-.si-input:focus { border-bottom-color: var(--acc-text); }
+.si-input::placeholder { color: var(--tm); }
+.si-input:focus { border-color: var(--tp); }
 
 .si-row {
   display: flex;
@@ -146,29 +185,31 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  font-family: var(--font);
+  font-family: var(--font-sans);
 }
 
 .si-btn-primary {
   width: 100%;
-  padding: 12px;
-  background: var(--acc);
-  color: #FAF7F3;
+  padding: 13px;
+  background: #D05A34;
+  color: #FDFCFA;
   border: none;
   border-radius: var(--r);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
-  font-family: var(--font);
+  font-family: var(--font-sans);
+  letter-spacing: -0.2px;
   margin-bottom: 16px;
   transition: opacity 0.15s;
 }
 
 .si-btn-primary:hover { opacity: 0.88; }
+.si-btn-primary:disabled { opacity: 0.55; cursor: default; }
 
-/* Variant shown when the email has no account — routes to signup */
+/* New account variant — still coral, no green override */
 .si-btn-primary--signup {
-  background: #2A6B45;
+  background: #D05A34;
 }
 
 .si-divider {
@@ -189,14 +230,9 @@
   color: var(--tm);
 }
 
-.si-btn-sso svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
 .si-btn-sso {
   width: 100%;
-  padding: 10px;
+  padding: 10px 16px;
   background: transparent;
   color: var(--ts);
   border: 1.5px solid var(--rule-em);
@@ -204,44 +240,35 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  font-family: var(--font);
-  margin-bottom: 20px;
-  transition: border-color 0.15s;
+  font-family: var(--font-sans);
+  margin-bottom: 10px;
+  transition: background 0.12s, border-color 0.15s;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  text-align: left;
 }
 
-.si-btn-sso:hover { border-color: var(--rule-em); }
+.si-btn-sso svg { width: 18px; height: 18px; flex-shrink: 0; }
+.si-btn-sso:hover { background: #EDE8E0; border-color: rgba(26, 21, 16, 0.35); }
 
 .si-footer {
-  font-size: 12px;
+  font-size: 11px;
   text-align: center;
   color: var(--tm);
-  margin-top: 16px;
+  margin-top: 20px;
+  line-height: 1.6;
 }
 
 .si-footer a {
-  color: var(--bl);
+  color: var(--ts);
   text-decoration: none;
   font-weight: 600;
 }
 
-@media (max-width: 640px) {
-  .si-card { flex-direction: column; }
-
-  /* Hide the marketing panel on small screens */
-  .si-left { display: none; }
-
-  .si-right { padding: 32px 20px 40px; }
-
-  .si-form { max-width: 100%; }
-}
-
 /* Email validation feedback */
-.si-input--error { border-bottom-color: #C0392B; }
-.si-input--warn  { border-bottom-color: #C07A00; }
+.si-input--error { border-color: #C0392B; }
+.si-input--warn  { border-color: #C07A00; }
 
 .si-field-hint {
   font-size: 11px;
@@ -267,3 +294,9 @@
 }
 
 .si-suggest-btn:hover { color: #5c4100; }
+
+@media (max-width: 640px) {
+  .si-card { flex-direction: column; }
+  .si-left { display: none; }
+  .si-right { padding: 32px 20px 40px; }
+}

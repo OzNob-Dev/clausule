@@ -291,22 +291,24 @@ export default function SignIn() {
   return (
     <div className="si-wrap">
       <div className="si-card">
-        {/* Left panel */}
+        {/* Left dark brand panel */}
         <div className="si-left">
           <div className="si-logo">
-            CLAU<span className="si-logo-accent">SULE</span>
+            <div className="si-logo-bug">
+              <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" style={{ width: 15, height: 15 }}>
+                <path d="M3 5h12M3 9h8M3 13h5" />
+              </svg>
+            </div>
+            <span className="si-brand-name">clausule</span>
           </div>
-          <div>
-            <h1 className="si-tagline">
-              Capture Every Win.<br />Retain Every Insight.
-            </h1>
-            <p className="si-tagline-sub">
-              Transforming daily interactions into a permanent record of professional impact.
-            </p>
+          <div className="si-left-body">
+            <h1 className="si-tagline">Thoughtful records.<br />Better conversations.</h1>
+            <p className="si-tagline-sub">The file note tool built for managers who care about their people — and a brag doc for the people themselves.</p>
           </div>
+          <div className="si-left-footer">Built for teams who care</div>
         </div>
 
-        {/* Right panel */}
+        {/* Right light panel */}
         <div className="si-right">
           <form className="si-form" onSubmit={handleSubmit} noValidate>
             <h2 className="si-heading">Sign in</h2>

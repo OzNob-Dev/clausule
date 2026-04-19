@@ -42,6 +42,40 @@ function SignUpInner() {
     goStep(2)
   }
 
+  if (step === 1) {
+    return (
+      <div className="su-shell-wrap">
+        <div className="su-shell">
+          {/* Left dark brand panel */}
+          <div className="su-shell-left">
+            <div className="su-shell-logo">
+              <div className="su-shell-bug">
+                <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" style={{ width: 15, height: 15 }}>
+                  <path d="M3 5h12M3 9h8M3 13h5" />
+                </svg>
+              </div>
+              <span className="su-shell-brand">clausule</span>
+            </div>
+            <div className="su-shell-body">
+              <h1 className="su-shell-headline">Thoughtful records.<br />Better conversations.</h1>
+              <p className="su-shell-subtext">The file note tool built for managers who care about their people — and a brag doc for the people themselves.</p>
+            </div>
+            <div className="su-shell-footer">Built for teams who care</div>
+          </div>
+
+          {/* Right light panel — su-page scopes the --su-* design tokens */}
+          <div className="su-shell-right su-page">
+            <SignupStepAccount onNext={handleStep1} initialData={step1Initial} />
+            <p className="su-shell-signin-note">
+              Already have an account?{' '}
+              <Link href="/">Sign in</Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="su-page">
       <div className="su-bg-lines" aria-hidden="true" />
@@ -67,28 +101,17 @@ function SignUpInner() {
 
       {/* Main */}
       <div className="su-main">
-        {step === 1 ? (
-          <div className="su-step1-layout">
-            <div className="su-step1-form">
-              <SignupStepAccount onNext={handleStep1} initialData={step1Initial} />
-            </div>
-            <div className="su-aside">
-              <SignupAside />
-            </div>
-          </div>
-        ) : (
-          <div className="su-narrow">
-            {step === 2 && (
-              <SignupStepPayment
-                onNext={(data) => { setStep2Data(data); completePayment() }}
-                onBack={(data) => { setStep2Data(data); goStep(1) }}
-                initialData={step2Data}
-                accountData={step1Data}
-              />
-            )}
-            {step === 3 && <SignupStepDone email={step1Data.email} />}
-          </div>
-        )}
+        <div className="su-narrow">
+          {step === 2 && (
+            <SignupStepPayment
+              onNext={(data) => { setStep2Data(data); completePayment() }}
+              onBack={(data) => { setStep2Data(data); goStep(1) }}
+              initialData={step2Data}
+              accountData={step1Data}
+            />
+          )}
+          {step === 3 && <SignupStepDone email={step1Data.email} />}
+        </div>
       </div>
     </div>
   )

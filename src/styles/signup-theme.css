@@ -1,4 +1,137 @@
 /* ── Sign Up page theme + layout ─────────────────────────────── */
+
+/* Two-panel shell for step 1 */
+.su-shell-wrap {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #F5F0EA;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 47px,
+    rgba(26, 21, 16, 0.028) 47px,
+    rgba(26, 21, 16, 0.028) 48px
+  );
+  font-family: var(--su-font, 'DM Sans', sans-serif);
+}
+
+.su-shell {
+  display: flex;
+  width: 820px;
+  max-width: 100%;
+  border: 1px solid rgba(26, 21, 16, 0.18);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.su-shell-left {
+  width: 268px;
+  flex-shrink: 0;
+  background: #2A221A;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 28px;
+}
+
+.su-shell-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.su-shell-bug {
+  width: 28px;
+  height: 28px;
+  background: #D05A34;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.su-shell-brand {
+  font-size: 15px;
+  font-weight: 800;
+  color: #FBF7F2;
+  letter-spacing: -0.3px;
+}
+
+.su-shell-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.su-shell-headline {
+  font-size: 26px;
+  font-weight: 900;
+  color: #FBF7F2;
+  letter-spacing: -0.8px;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.su-shell-subtext {
+  font-size: 13px;
+  color: #B8B2AC;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.su-shell-footer {
+  font-size: 11px;
+  color: #786B5F;
+}
+
+.su-shell-right {
+  flex: 1;
+  background: #FDFCFA;
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  width: auto;
+  min-width: 0;
+}
+
+
+/* su-page inside shell-right: keep token scoping, reset layout */
+.su-shell-right.su-page {
+  min-height: 0;
+  width: auto;
+  flex-direction: column;
+  background: #FDFCFA;
+}
+
+.su-shell-signin-note {
+  font-size: 11px;
+  color: #786B5F;
+  text-align: center;
+  margin-top: 20px;
+  line-height: 1.6;
+}
+
+.su-shell-signin-note a {
+  color: #3D3228;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .su-shell { flex-direction: column; }
+  .su-shell-left { display: none; }
+  .su-shell-right { padding: 32px 20px 40px; }
+}
+
 .su-page {
   --su-canvas:    #F5F0EA;
   --su-card:      #FDFCFA;
