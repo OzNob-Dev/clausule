@@ -25,6 +25,53 @@ test('new visitor can route from sign in to signup when email is unknown', async
   await expect(page.getByText(/or sign up with email/i)).toHaveCount(0)
 })
 
+test('login sends known OTP accounts to the OTP screen', async ({ page }) => {
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
+  })
+  await page.route('**/api/auth/check-email', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: false, ssoProvider: null }),
+    })
+  })
+  await page.route('**/api/auth/send-code', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) })
+  })
+
+  await page.goto('/')
+  await page.getByLabel('Email').fill('otp@example.com')
+  await page.getByRole('button', { name: /send code/i }).click()
+
+  await expect(page.getByText('Check your email')).toBeVisible()
+  await expect(page.getByText(/we sent a code to/i)).toBeVisible()
+  await expect(page.getByText('otp@example.com')).toBeVisible()
+})
+
+test('login routes known SSO accounts through SSO provider sign-in', async ({ page }) => {
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
+  })
+  await page.route('**/api/auth/check-email', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: true, ssoProvider: 'google' }),
+    })
+  })
+  await page.route('**/api/auth/sso/google', async (route) => {
+    await route.fulfill({ status: 204 })
+  })
+
+  await page.goto('/')
+  await page.getByLabel('Email').fill('sso@example.com')
+  const ssoRequest = page.waitForRequest('**/api/auth/sso/google')
+  await page.getByRole('button', { name: /send code/i }).click()
+
+  expect((await ssoRequest).url()).toContain('/api/auth/sso/google')
+})
+
 test('signup preloads SSO profile fields from redirect params', async ({ page }) => {
   await page.goto('/signup?email=ada%40example.com&firstName=Ada&lastName=Lovelace&sso=google')
 

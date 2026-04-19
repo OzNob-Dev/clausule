@@ -6,16 +6,23 @@
  * the user to the correct MFA step.
  *
  * Body:     { email: string }
- * Response: { exists: boolean, hasMfa: boolean }
+ * Response: { exists: boolean, hasMfa: boolean, hasSso: boolean, ssoProvider: string | null }
  */
 
 import { NextResponse }   from 'next/server'
-import { select }         from '@api/_lib/supabase.js'
+import { getAuthUser,
+         select }         from '@api/_lib/supabase.js'
 import { RateLimiter }    from '@api/_lib/rate-limit.js'
 import { validateEmail }  from '@/utils/emailValidation'
 
 // 20 checks per minute per IP — enough for normal use, tight for enumeration.
 const limiter = new RateLimiter({ limit: 20, windowMs: 60 * 1000 })
+
+function ssoProvider(user) {
+  const provider = user?.app_metadata?.provider
+  if (provider && provider !== 'email') return provider
+  return user?.identities?.find((identity) => identity?.provider && identity.provider !== 'email')?.provider ?? null
+}
 
 export async function POST(request) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
@@ -36,6 +43,8 @@ export async function POST(request) {
 
   const exists = Array.isArray(data) && data.length > 0
   const hasMfa = exists && Boolean(data[0]?.totp_secret)
+  const { data: authUser } = exists ? await getAuthUser(data[0].id) : { data: null }
+  const provider = ssoProvider(authUser?.user ?? authUser)
 
-  return NextResponse.json({ exists, hasMfa })
+  return NextResponse.json({ exists, hasMfa, hasSso: Boolean(provider), ssoProvider: provider })
 }

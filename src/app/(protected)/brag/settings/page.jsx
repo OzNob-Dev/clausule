@@ -104,7 +104,7 @@ export default function BragSettings() {
                 <div className="bss-mfa-divider" />
 
                 {/* Authenticator app row */}
-                <div className="bss-mfa-row">
+                <div className="bss-mfa-row bss-mfa-row--needs-setup">
                   <div className={`bss-mfa-icon${authenticatorAppConfigured || hasSecuritySnapshot ? ' bss-mfa-icon--on' : ''}`} aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <rect x="5" y="2" width="14" height="20" rx="2"/>
