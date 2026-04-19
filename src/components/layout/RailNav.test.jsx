@@ -56,12 +56,12 @@ describe('RailNav MFA lock', () => {
     expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
   })
 
-  it('hides app links when SSO is configured without MFA', () => {
+  it('shows app links when SSO is configured without MFA', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<RailNav />)
 
-    expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/dashboard')
+    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
   })
 })

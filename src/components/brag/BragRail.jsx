@@ -9,8 +9,9 @@ export default function BragRail({ activePage }) {
   const { logout } = useAuth()
   const profile = useProfileStore((state) => state.profile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const mfaSetupRequired = hasSecuritySnapshot && !authenticatorAppConfigured
+  const mfaSetupRequired = hasSecuritySnapshot && !authenticatorAppConfigured && !ssoConfigured
   const initials =
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
     profile.email?.[0]?.toUpperCase() ||

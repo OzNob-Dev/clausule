@@ -16,7 +16,8 @@ export default function BragSettings() {
   const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const setSecurity = useProfileStore((state) => state.setSecurity)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const mfaRestrictionEnabled = hasSecuritySnapshot && !authenticatorAppConfigured
+  const showMfaSection = !ssoConfigured
+  const mfaRestrictionEnabled = showMfaSection && hasSecuritySnapshot && !authenticatorAppConfigured
 
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
@@ -80,9 +81,11 @@ export default function BragSettings() {
             />
           )}
 
-          {/* Two-factor authentication */}
-          <div className="bss-section-label">Two-factor authentication</div>
-          <div className="bss-card">
+          {showMfaSection && (
+            <>
+              {/* Two-factor authentication */}
+              <div className="bss-section-label">Two-factor authentication</div>
+              <div className="bss-card">
 
                 {/* Email code row */}
                 <div className="bss-mfa-row">
@@ -153,6 +156,8 @@ export default function BragSettings() {
                   <TotpSetupPanel onDone={handleTotpDone} onCancel={() => setTotpExpanded(false)} />
                 )}
               </div>
+            </>
+          )}
 
           {/* Danger zone */}
           <div className="bss-danger-section">

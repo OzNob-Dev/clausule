@@ -75,12 +75,12 @@ describe('BragRail integration', () => {
     expect(screen.queryByRole('button', { name: /settings/i })).not.toBeInTheDocument()
   })
 
-  it('hides app navigation when SSO is configured without MFA', () => {
+  it('shows app navigation when SSO is configured without MFA', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<BragRail activePage="settings" />)
 
-    expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /settings/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /brag doc/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /settings/i })).toBeInTheDocument()
   })
 })

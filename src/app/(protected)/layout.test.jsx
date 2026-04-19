@@ -67,12 +67,12 @@ describe('ProtectedLayout MFA lock', () => {
     await waitFor(() => expect(replace).toHaveBeenCalledWith('/brag/settings'))
   })
 
-  it('redirects even when SSO is configured', async () => {
+  it('allows app access when SSO is configured without MFA', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<ProtectedLayout><div>SSO enabled app</div></ProtectedLayout>)
 
-    expect(screen.queryByText('SSO enabled app')).not.toBeInTheDocument()
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/brag/settings'))
+    expect(screen.getByText('SSO enabled app')).toBeInTheDocument()
+    expect(replace).not.toHaveBeenCalled()
   })
 })

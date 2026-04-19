@@ -195,7 +195,7 @@ test('protected app redirects to brag settings until authenticator setup is comp
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false },
       }),
     })
   })
@@ -209,7 +209,7 @@ test('protected app redirects to brag settings until authenticator setup is comp
   await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible()
 })
 
-test('brag settings highlights authenticator setup even when SSO is configured', async ({ page }) => {
+test('brag settings shows SSO and hides MFA when SSO is configured', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({
       status: 200,
@@ -225,11 +225,9 @@ test('brag settings highlights authenticator setup even when SSO is configured',
   await page.goto('/brag/settings')
 
   await expect(page.getByText('Single sign-on')).toBeVisible()
-  await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
-  await expect(page.locator('.bss-totp-empty--required')).toBeVisible()
-  await expect(page.getByLabel('Authenticator app is not set up')).toHaveCount(0)
-  await expect(page.getByText('Empty')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /set up/i })).toBeVisible()
+  await expect(page.getByText('Two-factor authentication', { exact: true })).toHaveCount(0)
+  await expect(page.getByText(/authenticator setup required/i)).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /set up/i })).toHaveCount(0)
 })
 
 test('protected app redirects after non-OTP auth until authenticator setup is complete', async ({ page }) => {
@@ -240,7 +238,7 @@ test('protected app redirects after non-OTP auth until authenticator setup is co
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false, ssoConfigured: true },
+        security: { authenticatorAppConfigured: false, authenticatedWithOtp: false, ssoConfigured: false },
       }),
     })
   })
@@ -261,14 +259,14 @@ test('brag settings shows active two-factor status when authenticator MFA is ena
       body: JSON.stringify({
         user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
         profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' },
-        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: true },
+        security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: false },
       }),
     })
   })
 
   await page.goto('/brag/settings')
 
-  await expect(page.getByText('Single sign-on')).toBeVisible()
+  await expect(page.getByText('Single sign-on')).toHaveCount(0)
   await expect(page.getByText('Two-factor authentication', { exact: true })).toBeVisible()
   await expect(page.getByText('Authenticator app', { exact: true })).toBeVisible()
   await expect(page.getByLabel('Authenticator app is active')).toHaveText('Active')

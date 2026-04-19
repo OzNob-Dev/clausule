@@ -43,8 +43,8 @@ describe('BragSettings integration', () => {
     expect(within(row).getByText('ada@example.com')).toBeInTheDocument()
     expect(within(row).getByLabelText('Google single sign-on is active')).toHaveTextContent('Active')
     expect(screen.queryByText('Microsoft')).not.toBeInTheDocument()
-    expect(screen.getByText('Two-factor authentication')).toBeInTheDocument()
-    expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).toHaveClass('bss-totp-empty--required')
+    expect(screen.queryByText('Two-factor authentication')).not.toBeInTheDocument()
+    expect(screen.queryByText(/authenticator setup required/i)).not.toBeInTheDocument()
   })
 
   it('hides SSO status when the account did not use SSO', async () => {
