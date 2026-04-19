@@ -22,6 +22,15 @@ function profileQuery(email) {
   return new URLSearchParams({ email: `ilike.${email}`, select: 'id,totp_secret', limit: '1' }).toString()
 }
 
+function paidQuery(userId) {
+  return new URLSearchParams({
+    user_id: `eq.${userId}`,
+    status: 'in.(active,trialing)',
+    select: 'id',
+    limit: '1',
+  }).toString()
+}
+
 function ssoProvider(user) {
   const provider = user?.app_metadata?.provider
   if (provider && provider !== 'email') return provider
@@ -43,12 +52,31 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
 
-  const { data } = await select('profiles', profileQuery(email))
+  const { data, error } = await select('profiles', profileQuery(email))
+  if (error) {
+    console.error('[check-email] profile lookup failed:', error)
+    return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
+  }
 
   const exists = Array.isArray(data) && data.length > 0
+  if (!exists) {
+    return NextResponse.json({ exists: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: false })
+  }
+
+  const { data: paidRows, error: paidError } = await select('subscriptions', paidQuery(data[0].id))
+  if (paidError) {
+    console.error('[check-email] subscription lookup failed:', paidError)
+    return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
+  }
+
+  const hasPaid = Array.isArray(paidRows) && paidRows.length > 0
   const hasMfa = exists && Boolean(data[0]?.totp_secret)
-  const { data: authUser } = exists ? await getAuthUser(data[0].id) : { data: null }
+  const { data: authUser, error: authError } = await getAuthUser(data[0].id)
+  if (authError) {
+    console.error('[check-email] auth user lookup failed:', authError)
+    return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
+  }
   const provider = ssoProvider(authUser?.user ?? authUser)
 
-  return NextResponse.json({ exists, hasMfa, hasSso: Boolean(provider), ssoProvider: provider })
+  return NextResponse.json({ exists: hasPaid, hasMfa, hasSso: Boolean(provider), ssoProvider: provider, hasPaid })
 }

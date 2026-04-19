@@ -21,7 +21,9 @@ describe('check-email route', () => {
   })
 
   it('returns SSO provider details for SSO accounts', async () => {
-    select.mockResolvedValueOnce({ data: [{ id: 'user-1', totp_secret: null }] })
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', totp_secret: null }] })
+      .mockResolvedValueOnce({ data: [{ id: 'sub-1' }] })
     getAuthUser.mockResolvedValueOnce({
       data: {
         app_metadata: { provider: 'google' },
@@ -32,13 +34,16 @@ describe('check-email route', () => {
     const response = await POST(request('Ada@Example.com'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, hasMfa: false, hasSso: true, ssoProvider: 'google' })
+    expect(data).toEqual({ exists: true, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true })
     expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Ctotp_secret&limit=1')
+    expect(select).toHaveBeenCalledWith('subscriptions', 'user_id=eq.user-1&status=in.%28active%2Ctrialing%29&select=id&limit=1')
     expect(getAuthUser).toHaveBeenCalledWith('user-1')
   })
 
   it('returns OTP account details for non-SSO accounts', async () => {
-    select.mockResolvedValueOnce({ data: [{ id: 'user-2', totp_secret: null }] })
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-2', totp_secret: null }] })
+      .mockResolvedValueOnce({ data: [{ id: 'sub-2' }] })
     getAuthUser.mockResolvedValueOnce({
       data: {
         app_metadata: { provider: 'email' },
@@ -49,7 +54,19 @@ describe('check-email route', () => {
     const response = await POST(request('otp@example.com', '127.0.0.2'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, hasMfa: false, hasSso: false, ssoProvider: null })
+    expect(data).toEqual({ exists: true, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: true })
+  })
+
+  it('returns not found for unpaid accounts', async () => {
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-3', totp_secret: null }] })
+      .mockResolvedValueOnce({ data: [] })
+    getAuthUser.mockResolvedValueOnce({ data: { app_metadata: { provider: 'email' }, identities: [{ provider: 'email' }] } })
+
+    const response = await POST(request('unpaid@example.com', '127.0.0.4'))
+    const data = await response.json()
+
+    expect(data).toEqual({ exists: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: false })
   })
 
   it('does not fetch auth user when no profile exists', async () => {
@@ -58,7 +75,18 @@ describe('check-email route', () => {
     const response = await POST(request('new@example.com', '127.0.0.3'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: false, hasMfa: false, hasSso: false, ssoProvider: null })
+    expect(data).toEqual({ exists: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: false })
+    expect(getAuthUser).not.toHaveBeenCalled()
+  })
+
+  it('fails closed when profile lookup fails', async () => {
+    select.mockResolvedValueOnce({ data: null, error: { message: 'db down' } })
+
+    const response = await POST(request('ada@example.com', '127.0.0.5'))
+    const data = await response.json()
+
+    expect(response.status).toBe(500)
+    expect(data).toEqual({ error: 'Email check failed' })
     expect(getAuthUser).not.toHaveBeenCalled()
   })
 })

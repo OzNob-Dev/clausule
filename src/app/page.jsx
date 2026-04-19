@@ -199,6 +199,7 @@ export default function SignIn() {
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ email: resolved }),
         })
+        if (!res.ok) throw new Error('Email check failed')
         const data = await res.json()
         if (!data.exists) {
           setEmailStatus('new')

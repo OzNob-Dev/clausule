@@ -69,6 +69,19 @@ test('login button submits after the email field blurs', async ({ page }) => {
   expect(checks).toBe(1)
 })
 
+test('login does not send users to signup when email check fails', async ({ page }) => {
+  await page.route('**/api/auth/check-email', async (route) => {
+    await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Email check failed' }) })
+  })
+
+  await page.goto('/')
+  await page.getByLabel('Email').fill('paid@example.com')
+  await page.getByRole('button', { name: /login/i }).click()
+
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole('button', { name: /login/i })).toBeVisible()
+})
+
 test('login sends known OTP accounts to the OTP screen', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
@@ -77,7 +90,7 @@ test('login sends known OTP accounts to the OTP screen', async ({ page }) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: false, ssoProvider: null }),
+      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: true }),
     })
   })
   await page.route('**/api/auth/send-code', async (route) => {
@@ -101,7 +114,7 @@ test('login routes known SSO accounts through SSO provider sign-in', async ({ pa
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: true, ssoProvider: 'google' }),
+      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true }),
     })
   })
   await page.route('**/api/auth/sso/google', async (route) => {
