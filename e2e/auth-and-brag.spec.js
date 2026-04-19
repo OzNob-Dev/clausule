@@ -253,7 +253,7 @@ test('protected app redirects after non-OTP auth until authenticator setup is co
   await expect(page.getByRole('button', { name: /brag doc/i })).toHaveCount(0)
 })
 
-test('brag settings hides two-factor setup when authenticator MFA is enabled', async ({ page }) => {
+test('brag settings shows active two-factor status when authenticator MFA is enabled', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({
       status: 200,
@@ -269,9 +269,11 @@ test('brag settings hides two-factor setup when authenticator MFA is enabled', a
   await page.goto('/brag/settings')
 
   await expect(page.getByText('Single sign-on')).toBeVisible()
-  await expect(page.getByText('Two-factor authentication', { exact: true })).toHaveCount(0)
-  await expect(page.getByText('Authenticator app', { exact: true })).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /reconfigure/i })).toHaveCount(0)
+  await expect(page.getByText('Two-factor authentication', { exact: true })).toBeVisible()
+  await expect(page.getByText('Authenticator app', { exact: true })).toBeVisible()
+  await expect(page.getByLabel('Authenticator app is active')).toHaveText('Active')
+  await expect(page.getByText(/authenticator setup required/i)).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /set up/i })).toHaveCount(0)
 })
 
 test('brag settings shows active SSO status for enabled providers', async ({ page }) => {

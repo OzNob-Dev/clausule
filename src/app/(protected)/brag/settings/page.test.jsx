@@ -102,7 +102,7 @@ describe('BragSettings integration', () => {
     expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).toHaveClass('bss-totp-empty--required')
   })
 
-  it('hides two-factor authentication when authenticator MFA is enabled', async () => {
+  it('shows active two-factor authentication when authenticator MFA is enabled', async () => {
     const { useProfileStore } = await import('@/stores/useProfileStore')
     useProfileStore.getState().setProfile({
       firstName: 'Ada',
@@ -115,8 +115,10 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
 
-    expect(screen.queryByText('Two-factor authentication')).not.toBeInTheDocument()
-    expect(screen.queryByText('Authenticator app')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /reconfigure/i })).not.toBeInTheDocument()
+    expect(screen.getByText('Two-factor authentication')).toBeInTheDocument()
+    expect(screen.getByText('Authenticator app')).toBeInTheDocument()
+    expect(screen.getByLabelText('Authenticator app is active')).toHaveTextContent('Active')
+    expect(screen.queryByText(/authenticator setup required/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /set up/i })).not.toBeInTheDocument()
   })
 })

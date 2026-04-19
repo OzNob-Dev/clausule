@@ -80,11 +80,9 @@ export default function BragSettings() {
             />
           )}
 
-          {!authenticatorAppConfigured && (
-            <>
-              {/* Two-factor authentication */}
-              <div className="bss-section-label">Two-factor authentication</div>
-              <div className="bss-card">
+          {/* Two-factor authentication */}
+          <div className="bss-section-label">Two-factor authentication</div>
+          <div className="bss-card">
 
                 {/* Email code row */}
                 <div className="bss-mfa-row">
@@ -115,10 +113,14 @@ export default function BragSettings() {
                   <div className="bss-mfa-info">
                     <div className="bss-mfa-title">Authenticator app</div>
                     <div className="bss-mfa-sub">
-                      Required — set up an authenticator app to unlock the rest of Clausule.
+                      {authenticatorAppConfigured
+                        ? 'Authenticator app verification is active for this account.'
+                        : 'Required — set up an authenticator app to unlock the rest of Clausule.'}
                     </div>
                   </div>
-                  {hasSecuritySnapshot && (
+                  {authenticatorAppConfigured ? (
+                    <span className="bss-mfa-status bss-mfa-status--on" aria-label="Authenticator app is active">Active</span>
+                  ) : hasSecuritySnapshot && (
                     <button
                       className="bss-mfa-reconfig-btn"
                       onClick={() => setTotpExpanded((v) => !v)}
@@ -137,7 +139,7 @@ export default function BragSettings() {
                   </div>
                 )}
 
-                {hasSecuritySnapshot && !totpExpanded && (
+                {hasSecuritySnapshot && !authenticatorAppConfigured && !totpExpanded && (
                   <div className={`bss-totp-empty${mfaRestrictionEnabled ? ' bss-totp-empty--required' : ''}`} role="status" aria-live="polite">
                     <div className="bss-totp-empty-title">Authenticator setup required</div>
                     <p className="bss-totp-empty-copy">
@@ -146,12 +148,10 @@ export default function BragSettings() {
                   </div>
                 )}
 
-                {totpExpanded && hasSecuritySnapshot && (
+                {!authenticatorAppConfigured && totpExpanded && hasSecuritySnapshot && (
                   <TotpSetupPanel onDone={handleTotpDone} onCancel={() => setTotpExpanded(false)} />
                 )}
               </div>
-            </>
-          )}
 
           {/* Danger zone */}
           <div className="bss-danger-section">
