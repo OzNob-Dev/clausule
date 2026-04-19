@@ -18,6 +18,10 @@ import { validateEmail }  from '@/utils/emailValidation'
 // 20 checks per minute per IP — enough for normal use, tight for enumeration.
 const limiter = new RateLimiter({ limit: 20, windowMs: 60 * 1000 })
 
+function profileQuery(email) {
+  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,totp_secret', limit: '1' }).toString()
+}
+
 function ssoProvider(user) {
   const provider = user?.app_metadata?.provider
   if (provider && provider !== 'email') return provider
@@ -39,7 +43,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
 
-  const { data } = await select('profiles', `email=eq.${email}&select=id,totp_secret&limit=1`)
+  const { data } = await select('profiles', profileQuery(email))
 
   const exists = Array.isArray(data) && data.length > 0
   const hasMfa = exists && Boolean(data[0]?.totp_secret)

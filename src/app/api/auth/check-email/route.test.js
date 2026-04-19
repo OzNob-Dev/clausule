@@ -33,6 +33,7 @@ describe('check-email route', () => {
     const data = await response.json()
 
     expect(data).toEqual({ exists: true, hasMfa: false, hasSso: true, ssoProvider: 'google' })
+    expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Ctotp_secret&limit=1')
     expect(getAuthUser).toHaveBeenCalledWith('user-1')
   })
 
