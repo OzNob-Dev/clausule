@@ -18,23 +18,13 @@
  */
 
 import { NextResponse }                    from 'next/server'
-import crypto                              from 'node:crypto'
-import { select, update }                  from '@api/_lib/supabase.js'
 import { appendSessionCookies,
          createPersistentSession }         from '@api/_lib/session.js'
 import { RateLimiter }                     from '@api/_lib/rate-limit.js'
+import { verifyEmailOtpLogin }             from '@features/auth/server/loginVerification.js'
 
 // 5 attempts per 10 minutes per email.
 const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
-
-function profileQuery(email) {
-  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role', limit: '1' }).toString()
-}
-
-function safeEqual(a, b) {
-  if (a.length !== b.length) return false
-  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
-}
 
 export async function POST(request) {
   const body  = await request.json().catch(() => ({}))
@@ -54,60 +44,13 @@ export async function POST(request) {
     )
   }
 
-  // ── 1. Fetch the most recent unused, unexpired OTP ─────────────────────────
-  const query = new URLSearchParams({
-    email:      `eq.${email}`,
-    used_at:    'is.null',
-    expires_at: `gt.${new Date().toISOString()}`,
-    order:      'created_at.desc',
-    limit:      '1',
-  })
-
-  const { data: rows, error: dbError } = await select('otp_codes', query.toString())
-
-  if (dbError || !rows?.length) {
-    // Generic message — don't reveal whether an OTP was ever sent.
-    return NextResponse.json(
-      { error: 'Invalid or expired code — request a new one' },
-      { status: 401 }
-    )
-  }
-
-  // ── 2. Verify OTP (constant-time) ─────────────────────────────────────────
-  const row = rows[0]
-  const [salt, storedHash] = row.code_hash.split(':')
-
-  const submittedHash = crypto
-    .createHmac('sha256', salt)
-    .update(code)
-    .digest('hex')
-
-  if (!safeEqual(submittedHash, storedHash)) {
-    return NextResponse.json(
-      { error: 'Invalid or expired code — request a new one' },
-      { status: 401 }
-    )
-  }
-
-  // Mark OTP as used immediately — single-use guarantee.
-  await update('otp_codes', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
-
-  // ── 3. Load user profile ───────────────────────────────────────────────────
-  const { data: profiles, error: profileError } = await select(
-    'profiles',
-    profileQuery(email)
-  )
-
-  if (profileError || !profiles?.length) {
-    console.error('[verify-code] profile lookup failed:', profileError)
-    return NextResponse.json({ error: 'User account not found' }, { status: 404 })
-  }
-
-  const { id: userId, role } = profiles[0]
+  const result = await verifyEmailOtpLogin({ email, code })
+  if (result.log) console.error(...result.log)
+  if (!result.session) return NextResponse.json(result.body, { status: result.status })
 
   try {
-    const response = NextResponse.json({ ok: true, role })
-    const session = await createPersistentSession({ userId, email, role, authMethod: 'otp' })
+    const response = NextResponse.json(result.body)
+    const session = await createPersistentSession(result.session)
     return appendSessionCookies(response, session)
   } catch (err) {
     console.error('[verify-code] refresh token insert failed:', err)

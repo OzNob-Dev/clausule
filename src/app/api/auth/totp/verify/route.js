@@ -12,19 +12,14 @@
  */
 
 import { NextResponse }                 from 'next/server'
-import { select }                       from '@api/_lib/supabase.js'
 import { appendSessionCookies,
          createPersistentSession }      from '@api/_lib/session.js'
 import { RateLimiter }                  from '@api/_lib/rate-limit.js'
-import { verifyTotp }                   from '@api/_lib/totp.js'
+import { verifyTotpLogin }              from '@features/auth/server/loginVerification.js'
 import { validateEmail }                from '@shared/utils/emailValidation'
 
 // 5 attempts per 10 minutes per email — matches verify-code policy.
 const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
-
-function profileQuery(email) {
-  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role,totp_secret', limit: '1' }).toString()
-}
 
 export async function POST(request) {
   const body  = await request.json().catch(() => ({}))
@@ -43,24 +38,12 @@ export async function POST(request) {
     )
   }
 
-  const { data: profiles, error: dbError } = await select(
-    'profiles',
-    profileQuery(email)
-  )
-
-  if (dbError || !profiles?.length || !profiles[0].totp_secret) {
-    return NextResponse.json({ error: 'Invalid code' }, { status: 401 })
-  }
-
-  const { id: userId, role, totp_secret: secret } = profiles[0]
-
-  if (!verifyTotp(secret, code)) {
-    return NextResponse.json({ error: 'Invalid code' }, { status: 401 })
-  }
+  const result = await verifyTotpLogin({ email, code })
+  if (!result.session) return NextResponse.json(result.body, { status: result.status })
 
   try {
-    const response = NextResponse.json({ ok: true, role })
-    const session  = await createPersistentSession({ userId, email, role, authMethod: 'totp' })
+    const response = NextResponse.json(result.body)
+    const session  = await createPersistentSession(result.session)
     return appendSessionCookies(response, session)
   } catch (err) {
     console.error('[totp/verify POST] session error:', err)
