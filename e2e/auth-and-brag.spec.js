@@ -109,6 +109,32 @@ test('login sends known non-SSO accounts to the authenticator app screen', async
   await expect(page.getByRole('button', { name: /verify/i })).toBeVisible()
 })
 
+test('login sends known OTP accounts to the email code screen', async ({ page }) => {
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
+  })
+  await page.route('**/api/auth/check-email', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ exists: true, isActive: true, isDeleted: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: true }),
+    })
+  })
+  await page.route('**/api/auth/send-code', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) })
+  })
+
+  await page.goto('/')
+  await page.getByLabel('Email').fill('otp@example.com')
+  await page.getByRole('button', { name: /login/i }).click()
+
+  await expect(page.getByText('Verify your code')).toBeVisible()
+  await expect(page.getByText('ot***@example.com')).toBeVisible()
+  await expect(page.getByLabel('Example of the email you received')).toBeVisible()
+  await expect(page.getByText('otp@example.com')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /verify your code/i })).toBeVisible()
+})
+
 test('login routes known SSO accounts through SSO provider sign-in', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })

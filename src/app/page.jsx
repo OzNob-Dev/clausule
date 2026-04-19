@@ -216,7 +216,7 @@ export default function SignIn() {
           window.location.href = `/api/auth/sso/${data.ssoProvider}`
           return
         }
-        status = 'mfa'
+        status = data.hasMfa ? 'mfa' : 'otp'
         setEmailStatus(status)
       } catch {
         setEmailStatus('idle')
@@ -306,34 +306,20 @@ export default function SignIn() {
     const resolvedEmail = storage.getEmail() ?? email
 
     return (
-      <div className="mfa-wrap">
-        <div className="mfa-card" role="main">
-          <button
-            className="mfa-back-btn"
-            onClick={() => { setStep('email'); code.setState('idle'); setVerifyError(null) }}
-            aria-label="Back to sign in"
-          >
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <polyline points="10 4 6 8 10 12" />
-            </svg>
-            Back
-          </button>
-
-          <MfaLoginEmailStep
-            email={resolvedEmail}
-            otp={code.digits}
-            otpRefs={codeRefs}
-            otpState={code.state}
-            expirySeconds={expirySeconds}
-            resendTimer={resendTimer}
-            onChange={code.handleChange}
-            onKeyDown={code.handleKeyDown}
-            onPaste={code.handlePaste}
-            onVerify={() => verifyOtp(code.digits)}
-            onResend={handleResend}
-          />
-        </div>
-      </div>
+      <MfaLoginEmailStep
+        email={resolvedEmail}
+        otp={code.digits}
+        otpRefs={codeRefs}
+        otpState={code.state}
+        expirySeconds={expirySeconds}
+        resendTimer={resendTimer}
+        onBack={() => { setStep('email'); code.setState('idle'); setVerifyError(null) }}
+        onChange={code.handleChange}
+        onKeyDown={code.handleKeyDown}
+        onPaste={code.handlePaste}
+        onVerify={() => verifyOtp(code.digits)}
+        onResend={handleResend}
+      />
     )
   }
 
