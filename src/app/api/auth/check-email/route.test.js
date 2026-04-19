@@ -40,6 +40,23 @@ describe('check-email route', () => {
     expect(getAuthUser).toHaveBeenCalledWith('user-1')
   })
 
+  it('treats paid legacy SSO profiles without is_active as active', async () => {
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-legacy', totp_secret: null, is_active: null, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [{ id: 'sub-legacy' }] })
+    getAuthUser.mockResolvedValueOnce({
+      data: {
+        app_metadata: { provider: 'google' },
+        identities: [{ provider: 'google' }],
+      },
+    })
+
+    const response = await POST(request('legacy@example.com', '127.0.0.8'))
+    const data = await response.json()
+
+    expect(data).toEqual({ exists: true, isActive: true, isDeleted: false, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true })
+  })
+
   it('returns MFA account details for non-SSO accounts', async () => {
     select
       .mockResolvedValueOnce({ data: [{ id: 'user-2', totp_secret: 'SECRET', is_active: true, is_deleted: false }] })

@@ -70,8 +70,9 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
   }
 
+  const hasPaid = Array.isArray(paidRows) && paidRows.length > 0
   const isDeleted = Boolean(profile.is_deleted)
-  const isActive = Boolean(profile.is_active)
+  const isActive = Boolean(profile.is_active) || hasPaid
   const hasMfa = exists && Boolean(profile.totp_secret)
   const { data: authUser, error: authError } = await getAuthUser(profile.id)
   if (authError) {
@@ -79,7 +80,5 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
   }
   const provider = ssoProvider(authUser?.user ?? authUser)
-  const hasPaid = Array.isArray(paidRows) && paidRows.length > 0
-
   return NextResponse.json({ exists, isActive, isDeleted, hasMfa, hasSso: Boolean(provider), ssoProvider: provider, hasPaid })
 }
