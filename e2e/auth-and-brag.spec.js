@@ -22,6 +22,15 @@ test('new visitor can route from sign in to signup when email is unknown', async
   await expect(page.getByText(/create your account/i)).toBeVisible()
 })
 
+test('signup preloads SSO profile fields from redirect params', async ({ page }) => {
+  await page.goto('/signup?email=ada%40example.com&firstName=Ada&lastName=Lovelace&sso=google')
+
+  await expect(page.getByText(/create your account/i)).toBeVisible()
+  await expect(page.getByPlaceholder('Jordan')).toHaveValue('Ada')
+  await expect(page.getByPlaceholder('Ellis')).toHaveValue('Lovelace')
+  await expect(page.getByPlaceholder('you@email.com')).toHaveValue('ada@example.com')
+})
+
 test('protected brag page hydrates profile and shows shared avatar initials', async ({ page }) => {
   await page.route('**/api/auth/bootstrap', async (route) => {
     await route.fulfill({

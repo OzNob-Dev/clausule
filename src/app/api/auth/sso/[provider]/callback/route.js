@@ -18,9 +18,10 @@
 
 import { NextResponse }                          from 'next/server'
 import crypto                                    from 'node:crypto'
-import { select, upsert, createUser }            from '@api/_lib/supabase.js'
+import { select }                                from '@api/_lib/supabase.js'
 import { createPersistentSession,
          appendSessionCookies }                  from '@api/_lib/session.js'
+import { clearAuthCookies }                      from '@api/_lib/auth.js'
 
 // ── Entry points ──────────────────────────────────────────────────────────────
 
@@ -106,13 +107,59 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
 
   if (!userInfo?.email) return redirect(origin, 'no_email')
 
-  // ── 3. Upsert profile + issue session ─────────────────────────────────────
+  // ── 3. Check for existing paid account ───────────────────────────────────
+  let existingProfile
   try {
-    const { userId, role } = await upsertSsoUser(userInfo)
+    const { data } = await select(
+      'profiles',
+      new URLSearchParams({
+        email:  `eq.${userInfo.email}`,
+        select: 'id,role,first_name,last_name',
+        limit:  '1',
+      }).toString()
+    )
+    existingProfile = data?.[0] ?? null
+  } catch (err) {
+    console.error(`[sso/${provider}] profile lookup:`, err.message)
+    return redirect(origin, 'account_error')
+  }
+
+  // New user — send to signup with SSO data prefilled so they complete payment
+  if (!existingProfile) {
+    return redirectToSignup(origin, provider, userInfo)
+  }
+
+  let hasPaid = false
+  try {
+    const { data } = await select(
+      'subscriptions',
+      new URLSearchParams({
+        user_id: 'eq.' + existingProfile.id,
+        status:  'in.(active,trialing)',
+        select:  'id',
+        limit:   '1',
+      }).toString()
+    )
+    hasPaid = Array.isArray(data) && data.length > 0
+  } catch (err) {
+    console.error(`[sso/${provider}] subscription lookup:`, err.message)
+    return redirect(origin, 'account_error')
+  }
+
+  if (!hasPaid) {
+    return redirectToSignup(origin, provider, {
+      email: userInfo.email,
+      firstName: userInfo.firstName || existingProfile.first_name || '',
+      lastName: userInfo.lastName || existingProfile.last_name || '',
+    })
+  }
+
+  // ── 4. Existing user — issue session ──────────────────────────────────────
+  try {
+    const { id: userId, role = 'employee' } = existingProfile
     const dest = `${origin}${role === 'employee' ? '/brag' : '/dashboard'}`
     const res  = NextResponse.redirect(dest)
 
-    // Clear the sso_state cookie
     res.headers.append('Set-Cookie', 'sso_state=; HttpOnly; Path=/; Max-Age=0')
 
     const session = await createPersistentSession({ userId, email: userInfo.email, role })
@@ -286,45 +333,20 @@ async function appleExchange({ code, codeVerifier, redirectUri, appleUser }) {
   }
 }
 
-// ── DB helper ─────────────────────────────────────────────────────────────────
-
-async function upsertSsoUser({ email, firstName, lastName }) {
-  const { data: profiles } = await select(
-    'profiles',
-    new URLSearchParams({ email: `eq.${email}`, select: 'id,role', limit: '1' }).toString()
-  )
-
-  let userId
-  let existingRole = 'employee'
-
-  if (profiles?.length) {
-    userId       = profiles[0].id
-    existingRole = profiles[0].role ?? 'employee'
-  } else {
-    const { data: created, error: createErr } = await createUser({
-      email,
-      user_metadata: {
-        first_name: firstName || undefined,
-        last_name:  lastName  || undefined,
-      },
-    })
-    if (createErr) throw new Error(`createUser: ${JSON.stringify(createErr)}`)
-    userId = created.id
-  }
-
-  // Only upsert name fields when we actually have them (Apple may not on repeat auth)
-  const profileRow = { id: userId, email }
-  if (firstName) profileRow.first_name = firstName
-  if (lastName)  profileRow.last_name  = lastName
-
-  const { data: upserted } = await upsert('profiles', profileRow)
-  const role = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? existingRole
-
-  return { userId, role }
-}
 
 // ── Util ──────────────────────────────────────────────────────────────────────
 
 function redirect(origin, errorCode) {
   return NextResponse.redirect(`${origin}/?sso_error=${encodeURIComponent(errorCode)}`)
+}
+
+function redirectToSignup(origin, provider, userInfo) {
+  const params = new URLSearchParams({ email: userInfo.email, sso: provider })
+  if (userInfo.firstName) params.set('firstName', userInfo.firstName)
+  if (userInfo.lastName) params.set('lastName', userInfo.lastName)
+
+  const res = NextResponse.redirect(`${origin}/signup?${params}`)
+  res.headers.append('Set-Cookie', 'sso_state=; HttpOnly; Path=/; Max-Age=0')
+  clearAuthCookies().forEach((cookie) => res.headers.append('Set-Cookie', cookie))
+  return res
 }

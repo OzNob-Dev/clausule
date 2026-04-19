@@ -42,4 +42,22 @@ describe('SignupStepAccount integration', () => {
       email: 'ada@example.com',
     })
   })
+
+  it('renders prefilled SSO account details', () => {
+    render(
+      <SignupStepAccount
+        initialData={{
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          agreed: false,
+        }}
+        onNext={vi.fn()}
+      />
+    )
+
+    expect(screen.getByPlaceholderText('Jordan')).toHaveValue('Ada')
+    expect(screen.getByPlaceholderText('Ellis')).toHaveValue('Lovelace')
+    expect(screen.getByPlaceholderText('you@email.com')).toHaveValue('ada@example.com')
+  })
 })

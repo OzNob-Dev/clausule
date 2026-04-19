@@ -22,8 +22,17 @@ function SignUpInner() {
   const { step, setStep, step1Data, setStep1Data, step2Data, setStep2Data, completePayment } = useSignup()
   const setProfile = useProfileStore((state) => state.setProfile)
 
-  const emailPrefill = decodeURIComponent(searchParams.get('email') ?? '')
-  const step1Initial = emailPrefill ? { ...step1Data, email: emailPrefill } : step1Data
+  const emailPrefill     = decodeURIComponent(searchParams.get('email')     ?? '')
+  const firstNamePrefill = decodeURIComponent(searchParams.get('firstName') ?? '')
+  const lastNamePrefill  = decodeURIComponent(searchParams.get('lastName')  ?? '')
+  const ssoProvider      = searchParams.get('sso') ?? ''
+
+  const step1Initial = {
+    ...step1Data,
+    ...(emailPrefill     && { email:     emailPrefill }),
+    ...(firstNamePrefill && { firstName: firstNamePrefill }),
+    ...(lastNamePrefill  && { lastName:  lastNamePrefill }),
+  }
 
   const goStep = (n) => {
     setStep(n)
