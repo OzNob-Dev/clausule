@@ -1,5 +1,5 @@
-import { QRCodeSVG } from 'qrcode.react'
 import DigitRow from './DigitRow'
+import TotpSecretBlock from './TotpSecretBlock'
 
 export default function MfaTotpStep({
   copied,
@@ -49,26 +49,17 @@ export default function MfaTotpStep({
                 <p className="mfa-factor-instruction">
                   Scan with your authenticator app, or copy the key below for manual entry.
                 </p>
-                {totpUri && (
-                  <div className="mfa-qr-wrap" aria-label="QR code for authenticator app">
-                    <QRCodeSVG value={totpUri} size={148} bgColor="#FAF7F3" fgColor="#2A221A" level="M" />
-                  </div>
-                )}
-                <div className="mfa-secret-row">
-                  <code className="mfa-secret">{totpSecretDisp}</code>
-                  <button className="mfa-copy-btn" onClick={onCopySecret} aria-label="Copy secret key">
-                    {copied ? (
-                      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M2 7l3.5 3.5L12 3" />
-                      </svg>
-                    ) : (
-                      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <rect x="4" y="4" width="8" height="8" rx="1" />
-                        <path d="M2 10V3a1 1 0 0 1 1-1h7" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
+                <TotpSecretBlock
+                  copied={copied}
+                  copyClassName="mfa-copy-btn"
+                  qrClassName="mfa-qr-wrap"
+                  qrSize={148}
+                  secret={totpSecretDisp}
+                  secretClassName="mfa-secret"
+                  secretRowClassName="mfa-secret-row"
+                  uri={totpUri}
+                  onCopy={onCopySecret}
+                />
                 <DigitRow
                   digits={totp}
                   inputState={totpState}

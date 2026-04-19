@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
 import { apiFetch } from '@/utils/api'
+import { useSixDigitCode } from '@/hooks/useSixDigitCode'
+import DigitRow from '@/components/mfa/DigitRow'
+import TotpSecretBlock from '@/components/mfa/TotpSecretBlock'
 
 export default function TotpSetupPanel({ onDone, onCancel }) {
   const [secret, setSecret]       = useState('')
@@ -8,8 +10,6 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
   const [loading, setLoading]     = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [copied, setCopied]       = useState(false)
-  const [digits, setDigits]       = useState(['', '', '', '', '', ''])
-  const [totpState, setTotpState] = useState('idle') // idle | checking | error | done
   const totpRefs                  = useRef([])
   const timeoutRefs               = useRef([])
 
@@ -48,11 +48,12 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
   }, [loadSetup])
 
   const secretDisp = secret.match(/.{1,4}/g)?.join(' ') ?? secret
+  const totpCode = useSixDigitCode({ inputRefs: totpRefs, scheduleTimeout })
 
   const verifyTotp = useCallback(async (d) => {
     const code = d.join('')
     if (!secret) return
-    setTotpState('checking')
+    totpCode.setState('checking')
     try {
       const res = await apiFetch('/api/auth/totp/setup', {
         method:  'POST',
@@ -60,60 +61,25 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
         body: JSON.stringify({ code, secret }),
       })
       if (res.ok) {
-        setTotpState('done')
+        totpCode.setState('done')
         scheduleTimeout(onDone, 600)
       } else {
-        setTotpState('error')
-        scheduleTimeout(() => {
-          setDigits(['', '', '', '', '', ''])
-          setTotpState('idle')
-          totpRefs.current[0]?.focus()
-        }, 700)
+        totpCode.setError()
       }
     } catch {
-      setTotpState('error')
-      scheduleTimeout(() => { setDigits(['', '', '', '', '', '']); setTotpState('idle') }, 700)
+      totpCode.setError()
     }
-  }, [scheduleTimeout, secret, onDone])
+  }, [scheduleTimeout, secret, onDone, totpCode])
 
-  const handleChange = useCallback((i, val) => {
-    const d = val.replace(/\D/g, '').slice(-1)
-    setDigits((prev) => {
-      const next = prev.map((v, idx) => idx === i ? d : v)
-      if (d && i < 5) scheduleTimeout(() => totpRefs.current[i + 1]?.focus(), 0)
-      if (next.every(Boolean)) verifyTotp(next)
-      return next
-    })
-  }, [scheduleTimeout, verifyTotp])
-
-  const handleKey = useCallback((i, e) => {
-    if (e.key === 'Backspace') {
-      setDigits((prev) => {
-        if (prev[i]) return prev.map((v, idx) => idx === i ? '' : v)
-        if (i > 0) scheduleTimeout(() => totpRefs.current[i - 1]?.focus(), 0)
-        return prev
-      })
-    } else if (e.key === 'ArrowLeft'  && i > 0) totpRefs.current[i - 1]?.focus()
-      else if (e.key === 'ArrowRight' && i < 5) totpRefs.current[i + 1]?.focus()
-  }, [scheduleTimeout])
-
-  const handlePaste = useCallback((e) => {
-    e.preventDefault()
-    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
-    if (!text) return
-    const next = Array.from({ length: 6 }, (_, i) => text[i] ?? '')
-    setDigits(next)
-    totpRefs.current[Math.min(text.length, 5)]?.focus()
-    if (next.every(Boolean)) verifyTotp(next)
-  }, [verifyTotp])
+  useEffect(() => {
+    if (totpCode.state === 'idle' && totpCode.digits.every(Boolean)) verifyTotp(totpCode.digits)
+  }, [totpCode.digits, totpCode.state, verifyTotp])
 
   const copySecret = () => {
     navigator.clipboard?.writeText(secret).catch(() => {})
     setCopied(true)
     scheduleTimeout(() => setCopied(false), 2000)
   }
-
-  const disabled = totpState === 'done' || totpState === 'checking'
 
   return (
     <div id="totp-setup" className="bss-totp-body">
@@ -135,48 +101,28 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
         </div>
       ) : (
         <>
-          {uri && (
-            <div className="bss-qr-wrap" aria-label="QR code for authenticator app">
-              <QRCodeSVG value={uri} size={136} bgColor="#FAF7F3" fgColor="#2A221A" level="M" />
-            </div>
-          )}
-
-          <div className="bss-secret-row">
-            <code className="bss-secret-code">{secretDisp}</code>
-            <button className="bss-copy-btn" onClick={copySecret} aria-label="Copy secret key">
-              {copied
-                ? <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 7l3.5 3.5L12 3"/></svg>
-                : <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="4" width="8" height="8" rx="1"/><path d="M2 10V3a1 1 0 0 1 1-1h7"/></svg>}
-            </button>
-          </div>
-
-          <div
-            className={['bss-otp-row', totpState === 'error' ? 'bss-otp-row--error' : '', totpState === 'done' ? 'bss-otp-row--done' : ''].join(' ')}
-            onPaste={handlePaste}
-            role="group"
-            aria-label="6-digit verification code"
-          >
-            {digits.map((digit, i) => (
-              <input
-                key={i}
-                ref={(el) => { totpRefs.current[i] = el }}
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleChange(i, e.target.value)}
-                onKeyDown={(e) => handleKey(i, e)}
-                className="bss-otp-box"
-                aria-label={`Digit ${i + 1} of 6`}
-                autoFocus={i === 0}
-                autoComplete={i === 0 ? 'one-time-code' : 'off'}
-                disabled={disabled}
-              />
-            ))}
-          </div>
-
-          {totpState === 'error' && (
+          <TotpSecretBlock
+            copied={copied}
+            copyClassName="bss-copy-btn"
+            qrClassName="bss-qr-wrap"
+            qrSize={136}
+            secret={secretDisp}
+            secretClassName="bss-secret-code"
+            secretRowClassName="bss-secret-row"
+            uri={uri}
+            onCopy={copySecret}
+          />
+          <DigitRow
+            ariaLabel="6-digit verification code"
+            digits={totpCode.digits}
+            inputRefs={totpRefs}
+            inputState={totpCode.state}
+            variant="bss"
+            onChange={totpCode.handleChange}
+            onKeyDown={totpCode.handleKeyDown}
+            onPaste={totpCode.handlePaste}
+          />
+          {totpCode.state === 'error' && (
             <p className="bss-otp-error" role="alert">Incorrect code — try again</p>
           )}
         </>
