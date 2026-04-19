@@ -132,7 +132,7 @@ test('login sends known OTP accounts to the email code screen', async ({ page })
   await expect(page.getByText('ot***@example.com')).toBeVisible()
   await expect(page.getByLabel('Example of the email you received')).toBeVisible()
   await expect(page.getByText('otp@example.com')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /verify your code/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /verify your code/i })).toBeDisabled()
 })
 
 test('login routes known SSO accounts through SSO provider sign-in', async ({ page }) => {

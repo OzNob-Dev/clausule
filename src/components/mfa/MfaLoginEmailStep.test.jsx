@@ -38,7 +38,7 @@ describe('MfaLoginEmailStep', () => {
   })
 
   it('calls back, verify, and resend handlers', () => {
-    const props = renderStep()
+    const props = renderStep({ otp: ['1', '2', '3', '4', '5', '6'] })
 
     fireEvent.click(screen.getByRole('button', { name: /back to sign in/i }))
     fireEvent.click(screen.getByRole('button', { name: /verify your code/i }))
@@ -47,5 +47,11 @@ describe('MfaLoginEmailStep', () => {
     expect(props.onBack).toHaveBeenCalledTimes(1)
     expect(props.onVerify).toHaveBeenCalledTimes(1)
     expect(props.onResend).toHaveBeenCalledTimes(1)
+  })
+
+  it('disables verify until the code is complete', () => {
+    renderStep()
+
+    expect(screen.getByRole('button', { name: /verify your code/i })).toBeDisabled()
   })
 })

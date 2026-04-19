@@ -24,6 +24,7 @@ export default function MfaLoginEmailStep({
 }) {
   const mins = Math.floor(expirySeconds / 60)
   const secs = String(expirySeconds % 60).padStart(2, '0')
+  const codeReady = otp.every(Boolean)
 
   return (
     <main className="mfa-email-wrap">
@@ -126,7 +127,7 @@ export default function MfaLoginEmailStep({
           <button
             className="mfa-email-verify"
             onClick={onVerify}
-            disabled={otpState === 'checking' || otpState === 'done' || expirySeconds <= 0}
+            disabled={!codeReady || otpState === 'checking' || otpState === 'done' || expirySeconds <= 0}
             aria-label="Verify your code"
           >
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

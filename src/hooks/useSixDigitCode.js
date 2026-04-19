@@ -67,6 +67,7 @@ export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
   return {
     digits,
     state,
+    reset,
     setState,
     setError,
     handleChange,

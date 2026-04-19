@@ -268,7 +268,7 @@ export default function SignIn() {
       await sendCodeEmail(storage.getEmail() ?? email)
       setExpirySeconds(OTP_TTL_SECONDS)
       setResendTimer(30)
-      code.setState('idle')
+      code.reset()
       setVerifyError(null)
     } catch { /* ignore */ }
   }
