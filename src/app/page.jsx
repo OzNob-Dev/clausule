@@ -211,7 +211,7 @@ export default function SignIn() {
           window.location.href = `/api/auth/sso/${data.ssoProvider}`
           return
         }
-        status = data.hasMfa ? 'mfa' : 'registered'
+        status = 'mfa'
         setEmailStatus(status)
       } catch {
         setEmailStatus('idle')
@@ -278,7 +278,26 @@ export default function SignIn() {
       : 'Login'
 
   // ── Render ────────────────────────────────────────────────────────
-  if (step === 'otp' || step === 'app') {
+  if (step === 'app') {
+    const resolvedEmail = storage.getEmail() ?? email
+
+    return (
+      <MfaLoginAppStep
+        email={resolvedEmail}
+        otp={code.digits}
+        otpRefs={codeRefs}
+        otpState={code.state}
+        onBack={() => { setStep('email'); code.setState('idle'); setVerifyError(null) }}
+        onChange={code.handleChange}
+        onKeyDown={code.handleKeyDown}
+        onPaste={code.handlePaste}
+        onVerify={() => verifyApp(code.digits)}
+        onUseRecovery={null}
+      />
+    )
+  }
+
+  if (step === 'otp') {
     const resolvedEmail = storage.getEmail() ?? email
 
     return (
@@ -295,33 +314,19 @@ export default function SignIn() {
             Back
           </button>
 
-          {step === 'otp' ? (
-            <MfaLoginEmailStep
-              email={resolvedEmail}
-              otp={code.digits}
-              otpRefs={codeRefs}
-              otpState={code.state}
-              expirySeconds={expirySeconds}
-              resendTimer={resendTimer}
-              onChange={code.handleChange}
-              onKeyDown={code.handleKeyDown}
-              onPaste={code.handlePaste}
-              onVerify={() => verifyOtp(code.digits)}
-              onResend={handleResend}
-            />
-          ) : (
-            <MfaLoginAppStep
-              email={resolvedEmail}
-              otp={code.digits}
-              otpRefs={codeRefs}
-              otpState={code.state}
-              onChange={code.handleChange}
-              onKeyDown={code.handleKeyDown}
-              onPaste={code.handlePaste}
-              onVerify={() => verifyApp(code.digits)}
-              onUseRecovery={null}
-            />
-          )}
+          <MfaLoginEmailStep
+            email={resolvedEmail}
+            otp={code.digits}
+            otpRefs={codeRefs}
+            otpState={code.state}
+            expirySeconds={expirySeconds}
+            resendTimer={resendTimer}
+            onChange={code.handleChange}
+            onKeyDown={code.handleKeyDown}
+            onPaste={code.handlePaste}
+            onVerify={() => verifyOtp(code.digits)}
+            onResend={handleResend}
+          />
         </div>
       </div>
     )

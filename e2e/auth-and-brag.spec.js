@@ -82,7 +82,7 @@ test('login does not send users to signup when email check fails', async ({ page
   await expect(page.getByRole('button', { name: /login/i })).toBeVisible()
 })
 
-test('login sends known OTP accounts to the OTP screen', async ({ page }) => {
+test('login sends known non-SSO accounts to the authenticator app screen', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
   })
@@ -101,9 +101,11 @@ test('login sends known OTP accounts to the OTP screen', async ({ page }) => {
   await page.getByLabel('Email').fill('otp@example.com')
   await page.getByRole('button', { name: /login/i }).click()
 
-  await expect(page.getByText('Check your email')).toBeVisible()
-  await expect(page.getByText(/we sent a code to/i)).toBeVisible()
+  await expect(page.getByText('Enter your code')).toBeVisible()
+  await expect(page.getByText(/open your authenticator app/i)).toBeVisible()
+  await expect(page.getByText(/signing in as/i)).toBeVisible()
   await expect(page.getByText('otp@example.com')).toBeVisible()
+  await expect(page.getByRole('button', { name: /verify/i })).toBeVisible()
 })
 
 test('login routes known SSO accounts through SSO provider sign-in', async ({ page }) => {

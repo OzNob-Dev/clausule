@@ -1,3 +1,155 @@
+/* ── MFA Login App ─────────────────────────────────────────────── */
+.mfa-app-wrap {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F5F0EA;
+  padding: 24px;
+}
+
+.mfa-app-shell { width: 100%; max-width: 400px; }
+
+.mfa-app-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 36px;
+}
+
+.mfa-app-logo-bug {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #1A1510;
+  color: #F5F0EA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mfa-app-logo-bug svg { width: 14px; height: 14px; }
+
+.mfa-app-logo-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1A1510;
+}
+
+.mfa-app-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #786B5F;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin-bottom: 24px;
+  cursor: pointer;
+  font-family: var(--font);
+}
+
+.mfa-app-back:hover,
+.mfa-app-back:focus-visible { color: #1A1510; }
+
+.mfa-app-back svg { width: 13px; height: 13px; }
+
+.mfa-app-sec-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #FDF0EC;
+  border-radius: 8px;
+  margin-bottom: 28px;
+}
+
+.mfa-app-sec-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #D05A34;
+  background: rgba(208, 90, 52, 0.15);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mfa-app-sec-icon svg { width: 16px; height: 16px; }
+
+.mfa-app-sec-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5B4E42;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.mfa-app-sec-text strong {
+  color: #1A1510;
+  font-weight: 700;
+}
+
+.mfa-app-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #1A1510;
+  margin: 0 0 6px;
+}
+
+.mfa-app-sub {
+  font-size: 14px;
+  color: #5B4E42;
+  line-height: 1.65;
+  margin: 0 0 28px;
+}
+
+.mfa-app-btn {
+  width: 100%;
+  background: #1A1510;
+  color: #F5F0EA;
+  border: 0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 15px;
+  cursor: pointer;
+  font-family: var(--font);
+  margin: 14px 0 16px;
+}
+
+.mfa-app-btn:hover:not(:disabled) { opacity: 0.85; }
+
+.mfa-app-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.mfa-app-footer {
+  font-size: 12px;
+  font-weight: 600;
+  color: #786B5F;
+  text-align: center;
+  margin: 0;
+}
+
+.mfa-app-link {
+  color: #3D3228;
+  text-decoration: underline;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.mfa-app-link:hover,
+.mfa-app-link:focus-visible { color: #1A1510; }
+
 /* ── MFA Setup ─────────────────────────────────────────────────── */
 .mfa-wrap {
   width: 100%;
@@ -457,4 +609,3 @@
   flex-direction: column;
   gap: 8px;
 }
-
