@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { storage } from '@shared/utils/storage'
 import { apiFetch, jsonRequest } from '@shared/utils/api'
+import { useCountdown } from '@shared/hooks/useCountdown'
+import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 import MfaOtpStep from '@features/mfa/components/MfaOtpStep'
 import MfaSuccessStep from '@features/mfa/components/MfaSuccessStep'
@@ -19,7 +21,7 @@ export default function MfaSetup() {
   const [email, setEmail] = useState('your email')
   const [hasMfaSetup, setHasMfaSetup] = useState(false)
 
-  const [resendTimer, setResendTimer] = useState(30)
+  const [resendTimer, , resetResendTimer] = useCountdown(30)
   const otpRefs = useRef([])
 
   const [totpSecret, setTotpSecret]         = useState('')
@@ -28,22 +30,11 @@ export default function MfaSetup() {
   const [totpLoading, setTotpLoading]       = useState(false)
   const [copied, setCopied]                 = useState(false)
   const totpRefs = useRef([])
-  const timeoutRefs = useRef([])
-
-  const scheduleTimeout = useCallback((fn, delay) => {
-    const id = setTimeout(fn, delay)
-    timeoutRefs.current.push(id)
-    return id
-  }, [])
+  const scheduleTimeout = useTrackedTimeout()
 
   useEffect(() => {
     setEmail(storage.getEmail() || 'your email')
     setHasMfaSetup(storage.getMfaSetup())
-  }, [])
-
-  useEffect(() => () => {
-    timeoutRefs.current.forEach(clearTimeout)
-    timeoutRefs.current = []
   }, [])
 
   // Fetch real TOTP secret when entering step 2
@@ -61,13 +52,6 @@ export default function MfaSetup() {
       .catch(() => {})
       .finally(() => setTotpLoading(false))
   }, [step, totpSecret])
-
-  // Resend countdown
-  useEffect(() => {
-    if (resendTimer <= 0) return
-    const id = setTimeout(() => setResendTimer((n) => n - 1), 1000)
-    return () => clearTimeout(id)
-  }, [resendTimer])
 
   const otpCode = useSixDigitCode({
     inputRefs: otpRefs,
@@ -174,7 +158,7 @@ export default function MfaSetup() {
             onChange={otpCode.handleChange}
             onKeyDown={otpCode.handleKeyDown}
             onPaste={otpCode.handlePaste}
-            onResend={() => setResendTimer(30)}
+            onResend={resetResendTimer}
           />
         )}
 

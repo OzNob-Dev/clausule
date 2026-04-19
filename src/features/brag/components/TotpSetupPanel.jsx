@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { apiFetch, jsonRequest } from '@shared/utils/api'
+import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 import DigitRow from '@features/mfa/components/DigitRow'
 import TotpSecretBlock from '@features/mfa/components/TotpSecretBlock'
@@ -11,18 +12,7 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
   const [loadError, setLoadError] = useState(false)
   const [copied, setCopied]       = useState(false)
   const totpRefs                  = useRef([])
-  const timeoutRefs               = useRef([])
-
-  const scheduleTimeout = useCallback((fn, delay) => {
-    const id = setTimeout(fn, delay)
-    timeoutRefs.current.push(id)
-    return id
-  }, [])
-
-  useEffect(() => () => {
-    timeoutRefs.current.forEach(clearTimeout)
-    timeoutRefs.current = []
-  }, [])
+  const scheduleTimeout = useTrackedTimeout()
 
   const loadSetup = useCallback(() => {
     setLoading(true)

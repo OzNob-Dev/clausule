@@ -3,20 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppShell } from '@shared/components/layout/AppShell'
+import { DateCategoryFields, EntryTextFields, Field, NoteTypeButtons } from '@features/manager/entries/EntryFormFields'
 import '@features/manager/styles/entry-form.css'
 
-const CATEGORIES = ['Performance', 'Conduct', 'Development']
-const NOTE_TYPES = ['Check-in', 'Note', 'Concern', 'Growth', 'Incident', 'Commendation']
 const EMPLOYEES = ['Jordan Ellis', 'Sara Chen', "Marcus O'Brien", 'Priya Lal', 'Tom Walsh', 'Riya Nair']
-
-function Field({ label, children }) {
-  return (
-    <div className="ef-field">
-      <div className="ef-field-label">{label}</div>
-      {children}
-    </div>
-  )
-}
 
 export default function NewEntry() {
   const router = useRouter()
@@ -62,66 +52,14 @@ export default function NewEntry() {
           </select>
         </Field>
 
-        {/* Date + Category */}
-        <div className="ef-grid">
-          <div>
-            <div className="ef-field-label">Date</div>
-            <input
-              type="date"
-              value={form.date}
-              onChange={(e) => set('date', e.target.value)}
-              className="ef-input"
-            />
-          </div>
-          <div>
-            <div className="ef-field-label">Category</div>
-            <select
-              value={form.category}
-              onChange={(e) => set('category', e.target.value)}
-              className="ef-input"
-              style={{ appearance: 'none', cursor: 'pointer' }}
-            >
-              {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-            </select>
-          </div>
-        </div>
-
-        {/* Note type */}
-        <Field label="Note type">
-          <div className="ef-type-btns">
-            {NOTE_TYPES.map((t) => (
-              <button
-                key={t}
-                onClick={() => set('type', t)}
-                className={`ef-type-btn${form.type === t ? ' ef-type-btn--active' : ''}`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </Field>
-
-        {/* Title */}
-        <Field label="Title">
-          <input
-            type="text"
-            value={form.title}
-            onChange={(e) => set('title', e.target.value)}
-            placeholder="What is this entry about?"
-            className="ef-input"
-          />
-        </Field>
-
-        {/* Details */}
-        <Field label="Details">
-          <textarea
-            value={form.details}
-            onChange={(e) => set('details', e.target.value)}
-            rows={6}
-            placeholder="What was discussed, agreed, or observed. Write plainly."
-            className="ef-input ef-input--textarea"
-          />
-        </Field>
+        <DateCategoryFields form={form} onChange={set} />
+        <NoteTypeButtons value={form.type} onChange={set} />
+        <EntryTextFields
+          form={form}
+          onChange={set}
+          titlePlaceholder="What is this entry about?"
+          detailsPlaceholder="What was discussed, agreed, or observed. Write plainly."
+        />
 
         {/* Checks */}
         <div className="ef-checks">
