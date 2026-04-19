@@ -63,7 +63,7 @@ function SignUpInner() {
                   <path d="M3 5h12M3 9h8M3 13h5" />
                 </svg>
               </div>
-              <span className="su-shell-brand">clausule</span>
+              <Link href="/" className="su-shell-brand">clausule</Link>
             </div>
             <div className="su-shell-body">
               <h1 className="su-shell-headline">Thoughtful records.<br />Better conversations.</h1>
