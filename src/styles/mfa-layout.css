@@ -62,7 +62,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  background: #FDF0EC;
+  background: #EAF7EF;
   border-radius: 8px;
   margin-bottom: 28px;
 }
@@ -71,8 +71,8 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  color: #D05A34;
-  background: rgba(208, 90, 52, 0.15);
+  color: #1D7A45;
+  background: rgba(29, 122, 69, 0.14);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -105,7 +105,26 @@
   font-size: 14px;
   color: #5B4E42;
   line-height: 1.65;
-  margin: 0 0 28px;
+  margin: 0 0 12px;
+}
+
+.mfa-app-sample {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #C7B8A9;
+  border-radius: 8px;
+  color: #3D3228;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+.mfa-app-sample strong {
+  color: #1A1510;
+  letter-spacing: 0;
 }
 
 .mfa-app-btn {

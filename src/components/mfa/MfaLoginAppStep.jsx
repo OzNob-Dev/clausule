@@ -1,5 +1,12 @@
 import DigitRow from './DigitRow'
 
+function maskEmail(email) {
+  const [name = '', domain = ''] = String(email).split('@')
+  if (!name || !domain) return '**'
+  const visible = name.length <= 2 ? name[0] : `${name[0]}${name.slice(-1)}`
+  return `${visible}**@${domain}`
+}
+
 export default function MfaLoginAppStep({
   email,
   otp,
@@ -40,12 +47,16 @@ export default function MfaLoginAppStep({
             </svg>
           </div>
           <p className="mfa-app-sec-text">
-            Signing in as <strong>{email}</strong>
+            Signing in as <strong>{maskEmail(email)}</strong>
           </p>
         </div>
 
         <h1 className="mfa-app-title">Enter your code</h1>
         <p className="mfa-app-sub">Open your authenticator app and enter the 6-digit code for Clausule.</p>
+        <div className="mfa-app-sample" aria-label="Sample email with hidden OTP code">
+          <span>security@clausule.app</span>
+          <strong aria-label="Hidden sample OTP code">******</strong>
+        </div>
 
         <DigitRow
           digits={otp}
