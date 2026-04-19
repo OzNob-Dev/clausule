@@ -19,6 +19,10 @@ import { appendSessionCookies,
 import { select, upsert,
          createUser }                       from '@api/_lib/supabase.js'
 
+function profileQuery(email) {
+  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role', limit: '1' }).toString()
+}
+
 export async function POST(request) {
   const body      = await request.json().catch(() => ({}))
   const email     = (body.email     ?? '').trim().toLowerCase()
@@ -32,10 +36,7 @@ export async function POST(request) {
     // ── Resolve userId ──────────────────────────────────────────────────────
     let userId
 
-    const { data: profiles } = await select(
-      'profiles',
-      new URLSearchParams({ email: `eq.${email}`, select: 'id', limit: '1' }).toString()
-    )
+    const { data: profiles } = await select('profiles', profileQuery(email))
 
     if (profiles?.length) {
       userId = profiles[0].id
@@ -45,10 +46,16 @@ export async function POST(request) {
         user_metadata: { first_name: firstName, last_name: lastName || undefined },
       })
       if (createErr) {
-        console.error('[register] createUser error:', createErr)
-        return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 })
+        const { data: retryProfiles } = await select('profiles', profileQuery(email))
+        if (retryProfiles?.length) {
+          userId = retryProfiles[0].id
+        } else {
+          console.error('[register] createUser error:', createErr)
+          return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 })
+        }
+      } else {
+        userId = created.id
       }
-      userId = created.id
     }
 
     // ── Save / update profile ───────────────────────────────────────────────
