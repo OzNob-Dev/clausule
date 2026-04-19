@@ -240,7 +240,7 @@ export default function SignIn() {
     }
   }
 
-  const handleBlur = () => doSubmit(email)
+  const handleBlur = () => setTouched(true)
 
   const handlePaste = (e) => {
     const pasted = e.clipboardData?.getData('text') ?? ''

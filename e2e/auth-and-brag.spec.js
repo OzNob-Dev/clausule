@@ -53,6 +53,22 @@ test('new visitor can route from sign in to signup when email is unknown', async
   await expect(page.getByText(/or sign up with email/i)).toHaveCount(0)
 })
 
+test('login button submits after the email field blurs', async ({ page }) => {
+  let checks = 0
+  await page.route('**/api/auth/check-email', async (route) => {
+    checks += 1
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ exists: false }) })
+  })
+
+  await page.goto('/')
+  await page.getByLabel('Email').fill('blur@example.com')
+  await page.locator('.si-left').click()
+  await page.getByRole('button', { name: /login/i }).click()
+
+  await expect(page).toHaveURL(/\/signup\?email=blur%40example\.com/)
+  expect(checks).toBe(1)
+})
+
 test('login sends known OTP accounts to the OTP screen', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
