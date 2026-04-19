@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { AppShell } from '@shared/components/layout/AppShell'
+import { AppShell } from '@features/manager/components/AppShell'
 import { KanbanBoard } from '@features/manager/dashboard/KanbanBoard'
 import { ALL_EMP } from '@shared/data/employees'
 import '@features/manager/styles/dashboard.css'

@@ -1,8 +1,7 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { RailNav } from './RailNav'
-import { useProfileStore } from '@features/auth/store/useProfileStore'
 
 const logout = vi.fn()
 let pathname = '/dashboard'
@@ -11,57 +10,43 @@ vi.mock('next/navigation', () => ({
   usePathname: () => pathname,
 }))
 
-vi.mock('@features/auth/context/AuthContext', () => ({
-  useAuth: () => ({ logout }),
-}))
-
-describe('RailNav MFA lock', () => {
+describe('RailNav', () => {
   beforeEach(() => {
     pathname = '/dashboard'
     logout.mockClear()
     localStorage.clear()
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
-    process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED = 'false'
-    process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED = 'false'
-    useProfileStore.getState().clearProfile()
   })
 
-  it('hides app links when MFA is missing', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
-
-    render(<RailNav />)
+  it('hides app links when locked', () => {
+    render(<RailNav locked onLogout={logout} />)
 
     expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /search entries/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /escalated/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /security settings/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
   })
 
-  it('shows app links after MFA is configured', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
-
-    render(<RailNav />)
+  it('shows app links when unlocked', () => {
+    render(<RailNav onLogout={logout} />)
 
     expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/dashboard')
     expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
   })
 
-  it('hides app links when MFA is missing after non-OTP auth', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
+  it('marks the active route', () => {
+    pathname = '/settings'
 
-    render(<RailNav />)
+    render(<RailNav onLogout={logout} />)
 
-    expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /settings/i })).toHaveClass('nav-item--active')
   })
 
-  it('shows app links when SSO is configured without MFA', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
+  it('calls the logout handler', () => {
+    render(<RailNav onLogout={logout} />)
 
-    render(<RailNav />)
+    fireEvent.click(screen.getByRole('button', { name: /sign out/i }))
 
-    expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/dashboard')
-    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
+    expect(logout).toHaveBeenCalledTimes(1)
   })
 })

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { AppShell } from '@shared/components/layout/AppShell'
+import { AppShell } from '@features/manager/components/AppShell'
 import AlertActionsCard from '@features/manager/settings/AlertActionsCard'
 import AlertThresholdCard from '@features/manager/settings/AlertThresholdCard'
 import DeleteAccountSection from '@features/manager/settings/DeleteAccountSection'

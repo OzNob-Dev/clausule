@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { AppShell } from '@shared/components/layout/AppShell'
+import { AppShell } from '@features/manager/components/AppShell'
 import { EscalationModal } from '@features/manager/profile/EscalationModal'
 import ProfileEntryFeed from '@features/manager/profile/ProfileEntryFeed'
 import ProfileSidebar from '@features/manager/profile/ProfileSidebar'

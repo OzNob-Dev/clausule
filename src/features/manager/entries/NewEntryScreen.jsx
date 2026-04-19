@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AppShell } from '@shared/components/layout/AppShell'
+import { AppShell } from '@features/manager/components/AppShell'
 import { DateCategoryFields, EntryTextFields, Field, NoteTypeButtons } from '@features/manager/entries/EntryFormFields'
 import '@features/manager/styles/entry-form.css'
 

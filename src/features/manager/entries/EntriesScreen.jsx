@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { AppShell } from '@shared/components/layout/AppShell'
+import { AppShell } from '@features/manager/components/AppShell'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
 import { ALL_EMP, SAMPLE_ENTRIES } from '@shared/data/employees'
 import { relativeTime } from '@shared/utils/relativeTime'

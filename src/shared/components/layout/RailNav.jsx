@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { storage } from '../../utils/storage'
-import { useAuth } from '@features/auth/context/AuthContext'
-import { useProfileStore } from '@features/auth/store/useProfileStore'
 import '../../styles/rail-nav.css'
 
 const settingsIcon = (
@@ -52,14 +50,10 @@ const navItems = [
   },
 ]
 
-export function RailNav() {
+export function RailNav({ items = navItems, locked = false, onLogout, userInitials = 'AD', userTitle = 'Adrian Diente' }) {
     const pathname        = usePathname()
     const [escalatedCount, setEscalatedCount] = useState(0)
-    const { logout }      = useAuth()
-    const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
-    const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
-    const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-    const items = hasSecuritySnapshot && !authenticatorAppConfigured && !ssoConfigured ? [] : navItems
+    const visibleItems = locked ? [] : items
 
     useEffect(() => {
       setEscalatedCount(storage.getEscalatedCount())
@@ -76,7 +70,7 @@ export function RailNav() {
 
       {/* Nav items */}
       <nav className="rail-items" aria-label="Primary">
-        {items.map(({ to, tip, icon, badge }) => (
+        {visibleItems.map(({ to, tip, icon, badge }) => (
           <Link
             key={to}
             href={to}
@@ -94,12 +88,12 @@ export function RailNav() {
 
       {/* Footer */}
       <div className="rail-footer">
-        <div className="rn-user" title="Adrian Diente">
-          AD
+        <div className="rn-user" title={userTitle}>
+          {userInitials}
         </div>
 
         <button
-          onClick={logout}
+          onClick={onLogout}
           title="Sign out"
           className="rn-logout"
           aria-label="Sign out"

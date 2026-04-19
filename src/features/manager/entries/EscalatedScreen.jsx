@@ -1,6 +1,6 @@
 'use client'
 
-import { AppShell } from '@shared/components/layout/AppShell'
+import { AppShell } from '@features/manager/components/AppShell'
 import { relativeTime } from '@shared/utils/relativeTime'
 import '@features/manager/styles/escalated.css'
 

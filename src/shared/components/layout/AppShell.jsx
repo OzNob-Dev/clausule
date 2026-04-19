@@ -1,9 +1,9 @@
 import { RailNav } from './RailNav'
 
-export function AppShell({ children }) {
+export function AppShell({ children, rail = <RailNav /> }) {
   return (
     <div className="app-shell">
-      <RailNav />
+      {rail}
       <main className="app-main">{children}</main>
     </div>
   )

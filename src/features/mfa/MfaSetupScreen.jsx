@@ -1,12 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import { storage } from '@shared/utils/storage'
-import { apiFetch, jsonRequest } from '@shared/utils/api'
-import { useCountdown } from '@shared/hooks/useCountdown'
-import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
-import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
+import { useMfaSetupFlow } from '@features/mfa/hooks/useMfaSetupFlow'
 import MfaOtpStep from '@features/mfa/components/MfaOtpStep'
 import MfaSuccessStep from '@features/mfa/components/MfaSuccessStep'
 import MfaTotpStep from '@features/mfa/components/MfaTotpStep'
@@ -14,119 +8,8 @@ import '@features/mfa/styles/mfa-layout.css'
 import '@features/mfa/styles/mfa-factors.css'
 import '@features/mfa/styles/code-email.css'
 
-// ── Main component ────────────────────────────────────────────────
 export default function MfaSetup() {
-  const router = useRouter()
-  const [step, setStep] = useState(1)
-  const [email, setEmail] = useState('your email')
-  const [hasMfaSetup, setHasMfaSetup] = useState(false)
-
-  const [resendTimer, , resetResendTimer] = useCountdown(30)
-  const otpRefs = useRef([])
-
-  const [totpSecret, setTotpSecret]         = useState('')
-  const [totpUri, setTotpUri]               = useState('')
-  const [totpSecretDisp, setTotpSecretDisp] = useState('')
-  const [totpLoading, setTotpLoading]       = useState(false)
-  const [copied, setCopied]                 = useState(false)
-  const totpRefs = useRef([])
-  const scheduleTimeout = useTrackedTimeout()
-
-  useEffect(() => {
-    setEmail(storage.getEmail() || 'your email')
-    setHasMfaSetup(storage.getMfaSetup())
-  }, [])
-
-  // Fetch real TOTP secret when entering step 2
-  useEffect(() => {
-    if (step !== 2 || totpSecret) return
-    setTotpLoading(true)
-    apiFetch('/api/auth/totp/setup')
-      .then((r) => r.json())
-      .then(({ secret, uri }) => {
-        if (!secret) return
-        setTotpSecret(secret)
-        setTotpUri(uri)
-        setTotpSecretDisp(secret.match(/.{1,4}/g)?.join(' ') ?? secret)
-      })
-      .catch(() => {})
-      .finally(() => setTotpLoading(false))
-  }, [step, totpSecret])
-
-  const otpCode = useSixDigitCode({
-    inputRefs: otpRefs,
-    scheduleTimeout,
-  })
-
-  const totpCode = useSixDigitCode({
-    inputRefs: totpRefs,
-    scheduleTimeout,
-  })
-  const totpDone = totpCode.state === 'done'
-
-  const verifyOtp = useCallback(async (digits) => {
-    const code = digits.join('')
-    otpCode.setState('checking')
-    try {
-      const res = await fetch('/api/auth/verify-code', jsonRequest({ email, code }, { method: 'POST' }))
-      if (res.ok) {
-        otpCode.setState('done')
-        if (hasMfaSetup) {
-          scheduleTimeout(() => router.replace('/brag'), 500)
-        } else {
-          scheduleTimeout(() => setStep(2), 500)
-        }
-      } else {
-        otpCode.setError()
-      }
-    } catch {
-      otpCode.setError()
-    }
-  }, [email, hasMfaSetup, otpCode, router, scheduleTimeout])
-
-  const verifyTotp = useCallback(async (digits) => {
-    const code = digits.join('')
-    if (!totpSecret) return
-    totpCode.setState('checking')
-    try {
-      const res = await apiFetch('/api/auth/totp/setup', jsonRequest({ code, secret: totpSecret }, { method: 'POST' }))
-      if (res.ok) {
-        totpCode.setState('done')
-      } else {
-        totpCode.setError()
-      }
-    } catch {
-      totpCode.setError()
-    }
-  }, [scheduleTimeout, totpCode, totpSecret])
-
-  useEffect(() => {
-    if (otpCode.state === 'idle' && otpCode.digits.every(Boolean)) {
-      verifyOtp(otpCode.digits)
-    }
-  }, [otpCode.digits, otpCode.state, verifyOtp])
-
-  useEffect(() => {
-    if (step !== 2) return
-    if (totpCode.state === 'idle' && totpCode.digits.every(Boolean)) {
-      verifyTotp(totpCode.digits)
-    }
-  }, [step, totpCode.digits, totpCode.state, verifyTotp])
-
-  const copySecret = () => {
-    navigator.clipboard?.writeText(totpSecret).catch(() => {})
-    setCopied(true)
-    scheduleTimeout(() => setCopied(false), 2000)
-  }
-
-  const finishSetup = () => {
-    storage.setMfaSetup(true)
-    setHasMfaSetup(true)
-    setStep(3)
-  }
-
-  const enterApp = () => router.push('/brag')
-
+  const flow = useMfaSetupFlow()
   const stepLabels = ['Verify email', 'Secure account', 'All set']
 
   return (
@@ -140,47 +23,47 @@ export default function MfaSetup() {
               key={n}
               className={[
                 'mfa-seg',
-                step > n   ? 'mfa-seg--done'   : '',
-                step === n ? 'mfa-seg--active' : '',
+                flow.step > n   ? 'mfa-seg--done'   : '',
+                flow.step === n ? 'mfa-seg--active' : '',
               ].join(' ')}
-              aria-label={`Step ${n}: ${stepLabels[n - 1]}${step > n ? ' (complete)' : step === n ? ' (current)' : ''}`}
+              aria-label={`Step ${n}: ${stepLabels[n - 1]}${flow.step > n ? ' (complete)' : flow.step === n ? ' (current)' : ''}`}
             />
           ))}
         </nav>
 
-        {step === 1 && (
+        {flow.step === 1 && (
           <MfaOtpStep
-            email={email}
-            otp={otpCode.digits}
-            otpRefs={otpRefs}
-            otpState={otpCode.state}
-            resendTimer={resendTimer}
-            onChange={otpCode.handleChange}
-            onKeyDown={otpCode.handleKeyDown}
-            onPaste={otpCode.handlePaste}
-            onResend={resetResendTimer}
+            email={flow.email}
+            otp={flow.otpCode.digits}
+            otpRefs={flow.otpRefs}
+            otpState={flow.otpCode.state}
+            resendTimer={flow.resendTimer}
+            onChange={flow.otpCode.handleChange}
+            onKeyDown={flow.otpCode.handleKeyDown}
+            onPaste={flow.otpCode.handlePaste}
+            onResend={flow.resetResendTimer}
           />
         )}
 
-        {step === 2 && (
+        {flow.step === 2 && (
           <MfaTotpStep
-            copied={copied}
-            onCopySecret={copySecret}
-            onContinue={finishSetup}
-            totp={totpCode.digits}
-            totpDone={totpDone}
-            totpLoading={totpLoading}
-            totpRefs={totpRefs}
-            totpSecretDisp={totpSecretDisp}
-            totpState={totpCode.state}
-            totpUri={totpUri}
-            onChange={totpCode.handleChange}
-            onKeyDown={totpCode.handleKeyDown}
-            onPaste={totpCode.handlePaste}
+            copied={flow.copied}
+            onCopySecret={flow.copySecret}
+            onContinue={flow.finishSetup}
+            totp={flow.totpCode.digits}
+            totpDone={flow.totpDone}
+            totpLoading={flow.totpLoading}
+            totpRefs={flow.totpRefs}
+            totpSecretDisp={flow.totpSecretDisp}
+            totpState={flow.totpCode.state}
+            totpUri={flow.totpUri}
+            onChange={flow.totpCode.handleChange}
+            onKeyDown={flow.totpCode.handleKeyDown}
+            onPaste={flow.totpCode.handlePaste}
           />
         )}
 
-        {step === 3 && <MfaSuccessStep onEnterApp={enterApp} />}
+        {flow.step === 3 && <MfaSuccessStep onEnterApp={flow.enterApp} />}
 
       </div>
     </div>
