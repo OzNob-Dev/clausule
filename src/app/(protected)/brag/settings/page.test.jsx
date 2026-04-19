@@ -42,8 +42,8 @@ describe('BragSettings integration', () => {
     expect(within(row).getByText('ada@example.com')).toBeInTheDocument()
     expect(within(row).getByLabelText('Google single sign-on is active')).toHaveTextContent('Active')
     expect(screen.queryByText('Microsoft')).not.toBeInTheDocument()
-    expect(screen.queryByText('Two-factor authentication')).not.toBeInTheDocument()
-    expect(screen.queryByText(/authenticator setup required/i)).not.toBeInTheDocument()
+    expect(screen.getByText('Two-factor authentication')).toBeInTheDocument()
+    expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).toHaveClass('bss-totp-empty--required')
   })
 
   it('renders MFA setup when SSO and authenticator MFA are not configured', async () => {
@@ -65,7 +65,7 @@ describe('BragSettings integration', () => {
     expect(screen.queryByText('Empty')).not.toBeInTheDocument()
   })
 
-  it('does not green-highlight MFA setup when restriction is not enabled', async () => {
+  it('green-highlights MFA setup when MFA is missing after non-OTP auth', async () => {
     process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
     const { useProfileStore } = await import('@/stores/useProfileStore')
     useProfileStore.getState().setProfile({
@@ -78,8 +78,8 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./page')
     render(<BragSettings />)
 
-    expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).not.toHaveClass('bss-mfa-row--needs-setup')
-    expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).not.toHaveClass('bss-totp-empty--required')
+    expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).toHaveClass('bss-mfa-row--needs-setup')
+    expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).toHaveClass('bss-totp-empty--required')
   })
 
   it('hides two-factor authentication when authenticator MFA is enabled', async () => {

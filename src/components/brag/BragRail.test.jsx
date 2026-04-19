@@ -57,27 +57,30 @@ describe('BragRail integration', () => {
   })
 
   it('hides app navigation until authenticator setup is complete', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
 
     render(<BragRail activePage="settings" />)
 
     expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /settings/i })).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByRole('button', { name: /settings/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
   })
 
-  it('keeps app navigation visible when MFA is missing after non-OTP auth', () => {
+  it('hides app navigation when MFA is missing after non-OTP auth', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
 
     render(<BragRail activePage="settings" />)
 
-    expect(screen.getByRole('button', { name: /brag doc/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /settings/i })).not.toBeInTheDocument()
   })
 
-  it('keeps app navigation visible when SSO is configured', () => {
+  it('hides app navigation when SSO is configured without MFA', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<BragRail activePage="settings" />)
 
-    expect(screen.getByRole('button', { name: /brag doc/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /settings/i })).not.toBeInTheDocument()
   })
 })

@@ -31,7 +31,7 @@ describe('ProtectedLayout MFA lock', () => {
   })
 
   it('redirects protected routes to brag settings until MFA is configured', async () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
 
     render(<ProtectedLayout><div>Blocked app</div></ProtectedLayout>)
 
@@ -41,7 +41,7 @@ describe('ProtectedLayout MFA lock', () => {
 
   it('allows brag settings while MFA setup is incomplete', () => {
     pathname = '/brag/settings'
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
 
     render(<ProtectedLayout><div>Security settings</div></ProtectedLayout>)
 
@@ -50,7 +50,7 @@ describe('ProtectedLayout MFA lock', () => {
   })
 
   it('allows app access after MFA is configured', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true })
 
     render(<ProtectedLayout><div>Unlocked app</div></ProtectedLayout>)
 
@@ -58,21 +58,21 @@ describe('ProtectedLayout MFA lock', () => {
     expect(replace).not.toHaveBeenCalled()
   })
 
-  it('allows app access when the session did not use OTP', () => {
+  it('redirects even when the session did not use OTP', async () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
 
     render(<ProtectedLayout><div>SSO app</div></ProtectedLayout>)
 
-    expect(screen.getByText('SSO app')).toBeInTheDocument()
-    expect(replace).not.toHaveBeenCalled()
+    expect(screen.queryByText('SSO app')).not.toBeInTheDocument()
+    await waitFor(() => expect(replace).toHaveBeenCalledWith('/brag/settings'))
   })
 
-  it('allows app access when SSO is configured', () => {
+  it('redirects even when SSO is configured', async () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<ProtectedLayout><div>SSO enabled app</div></ProtectedLayout>)
 
-    expect(screen.getByText('SSO enabled app')).toBeInTheDocument()
-    expect(replace).not.toHaveBeenCalled()
+    expect(screen.queryByText('SSO enabled app')).not.toBeInTheDocument()
+    await waitFor(() => expect(replace).toHaveBeenCalledWith('/brag/settings'))
   })
 })

@@ -52,23 +52,13 @@ const navItems = [
   },
 ]
 
-const mfaSetupNavItems = [
-  {
-    to: '/brag/settings',
-    tip: 'Security settings',
-    icon: settingsIcon,
-  },
-]
-
 export function RailNav() {
     const pathname        = usePathname()
     const [escalatedCount, setEscalatedCount] = useState(0)
     const { logout }      = useAuth()
     const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
-    const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
-    const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
     const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-    const items = hasSecuritySnapshot && authenticatedWithOtp && !authenticatorAppConfigured && !ssoConfigured ? mfaSetupNavItems : navItems
+    const items = hasSecuritySnapshot && !authenticatorAppConfigured ? [] : navItems
 
     useEffect(() => {
       setEscalatedCount(storage.getEscalatedCount())

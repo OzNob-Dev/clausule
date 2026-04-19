@@ -26,15 +26,16 @@ describe('RailNav MFA lock', () => {
     useProfileStore.getState().clearProfile()
   })
 
-  it('hides app links and keeps security settings available when MFA is missing', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+  it('hides app links when MFA is missing', () => {
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
 
     render(<RailNav />)
 
     expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /search entries/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /escalated/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /security settings/i })).toHaveAttribute('href', '/brag/settings')
+    expect(screen.queryByRole('link', { name: /security settings/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
   })
 
   it('shows app links after MFA is configured', () => {
@@ -46,21 +47,21 @@ describe('RailNav MFA lock', () => {
     expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
   })
 
-  it('shows app links when MFA is missing after non-OTP auth', () => {
+  it('hides app links when MFA is missing after non-OTP auth', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
 
     render(<RailNav />)
 
-    expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/dashboard')
-    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
+    expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
   })
 
-  it('shows app links when SSO is configured', () => {
+  it('hides app links when SSO is configured without MFA', () => {
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
 
     render(<RailNav />)
 
-    expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/dashboard')
-    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings')
+    expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
   })
 })

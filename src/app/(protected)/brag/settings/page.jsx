@@ -13,12 +13,9 @@ import '@/styles/brag-settings-totp.css'
 export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
-  const authenticatedWithOtp = useProfileStore((state) => state.security.authenticatedWithOtp)
-  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const setSecurity = useProfileStore((state) => state.setSecurity)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const mfaSetup = authenticatorAppConfigured || ssoConfigured
-  const mfaRestrictionEnabled = hasSecuritySnapshot && authenticatedWithOtp && !mfaSetup
+  const mfaRestrictionEnabled = hasSecuritySnapshot && !authenticatorAppConfigured
 
   const [totpExpanded, setTotpExpanded]     = useState(false)
 
@@ -80,7 +77,7 @@ export default function BragSettings() {
             email={profile.email}
           />
 
-          {!authenticatorAppConfigured && !mfaSetup && (
+          {!authenticatorAppConfigured && (
             <>
               {/* Two-factor authentication */}
               <div className="bss-section-label">Two-factor authentication</div>
