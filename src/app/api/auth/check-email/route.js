@@ -69,7 +69,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
   }
 
-  const hasPaid = Array.isArray(paidRows) && paidRows.length > 0
   const hasMfa = exists && Boolean(data[0]?.totp_secret)
   const { data: authUser, error: authError } = await getAuthUser(data[0].id)
   if (authError) {
@@ -77,6 +76,8 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
   }
   const provider = ssoProvider(authUser?.user ?? authUser)
+  const hasPaid = Array.isArray(paidRows) && paidRows.length > 0
+  const hasValidLogin = hasPaid && (hasMfa || Boolean(provider))
 
-  return NextResponse.json({ exists: hasPaid, hasMfa, hasSso: Boolean(provider), ssoProvider: provider, hasPaid })
+  return NextResponse.json({ exists: hasValidLogin, hasMfa, hasSso: Boolean(provider), ssoProvider: provider, hasPaid })
 }

@@ -90,7 +90,7 @@ test('login sends known non-SSO accounts to the authenticator app screen', async
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ exists: true, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: true }),
+      body: JSON.stringify({ exists: true, hasMfa: true, hasSso: false, ssoProvider: null, hasPaid: true }),
     })
   })
   await page.route('**/api/auth/send-code', async (route) => {
