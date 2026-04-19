@@ -30,6 +30,10 @@ function profileQuery(email) {
   return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role', limit: '1' }).toString()
 }
 
+function authUserId(created) {
+  return created?.id ?? created?.user?.id ?? null
+}
+
 function money(amountCents) {
   return new Intl.NumberFormat('en-AU', { style: 'currency', currency: PLAN_CURRENCY }).format(amountCents / 100)
 }
@@ -97,17 +101,26 @@ export async function POST(request) {
           return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 })
         }
       } else {
-        userId = created.id
+        userId = authUserId(created)
+        if (!userId) {
+          console.error('[register] createUser returned no id:', created)
+          return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 })
+        }
       }
     }
 
     // ── Save / update profile ───────────────────────────────────────────────
-    const { data: upserted } = await upsert('profiles', {
+    const { data: upserted, error: profileError } = await upsert('profiles', {
       id:         userId,
       email,
       first_name: firstName,
       last_name:  lastName || null,
     })
+
+    if (profileError) {
+      console.error('[register] profile upsert error:', profileError)
+      return NextResponse.json({ error: 'Failed to save profile' }, { status: 500 })
+    }
 
     const role = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? 'employee'
     const now = new Date()

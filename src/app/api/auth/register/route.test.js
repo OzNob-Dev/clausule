@@ -94,6 +94,36 @@ describe('register route', () => {
     expect(sendTransacEmail).toHaveBeenCalled()
   })
 
+  it('uses the Supabase admin nested user id when creating a new user', async () => {
+    select.mockResolvedValueOnce({ data: [] })
+    createUser.mockResolvedValueOnce({ data: { user: { id: 'user-4' } }, error: null })
+
+    const response = await POST(registerRequest())
+
+    expect(response.status).toBe(200)
+    expect(upsert).toHaveBeenCalledWith('profiles', {
+      id: 'user-4',
+      email: 'ada@example.com',
+      first_name: 'Ada',
+      last_name: 'Lovelace',
+    })
+    expect(insert).toHaveBeenCalledWith('subscriptions', expect.objectContaining({ user_id: 'user-4' }))
+    expect(sendTransacEmail).toHaveBeenCalled()
+  })
+
+  it('fails before subscription when the profile cannot be saved', async () => {
+    select.mockResolvedValueOnce({ data: [{ id: 'user-5', role: 'employee' }] })
+    upsert.mockResolvedValueOnce({ data: null, error: { message: 'profile failed' } })
+
+    const response = await POST(registerRequest())
+    const data = await response.json()
+
+    expect(response.status).toBe(500)
+    expect(data).toEqual({ error: 'Failed to save profile' })
+    expect(insert).not.toHaveBeenCalled()
+    expect(sendTransacEmail).not.toHaveBeenCalled()
+  })
+
   it('rejects an invalid subscription amount', async () => {
     const response = await POST(registerRequest({ subscription: { amountCents: 499, currency: 'AUD', interval: 'month' } }))
     const data = await response.json()
