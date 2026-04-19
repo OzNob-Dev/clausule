@@ -113,8 +113,8 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
     const { data } = await select(
       'profiles',
       new URLSearchParams({
-        email:  `eq.${userInfo.email}`,
-        select: 'id,role,first_name,last_name',
+        email:  `ilike.${userInfo.email}`,
+        select: 'id,role,first_name,last_name,is_active,is_deleted',
         limit:  '1',
       }).toString()
     )
@@ -146,7 +146,8 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
     return redirect(origin, 'account_error')
   }
 
-  if (!hasPaid) {
+  const isActive = Boolean(existingProfile.is_active) || hasPaid
+  if (!isActive || existingProfile.is_deleted) {
     return redirectToSignup(origin, provider, {
       email: userInfo.email,
       firstName: userInfo.firstName || existingProfile.first_name || '',

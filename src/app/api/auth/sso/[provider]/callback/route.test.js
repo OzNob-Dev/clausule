@@ -51,7 +51,7 @@ describe('Google SSO callback', () => {
 
   it('redirects an existing unpaid SSO user to prefilled signup without issuing a session', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', first_name: '', last_name: '' }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', first_name: '', last_name: '', is_active: false, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [] })
 
     const response = await GET(callbackRequest(), { params: { provider: 'google' } })
@@ -67,7 +67,7 @@ describe('Google SSO callback', () => {
 
   it('issues a session and redirects paid SSO users into the app', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', first_name: 'Ada', last_name: 'Lovelace' }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', first_name: 'Ada', last_name: 'Lovelace', is_active: false, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-1' }] })
 
     const response = await GET(callbackRequest(), { params: { provider: 'google' } })
@@ -76,6 +76,24 @@ describe('Google SSO callback', () => {
     expect(location.pathname).toBe('/brag')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',
+      email: 'ada@example.com',
+      role: 'employee',
+      authMethod: 'sso',
+    })
+  })
+
+  it('issues a session for active legacy SSO users without a subscription row', async () => {
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-2', role: 'employee', first_name: 'Ada', last_name: 'Lovelace', is_active: true, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [] })
+
+    const response = await GET(callbackRequest(), { params: { provider: 'google' } })
+    const location = new URL(response.headers.get('location'))
+
+    expect(location.pathname).toBe('/brag')
+    expect(select).toHaveBeenNthCalledWith(1, 'profiles', 'email=ilike.ada%40example.com&select=id%2Crole%2Cfirst_name%2Clast_name%2Cis_active%2Cis_deleted&limit=1')
+    expect(createPersistentSession).toHaveBeenCalledWith({
+      userId: 'user-2',
       email: 'ada@example.com',
       role: 'employee',
       authMethod: 'sso',
