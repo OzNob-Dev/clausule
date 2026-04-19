@@ -18,6 +18,7 @@ const IS_PROD = process.env.NODE_ENV === 'production'
 
 const COOKIE_AT = 'clausule_at'   // access token
 const COOKIE_RT = 'clausule_rt'   // refresh token
+const COOKIE_SESSION = 'clausule_session'
 
 // ── Cookie extraction ─────────────────────────────────────────────────────────
 
@@ -67,6 +68,10 @@ export function refreshTokenCookie(token) {
   return `${COOKIE_RT}=${encodeURIComponent(token)}; ${cookieFlags(REFRESH_TOKEN_TTL_S)}`
 }
 
+export function sessionCookie() {
+  return `${COOKIE_SESSION}=1; Max-Age=${REFRESH_TOKEN_TTL_S}; Path=/; SameSite=Lax; Priority=High${IS_PROD ? '; Secure' : ''}`
+}
+
 /**
  * Pair of Set-Cookie strings that expire both tokens immediately (logout).
  * @returns {string[]}
@@ -75,6 +80,7 @@ export function clearAuthCookies() {
   return [
     `${COOKIE_AT}=; ${cookieFlags(0)}`,
     `${COOKIE_RT}=; ${cookieFlags(0)}`,
+    `${COOKIE_SESSION}=; Max-Age=0; Path=/; SameSite=Lax; Priority=High${IS_PROD ? '; Secure' : ''}`,
   ]
 }
 

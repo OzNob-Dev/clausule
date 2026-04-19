@@ -24,6 +24,7 @@ const SSO = {
   apple:     process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED     === 'true',
 }
 const ANY_SSO = SSO.google || SSO.microsoft || SSO.apple
+const SESSION_COOKIE = 'clausule_session='
 
 const SSO_ERROR_LABELS = {
   not_configured:      'That sign-in method is not yet enabled.',
@@ -71,6 +72,7 @@ export default function SignIn() {
 
   // Redirect already-authenticated users.
   useEffect(() => {
+    if (!document.cookie.split('; ').some((cookie) => cookie.startsWith(SESSION_COOKIE))) return
     apiFetch('/api/auth/me')
       .then(async (res) => {
         if (res.ok) {
@@ -272,7 +274,7 @@ export default function SignIn() {
     ? (sending ? 'Sending…' : 'Checking…')
     : isNewAccount
       ? 'Create account →'
-      : 'Send code'
+      : 'Login'
 
   // ── Render ────────────────────────────────────────────────────────
   if (step === 'otp' || step === 'app') {

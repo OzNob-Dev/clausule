@@ -1,4 +1,4 @@
-import { accessTokenCookie, refreshTokenCookie } from './auth.js'
+import { accessTokenCookie, refreshTokenCookie, sessionCookie } from './auth.js'
 import { generateRefreshToken, signAccessToken, REFRESH_TOKEN_TTL_S } from './jwt.js'
 import { insert } from './supabase.js'
 
@@ -19,6 +19,7 @@ export async function createPersistentSession({ userId, email, role, authMethod 
 export function appendSessionCookies(response, { accessToken, refreshToken }) {
   response.headers.append('Set-Cookie', accessTokenCookie(accessToken))
   response.headers.append('Set-Cookie', refreshTokenCookie(refreshToken))
+  response.headers.append('Set-Cookie', sessionCookie())
   response.headers.set('Cache-Control', 'no-store')
   return response
 }

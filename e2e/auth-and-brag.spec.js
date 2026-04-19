@@ -6,6 +6,34 @@ test.beforeEach(async ({ context }) => {
   })
 })
 
+test('sign in skips auth session checks when no session cookie exists', async ({ page }) => {
+  const authRequests = []
+  await page.route('**/api/auth/{me,refresh}', async (route) => {
+    authRequests.push(route.request().url())
+    await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
+  })
+
+  await page.goto('/')
+
+  await expect(page.getByRole('button', { name: /login/i })).toBeVisible()
+  expect(authRequests).toEqual([])
+})
+
+test('sign in checks the session when the session cookie exists', async ({ context, page }) => {
+  await context.addCookies([{ name: 'clausule_session', value: '1', domain: '127.0.0.1', path: '/' }])
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ user: { role: 'employee' } }),
+    })
+  })
+
+  await page.goto('/')
+
+  await expect(page).toHaveURL(/\/brag/)
+})
+
 test('new visitor can route from sign in to signup when email is unknown', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Unauthenticated' }) })
@@ -16,7 +44,7 @@ test('new visitor can route from sign in to signup when email is unknown', async
 
   await page.goto('/')
   await page.getByLabel('Email').fill('newperson@example.com')
-  await page.getByRole('button', { name: /send code/i }).click()
+  await page.getByRole('button', { name: /login/i }).click()
 
   await expect(page).toHaveURL(/\/signup\?email=newperson%40example\.com/)
   await expect(page.getByText(/create your account/i)).toBeVisible()
@@ -42,7 +70,7 @@ test('login sends known OTP accounts to the OTP screen', async ({ page }) => {
 
   await page.goto('/')
   await page.getByLabel('Email').fill('otp@example.com')
-  await page.getByRole('button', { name: /send code/i }).click()
+  await page.getByRole('button', { name: /login/i }).click()
 
   await expect(page.getByText('Check your email')).toBeVisible()
   await expect(page.getByText(/we sent a code to/i)).toBeVisible()
@@ -67,7 +95,7 @@ test('login routes known SSO accounts through SSO provider sign-in', async ({ pa
   await page.goto('/')
   await page.getByLabel('Email').fill('sso@example.com')
   const ssoRequest = page.waitForRequest('**/api/auth/sso/google')
-  await page.getByRole('button', { name: /send code/i }).click()
+  await page.getByRole('button', { name: /login/i }).click()
 
   expect((await ssoRequest).url()).toContain('/api/auth/sso/google')
 })
