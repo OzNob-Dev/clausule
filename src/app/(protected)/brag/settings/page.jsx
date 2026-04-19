@@ -110,6 +110,7 @@ export default function BragSettings() {
                       <circle cx="12" cy="17.5" r="1"/>
                     </svg>
                   </div>
+                  
                   <div className="bss-mfa-info">
                     <div className="bss-mfa-title">Authenticator app</div>
                     <div className="bss-mfa-sub">
