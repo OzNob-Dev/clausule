@@ -100,13 +100,12 @@ describe('BragEmployeeScreen', () => {
     await waitFor(() => expect(screen.queryByRole('heading', { name: /you've done great things/i })).not.toBeInTheDocument())
   })
 
-  it('shows a disabled resume preview when there are no entries', async () => {
+  it('hides the resume panel when there are no entries', async () => {
     render(<BragEmployeeScreen />)
 
-    expect(await screen.findByText(/add a brag entry to unlock resume generation/i)).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /you've done great things/i })).toBeInTheDocument()
     expect(screen.queryByRole('tablist', { name: /brag document views/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /generate resume/i })).toBeDisabled()
-    expect(screen.getByLabelText(/full name/i)).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.queryByText(/generate your resume/i)).not.toBeInTheDocument()
   })
 
   it('shows a helpful load error when entries cannot be retrieved', async () => {

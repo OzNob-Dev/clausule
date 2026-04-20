@@ -206,16 +206,11 @@ export default function BragEmployee() {
             </div>
           </section>
 
-          {/* Resume tab */}
-          <section
-            id="panel-cv"
-            role={entries.length ? 'tabpanel' : 'region'}
-            aria-labelledby={entries.length ? 'tab-cv' : undefined}
-            aria-label={entries.length ? undefined : 'Resume preview'}
-            hidden={entriesLoading || entriesError || (entries.length > 0 && tab !== 'cv')}
-          >
-            <ResumeTab disabled={!entries.length} />
-          </section>
+          {entries.length > 0 && (
+            <section id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
+              <ResumeTab />
+            </section>
+          )}
 
         </div>
       </main>
