@@ -8,6 +8,7 @@ import BragEmptyState from '@features/brag/components/BragEmptyState'
 import BragLoadingState from '@features/brag/components/BragLoadingState'
 import EntryCard from '@features/brag/components/EntryCard'
 import EntryComposer from '@features/brag/components/EntryComposer'
+import FeedbackComposer from '@features/brag/components/FeedbackComposer'
 import ResumeTab from '@features/brag/components/ResumeTab'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import '@features/brag/styles/brag-shell.css'
@@ -82,7 +83,8 @@ export default function BragEmployee() {
   const [entriesLoading, setEntriesLoading] = useState(true)
   const [entriesError, setEntriesError] = useState('')
   const [composerOpen, setComposerOpen] = useState(false)
-  const panelKey = entriesLoading ? 'loading' : composerOpen ? 'composer' : entriesError ? 'error' : entries.length ? 'entries' : 'empty'
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const panelKey = entriesLoading ? 'loading' : feedbackOpen ? 'feedback' : composerOpen ? 'composer' : entriesError ? 'error' : entries.length ? 'entries' : 'empty'
   const [visiblePanel, setVisiblePanel] = useState(panelKey)
   const [panelExiting, setPanelExiting] = useState(false)
 
@@ -128,6 +130,7 @@ export default function BragEmployee() {
   const saveEntry = (savedEntry) => {
     setEntries((prev) => [cardFromSavedEntry(savedEntry), ...prev])
     setComposerOpen(false)
+    setFeedbackOpen(false)
   }
 
   const displayName =
@@ -142,6 +145,7 @@ export default function BragEmployee() {
 
   const panelContent = {
     composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,
+    feedback: <FeedbackComposer onSave={saveEntry} onClose={() => setFeedbackOpen(false)} />,
     loading: <BragLoadingState />,
     error: <p className="be-entry-load-error" role="alert">{entriesError}</p>,
     empty: <BragEmptyState onAddEntry={() => setComposerOpen(true)} />,
@@ -192,14 +196,23 @@ export default function BragEmployee() {
 
           {/* Brag doc tab */}
           <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
-            {!composerOpen && entries.length > 0 ? (
-              <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger be-add-trigger--top">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                  <line x1="8" y1="3" x2="8" y2="13"/>
-                  <line x1="3" y1="8" x2="13" y2="8"/>
-                </svg>
-                Add a win
-              </button>
+            {!composerOpen && !feedbackOpen && entries.length > 0 ? (
+              <div className="be-action-row" aria-label="Brag actions">
+                <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger be-add-trigger--top">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <line x1="8" y1="3" x2="8" y2="13"/>
+                    <line x1="3" y1="8" x2="13" y2="8"/>
+                  </svg>
+                  Add a win
+                </button>
+                <button type="button" onClick={() => setFeedbackOpen(true)} className="be-add-trigger be-add-trigger--top">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M3 3h10v7H7l-4 3V3Z" />
+                    <path d="M6 6h4M6 8h3" />
+                  </svg>
+                  Add feedback
+                </button>
+              </div>
             ) : null}
 
             <div className={`be-panel-swap${panelExiting ? ' be-panel-swap--out' : ' be-panel-swap--in'}`} key={visiblePanel}>

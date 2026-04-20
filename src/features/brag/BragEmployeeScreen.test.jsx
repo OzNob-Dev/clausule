@@ -15,6 +15,10 @@ vi.mock('@features/brag/components/EntryComposer', () => ({
   default: () => <div role="form" aria-label="Add a new entry">Composer</div>,
 }))
 
+vi.mock('@features/brag/components/FeedbackComposer', () => ({
+  default: () => <div role="form" aria-label="Add feedback">Feedback composer</div>,
+}))
+
 describe('BragEmployeeScreen', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
@@ -47,6 +51,7 @@ describe('BragEmployeeScreen', () => {
     render(<BragEmployeeScreen />)
 
     expect(await screen.findByRole('button', { name: /add a win/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /add feedback/i })).toBeInTheDocument()
     expect(screen.queryByText(/from your manager/i)).not.toBeInTheDocument()
   })
 
@@ -86,6 +91,30 @@ describe('BragEmployeeScreen', () => {
     expect(container.querySelectorAll('.be-entry-card')[0]).toHaveTextContent('Newest win')
     expect(screen.queryByRole('heading', { name: /you've done great things/i })).not.toBeInTheDocument()
     expect(fetch).toHaveBeenCalledWith('/api/brag/entries?limit=100', expect.objectContaining({ credentials: 'same-origin' }))
+  })
+
+  it('opens the feedback composer from the brag actions', async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: vi.fn().mockResolvedValue({
+        entries: [{
+          id: 'new',
+          title: 'Newest win',
+          body: 'A fresh result.',
+          entry_date: '2025-12-01',
+          created_at: '2025-12-01T01:00:00Z',
+          strength: 'Good',
+          strength_hint: 'Add more evidence types to reach Solid',
+          brag_entry_evidence: [{ type: 'Work artefact' }],
+        }],
+      }),
+    })
+
+    render(<BragEmployeeScreen />)
+
+    fireEvent.click(await screen.findByRole('button', { name: /add feedback/i }))
+
+    expect(await screen.findByRole('form', { name: /add feedback/i })).toBeInTheDocument()
   })
 
   it('opens the composer from the empty state', async () => {
