@@ -43,7 +43,7 @@ export default function BragEmptyState({ onAddEntry }) {
 
       <div className="be-empty-prompts" aria-label="Entry prompts to get started">
         {PROMPTS.map((prompt) => (
-          <button key={prompt.title} type="button" className="be-empty-prompt" onClick={onAddEntry}>
+          <div key={prompt.title} className="be-empty-prompt">
             <span className="be-empty-prompt-icon" aria-hidden="true">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d={prompt.icon} />
@@ -53,10 +53,7 @@ export default function BragEmptyState({ onAddEntry }) {
               <span className="be-empty-prompt-title">{prompt.title}</span>
               <span className="be-empty-prompt-hint">{prompt.hint}</span>
             </span>
-            <svg className="be-empty-prompt-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="m6 4 4 4-4 4" />
-            </svg>
-          </button>
+          </div>
         ))}
       </div>
 
