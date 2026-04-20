@@ -1,71 +1,57 @@
 import { useState } from 'react'
 
-function today() {
-  return new Date().toISOString().slice(0, 10)
-}
+const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Pricing', 'Other']
+const FEELINGS = ['Love it', 'Confusing', 'Blocked', 'Just noting']
 
-function buildFeedbackBody({ context, feedback, impact, source, sourceRole }) {
-  return [
-    `Feedback from ${source}${sourceRole ? `, ${sourceRole}` : ''}.`,
-    context ? `Context: ${context}` : '',
-    `Feedback: "${feedback}"`,
-    impact ? `Impact: ${impact}` : '',
-  ].filter(Boolean).join('\n\n')
-}
-
-export default function FeedbackComposer({ onClose, onSave }) {
-  const [source, setSource] = useState('')
-  const [sourceRole, setSourceRole] = useState('')
-  const [date, setDate] = useState(today())
-  const [context, setContext] = useState('')
-  const [feedback, setFeedback] = useState('')
-  const [impact, setImpact] = useState('')
-  const [saving, setSaving] = useState(false)
+export default function FeedbackComposer({ onClose }) {
+  const [category, setCategory] = useState('Idea')
+  const [feeling, setFeeling] = useState('Just noting')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
+  const [improvement, setImprovement] = useState('')
+  const [contactOk, setContactOk] = useState(true)
+  const [isAction, setIsAction] = useState(true)
+  const [sending, setSending] = useState(false)
+  const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
 
-  const canSave = source.trim() && feedback.trim()
+  const canSend = subject.trim() && message.trim()
 
-  const handleSave = async () => {
-    if (!canSave) return
+  const handleSend = async () => {
+    if (!canSend) return
 
-    setSaving(true)
+    setSending(true)
     setError('')
 
     try {
-      const title = `Feedback from ${source.trim()}`
-      const body = buildFeedbackBody({
-        context: context.trim(),
-        feedback: feedback.trim(),
-        impact: impact.trim(),
-        source: source.trim(),
-        sourceRole: sourceRole.trim(),
-      })
-      const response = await fetch('/api/brag/entries', {
+      const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
         body: JSON.stringify({
-          title,
-          body,
-          entry_date: date,
-          evidence_types: ['Peer recognition'],
-          visible_to_manager: true,
+          category,
+          feeling,
+          subject: subject.trim(),
+          message: message.trim(),
+          improvement: improvement.trim(),
+          contactOk,
+          isAction,
         }),
       })
 
-      if (!response.ok) throw new Error('Save failed')
-      const { entry } = await response.json()
-      onSave({ entry, evidenceTypes: ['Peer recognition'], files: [] })
+      if (!response.ok) throw new Error('Send failed')
+      setSent(true)
     } catch {
-      setError('Could not save this feedback. Please try again.')
-      setSaving(false)
+      setError('Could not send this feedback. Please try again.')
+    } finally {
+      setSending(false)
     }
   }
 
   return (
     <div className="be-feedback-stage">
-      {saving ? (
-        <div className="be-feedback-saving" role="status" aria-live="polite" aria-label="Saving feedback">
+      {sending ? (
+        <div className="be-feedback-saving" role="status" aria-live="polite" aria-label="Sending feedback">
           <div className="be-feedback-saving-mark" aria-hidden="true">
             <span />
             <span />
@@ -76,7 +62,19 @@ export default function FeedbackComposer({ onClose, onSave }) {
               <path d="M18 19h12M18 24h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </div>
-          <p>Turning feedback into brag evidence</p>
+          <p>Sending feedback to Clausule</p>
+        </div>
+      ) : sent ? (
+        <div className="be-feedback-sent" role="status" aria-live="polite">
+          <div className="be-feedback-orbit" aria-hidden="true">
+            <span className="be-feedback-orbit-ring" />
+            <svg className="be-feedback-orbit-chat" viewBox="0 0 56 56" fill="none">
+              <path d="M17 29 25 37 41 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h2>Feedback sent.</h2>
+          <p>Thank you for helping shape Clausule.</p>
+          <button type="button" className="be-comp-save" onClick={onClose}>Back to brag doc</button>
         </div>
       ) : (
         <>
@@ -91,46 +89,56 @@ export default function FeedbackComposer({ onClose, onSave }) {
             </svg>
           </div>
 
-          <div className="be-feedback-form" role="form" aria-label="Add feedback">
+          <div className="be-feedback-form" role="form" aria-label="Send app feedback">
             <div className="be-feedback-head">
-              <p className="be-feedback-eyebrow">Peer recognition</p>
-              <h2>Capture feedback while it is fresh.</h2>
+              <p className="be-feedback-eyebrow">Product feedback</p>
+              <h2>Tell the Clausule team what would make this better.</h2>
             </div>
 
             <div className="be-feedback-grid">
               <label>
-                <span>Who gave it?</span>
-                <input value={source} onChange={(e) => setSource(e.target.value)} placeholder="Manager, peer, customer" autoFocus />
+                <span>What is this about?</span>
+                <select value={category} onChange={(e) => setCategory(e.target.value)} autoFocus>
+                  {CATEGORIES.map((value) => <option key={value}>{value}</option>)}
+                </select>
               </label>
               <label>
-                <span>Role or team</span>
-                <input value={sourceRole} onChange={(e) => setSourceRole(e.target.value)} placeholder="Design lead, Platform team" />
+                <span>How does it feel?</span>
+                <select value={feeling} onChange={(e) => setFeeling(e.target.value)}>
+                  {FEELINGS.map((value) => <option key={value}>{value}</option>)}
+                </select>
               </label>
-              <label>
-                <span>Date received</span>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-              </label>
-              <label>
-                <span>Context</span>
-                <input value={context} onChange={(e) => setContext(e.target.value)} placeholder="Project, release, workshop" />
+              <label className="be-feedback-grid-wide">
+                <span>Short summary</span>
+                <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What should we know?" />
               </label>
             </div>
 
             <label className="be-feedback-wide">
-              <span>Feedback</span>
-              <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} rows={4} placeholder="Paste or write the feedback you received." />
+              <span>Feedback for the app owners</span>
+              <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder="Tell us what happened, what felt good, or what got in your way." />
             </label>
 
             <label className="be-feedback-wide">
-              <span>Why it matters</span>
-              <textarea value={impact} onChange={(e) => setImpact(e.target.value)} rows={3} placeholder="What did this show about your impact, growth, or strengths?" />
+              <span>What would make it better?</span>
+              <textarea value={improvement} onChange={(e) => setImprovement(e.target.value)} rows={3} placeholder="A workflow, design, feature, or rough idea is perfect." />
+            </label>
+
+            <label className="be-feedback-check">
+              <input type="checkbox" checked={contactOk} onChange={(e) => setContactOk(e.target.checked)} />
+              <span>The Clausule team may contact me about this feedback.</span>
+            </label>
+
+            <label className="be-feedback-check">
+              <input type="checkbox" checked={isAction} onChange={(e) => setIsAction(e.target.checked)} />
+              <span>This is an action item for the Clausule team.</span>
             </label>
 
             <div className="be-feedback-footer">
-              <p>Saved as peer-recognition evidence in your brag doc.</p>
+              <p>Sent privately to the app owners. This will not appear in your brag doc.</p>
               <div className="be-feedback-actions">
                 <button type="button" className="be-comp-cancel" onClick={onClose}>Cancel</button>
-                <button type="button" className="be-comp-save" onClick={handleSave} disabled={!canSave}>Save feedback</button>
+                <button type="button" className="be-comp-save" onClick={handleSend} disabled={!canSend}>Send feedback</button>
               </div>
             </div>
 

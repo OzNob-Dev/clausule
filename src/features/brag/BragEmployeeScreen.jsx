@@ -151,7 +151,7 @@ export default function BragEmployee() {
 
   const panelContent = {
     composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,
-    feedback: <FeedbackComposer onSave={saveEntry} onClose={() => setFeedbackOpen(false)} />,
+    feedback: <FeedbackComposer onClose={() => setFeedbackOpen(false)} />,
     loading: <BragLoadingState />,
     error: <p className="be-entry-load-error" role="alert">{entriesError}</p>,
     empty: <BragEmptyState onAddEntry={() => setComposerOpen(true)} />,

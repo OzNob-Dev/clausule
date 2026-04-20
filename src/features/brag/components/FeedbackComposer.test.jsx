@@ -9,51 +9,41 @@ describe('FeedbackComposer', () => {
     vi.restoreAllMocks()
   })
 
-  it('saves feedback as peer-recognition evidence', async () => {
+  it('sends product feedback to the app owners', async () => {
     const user = userEvent.setup()
-    const onSave = vi.fn()
-    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
-      entry: {
-        id: 'feedback-1',
-        title: 'Feedback from Priya',
-        body: 'Feedback body',
-        entry_date: '2026-04-20',
-        strength: 'Good',
-        strength_hint: 'Add more evidence types to reach Solid',
-      },
-    }), { status: 201, headers: { 'Content-Type': 'application/json' } }))
-
-    render(<FeedbackComposer onSave={onSave} onClose={vi.fn()} />)
-
-    await user.type(screen.getByLabelText(/who gave it/i), 'Priya')
-    await user.type(screen.getByLabelText(/role or team/i), 'Product lead')
-    await user.type(screen.getByLabelText(/^feedback$/i), 'This changed how the team ships.')
-    await user.type(screen.getByLabelText(/why it matters/i), 'Clear product impact.')
-    await user.click(screen.getByRole('button', { name: /save feedback/i }))
-
-    await waitFor(() => expect(onSave).toHaveBeenCalledWith({
-      entry: expect.objectContaining({ id: 'feedback-1', title: 'Feedback from Priya' }),
-      evidenceTypes: ['Peer recognition'],
-      files: [],
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
     }))
-    expect(fetchMock).toHaveBeenCalledWith('/api/brag/entries', expect.objectContaining({
+
+    render(<FeedbackComposer onClose={vi.fn()} />)
+
+    await user.selectOptions(screen.getByLabelText(/what is this about/i), 'Bug')
+    await user.selectOptions(screen.getByLabelText(/how does it feel/i), 'Blocked')
+    await user.type(screen.getByLabelText(/short summary/i), 'Export is stuck')
+    await user.type(screen.getByLabelText(/feedback for the app owners/i), 'The resume export spinner never ends.')
+    await user.type(screen.getByLabelText(/what would make it better/i), 'Show an error and retry option.')
+    await user.click(screen.getByRole('button', { name: /send feedback/i }))
+
+    await waitFor(() => expect(screen.getByText(/feedback sent/i)).toBeInTheDocument())
+    expect(fetchMock).toHaveBeenCalledWith('/api/feedback', expect.objectContaining({
       method: 'POST',
       credentials: 'same-origin',
-      body: expect.stringContaining('"evidence_types":["Peer recognition"]'),
+      body: expect.stringContaining('"category":"Bug"'),
     }))
   })
 
-  it('shows the saving animation while feedback is being saved', async () => {
+  it('shows the sending animation while feedback is being sent', async () => {
     const user = userEvent.setup()
     vi.spyOn(globalThis, 'fetch').mockReturnValue(new Promise(() => {}))
 
-    render(<FeedbackComposer onSave={vi.fn()} onClose={vi.fn()} />)
+    render(<FeedbackComposer onClose={vi.fn()} />)
 
-    await user.type(screen.getByLabelText(/who gave it/i), 'Jordan')
-    await user.type(screen.getByLabelText(/^feedback$/i), 'Great stakeholder management.')
-    await user.click(screen.getByRole('button', { name: /save feedback/i }))
+    await user.type(screen.getByLabelText(/short summary/i), 'Navigation idea')
+    await user.type(screen.getByLabelText(/feedback for the app owners/i), 'Let me jump between sections faster.')
+    await user.click(screen.getByRole('button', { name: /send feedback/i }))
 
-    expect(screen.getByRole('status', { name: /saving feedback/i })).toBeInTheDocument()
-    expect(screen.getByText(/turning feedback into brag evidence/i)).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: /sending feedback/i })).toBeInTheDocument()
+    expect(screen.getByText(/sending feedback to clausule/i)).toBeInTheDocument()
   })
 })
