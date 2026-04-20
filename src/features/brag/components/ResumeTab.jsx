@@ -22,9 +22,9 @@ const INITIAL_CV = {
   bullets: GENERATED_BULLETS,
 }
 
-function GenerateButton({ generating, visible, onClick }) {
+function GenerateButton({ disabled, generating, visible, onClick }) {
   return (
-    <button onClick={onClick} disabled={generating} className="be-btn-generate">
+    <button onClick={onClick} disabled={disabled || generating} className="be-btn-generate">
       {generating ? (
         <>
           <span className="be-thinking-dots" aria-hidden="true">
@@ -66,7 +66,7 @@ function ResumeActions({ copied, onCopy, onDownload }) {
   )
 }
 
-export default function ResumeTab() {
+export default function ResumeTab({ disabled = false }) {
   const [cvVisible, setCvVisible] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [cvData, setCvData] = useState(INITIAL_CV)
@@ -111,6 +111,7 @@ export default function ResumeTab() {
   }, [scheduleAutosave])
 
   const generateCV = () => {
+    if (disabled) return
     setGenerating(true)
     if (generateTimerRef.current) clearTimeout(generateTimerRef.current)
 
@@ -160,10 +161,17 @@ export default function ResumeTab() {
           <p className="be-cv-desc">Generate your resume from your brag doc entries.</p>
           <p className="be-cv-subdesc">Everything is editable — treat it as a living document you take with you.</p>
         </div>
-        <GenerateButton generating={generating} visible={cvVisible} onClick={generateCV} />
+        <GenerateButton disabled={disabled} generating={generating} visible={cvVisible} onClick={generateCV} />
       </div>
 
-      {cvVisible && (
+      {disabled && (
+        <>
+          <p className="be-cv-disabled-note">Add a brag entry to unlock resume generation.</p>
+          <ResumeDocument cvData={cvData} autosaved={false} disabled onBulletInput={handleBulletInput} onFieldInput={handleFieldInput} />
+        </>
+      )}
+
+      {!disabled && cvVisible && (
         <>
           <ResumeDocument cvData={cvData} autosaved={cvAutosaved} onBulletInput={handleBulletInput} onFieldInput={handleFieldInput} />
           <ResumeActions copied={cvCopied} onCopy={copyCV} onDownload={downloadCV} />

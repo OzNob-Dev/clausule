@@ -171,7 +171,7 @@ export default function BragEmployee() {
               <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />
             ) : null}
 
-            {entriesLoading ? (
+            {!composerOpen && (entriesLoading ? (
               <p className="be-entry-loading">Loading entries...</p>
             ) : entriesError ? (
               <p className="be-entry-load-error" role="alert">{entriesError}</p>
@@ -184,12 +184,12 @@ export default function BragEmployee() {
               </>
             ) : (
               <BragEmptyState onAddEntry={() => setComposerOpen(true)} />
-            )}
+            ))}
           </section>
 
           {/* Resume tab */}
           <section id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
-            <ResumeTab />
+            <ResumeTab disabled={!entries.length} />
           </section>
 
         </div>

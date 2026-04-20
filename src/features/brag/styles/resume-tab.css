@@ -50,6 +50,23 @@
   padding: 28px 30px;
 }
 
+.be-cv-card--disabled {
+  opacity: 0.58;
+  pointer-events: none;
+  user-select: none;
+}
+
+.be-cv-disabled-note {
+  margin: -8px 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(208, 90, 52, 0.22);
+  border-radius: 8px;
+  background: rgba(208, 90, 52, 0.08);
+  color: #7A2F1A;
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .be-cv-autosave {
   position: absolute;
   top: 18px;

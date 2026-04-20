@@ -80,6 +80,17 @@ describe('BragEmployeeScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: /add your first entry/i }))
 
     expect(screen.getByRole('form', { name: /add a new entry/i })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /you've done great things/i })).not.toBeInTheDocument()
+  })
+
+  it('shows a disabled resume preview when there are no entries', async () => {
+    render(<BragEmployeeScreen />)
+
+    fireEvent.click(screen.getByRole('tab', { name: /resume/i }))
+
+    expect(await screen.findByText(/add a brag entry to unlock resume generation/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /generate resume/i })).toBeDisabled()
+    expect(screen.getByLabelText(/full name/i)).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('shows a helpful load error when entries cannot be retrieved', async () => {
