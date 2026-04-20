@@ -92,6 +92,7 @@ describe('BragEmployeeScreen', () => {
     render(<BragEmployeeScreen />)
 
     await screen.findByRole('heading', { name: /you've done great things/i })
+    expect(screen.queryByRole('tablist', { name: /brag document views/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /add a win/i })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /add your first entry/i }))
 
@@ -102,9 +103,8 @@ describe('BragEmployeeScreen', () => {
   it('shows a disabled resume preview when there are no entries', async () => {
     render(<BragEmployeeScreen />)
 
-    fireEvent.click(screen.getByRole('tab', { name: /resume/i }))
-
     expect(await screen.findByText(/add a brag entry to unlock resume generation/i)).toBeInTheDocument()
+    expect(screen.queryByRole('tablist', { name: /brag document views/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /generate resume/i })).toBeDisabled()
     expect(screen.getByLabelText(/full name/i)).toHaveAttribute('aria-disabled', 'true')
   })

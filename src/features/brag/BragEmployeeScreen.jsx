@@ -170,22 +170,24 @@ export default function BragEmployee() {
 
           <h1 id="brag-page-title" className="sr-only">Brag document</h1>
 
-          <div className="be-tabs" role="tablist" aria-label="Brag document views">
-            {[['brag', 'Brag doc'], ['cv', 'Resume']].map(([key, label]) => (
-              <button
-                key={key}
-                id={`tab-${key}`}
-                type="button"
-                role="tab"
-                aria-selected={tab === key}
-                aria-controls={`panel-${key}`}
-                onClick={() => setTab(key)}
-                className={`be-tab${tab === key ? ' be-tab--active' : ''}`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          {entries.length > 0 && (
+            <div className="be-tabs" role="tablist" aria-label="Brag document views">
+              {[['brag', 'Brag doc'], ['cv', 'Resume']].map(([key, label]) => (
+                <button
+                  key={key}
+                  id={`tab-${key}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === key}
+                  aria-controls={`panel-${key}`}
+                  onClick={() => setTab(key)}
+                  className={`be-tab${tab === key ? ' be-tab--active' : ''}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Brag doc tab */}
           <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
@@ -205,7 +207,13 @@ export default function BragEmployee() {
           </section>
 
           {/* Resume tab */}
-          <section id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
+          <section
+            id="panel-cv"
+            role={entries.length ? 'tabpanel' : 'region'}
+            aria-labelledby={entries.length ? 'tab-cv' : undefined}
+            aria-label={entries.length ? undefined : 'Resume preview'}
+            hidden={entriesLoading || entriesError || (entries.length > 0 && tab !== 'cv')}
+          >
             <ResumeTab disabled={!entries.length} />
           </section>
 
