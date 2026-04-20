@@ -48,6 +48,38 @@ const INITIAL_ENTRIES = [
   },
 ]
 
+function evidenceTypeToPill(type) {
+  if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
+  if (type === 'Work artefact') return { label: 'Work artefact', type: 'filled' }
+  if (type === 'Peer recognition') return { label: 'Peer recognition', type: 'filled' }
+  return { label: 'External link', type: 'filled' }
+}
+
+function ringOffsets(count) {
+  return [
+    count >= 1 ? 0 : 113.1,
+    count >= 2 ? 0 : 75.4,
+    count >= 3 ? 0 : 37.7,
+  ]
+}
+
+function cardFromSavedEntry({ entry, evidenceTypes, files }) {
+  const pills = evidenceTypes.length
+    ? evidenceTypes.slice(0, 4).map(evidenceTypeToPill)
+    : files.slice(0, 4).map((file) => ({ label: file.name.replace(/\.[^.]+$/, ''), type: 'filled' }))
+
+  return {
+    id: entry.id,
+    title: entry.title,
+    date: entry.entry_date,
+    body: entry.body ?? '',
+    strength: entry.strength,
+    strengthHint: entry.strength_hint,
+    ringOffsets: ringOffsets(evidenceTypes.length),
+    pills,
+  }
+}
+
 export default function BragEmployee() {
   useTheme()
   const profile = useProfileStore((state) => state.profile)
@@ -55,8 +87,8 @@ export default function BragEmployee() {
   const [entries, setEntries]           = useState(INITIAL_ENTRIES)
   const [composerOpen, setComposerOpen] = useState(false)
 
-  const saveEntry = (entry) => {
-    setEntries((prev) => [entry, ...prev])
+  const saveEntry = (savedEntry) => {
+    setEntries((prev) => [cardFromSavedEntry(savedEntry), ...prev])
     setComposerOpen(false)
   }
 
@@ -105,23 +137,8 @@ export default function BragEmployee() {
 
           {/* Brag doc tab */}
           <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
-            <div className="be-card">
-              <div className="be-card-label">
-                From your manager
-                <div className="be-card-rule" aria-hidden="true" />
-                <span className="be-read-only-badge">Read only</span>
-              </div>
-              <p className="be-summary-quote">{MANAGER_NOTE}</p>
-            </div>
-
-            <div className="be-sec-label">Your entries</div>
-
-            {entries.map((entry) => (
-              <EntryCard key={entry.id} entry={entry} />
-            ))}
-
             {!composerOpen ? (
-              <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger">
+              <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger be-add-trigger--top">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <line x1="8" y1="3" x2="8" y2="13"/>
                   <line x1="3" y1="8" x2="13" y2="8"/>
@@ -131,6 +148,12 @@ export default function BragEmployee() {
             ) : (
               <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />
             )}
+
+            <div className="be-sec-label">Your entries</div>
+
+            {entries.map((entry) => (
+              <EntryCard key={entry.id} entry={entry} />
+            ))}
           </section>
 
           {/* Resume tab */}

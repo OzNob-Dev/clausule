@@ -7,6 +7,8 @@ export default function EntryComposer({ onSave, onClose }) {
   const [evTypes, setEvTypes]     = useState(new Set())
   const [files, setFiles]         = useState([])
   const [dropActive, setDropActive] = useState(false)
+  const [saving, setSaving]       = useState(false)
+  const [error, setError]         = useState('')
   const fileInputRef              = useRef(null)
 
   const toggleEvType = (type) => {
@@ -35,24 +37,33 @@ export default function EntryComposer({ onSave, onClose }) {
     addFiles(e.dataTransfer.files)
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim()) return
-    onSave({
-      id: Date.now(),
-      title: title.trim(),
-      date: new Date().toISOString().slice(0, 10),
-      body: body.trim(),
-      strength: evTypes.size >= 3 ? 'Exceptional' : evTypes.size >= 2 ? 'Solid' : 'Good',
-      strengthHint: files.length
-        ? `${files.length} file${files.length !== 1 ? 's' : ''} attached`
-        : 'Evidence added',
-      ringOffsets: [
-        evTypes.size >= 1 ? 0 : 113.1,
-        evTypes.size >= 2 ? 0 : 75.4,
-        evTypes.size >= 3 ? 0 : 37.7,
-      ],
-      pills: files.slice(0, 4).map((f) => ({ label: f.name.replace(/\.[^.]+$/, ''), type: 'filled' })),
-    })
+
+    setSaving(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/brag/entries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          title: title.trim(),
+          body: body.trim(),
+          entry_date: new Date().toISOString().slice(0, 10),
+          evidence_types: [...evTypes],
+          visible_to_manager: true,
+        }),
+      })
+
+      if (!response.ok) throw new Error('Save failed')
+      const { entry } = await response.json()
+      onSave({ entry, evidenceTypes: [...evTypes], files })
+    } catch {
+      setError('Could not save this entry. Please try again.')
+      setSaving(false)
+    }
   }
 
   return (
@@ -84,10 +95,13 @@ export default function EntryComposer({ onSave, onClose }) {
       <div className="be-comp-footer">
         <div />
         <div className="be-comp-btns">
-          <button type="button" onClick={onClose} className="be-comp-cancel">Cancel</button>
-          <button type="button" onClick={handleSave} className="be-comp-save">Save entry</button>
+          <button type="button" onClick={onClose} className="be-comp-cancel" disabled={saving}>Cancel</button>
+          <button type="button" onClick={handleSave} className="be-comp-save" disabled={saving || !title.trim()}>
+            {saving ? 'Saving...' : 'Save entry'}
+          </button>
         </div>
       </div>
+      {error && <p className="be-comp-error" role="alert">{error}</p>}
     </div>
   )
 }

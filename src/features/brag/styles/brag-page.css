@@ -185,12 +185,22 @@
 .be-add-trigger:hover { color: var(--acc); }
 .be-add-trigger svg { width: 1rem; height: 1rem; }
 
+.be-add-trigger--top {
+  width: 100%;
+  justify-content: center;
+  background: #FAF7F3;
+  border: 1px solid rgba(60, 45, 35, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 16px;
+}
+
 .be-composer {
   background: #FAF7F3;
   border: 1px solid rgba(60, 45, 35, 0.1);
   border-radius: 8px;
   padding: 16px;
-  margin-top: 4px;
+  margin-bottom: 20px;
 }
 
 .be-comp-title {
@@ -413,3 +423,15 @@
 }
 
 .be-comp-save:hover { opacity: 0.88; }
+.be-comp-save:disabled,
+.be-comp-cancel:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.be-comp-error {
+  margin: 10px 0 0;
+  color: #9E1F1F;
+  font-size: 12px;
+  font-weight: 700;
+}
