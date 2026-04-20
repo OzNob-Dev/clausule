@@ -30,7 +30,7 @@ export default function BragRail({ activePage }) {
               </svg>
             </Link>
             <Link
-              href="/brag?panel=feedback"
+              href={ROUTES.bragFeedback}
               className={activePage === 'feedback' ? 'be-rail-btn-active' : 'be-rail-btn'}
               aria-label="Feedback"
               aria-current={activePage === 'feedback' ? 'page' : undefined}

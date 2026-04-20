@@ -26,11 +26,8 @@ describe('FeedbackComposer', () => {
     await user.click(screen.getByRole('button', { name: /send feedback/i }))
 
     await waitFor(() => expect(screen.getByText(/feedback sent/i)).toBeInTheDocument())
-    expect(fetchMock).toHaveBeenCalledWith('/api/feedback', expect.objectContaining({
-      method: 'POST',
-      credentials: 'same-origin',
-      body: expect.stringContaining('"category":"Bug"'),
-    }))
+    expect(fetchMock).toHaveBeenCalledWith('/api/feedback', expect.objectContaining({ method: 'POST', credentials: 'same-origin', body: expect.stringContaining('"category":"Bug"') }))
+    expect(fetchMock.mock.calls[0][1].body).toContain('"isAction":true')
   })
 
   it('shows the sending animation while feedback is being sent', async () => {

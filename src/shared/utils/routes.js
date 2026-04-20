@@ -1,5 +1,6 @@
 export const ROUTES = {
   brag: '/brag',
+  bragFeedback: '/brag/feedback',
   bragSettings: '/brag/settings',
   dashboard: '/dashboard',
 }

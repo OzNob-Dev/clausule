@@ -41,7 +41,7 @@ describe('BragRail integration', () => {
     render(<BragRail activePage="feedback" />)
 
     const feedbackLink = screen.getByRole('link', { name: /feedback/i })
-    expect(feedbackLink).toHaveAttribute('href', '/brag?panel=feedback')
+    expect(feedbackLink).toHaveAttribute('href', '/brag/feedback')
     expect(feedbackLink).toHaveAttribute('aria-current', 'page')
   })
 
@@ -81,7 +81,7 @@ describe('BragRail integration', () => {
     render(<BragRail activePage="settings" />)
 
     expect(screen.getByRole('link', { name: /brag doc/i })).toHaveAttribute('href', '/brag')
-    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag?panel=feedback')
+    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag/feedback')
     expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
   })
 })
