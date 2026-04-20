@@ -67,41 +67,55 @@ export default function EntryComposer({ onSave, onClose }) {
   }
 
   return (
-    <div className="be-composer" role="form" aria-label="Add a new entry">
-      <input
-        type="text"
-        className="be-comp-title"
-        placeholder="What did you achieve?"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        autoFocus
-      />
-      <textarea
-        className="be-comp-body"
-        rows={4}
-        placeholder="Describe what you did, what the impact was, and how you know it worked."
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-      />
-      <EvidenceTypeGroup selectedTypes={evTypes} onToggle={toggleEvType} />
-      <FileDropzone
-        active={dropActive}
-        fileInputRef={fileInputRef}
-        onAddFiles={addFiles}
-        onDrop={handleDrop}
-        onSetActive={setDropActive}
-      />
-      <AttachedFileList files={files} onRemove={removeFile} />
-      <div className="be-comp-footer">
-        <div />
-        <div className="be-comp-btns">
-          <button type="button" onClick={onClose} className="be-comp-cancel" disabled={saving}>Cancel</button>
-          <button type="button" onClick={handleSave} className="be-comp-save" disabled={saving || !title.trim()}>
-            {saving ? 'Saving...' : 'Save entry'}
-          </button>
-        </div>
+    <div className="be-composer-stage">
+      <div className="be-composer-orbit" aria-hidden="true">
+        <span className="be-composer-orbit-ring" />
+        <span className="be-composer-orbit-dot" />
+        <span className="be-composer-orbit-dot" />
+        <span className="be-composer-orbit-dot" />
+        <svg className="be-composer-orbit-pen" viewBox="0 0 48 48" fill="none">
+          <path d="M13 34 11 41l7-2 20-20-5-5L13 34Z" fill="currentColor" opacity="0.16" />
+          <path d="M13 34 11 41l7-2 20-20-5-5L13 34Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+          <path d="m30 17 5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
       </div>
-      {error && <p className="be-comp-error" role="alert">{error}</p>}
+
+      <div className="be-composer" role="form" aria-label="Add a new entry">
+        <input
+          type="text"
+          className="be-comp-title"
+          placeholder="What did you achieve?"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          autoFocus
+        />
+        <textarea
+          className="be-comp-body"
+          rows={4}
+          placeholder="Describe what you did, what the impact was, and how you know it worked."
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+        />
+        <EvidenceTypeGroup selectedTypes={evTypes} onToggle={toggleEvType} />
+        <FileDropzone
+          active={dropActive}
+          fileInputRef={fileInputRef}
+          onAddFiles={addFiles}
+          onDrop={handleDrop}
+          onSetActive={setDropActive}
+        />
+        <AttachedFileList files={files} onRemove={removeFile} />
+        <div className="be-comp-footer">
+          <div />
+          <div className="be-comp-btns">
+            <button type="button" onClick={onClose} className="be-comp-cancel" disabled={saving}>Cancel</button>
+            <button type="button" onClick={handleSave} className="be-comp-save" disabled={saving || !title.trim()}>
+              {saving ? 'Saving...' : 'Save entry'}
+            </button>
+          </div>
+        </div>
+        {error && <p className="be-comp-error" role="alert">{error}</p>}
+      </div>
     </div>
   )
 }

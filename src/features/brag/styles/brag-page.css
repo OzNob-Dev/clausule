@@ -201,6 +201,100 @@
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
+  width: 100%;
+  max-width: 620px;
+}
+
+.be-composer-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: min(620px, calc(100vh - 160px));
+  padding: 24px 0;
+}
+
+.be-composer-orbit {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  margin-bottom: 22px;
+  color: var(--acc);
+}
+
+.be-composer-orbit-ring {
+  position: absolute;
+  inset: 8px;
+  border: 1.5px dashed rgba(208, 90, 52, 0.32);
+  border-radius: 50%;
+  animation: be-composer-spin 14s linear infinite;
+}
+
+.be-composer-orbit-dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 18px rgba(208, 90, 52, 0.24);
+  animation: be-composer-spark 2.6s ease-in-out infinite;
+}
+
+.be-composer-orbit-dot:nth-of-type(2) {
+  top: 18px;
+  right: 30px;
+}
+
+.be-composer-orbit-dot:nth-of-type(3) {
+  left: 22px;
+  bottom: 34px;
+  animation-delay: 0.45s;
+}
+
+.be-composer-orbit-dot:nth-of-type(4) {
+  right: 25px;
+  bottom: 22px;
+  animation-delay: 0.9s;
+}
+
+.be-composer-orbit-pen {
+  width: 54px;
+  height: 54px;
+  filter: drop-shadow(0 8px 16px rgba(208, 90, 52, 0.18));
+  transform-origin: center;
+  animation: be-composer-float 3.4s ease-in-out infinite;
+}
+
+@keyframes be-composer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes be-composer-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(5deg);
+  }
+}
+
+@keyframes be-composer-spark {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.76);
+  }
+
+  45% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 .be-comp-title {
@@ -920,6 +1014,9 @@
 @media (prefers-reduced-motion: reduce) {
   .be-empty-cta,
   .be-panel-swap,
+  .be-composer-orbit-ring,
+  .be-composer-orbit-dot,
+  .be-composer-orbit-pen,
   .be-loading-ring,
   .be-loading-pencil,
   .be-loading-lines span,
