@@ -28,11 +28,26 @@ describe('BragEmployeeScreen', () => {
   })
 
   it('places the add-entry action at the top instead of the manager note card', async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: vi.fn().mockResolvedValue({
+        entries: [{
+          id: 'new',
+          title: 'Newest win',
+          body: 'A fresh result.',
+          entry_date: '2025-12-01',
+          created_at: '2025-12-01T01:00:00Z',
+          strength: 'Good',
+          strength_hint: 'Add more evidence types to reach Solid',
+          brag_entry_evidence: [{ type: 'Work artefact' }],
+        }],
+      }),
+    })
+
     render(<BragEmployeeScreen />)
 
-    expect(screen.getByRole('button', { name: /add a win/i })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /add a win/i })).toBeInTheDocument()
     expect(screen.queryByText(/from your manager/i)).not.toBeInTheDocument()
-    expect(await screen.findByRole('heading', { name: /you've done great things/i })).toBeInTheDocument()
   })
 
   it('loads entries from the database with newest entries first', async () => {
@@ -77,10 +92,11 @@ describe('BragEmployeeScreen', () => {
     render(<BragEmployeeScreen />)
 
     await screen.findByRole('heading', { name: /you've done great things/i })
+    expect(screen.queryByRole('button', { name: /add a win/i })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /add your first entry/i }))
 
-    expect(screen.getByRole('form', { name: /add a new entry/i })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: /you've done great things/i })).not.toBeInTheDocument()
+    expect(await screen.findByRole('form', { name: /add a new entry/i })).toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByRole('heading', { name: /you've done great things/i })).not.toBeInTheDocument())
   })
 
   it('shows a disabled resume preview when there are no entries', async () => {

@@ -201,7 +201,6 @@
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
-  animation: be-panel-slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .be-comp-title {
@@ -454,14 +453,32 @@
   color: #9E1F1F;
 }
 
+.be-panel-swap {
+  will-change: opacity, transform;
+}
+
+.be-panel-swap--in {
+  animation: be-panel-slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.be-panel-swap--out {
+  animation: be-panel-slide-out 0.18s ease-in both;
+}
+
 .be-empty {
+  --be-empty-canvas: #F5F0EA;
+  --be-empty-card: #FDFCFA;
+  --be-empty-text: #1A1510;
+  --be-empty-muted: #5B4E42;
+  --be-empty-soft: #9A8E84;
+  --be-empty-accent: #C94F2A;
+  --be-empty-border: rgba(26, 21, 16, 0.15);
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 520px;
-  margin: 8px auto 0;
+  max-width: 480px;
+  margin: 0 auto;
   text-align: center;
-  animation: be-panel-slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes be-panel-slide-in {
@@ -476,19 +493,67 @@
   }
 }
 
+@keyframes be-panel-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
 .be-empty-trophy {
   position: relative;
-  width: 148px;
-  height: 148px;
-  margin-bottom: 28px;
-  color: var(--acc);
+  width: 160px;
+  height: 160px;
+  margin-bottom: 32px;
+  color: var(--be-empty-accent);
 }
 
 .be-empty-halo {
   position: absolute;
-  inset: 4px;
-  border: 1px dashed rgba(208, 90, 52, 0.34);
+  inset: -16px;
+  border: 1.5px dashed rgba(201, 79, 42, 0.25);
   border-radius: 50%;
+  animation: be-empty-halo-spin 18s linear infinite;
+}
+
+.be-empty-halo--inner {
+  inset: -8px;
+  border-width: 1px;
+  border-color: rgba(201, 79, 42, 0.12);
+  animation-duration: 12s;
+  animation-direction: reverse;
+}
+
+.be-empty-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 79, 42, 0.13) 0%, transparent 70%);
+  animation: be-empty-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes be-empty-halo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes be-empty-glow-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.62;
+    transform: scale(1.15);
+  }
 }
 
 .be-empty-stage {
@@ -502,7 +567,7 @@
   position: absolute;
   width: 7px;
   height: 7px;
-  color: var(--acc);
+  color: var(--be-empty-accent);
   opacity: 0;
   transform-origin: center;
   animation: be-empty-sparkle 3.2s ease-in-out infinite;
@@ -522,26 +587,32 @@
 }
 
 .be-empty-sparkle:nth-of-type(1) {
-  top: 20px;
-  left: 34px;
+  top: 10px;
+  left: 30px;
 }
 
 .be-empty-sparkle:nth-of-type(2) {
-  top: 32px;
-  right: 26px;
-  animation-delay: 0.7s;
+  top: 20px;
+  right: 20px;
+  animation-delay: 0.8s;
 }
 
 .be-empty-sparkle:nth-of-type(3) {
-  bottom: 30px;
-  left: 24px;
-  animation-delay: 1.4s;
+  bottom: 25px;
+  left: 15px;
+  animation-delay: 1.6s;
 }
 
 .be-empty-sparkle:nth-of-type(4) {
-  right: 38px;
-  bottom: 18px;
-  animation-delay: 2.1s;
+  right: 35px;
+  bottom: 10px;
+  animation-delay: 0.4s;
+}
+
+.be-empty-sparkle:nth-of-type(5) {
+  top: 50%;
+  left: 5px;
+  animation-delay: 1.2s;
 }
 
 @keyframes be-empty-sparkle {
@@ -563,9 +634,9 @@
 }
 
 .be-empty-trophy-svg {
-  width: 82px;
-  height: 82px;
-  filter: drop-shadow(0 8px 18px rgba(208, 90, 52, 0.16));
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 4px 16px rgba(201, 79, 42, 0.2));
   transform-origin: center;
   animation: be-empty-trophy-float 4s ease-in-out infinite;
 }
@@ -583,30 +654,40 @@
 
 .be-empty-eyebrow {
   margin: 0 0 10px;
-  color: #7A2F1A;
-  font-size: 10px;
+  color: var(--be-empty-accent);
+  font-size: 10.5px;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .be-empty-title {
   max-width: 420px;
   margin: 0 0 14px;
-  color: #2A221A;
-  font-family: var(--font-sans);
+  color: var(--be-empty-text);
+  font-family: var(--font-serif);
   font-size: 34px;
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.16;
 }
 
+.be-empty-title em {
+  color: var(--be-empty-accent);
+  font-style: italic;
+}
+
 .be-empty-copy {
-  max-width: 380px;
+  max-width: 360px;
   margin: 0 0 28px;
-  color: #5C5048;
-  font-size: 14px;
+  color: var(--be-empty-muted);
+  font-size: 14.5px;
   line-height: 1.75;
+}
+
+.be-empty-copy strong {
+  color: var(--be-empty-text);
+  font-weight: 700;
 }
 
 .be-empty-prompts {
@@ -623,16 +704,16 @@
   width: 100%;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid rgba(60, 45, 35, 0.14);
+  border: 1px solid var(--be-empty-border);
   border-radius: 8px;
-  background: #FAF7F3;
+  background: var(--be-empty-card);
   color: inherit;
   font-family: var(--font-sans);
   text-align: left;
 }
 
 .be-empty-cta:focus-visible {
-  outline: 2px solid var(--acc);
+  outline: 2px solid var(--be-empty-accent);
   outline-offset: 3px;
 }
 
@@ -643,8 +724,8 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(208, 90, 52, 0.1);
-  color: var(--acc);
+  background: rgba(201, 79, 42, 0.08);
+  color: var(--be-empty-accent);
 }
 
 .be-empty-prompt-icon svg {
@@ -661,13 +742,13 @@
 }
 
 .be-empty-prompt-title {
-  color: #2A221A;
+  color: var(--be-empty-text);
   font-size: 13px;
   font-weight: 800;
 }
 
 .be-empty-prompt-hint {
-  color: #5C5048;
+  color: var(--be-empty-soft);
   font-size: 11.5px;
   font-weight: 600;
 }
@@ -679,11 +760,11 @@
   padding: 14px 26px;
   border: none;
   border-radius: 8px;
-  background: var(--acc);
-  color: #FAF7F3;
+  background: var(--be-empty-accent);
+  color: var(--be-empty-canvas);
   cursor: pointer;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 800;
   transition: opacity 0.15s, transform 0.12s;
 }
@@ -700,7 +781,7 @@
 
 .be-empty-note {
   margin: 12px 0 0;
-  color: #5C5048;
+  color: var(--be-empty-soft);
   font-size: 11.5px;
   font-weight: 700;
 }
@@ -727,8 +808,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .be-empty-cta,
-  .be-composer,
-  .be-empty,
+  .be-panel-swap,
+  .be-empty-halo,
+  .be-empty-glow,
   .be-empty-trophy-svg,
   .be-empty-sparkle {
     animation: none;

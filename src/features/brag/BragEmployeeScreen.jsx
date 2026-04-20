@@ -81,6 +81,9 @@ export default function BragEmployee() {
   const [entriesLoading, setEntriesLoading] = useState(true)
   const [entriesError, setEntriesError] = useState('')
   const [composerOpen, setComposerOpen] = useState(false)
+  const panelKey = entriesLoading ? 'loading' : composerOpen ? 'composer' : entriesError ? 'error' : entries.length ? 'entries' : 'empty'
+  const [visiblePanel, setVisiblePanel] = useState(panelKey)
+  const [panelExiting, setPanelExiting] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -109,6 +112,18 @@ export default function BragEmployee() {
     return () => controller.abort()
   }, [])
 
+  useEffect(() => {
+    if (panelKey === visiblePanel) return undefined
+
+    setPanelExiting(true)
+    const timeout = setTimeout(() => {
+      setVisiblePanel(panelKey)
+      setPanelExiting(false)
+    }, 180)
+
+    return () => clearTimeout(timeout)
+  }, [panelKey, visiblePanel])
+
   const saveEntry = (savedEntry) => {
     setEntries((prev) => [cardFromSavedEntry(savedEntry), ...prev])
     setComposerOpen(false)
@@ -123,6 +138,21 @@ export default function BragEmployee() {
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
     profile.email?.[0]?.toUpperCase() ||
     '?'
+
+  const panelContent = {
+    composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,
+    loading: <p className="be-entry-loading">Loading entries...</p>,
+    error: <p className="be-entry-load-error" role="alert">{entriesError}</p>,
+    empty: <BragEmptyState onAddEntry={() => setComposerOpen(true)} />,
+    entries: (
+      <>
+        <div className="be-sec-label">Your entries</div>
+        {entries.map((entry) => (
+          <EntryCard key={entry.id} entry={entry} />
+        ))}
+      </>
+    ),
+  }
 
   return (
     <div className="be-page">
@@ -159,7 +189,7 @@ export default function BragEmployee() {
 
           {/* Brag doc tab */}
           <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
-            {!composerOpen && (entriesLoading || entriesError || entries.length > 0) ? (
+            {!composerOpen && entries.length > 0 ? (
               <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger be-add-trigger--top">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <line x1="8" y1="3" x2="8" y2="13"/>
@@ -167,24 +197,11 @@ export default function BragEmployee() {
                 </svg>
                 Add a win
               </button>
-            ) : composerOpen ? (
-              <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />
             ) : null}
 
-            {!composerOpen && (entriesLoading ? (
-              <p className="be-entry-loading">Loading entries...</p>
-            ) : entriesError ? (
-              <p className="be-entry-load-error" role="alert">{entriesError}</p>
-            ) : entries.length ? (
-              <>
-                <div className="be-sec-label">Your entries</div>
-                {entries.map((entry) => (
-                  <EntryCard key={entry.id} entry={entry} />
-                ))}
-              </>
-            ) : (
-              <BragEmptyState onAddEntry={() => setComposerOpen(true)} />
-            ))}
+            <div className={`be-panel-swap${panelExiting ? ' be-panel-swap--out' : ' be-panel-swap--in'}`} key={visiblePanel}>
+              {panelContent[visiblePanel]}
+            </div>
           </section>
 
           {/* Resume tab */}

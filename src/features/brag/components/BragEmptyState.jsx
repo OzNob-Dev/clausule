@@ -21,6 +21,9 @@ export default function BragEmptyState({ onAddEntry }) {
     <section className="be-empty" aria-labelledby="brag-empty-title">
       <div className="be-empty-trophy" aria-hidden="true">
         <div className="be-empty-halo" />
+        <div className="be-empty-halo be-empty-halo--inner" />
+        <div className="be-empty-glow" />
+        <span className="be-empty-sparkle" />
         <span className="be-empty-sparkle" />
         <span className="be-empty-sparkle" />
         <span className="be-empty-sparkle" />
@@ -36,14 +39,17 @@ export default function BragEmptyState({ onAddEntry }) {
       </div>
 
       <p className="be-empty-eyebrow">Your brag doc awaits</p>
-      <h2 id="brag-empty-title" className="be-empty-title">You&apos;ve done great things. Start writing them down.</h2>
+      <h2 id="brag-empty-title" className="be-empty-title">
+        You&apos;ve done great things.<br />
+        Start <em>writing them down.</em>
+      </h2>
       <p className="be-empty-copy">
-        Your brag doc is a running record of wins, impact, and growth. It turns review season from stressful to confident.
+        Your brag doc is a running record of wins, impact, and growth. It turns <strong>review season from stressful to confident.</strong>
       </p>
 
-      <div className="be-empty-prompts" aria-label="Entry prompts to get started">
+      <div className="be-empty-prompts" role="list" aria-label="Entry prompts to get started">
         {PROMPTS.map((prompt) => (
-          <div key={prompt.title} className="be-empty-prompt">
+          <div key={prompt.title} className="be-empty-prompt" role="listitem">
             <span className="be-empty-prompt-icon" aria-hidden="true">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d={prompt.icon} />
