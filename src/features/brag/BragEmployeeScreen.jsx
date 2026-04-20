@@ -159,7 +159,7 @@ export default function BragEmployee() {
 
           {/* Brag doc tab */}
           <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
-            {!composerOpen ? (
+            {!composerOpen && (entriesLoading || entriesError || entries.length > 0) ? (
               <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger be-add-trigger--top">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <line x1="8" y1="3" x2="8" y2="13"/>
@@ -167,9 +167,9 @@ export default function BragEmployee() {
                 </svg>
                 Add a win
               </button>
-            ) : (
+            ) : composerOpen ? (
               <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />
-            )}
+            ) : null}
 
             {entriesLoading ? (
               <p className="be-entry-loading">Loading entries...</p>

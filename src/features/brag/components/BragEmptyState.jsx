@@ -21,6 +21,10 @@ export default function BragEmptyState({ onAddEntry }) {
     <section className="be-empty" aria-labelledby="brag-empty-title">
       <div className="be-empty-trophy" aria-hidden="true">
         <div className="be-empty-halo" />
+        <span className="be-empty-sparkle" />
+        <span className="be-empty-sparkle" />
+        <span className="be-empty-sparkle" />
+        <span className="be-empty-sparkle" />
         <div className="be-empty-stage">
           <svg className="be-empty-trophy-svg" viewBox="0 0 80 80" fill="none">
             <path d="M24 14h32v22c0 10-7 18-16 18S24 46 24 36V14z" fill="currentColor" opacity="0.14" />
