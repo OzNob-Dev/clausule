@@ -30,6 +30,17 @@ export default function BragRail({ activePage }) {
               </svg>
             </Link>
             <Link
+              href="/brag?panel=feedback"
+              className={activePage === 'feedback' ? 'be-rail-btn-active' : 'be-rail-btn'}
+              aria-label="Feedback"
+              aria-current={activePage === 'feedback' ? 'page' : undefined}
+            >
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <path d="M3 3h10v7H7l-4 3V3Z"/>
+                <path d="M6 6h4M6 8h3"/>
+              </svg>
+            </Link>
+            <Link
               href={ROUTES.bragSettings}
               className={activePage === 'settings' ? 'be-rail-btn-active' : 'be-rail-btn'}
               aria-label="Settings"

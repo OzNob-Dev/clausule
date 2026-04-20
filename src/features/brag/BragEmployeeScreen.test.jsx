@@ -28,6 +28,7 @@ describe('BragEmployeeScreen', () => {
   })
 
   afterEach(() => {
+    window.history.pushState({}, '', '/')
     vi.unstubAllGlobals()
   })
 
@@ -113,6 +114,14 @@ describe('BragEmployeeScreen', () => {
     render(<BragEmployeeScreen />)
 
     fireEvent.click(await screen.findByRole('button', { name: /add feedback/i }))
+
+    expect(await screen.findByRole('form', { name: /add feedback/i })).toBeInTheDocument()
+  })
+
+  it('opens feedback capture from the rail query link', async () => {
+    window.history.pushState({}, '', '/brag?panel=feedback')
+
+    render(<BragEmployeeScreen />)
 
     expect(await screen.findByRole('form', { name: /add feedback/i })).toBeInTheDocument()
   })

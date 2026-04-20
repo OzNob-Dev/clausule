@@ -116,6 +116,12 @@ export default function BragEmployee() {
   }, [])
 
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('panel') !== 'feedback') return
+    setComposerOpen(false)
+    setFeedbackOpen(true)
+  }, [])
+
+  useEffect(() => {
     if (panelKey === visiblePanel) return undefined
 
     setPanelExiting(true)
@@ -161,7 +167,7 @@ export default function BragEmployee() {
 
   return (
     <div className="be-page">
-      <BragRail activePage="brag" />
+      <BragRail activePage={feedbackOpen ? 'feedback' : 'brag'} />
 
       <BragSidebar
         avatarInitials={avatarInitials}

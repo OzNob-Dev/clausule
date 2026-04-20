@@ -37,6 +37,14 @@ describe('BragRail integration', () => {
     expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
   })
 
+  it('links to feedback capture from the rail', () => {
+    render(<BragRail activePage="feedback" />)
+
+    const feedbackLink = screen.getByRole('link', { name: /feedback/i })
+    expect(feedbackLink).toHaveAttribute('href', '/brag?panel=feedback')
+    expect(feedbackLink).toHaveAttribute('aria-current', 'page')
+  })
+
   it('delegates sign out to auth context', async () => {
     const userEvent = await import('@testing-library/user-event')
     const user = userEvent.default.setup()
@@ -53,6 +61,7 @@ describe('BragRail integration', () => {
     render(<BragRail activePage="settings" />)
 
     expect(screen.queryByRole('link', { name: /brag doc/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /feedback/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
   })
@@ -72,6 +81,7 @@ describe('BragRail integration', () => {
     render(<BragRail activePage="settings" />)
 
     expect(screen.getByRole('link', { name: /brag doc/i })).toHaveAttribute('href', '/brag')
+    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag?panel=feedback')
     expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
   })
 })
