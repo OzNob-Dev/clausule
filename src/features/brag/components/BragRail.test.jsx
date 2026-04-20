@@ -19,7 +19,7 @@ describe('BragRail integration', () => {
     useProfileStore.getState().clearProfile()
   })
 
-  it('renders initials from the shared profile store', () => {
+  it('does not render a duplicate avatar in the rail', () => {
     useProfileStore.getState().setProfile({
       firstName: 'Ada',
       lastName: 'Lovelace',
@@ -28,7 +28,7 @@ describe('BragRail integration', () => {
 
     render(<BragRail activePage="brag" />)
 
-    expect(screen.getByText('AL')).toBeInTheDocument()
+    expect(screen.queryByText('AL')).not.toBeInTheDocument()
   })
 
   it('links to settings from the brag page', () => {

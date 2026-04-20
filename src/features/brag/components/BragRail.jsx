@@ -7,19 +7,14 @@ import { ROUTES } from '@shared/utils/routes'
 
 export default function BragRail({ activePage }) {
   const { logout } = useAuth()
-  const profile = useProfileStore((state) => state.profile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
   const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
   const mfaSetupRequired = hasSecuritySnapshot && !authenticatorAppConfigured && !ssoConfigured
-  const initials =
-    ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
-    profile.email?.[0]?.toUpperCase() ||
-    ''
 
   return (
     <aside className="be-rail be-sidebar" aria-label="App navigation">
-      <div className="be-rail-logo" aria-hidden="true">CLS</div>
+      <img className="be-rail-logo" src="/favicon.svg" alt="" aria-hidden="true" />
       <nav className="be-rail-nav" aria-label="Primary">
         {!mfaSetupRequired && (
           <>
@@ -49,7 +44,6 @@ export default function BragRail({ activePage }) {
         )}
       </nav>
       <div className="be-rail-foot">
-        <div key={initials || 'avatar-empty'} className="be-rail-avatar be-avatar-pop be-avatar-pop--rail" aria-hidden="true">{initials}</div>
         <button type="button" onClick={logout} className="be-rail-icon-btn" aria-label="Sign out">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>
