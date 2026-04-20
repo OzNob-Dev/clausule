@@ -1,7 +1,7 @@
 import { BrevoClient } from '@getbrevo/brevo'
 import { insert } from '@api/_lib/supabase.js'
 
-const CATEGORIES = new Set(['Bug', 'Idea', 'Usability', 'Pricing', 'Other'])
+const CATEGORIES = new Set(['Bug', 'Idea', 'Usability', 'Other'])
 const FEELINGS = new Set(['Love it', 'Confusing', 'Blocked', 'Just noting'])
 
 function clean(value) {
@@ -24,7 +24,6 @@ export async function sendAppFeedback({ body, user }) {
   const message = clean(body.message)
   const improvement = clean(body.improvement)
   const contactOk = body.contactOk === true
-  const isAction = body.isAction !== false
   const toEmail = process.env.APP_FEEDBACK_EMAIL || process.env.SUPPORT_EMAIL || 'support@clausule.app'
 
   if (!subject) return { body: { error: 'subject is required' }, status: 400 }
@@ -39,7 +38,6 @@ export async function sendAppFeedback({ body, user }) {
     message,
     improvement: improvement || null,
     contact_ok: contactOk,
-    is_action: isAction,
   })
 
   if (insertError) {
@@ -64,7 +62,6 @@ export async function sendAppFeedback({ body, user }) {
             <tr><td style="padding:8px 0;color:#786B5F;">From</td><td style="padding:8px 0;text-align:right;">${escapeHtml(user.email || user.userId)}</td></tr>
             <tr><td style="padding:8px 0;color:#786B5F;">Category</td><td style="padding:8px 0;text-align:right;">${escapeHtml(category)}</td></tr>
             <tr><td style="padding:8px 0;color:#786B5F;">Feeling</td><td style="padding:8px 0;text-align:right;">${escapeHtml(feeling)}</td></tr>
-            <tr><td style="padding:8px 0;color:#786B5F;">Action item</td><td style="padding:8px 0;text-align:right;">${isAction ? 'Yes' : 'No'}</td></tr>
             <tr><td style="padding:8px 0;color:#786B5F;">May contact</td><td style="padding:8px 0;text-align:right;">${contactOk ? 'Yes' : 'No'}</td></tr>
           </table>
           <h3 style="margin:0 0 8px;font-size:15px;">Feedback</h3>

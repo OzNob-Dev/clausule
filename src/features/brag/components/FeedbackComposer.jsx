@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Pricing', 'Other']
+const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Other']
 const FEELINGS = ['Love it', 'Confusing', 'Blocked', 'Just noting']
 
 export default function FeedbackComposer({ onClose }) {
@@ -10,7 +10,6 @@ export default function FeedbackComposer({ onClose }) {
   const [message, setMessage] = useState('')
   const [improvement, setImprovement] = useState('')
   const [contactOk, setContactOk] = useState(true)
-  const [isAction, setIsAction] = useState(true)
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
@@ -35,7 +34,6 @@ export default function FeedbackComposer({ onClose }) {
           message: message.trim(),
           improvement: improvement.trim(),
           contactOk,
-          isAction,
         }),
       })
 
@@ -116,11 +114,6 @@ export default function FeedbackComposer({ onClose }) {
             <label className="be-feedback-check">
               <input type="checkbox" checked={contactOk} onChange={(e) => setContactOk(e.target.checked)} />
               <span>The Clausule team may contact me about this feedback.</span>
-            </label>
-
-            <label className="be-feedback-check">
-              <input type="checkbox" checked={isAction} onChange={(e) => setIsAction(e.target.checked)} />
-              <span>This is an action item for the Clausule team.</span>
             </label>
 
             <div className="be-feedback-footer">

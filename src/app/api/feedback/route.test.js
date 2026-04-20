@@ -63,7 +63,6 @@ describe('feedback route', () => {
       message: 'Please add faster entry shortcuts.',
       improvement: 'Let me press j/k to move.',
       contact_ok: true,
-      is_action: true,
     }))
   })
 
