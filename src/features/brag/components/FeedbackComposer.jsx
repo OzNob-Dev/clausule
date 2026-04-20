@@ -78,17 +78,6 @@ export default function FeedbackComposer({ onClose }) {
         </div>
       ) : (
         <>
-          <div className="be-feedback-orbit" aria-hidden="true">
-            <span className="be-feedback-orbit-ring" />
-            <span className="be-feedback-orbit-bubble" />
-            <span className="be-feedback-orbit-bubble" />
-            <svg className="be-feedback-orbit-chat" viewBox="0 0 56 56" fill="none">
-              <path d="M12 13h32v22H26l-10 8v-8h-4V13Z" fill="currentColor" opacity="0.14" />
-              <path d="M12 13h32v22H26l-10 8v-8h-4V13Z" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" />
-              <path d="M20 22h16M20 28h10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-            </svg>
-          </div>
-
           <div className="be-feedback-form" role="form" aria-label="Send app feedback">
             <div className="be-feedback-head">
               <p className="be-feedback-eyebrow">Product feedback</p>

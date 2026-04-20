@@ -1,8 +1,21 @@
-export default function BragSidebar({ avatarInitials, displayName, email, managerNote }) {
+export default function BragSidebar({
+  ariaLabel = 'Profile and evidence',
+  eyebrow = 'Clausule · Brag doc',
+  avatarInitials,
+  displayName,
+  email,
+  noteLabel = 'Manager note',
+  note,
+  overviewLabel = 'Evidence strength',
+  status = 'Strong',
+  statusSub = '3 of 4 types',
+  legendTitle = 'Evidence type breakdown',
+  legendItems = [],
+}) {
   return (
-    <aside className="be-identity be-sidebar" aria-label="Profile and evidence">
+    <aside className="be-identity be-sidebar" aria-label={ariaLabel}>
       <div className="be-sidebar-header">
-        <div className="be-sidebar-eyebrow">Clausule · Brag doc</div>
+        <div className="be-sidebar-eyebrow">{eyebrow}</div>
       </div>
       <div className="be-sidebar-body">
         <div>
@@ -16,14 +29,14 @@ export default function BragSidebar({ avatarInitials, displayName, email, manage
         <div className="be-divider" role="separator" />
 
         <div>
-          <div className="be-notes-label">Manager note</div>
-          <p className="be-note-quote">{managerNote}</p>
+          <div className="be-notes-label">{noteLabel}</div>
+          <p className="be-note-quote">{note}</p>
         </div>
 
         <div className="be-divider" role="separator" />
 
         <div>
-          <div className="be-overview-label">Evidence strength</div>
+          <div className="be-overview-label">{overviewLabel}</div>
           <div className="be-strength-row">
             <div className="be-sidebar-rings" aria-hidden="true">
               <svg width="50" height="50" viewBox="0 0 50 50">
@@ -40,27 +53,17 @@ export default function BragSidebar({ avatarInitials, displayName, email, manage
               </svg>
             </div>
             <div>
-              <div className="be-overview-status">Strong</div>
-              <div className="be-overview-sub">3 of 4 types</div>
+              <div className="be-overview-status">{status}</div>
+              <div className="be-overview-sub">{statusSub}</div>
             </div>
           </div>
-          <ul className="be-ring-legend" aria-label="Evidence type breakdown">
-            <li className="be-ring-leg">
-              <span className="be-ring-leg-dot" style={{ background: 'var(--ring-outer)' }} aria-hidden="true" />
-              Work artefacts ✓
-            </li>
-            <li className="be-ring-leg">
-              <span className="be-ring-leg-dot" style={{ background: 'var(--ring-mid)' }} aria-hidden="true" />
-              Metrics / data ✓
-            </li>
-            <li className="be-ring-leg">
-              <span className="be-ring-leg-dot" style={{ background: 'var(--ring-inner)' }} aria-hidden="true" />
-              Peer recognition ✓
-            </li>
-            <li className="be-ring-leg be-ring-leg--missing">
-              <span className="be-ring-leg-dot be-ring-leg-dot--missing" aria-hidden="true" />
-              External links — add one for Exceptional
-            </li>
+          <ul className="be-ring-legend" aria-label={legendTitle}>
+            {legendItems.map((item) => (
+              <li key={item.label} className={`be-ring-leg${item.missing ? ' be-ring-leg--missing' : ''}`}>
+                <span className={`be-ring-leg-dot${item.missing ? ' be-ring-leg-dot--missing' : ''}`} style={{ background: item.color }} aria-hidden="true" />
+                {item.label}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

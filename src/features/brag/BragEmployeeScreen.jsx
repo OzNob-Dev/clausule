@@ -165,7 +165,7 @@ export default function BragEmployee() {
         avatarInitials={avatarInitials}
         displayName={displayName}
         email={profile.email}
-        managerNote={MANAGER_NOTE}
+        note={MANAGER_NOTE}
       />
 
       <main className="be-main" aria-labelledby="brag-page-title">

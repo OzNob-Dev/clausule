@@ -317,52 +317,6 @@
   padding: 24px 0;
 }
 
-.be-feedback-orbit {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 128px;
-  height: 128px;
-  margin-bottom: 22px;
-  color: #C94F2A;
-}
-
-.be-feedback-orbit-ring {
-  position: absolute;
-  inset: 4px;
-  border: 1.5px dashed rgba(201, 79, 42, 0.26);
-  border-radius: 50%;
-  animation: be-feedback-spin 16s linear infinite;
-}
-
-.be-feedback-orbit-bubble {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border: 1px solid rgba(201, 79, 42, 0.22);
-  border-radius: 50%;
-  background: rgba(201, 79, 42, 0.08);
-  animation: be-feedback-bubble 3s ease-in-out infinite;
-}
-
-.be-feedback-orbit-bubble:nth-of-type(2) {
-  top: 20px;
-  right: 26px;
-}
-
-.be-feedback-orbit-bubble:nth-of-type(3) {
-  left: 22px;
-  bottom: 26px;
-  animation-delay: 0.65s;
-}
-
-.be-feedback-orbit-chat {
-  width: 60px;
-  height: 60px;
-  filter: drop-shadow(0 8px 18px rgba(201, 79, 42, 0.16));
-  animation: be-feedback-float 3.6s ease-in-out infinite;
-}
-
 .be-feedback-form {
   width: 100%;
   max-width: 660px;
@@ -1338,9 +1292,6 @@
   .be-composer-orbit-ring,
   .be-composer-orbit-dot,
   .be-composer-orbit-pen,
-  .be-feedback-orbit-ring,
-  .be-feedback-orbit-bubble,
-  .be-feedback-orbit-chat,
   .be-feedback-saving-mark span,
   .be-feedback-saving-mark svg,
   .be-loading-ring,
