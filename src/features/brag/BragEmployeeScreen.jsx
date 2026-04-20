@@ -5,6 +5,7 @@ import { useTheme } from '@shared/hooks/useTheme'
 import BragRail from '@features/brag/components/BragRail'
 import BragSidebar from '@features/brag/components/BragSidebar'
 import BragEmptyState from '@features/brag/components/BragEmptyState'
+import BragLoadingState from '@features/brag/components/BragLoadingState'
 import EntryCard from '@features/brag/components/EntryCard'
 import EntryComposer from '@features/brag/components/EntryComposer'
 import ResumeTab from '@features/brag/components/ResumeTab'
@@ -141,7 +142,7 @@ export default function BragEmployee() {
 
   const panelContent = {
     composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,
-    loading: <p className="be-entry-loading">Loading entries...</p>,
+    loading: <BragLoadingState />,
     error: <p className="be-entry-load-error" role="alert">{entriesError}</p>,
     empty: <BragEmptyState onAddEntry={() => setComposerOpen(true)} />,
     entries: (

@@ -436,7 +436,6 @@
   font-weight: 700;
 }
 
-.be-entry-loading,
 .be-entry-load-error {
   margin: 0;
   padding: 18px;
@@ -446,6 +445,116 @@
   color: #5C5048;
   font-size: 13px;
   font-weight: 600;
+}
+
+.be-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 44px 18px;
+  color: var(--acc);
+  text-align: center;
+}
+
+.be-loading-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+}
+
+.be-loading-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-right-color: rgba(208, 90, 52, 0.35);
+  animation: be-loading-spin 1.45s linear infinite;
+}
+
+.be-loading-ring--outer {
+  inset: 0;
+}
+
+.be-loading-ring--mid {
+  inset: 14px;
+  animation-duration: 1.1s;
+  animation-direction: reverse;
+  opacity: 0.72;
+}
+
+.be-loading-ring--inner {
+  inset: 28px;
+  animation-duration: 0.9s;
+  opacity: 0.52;
+}
+
+.be-loading-pencil {
+  width: 46px;
+  height: 46px;
+  transform-origin: center;
+  animation: be-loading-pencil 1.8s ease-in-out infinite;
+}
+
+.be-loading-title {
+  margin: 0;
+  color: #5C2C1A;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.be-loading-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: min(220px, 70%);
+}
+
+.be-loading-lines span {
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(208, 90, 52, 0.1), rgba(208, 90, 52, 0.34), rgba(208, 90, 52, 0.1));
+  background-size: 220% 100%;
+  animation: be-loading-shimmer 1.25s ease-in-out infinite;
+}
+
+.be-loading-lines span:nth-child(2) {
+  width: 82%;
+  animation-delay: 0.14s;
+}
+
+.be-loading-lines span:nth-child(3) {
+  width: 58%;
+  animation-delay: 0.28s;
+}
+
+@keyframes be-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes be-loading-pencil {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(4deg);
+  }
+}
+
+@keyframes be-loading-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .be-entry-load-error {
@@ -809,6 +918,9 @@
 @media (prefers-reduced-motion: reduce) {
   .be-empty-cta,
   .be-panel-swap,
+  .be-loading-ring,
+  .be-loading-pencil,
+  .be-loading-lines span,
   .be-empty-halo,
   .be-empty-glow,
   .be-empty-trophy-svg,
