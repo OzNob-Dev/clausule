@@ -81,14 +81,17 @@ export default function BragEmployee() {
         managerNote={MANAGER_NOTE}
       />
 
-      {/* Main content */}
-      <main className="be-main">
+      <main className="be-main" aria-labelledby="brag-page-title">
         <div className="be-inner">
 
-          <div className="be-tabs" role="tablist">
+          <h1 id="brag-page-title" className="sr-only">Brag document</h1>
+
+          <div className="be-tabs" role="tablist" aria-label="Brag document views">
             {[['brag', 'Brag doc'], ['cv', 'Resume']].map(([key, label]) => (
               <button
                 key={key}
+                id={`tab-${key}`}
+                type="button"
                 role="tab"
                 aria-selected={tab === key}
                 aria-controls={`panel-${key}`}
@@ -101,7 +104,7 @@ export default function BragEmployee() {
           </div>
 
           {/* Brag doc tab */}
-          <div id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
+          <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
             <div className="be-card">
               <div className="be-card-label">
                 From your manager
@@ -118,7 +121,7 @@ export default function BragEmployee() {
             ))}
 
             {!composerOpen ? (
-              <button onClick={() => setComposerOpen(true)} className="be-add-trigger">
+              <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <line x1="8" y1="3" x2="8" y2="13"/>
                   <line x1="3" y1="8" x2="13" y2="8"/>
@@ -128,12 +131,12 @@ export default function BragEmployee() {
             ) : (
               <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />
             )}
-          </div>
+          </section>
 
           {/* Resume tab */}
-          <div id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
+          <section id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
             <ResumeTab />
-          </div>
+          </section>
 
         </div>
       </main>

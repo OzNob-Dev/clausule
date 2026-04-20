@@ -1,16 +1,10 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import BragRail from './BragRail'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 
-const push = vi.fn()
 const logout = vi.fn()
-
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push }),
-}))
 
 vi.mock('@features/auth/context/AuthContext', () => ({
   useAuth: () => ({ logout }),
@@ -18,7 +12,6 @@ vi.mock('@features/auth/context/AuthContext', () => ({
 
 describe('BragRail integration', () => {
   beforeEach(() => {
-    push.mockClear()
     logout.mockClear()
     process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
     process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED = 'false'
@@ -38,17 +31,15 @@ describe('BragRail integration', () => {
     expect(screen.getByText('AL')).toBeInTheDocument()
   })
 
-  it('navigates to settings from the brag page', async () => {
-    const user = userEvent.setup()
-
+  it('links to settings from the brag page', () => {
     render(<BragRail activePage="brag" />)
-    await user.click(screen.getByRole('button', { name: /settings/i }))
 
-    expect(push).toHaveBeenCalledWith('/brag/settings')
+    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
   })
 
   it('delegates sign out to auth context', async () => {
-    const user = userEvent.setup()
+    const userEvent = await import('@testing-library/user-event')
+    const user = userEvent.default.setup()
 
     render(<BragRail activePage="brag" />)
     await user.click(screen.getByRole('button', { name: /sign out/i }))
@@ -61,8 +52,8 @@ describe('BragRail integration', () => {
 
     render(<BragRail activePage="settings" />)
 
-    expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /settings/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /brag doc/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
   })
 
@@ -71,8 +62,8 @@ describe('BragRail integration', () => {
 
     render(<BragRail activePage="settings" />)
 
-    expect(screen.queryByRole('button', { name: /brag doc/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /settings/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /brag doc/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
   })
 
   it('shows app navigation when SSO is configured without MFA', () => {
@@ -80,7 +71,7 @@ describe('BragRail integration', () => {
 
     render(<BragRail activePage="settings" />)
 
-    expect(screen.getByRole('button', { name: /brag doc/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /settings/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /brag doc/i })).toHaveAttribute('href', '/brag')
+    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
   })
 })

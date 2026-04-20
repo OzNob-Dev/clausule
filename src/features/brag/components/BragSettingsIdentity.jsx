@@ -1,6 +1,6 @@
 export default function BragSettingsIdentity({ avatarInitials, displayName, email }) {
   return (
-    <div className="be-identity be-sidebar" role="complementary" aria-label="Profile">
+    <aside className="be-identity be-sidebar" aria-label="Profile">
       <div className="be-sidebar-header">
         <div className="be-sidebar-eyebrow">Clausule · Settings</div>
       </div>
@@ -20,6 +20,6 @@ export default function BragSettingsIdentity({ avatarInitials, displayName, emai
           </p>
         </div>
       </div>
-    </div>
+    </aside>
   )
 }

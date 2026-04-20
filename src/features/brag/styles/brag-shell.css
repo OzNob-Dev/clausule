@@ -50,10 +50,17 @@
   cursor: pointer;
   background: transparent;
   transition: color 0.15s;
+  text-decoration: none;
 }
 
 .be-rail-btn { color: var(--tm); }
 .be-rail-btn:hover { color: var(--tp); }
+.be-rail-btn:focus-visible,
+.be-rail-btn-active:focus-visible,
+.be-rail-icon-btn:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+}
 
 .be-rail-btn-active {
   background: var(--acc-tint);

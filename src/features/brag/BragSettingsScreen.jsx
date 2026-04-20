@@ -46,10 +46,10 @@ export default function BragSettings() {
 
       <BragSettingsIdentity avatarInitials={avatarInitials} displayName={displayName} email={profile.email} />
 
-      <main className="be-main">
+      <main className="be-main" aria-labelledby="brag-settings-title">
         <div className="be-inner">
-          <div className="bss-heading">Security settings</div>
-          <div className="bss-subheading">Manage how you sign in to Clausule.</div>
+          <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
+          <p className="bss-subheading">Manage how you sign in to Clausule.</p>
           <div className="bss-divider" />
 
           {ssoConfigured && (

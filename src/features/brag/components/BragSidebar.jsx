@@ -1,6 +1,6 @@
 export default function BragSidebar({ avatarInitials, displayName, email, managerNote }) {
   return (
-    <div className="be-identity be-sidebar" role="complementary" aria-label="Profile and evidence">
+    <aside className="be-identity be-sidebar" aria-label="Profile and evidence">
       <div className="be-sidebar-header">
         <div className="be-sidebar-eyebrow">Clausule · Brag doc</div>
       </div>
@@ -64,6 +64,6 @@ export default function BragSidebar({ avatarInitials, displayName, email, manage
           </ul>
         </div>
       </div>
-    </div>
+    </aside>
   )
 }
