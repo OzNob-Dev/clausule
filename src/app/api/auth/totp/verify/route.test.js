@@ -31,12 +31,12 @@ describe('totp verify route', () => {
   })
 
   it('loads the profile case-insensitively and accepts a valid TOTP', async () => {
-    select.mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', totp_secret: SECRET }] })
+    select.mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', totp_secret: SECRET, is_active: true, is_deleted: false }] })
 
     const response = await POST(request())
 
     expect(response.status).toBe(200)
-    expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Crole%2Ctotp_secret&limit=1')
+    expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Crole%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',
       email: 'ada@example.com',

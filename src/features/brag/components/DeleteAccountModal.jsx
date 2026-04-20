@@ -6,6 +6,8 @@ import { useAuth } from '@features/auth/context/AuthContext'
 export default function DeleteAccountModal({ open, onClose }) {
   const { logout } = useAuth()
   const [deleteConfirm, setDeleteConfirm] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+  const [deleting, setDeleting] = useState(false)
   const [visible, setVisible] = useState(false)
   const inputRef = useRef(null)
   const frameRef = useRef(null)
@@ -16,6 +18,8 @@ export default function DeleteAccountModal({ open, onClose }) {
     } else {
       setVisible(false)
       setDeleteConfirm('')
+      setDeleteError('')
+      setDeleting(false)
     }
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current)
@@ -24,7 +28,7 @@ export default function DeleteAccountModal({ open, onClose }) {
 
   const confirmReady = deleteConfirm === 'DELETE'
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!confirmReady) {
       const el = inputRef.current
       if (el) {
@@ -34,7 +38,22 @@ export default function DeleteAccountModal({ open, onClose }) {
       }
       return
     }
-    logout()
+
+    setDeleting(true)
+    setDeleteError('')
+
+    try {
+      const response = await fetch('/api/account', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      })
+
+      if (!response.ok) throw new Error('Delete failed')
+      await logout()
+    } catch {
+      setDeleteError('Could not delete your account. Please try again.')
+      setDeleting(false)
+    }
   }
 
   const handleClose = () => {
@@ -84,14 +103,16 @@ export default function DeleteAccountModal({ open, onClose }) {
         <div className="bss-modal-actions">
           <button
             onClick={handleConfirm}
+            disabled={deleting}
             className={`bss-btn-delete-confirm${confirmReady ? ' bss-btn-delete-confirm--ready' : ''}`}
           >
-            Yes, permanently delete my account
+            {deleting ? 'Deleting account...' : 'Yes, permanently delete my account'}
           </button>
-          <button className="bss-btn-modal-cancel" onClick={handleClose}>
+          <button className="bss-btn-modal-cancel" onClick={handleClose} disabled={deleting}>
             Cancel
           </button>
         </div>
+        {deleteError && <p className="bss-error-text" role="alert">{deleteError}</p>}
       </div>
     </div>
   )

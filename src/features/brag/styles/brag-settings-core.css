@@ -378,3 +378,10 @@
 }
 
 .bss-btn-modal-cancel:hover { border-color: #2A221A; }
+
+.bss-error-text {
+  margin: 10px 0 0;
+  color: #9E1F1F;
+  font-size: 12px;
+  font-weight: 700;
+}

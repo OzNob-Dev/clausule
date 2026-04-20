@@ -26,8 +26,8 @@ export async function rotateRefreshSession(rawToken) {
     return { clearCookies: true, body: { error: 'Refresh token expired — please sign in again' }, status: 401 }
   }
 
-  const { profile } = await findProfileById(row.user_id)
-  if (!profile) {
+  const { profile } = await findProfileById(row.user_id, 'id,email,role,is_active,is_deleted')
+  if (!profile || !profile.is_active || profile.is_deleted) {
     await del('refresh_tokens', `user_id=eq.${row.user_id}`)
     return { clearCookies: true, body: { error: 'User not found' }, status: 401 }
   }

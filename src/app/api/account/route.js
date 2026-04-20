@@ -1,60 +1,37 @@
 /**
  * DELETE /api/account
  *
- * Permanently deletes the authenticated user's account.
- * The Supabase `ON DELETE CASCADE` rules handle:
- *   profiles → subscriptions, brag_entries, passkeys, team_memberships,
- *              file_notes, manager_narratives
+ * Soft-deletes the authenticated user's account.
  *
- * Requires the user to confirm their email in the request body as an extra
- * safeguard against accidental or CSRF-driven deletion.
- *
- * Body: { confirmEmail: string }
  * Response 204: no content
- * Response 400: { error: string }
  * Response 401: { error: string }
  */
 
 import { NextResponse }                       from 'next/server'
 import { requireAuth, unauthorized,
          clearAuthCookies }                   from '@api/_lib/auth.js'
-import { select, deleteUser }                 from '@api/_lib/supabase.js'
+import { del, update }                        from '@api/_lib/supabase.js'
 
 export async function DELETE(request) {
   const { userId, error: authError } = await requireAuth(request)
   if (authError) return unauthorized()
 
-  const body         = await request.json().catch(() => ({}))
-  const confirmEmail = (body.confirmEmail ?? '').trim().toLowerCase()
-
-  if (!confirmEmail) {
-    return NextResponse.json(
-      { error: 'Provide confirmEmail matching your account email to confirm deletion' },
-      { status: 400 }
-    )
-  }
-
-  // Verify the supplied email matches the account.
-  const { data: profiles } = await select(
-    'profiles',
-    `id=eq.${userId}&select=email&limit=1`
-  )
-
-  const storedEmail = profiles?.[0]?.email?.toLowerCase()
-  if (!storedEmail || storedEmail !== confirmEmail) {
-    return NextResponse.json({ error: 'Email does not match account' }, { status: 400 })
-  }
-
-  // Delete the Supabase Auth user — cascades to the profiles row and all
-  // child tables via FK constraints.
-  const { error: deleteError } = await deleteUser(userId)
+  const deletedAt = new Date().toISOString()
+  const { error: deleteError } = await update('profiles', `id=eq.${userId}`, {
+    is_active: false,
+    is_deleted: true,
+    deleted_at: deletedAt,
+  })
 
   if (deleteError) {
-    console.error('[account DELETE] deleteUser error:', deleteError)
+    console.error('[account DELETE] profile soft-delete error:', deleteError)
     return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
   }
 
-  // Clear auth cookies.
+  await del('refresh_tokens', `user_id=eq.${userId}`).catch((err) => {
+    console.warn('[account DELETE] failed to revoke refresh tokens:', err?.message)
+  })
+
   const response = new Response(null, { status: 204 })
   clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
   return response

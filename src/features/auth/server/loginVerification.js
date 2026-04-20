@@ -38,7 +38,7 @@ export async function verifyEmailOtpLogin({ email, code }) {
 
   await update('otp_codes', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
 
-  const { profile, error: profileError } = await findProfileByEmail(email)
+  const { profile, error: profileError } = await findProfileByEmail(email, 'id,role,is_active,is_deleted')
   if (profileError || !profile) {
     return {
       log: ['[verify-code] profile lookup failed:', profileError],
@@ -46,6 +46,7 @@ export async function verifyEmailOtpLogin({ email, code }) {
       status: 404,
     }
   }
+  if (!profile.is_active || profile.is_deleted) return { body: { error: 'User account not found' }, status: 404 }
 
   const { id: userId, role } = profile
   return {
@@ -58,8 +59,8 @@ export async function verifyEmailOtpLogin({ email, code }) {
 export async function verifyTotpLogin({ email, code }) {
   if (!validateEmail(email).valid || code.length !== 6) return { body: { error: 'email and 6-digit code required' }, status: 400 }
 
-  const { profile, error: dbError } = await findProfileByEmail(email, 'id,role,totp_secret')
-  if (dbError || !profile?.totp_secret) return invalidTotp()
+  const { profile, error: dbError } = await findProfileByEmail(email, 'id,role,totp_secret,is_active,is_deleted')
+  if (dbError || !profile?.totp_secret || !profile.is_active || profile.is_deleted) return invalidTotp()
 
   const { id: userId, role, totp_secret: secret } = profile
   if (!verifyTotp(secret, code)) return invalidTotp()

@@ -37,12 +37,12 @@ describe('verify-code route', () => {
   it('loads the profile case-insensitively after a valid OTP', async () => {
     select
       .mockResolvedValueOnce({ data: [{ id: 'otp-1', code_hash: codeHash('123456') }] })
-      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee' }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', is_active: true, is_deleted: false }] })
 
     const response = await POST(request())
 
     expect(response.status).toBe(200)
-    expect(select).toHaveBeenNthCalledWith(2, 'profiles', 'email=ilike.ada%40example.com&select=id%2Crole&limit=1')
+    expect(select).toHaveBeenNthCalledWith(2, 'profiles', 'email=ilike.ada%40example.com&select=id%2Crole%2Cis_active%2Cis_deleted&limit=1')
     expect(update).toHaveBeenCalledWith('otp_codes', 'id=eq.otp-1', expect.objectContaining({ used_at: expect.any(String) }))
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',
