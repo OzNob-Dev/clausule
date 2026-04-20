@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
-import { insert, select } from '@api/_lib/supabase.js'
+import { insert } from '@api/_lib/supabase.js'
+import { findProfileById } from './accountRepository.js'
 
 const RP_NAME = process.env.NEXT_PUBLIC_RP_NAME ?? 'Clausule'
 const CHALLENGE_TTL_MS = 5 * 60 * 1000
@@ -55,8 +56,7 @@ function pruneExpiredChallenges() {
 
 export async function createPasskeyRegistrationOptions({ request, userId }) {
   const rpId = getRpId(request)
-  const { data: profiles } = await select('profiles', `id=eq.${userId}&select=email,first_name,last_name&limit=1`)
-  const profile = profiles?.[0]
+  const { profile } = await findProfileById(userId, 'email,first_name,last_name')
 
   if (!profile) return jsonError('User profile not found', 404)
 

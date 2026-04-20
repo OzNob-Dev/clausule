@@ -1,0 +1,481 @@
+/* ── MFA Login Email ────────────────────────────────────────────── */
+.mfa-email-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F5F0EA;
+  color: #1A1510;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.mfa-email-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 47px, rgba(26, 21, 16, 0.028) 47px, rgba(26, 21, 16, 0.028) 48px);
+}
+
+.mfa-email-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 780px;
+  max-width: 100%;
+  overflow: hidden;
+  background: #FDFCFA;
+  border: 1px solid rgba(26, 21, 16, 0.18);
+  border-radius: 8px;
+  animation: mfa-in 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.mfa-email-left {
+  width: 256px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+  background: #2A221A;
+  padding: 32px 28px;
+}
+
+.mfa-email-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.mfa-email-logo-bug {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #FBF7F2;
+  background: #C94F2A;
+  border-radius: 8px;
+}
+
+.mfa-email-logo-bug svg {
+  width: 15px;
+  height: 15px;
+}
+
+.mfa-email-logo-name {
+  color: #FBF7F2;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.mfa-email-left-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mfa-email-left-body h1 {
+  color: #FBF7F2;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.mfa-email-left-body em {
+  color: #C94F2A;
+}
+
+.mfa-email-left-body p {
+  color: #B8B2AC;
+  font-size: 12.5px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.mfa-email-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.mfa-email-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #786B5F;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.mfa-email-step-num {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #B8B2AC;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.mfa-email-step-num--done {
+  color: #C94F2A;
+  background: rgba(201, 79, 42, 0.25);
+}
+
+.mfa-email-step-num--active {
+  color: #FFFFFF;
+  background: #C94F2A;
+}
+
+.mfa-email-step-current {
+  color: #B8B2AC;
+}
+
+.mfa-email-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #FDFCFA;
+  padding: 36px 32px;
+}
+
+.mfa-email-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  color: #786B5F;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  padding: 0;
+  margin-bottom: 22px;
+  font-family: var(--font);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mfa-email-back:hover,
+.mfa-email-back:focus-visible {
+  color: #1A1510;
+}
+
+.mfa-email-back:focus-visible,
+.mfa-email-resend:focus-visible,
+.mfa-email-verify:focus-visible {
+  outline: 2px solid #C94F2A;
+  outline-offset: 3px;
+}
+
+.mfa-email-back svg {
+  width: 13px;
+  height: 13px;
+}
+
+.mfa-email-title {
+  color: #1A1510;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0;
+  margin: 0 0 4px;
+}
+
+.mfa-email-sub {
+  color: #5B4E42;
+  font-size: 13px;
+  line-height: 1.65;
+  margin: 0 0 18px;
+}
+
+.mfa-email-sub strong {
+  color: #1A1510;
+}
+
+.mfa-email-preview {
+  overflow: hidden;
+  background: #F5F0EA;
+  border: 1px solid rgba(26, 21, 16, 0.18);
+  border-radius: 8px;
+  margin-bottom: 22px;
+}
+
+.mfa-email-preview-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #EDE8E0;
+  border-bottom: 1px solid rgba(26, 21, 16, 0.1);
+  padding: 9px 12px;
+}
+
+.mfa-email-preview-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #F5F0EA;
+  background: #1A1510;
+  border-radius: 5px;
+}
+
+.mfa-email-preview-icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+.mfa-email-preview-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.mfa-email-preview-from {
+  color: #1A1510;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.mfa-email-preview-subject {
+  overflow: hidden;
+  color: #786B5F;
+  font-size: 10px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mfa-email-preview-time {
+  color: #786B5F;
+  font-size: 9.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mfa-email-preview-body {
+  padding: 12px 14px 10px;
+}
+
+.mfa-email-preview-body p {
+  color: #5B4E42;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0 0 9px;
+}
+
+.mfa-email-code-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #FDFCFA;
+  border: 1.5px dashed rgba(26, 21, 16, 0.18);
+  border-radius: 8px;
+  padding: 9px 10px;
+  margin-bottom: 9px;
+}
+
+.mfa-email-code-digit {
+  width: 24px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1510;
+  background: #FDFCFA;
+  border: 1px solid rgba(26, 21, 16, 0.18);
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.mfa-email-code-separator {
+  width: 7px;
+  height: 2px;
+  background: rgba(26, 21, 16, 0.18);
+  border-radius: 1px;
+  margin: 0 1px;
+}
+
+.mfa-email-note {
+  color: #786B5F;
+  font-size: 9.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.mfa-email-note strong {
+  color: #5B4E42;
+}
+
+.mfa-email-otp-meta {
+  width: calc(6 * 40px + 5 * 6px);
+  max-width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  align-self: center;
+  color: #786B5F;
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
+.mfa-email-otp-meta strong {
+  color: #3D3228;
+}
+
+.mfa-email-expired {
+  color: #C0392B !important;
+}
+
+.mfa-email-right .mfa-otp-row {
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.mfa-email-right .mfa-otp-box {
+  width: 40px;
+  height: 44px;
+  flex: none;
+  color: #1A1510;
+  background: #F5F0EA;
+  border: 1.5px solid rgba(26, 21, 16, 0.18);
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.mfa-email-right .mfa-otp-box:focus {
+  border-color: #C94F2A;
+  box-shadow: 0 0 0 3px rgba(201, 79, 42, 0.13);
+}
+
+.mfa-email-right .mfa-otp-row--valid .mfa-otp-box {
+  border-color: #1A1510;
+  background: #F5F0EA;
+}
+
+.mfa-email-right .mfa-otp-row--error .mfa-otp-box {
+  border-color: #C0392B;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.13);
+}
+
+.mfa-email-verify {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #FFFFFF;
+  background: #C94F2A;
+  border: 0;
+  border-radius: 8px;
+  padding: 13px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.mfa-email-verify:hover:not(:disabled) {
+  opacity: 0.87;
+  transform: translateY(-1px);
+}
+
+.mfa-email-verify:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.mfa-email-verify svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.mfa-email-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  align-items: center;
+}
+
+.mfa-email-footer p {
+  color: #786B5F;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+}
+
+.mfa-email-resend {
+  color: #3D3228;
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
+  padding: 0;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.mfa-email-resend:hover {
+  color: #C94F2A;
+}
+
+@media (max-width: 720px) {
+  .mfa-email-shell {
+    display: block;
+  }
+
+  .mfa-email-left {
+    width: 100%;
+    gap: 22px;
+    padding: 24px;
+  }
+
+  .mfa-email-right {
+    padding: 28px 22px 32px;
+  }
+}
+
+@media (max-width: 420px) {
+  .mfa-email-wrap {
+    padding: 12px;
+  }
+
+  .mfa-email-right .mfa-otp-box {
+    width: 36px;
+    height: 42px;
+  }
+
+  .mfa-email-otp-meta {
+    width: calc(6 * 36px + 5 * 6px);
+  }
+}
+

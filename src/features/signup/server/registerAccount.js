@@ -1,15 +1,12 @@
 import crypto from 'node:crypto'
 import { BrevoClient } from '@getbrevo/brevo'
-import { insert, select, upsert, createUser } from '@api/_lib/supabase.js'
+import { insert, upsert, createUser } from '@api/_lib/supabase.js'
+import { findProfileByEmail } from '@features/auth/server/accountRepository.js'
 
 const PLAN_AMOUNT_CENTS = 500
 const PLAN_CURRENCY = 'AUD'
 const PLAN_INTERVAL = 'month'
 const PLAN_LABEL = 'Clausule Individual'
-
-function profileQuery(email) {
-  return new URLSearchParams({ email: `ilike.${email}`, select: 'id,role', limit: '1' }).toString()
-}
 
 function authUserId(created) {
   return created?.id ?? created?.user?.id ?? null
@@ -49,8 +46,8 @@ function error(body, status) {
 }
 
 async function resolveUserId({ email, firstName, lastName }) {
-  const { data: profiles } = await select('profiles', profileQuery(email))
-  if (profiles?.length) return { userId: profiles[0].id }
+  const { profile } = await findProfileByEmail(email)
+  if (profile) return { userId: profile.id }
 
   const { data: created, error: createErr } = await createUser({
     email,
@@ -62,8 +59,8 @@ async function resolveUserId({ email, firstName, lastName }) {
     return userId ? { userId } : { log: ['[register] createUser returned no id:', created], ...error({ error: 'Failed to create user account' }, 500) }
   }
 
-  const { data: retryProfiles } = await select('profiles', profileQuery(email))
-  if (retryProfiles?.length) return { userId: retryProfiles[0].id }
+  const { profile: retryProfile } = await findProfileByEmail(email)
+  if (retryProfile) return { userId: retryProfile.id }
 
   return { log: ['[register] createUser error:', createErr], ...error({ error: 'Failed to create user account' }, 500) }
 }

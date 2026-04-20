@@ -7,13 +7,7 @@
 
 import { NextResponse } from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
-import { getAuthUser, select } from '@api/_lib/supabase.js'
-
-function hasSsoIdentity(user) {
-  const provider = user?.app_metadata?.provider
-  if (provider && provider !== 'email') return true
-  return (user?.identities ?? []).some((identity) => identity?.provider && identity.provider !== 'email')
-}
+import { bootstrapSession } from '@features/auth/server/bootstrapSession.js'
 
 export async function GET(request) {
   const { userId, email, role, authMethod, error: authError } = requireAuth(request)
@@ -26,39 +20,7 @@ export async function GET(request) {
     return unauthorized(authError)
   }
 
-  const { data: rows, error } = await select(
-    'profiles',
-    `id=eq.${userId}&select=first_name,last_name,email,totp_secret&limit=1`
-  )
-
-  if (error) {
-    console.error('[auth/bootstrap GET]', error)
-    return NextResponse.json({ error: 'Failed to fetch bootstrap data' }, { status: 500 })
-  }
-
-  const row = rows?.[0]
-  const { data: authUser, error: authUserError } = await getAuthUser(userId)
-
-  if (authUserError) {
-    console.error('[auth/bootstrap auth user GET]', authUserError)
-    return NextResponse.json({ error: 'Failed to fetch auth state' }, { status: 500 })
-  }
-
-  return NextResponse.json({
-    user: {
-      id: userId,
-      email,
-      role,
-    },
-    profile: {
-      firstName: row?.first_name ?? '',
-      lastName: row?.last_name ?? '',
-      email: row?.email ?? email ?? '',
-    },
-    security: {
-      authenticatorAppConfigured: Boolean(row?.totp_secret),
-      authenticatedWithOtp: authMethod === 'otp',
-      ssoConfigured: hasSsoIdentity(authUser?.user ?? authUser),
-    },
-  })
+  const result = await bootstrapSession({ userId, email, role, authMethod })
+  if (result.error) console.error(result.log, result.error)
+  return NextResponse.json(result.body, { status: result.status })
 }

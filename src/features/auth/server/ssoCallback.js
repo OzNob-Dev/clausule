@@ -1,23 +1,6 @@
-import { select } from '@api/_lib/supabase.js'
 import { homePathForRole } from '@shared/utils/routes'
+import { accountActive, findProfileByEmail, hasActiveSubscription } from './accountRepository.js'
 import { exchangeSsoCode } from './ssoProviders.js'
-
-function profileQuery(email) {
-  return new URLSearchParams({
-    email: `ilike.${email}`,
-    select: 'id,role,first_name,last_name,is_active,is_deleted',
-    limit: '1',
-  }).toString()
-}
-
-function subscriptionQuery(userId) {
-  return new URLSearchParams({
-    user_id: `eq.${userId}`,
-    status: 'in.(active,trialing)',
-    select: 'id',
-    limit: '1',
-  }).toString()
-}
 
 export function parseSsoState(cookieHeader) {
   const rawCookie = (cookieHeader ?? '')
@@ -62,8 +45,9 @@ export async function resolveSsoCallback({ origin, provider, code, state, cookie
 
   let existingProfile
   try {
-    const { data } = await select('profiles', profileQuery(userInfo.email))
-    existingProfile = data?.[0] ?? null
+    const { profile, error } = await findProfileByEmail(userInfo.email, 'id,role,first_name,last_name,is_active,is_deleted')
+    if (error) throw error
+    existingProfile = profile
   } catch (err) {
     return { type: 'error', error: 'account_error', log: [`[sso/${provider}] profile lookup:`, err.message] }
   }
@@ -72,13 +56,14 @@ export async function resolveSsoCallback({ origin, provider, code, state, cookie
 
   let hasPaid = false
   try {
-    const { data } = await select('subscriptions', subscriptionQuery(existingProfile.id))
-    hasPaid = Array.isArray(data) && data.length > 0
+    const paid = await hasActiveSubscription(existingProfile.id)
+    if (paid.error) throw paid.error
+    hasPaid = paid.hasPaid
   } catch (err) {
     return { type: 'error', error: 'account_error', log: [`[sso/${provider}] subscription lookup:`, err.message] }
   }
 
-  const isActive = Boolean(existingProfile.is_active) || hasPaid
+  const isActive = accountActive(existingProfile, hasPaid)
   if (!isActive || existingProfile.is_deleted) {
     return {
       type: 'signup',

@@ -11,20 +11,13 @@
 import { NextResponse }            from 'next/server'
 import { getRefreshToken,
          clearAuthCookies }        from '@api/_lib/auth.js'
-import { hashRefreshToken }        from '@api/_lib/jwt.js'
-import { update }                  from '@api/_lib/supabase.js'
+import { revokeRefreshSession }    from '@features/auth/server/refreshSession.js'
 
 export async function POST(request) {
   const rawToken = getRefreshToken(request)
 
   if (rawToken) {
-    const tokenHash = hashRefreshToken(rawToken)
-    // Mark the refresh token as used so it cannot be replayed after logout.
-    await update(
-      'refresh_tokens',
-      `token_hash=eq.${tokenHash}&used_at=is.null`,
-      { used_at: new Date().toISOString() }
-    ).catch((err) => {
+    await revokeRefreshSession(rawToken).catch((err) => {
       // Non-fatal — cookie expiry handles this if the DB call fails.
       console.warn('[logout] failed to revoke refresh token:', err?.message)
     })

@@ -1,4 +1,5 @@
-import { insert, select, upsert, createUser } from '@api/_lib/supabase.js'
+import { insert, upsert, createUser } from '@api/_lib/supabase.js'
+import { findProfileByEmail, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
 const STRIPE_API = 'https://api.stripe.com/v1'
@@ -22,11 +23,8 @@ async function stripe(path, body = null, method = 'POST') {
 async function resolveUserId({ authedId, email, firstName, lastName }) {
   if (authedId) return authedId
 
-  const { data: profiles } = await select(
-    'profiles',
-    new URLSearchParams({ email: `eq.${email}`, select: 'id', limit: '1' }).toString()
-  )
-  if (profiles?.length) return profiles[0].id
+  const { profile } = await findProfileByEmail(email, 'id')
+  if (profile) return profile.id
 
   const { data: created, error: createErr } = await createUser({
     email,
@@ -52,8 +50,8 @@ export async function createSubscription({ body, authedId }) {
 
   const userId = await resolveUserId({ authedId, email, firstName, lastName })
 
-  const { data: existing } = await select('subscriptions', `user_id=eq.${userId}&status=in.(active,trialing)&limit=1`)
-  if (existing?.length) return { body: { error: 'Active subscription already exists' }, status: 409 }
+  const { hasPaid } = await hasActiveSubscription(userId)
+  if (hasPaid) return { body: { error: 'Active subscription already exists' }, status: 409 }
 
   const customer = await stripe('/customers', new URLSearchParams({ email, name: fullName }))
 

@@ -1,0 +1,459 @@
+/* ── MFA Setup ─────────────────────────────────────────────────── */
+.mfa-wrap {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #D4C5B2;
+  padding: 1.5rem;
+}
+
+.mfa-card {
+  width: 480px;
+  max-width: 100%;
+  background: #FAF7F3;
+  border-radius: 20px;
+  padding: 36px 44px 48px;
+  box-shadow: 0 12px 48px rgba(60, 45, 35, 0.13);
+}
+
+/* ── Progress segments ───────────────────────────────────────────── */
+.mfa-progress {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 40px;
+}
+
+.mfa-seg {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  background: rgba(60, 45, 35, 0.12);
+  transition: background 0.35s, opacity 0.35s;
+}
+
+.mfa-seg--done   { background: var(--acc); }
+.mfa-seg--active { background: var(--acc); opacity: 0.45; }
+
+/* ── Pane ────────────────────────────────────────────────────────── */
+.mfa-pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: mfa-in 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.mfa-pane--center { align-items: center; }
+
+@keyframes mfa-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Icon ────────────────────────────────────────────────────────── */
+.mfa-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: rgba(208, 90, 52, 0.09);
+  color: var(--acc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+  flex-shrink: 0;
+}
+
+.mfa-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ── Headings ────────────────────────────────────────────────────── */
+.mfa-heading {
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: #2A221A;
+  margin: 0 0 10px;
+  line-height: 1.2;
+}
+
+.mfa-sub {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #5C5048;
+  margin: 0 0 28px;
+  max-width: 320px;
+}
+
+.mfa-sub strong {
+  color: #2A221A;
+  font-weight: 700;
+}
+
+/* ── Demo pill ───────────────────────────────────────────────────── */
+.mfa-demo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--acc);
+  background: rgba(208, 90, 52, 0.09);
+  border: 1px solid rgba(208, 90, 52, 0.18);
+  border-radius: 20px;
+  padding: 5px 14px;
+  margin-bottom: 24px;
+  letter-spacing: 0.2px;
+}
+
+.mfa-demo-pill strong { font-weight: 800; letter-spacing: 1.5px; }
+
+/* ── OTP row ─────────────────────────────────────────────────────── */
+.mfa-otp-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mfa-otp-box {
+  width: 50px;
+  height: 58px;
+  border: 2px solid rgba(60, 45, 35, 0.16);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  font-family: var(--font);
+  color: #2A221A;
+  background: #FAF7F3;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  caret-color: var(--acc);
+  -moz-appearance: textfield;
+}
+
+.mfa-otp-box::-webkit-outer-spin-button,
+.mfa-otp-box::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.mfa-otp-box:focus {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 3px rgba(208, 90, 52, 0.12);
+}
+
+/* Error state — shake all boxes */
+.mfa-otp-row--error .mfa-otp-box {
+  border-color: #D94040;
+  animation: mfa-shake 0.4s ease;
+}
+
+/* Valid state */
+.mfa-otp-row--valid .mfa-otp-box {
+  border-color: #5DCAA5;
+  background: rgba(93, 202, 165, 0.06);
+}
+
+@keyframes mfa-shake {
+  0%, 100% { transform: translateX(0); }
+  18%       { transform: translateX(-5px); }
+  36%       { transform: translateX(5px); }
+  54%       { transform: translateX(-3px); }
+  72%       { transform: translateX(3px); }
+}
+
+/* ── Error message ───────────────────────────────────────────────── */
+.mfa-error {
+  font-size: 12px;
+  font-weight: 600;
+  color: #D94040;
+  margin: 0 0 10px;
+}
+
+/* ── Resend ──────────────────────────────────────────────────────── */
+.mfa-resend {
+  font-size: 12px;
+  color: #8A7E76;
+  margin-top: 4px;
+}
+
+.mfa-resend-btn {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--acc);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  padding: 0;
+  transition: opacity 0.15s;
+}
+
+.mfa-resend-btn:hover { opacity: 0.75; }
+
+/* ── Passkey button ──────────────────────────────────────────────── */
+.mfa-passkey-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px 20px;
+  background: var(--acc);
+  color: #FAF7F3;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.3s;
+  margin-bottom: 12px;
+  letter-spacing: -0.1px;
+}
+
+.mfa-passkey-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.mfa-passkey-btn:hover:not(:disabled) { opacity: 0.88; }
+
+.mfa-passkey-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.mfa-passkey-btn--done {
+  background: #3A9E7E;
+  opacity: 1 !important;
+  cursor: default;
+}
+
+/* ── Spinner ─────────────────────────────────────────────────────── */
+.mfa-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(250, 247, 243, 0.3);
+  border-top-color: #FAF7F3;
+  border-radius: 50%;
+  animation: mfa-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes mfa-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Skip / secondary button ─────────────────────────────────────── */
+.mfa-skip-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8A7E76;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+
+.mfa-skip-btn:hover { color: #5C5048; }
+
+/* ── No-passkey badge ────────────────────────────────────────────── */
+.mfa-no-passkey-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #5C5048;
+  background: rgba(60, 45, 35, 0.06);
+  border: 1px solid rgba(60, 45, 35, 0.12);
+  border-radius: 10px;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+}
+
+.mfa-no-passkey-badge svg {
+  width: 14px;
+  height: 14px;
+  color: var(--acc);
+  flex-shrink: 0;
+}
+
+/* ── Success ─────────────────────────────────────────────────────── */
+.mfa-success-ring {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(93, 202, 165, 0.1);
+  border: 2px solid rgba(93, 202, 165, 0.35);
+  color: #3A9E7E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  animation: mfa-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.mfa-success-ring svg {
+  width: 30px;
+  height: 30px;
+}
+
+@keyframes mfa-pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Enter button ────────────────────────────────────────────────── */
+.mfa-enter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 20px;
+  background: #2A221A;
+  color: #FAF7F3;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  letter-spacing: -0.1px;
+}
+
+.mfa-enter-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.mfa-enter-btn:hover { opacity: 0.85; }
+
+/* ── Back button ─────────────────────────────────────────────────── */
+.mfa-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #786B5F;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  padding: 0;
+  margin-bottom: 28px;
+  transition: color 0.12s;
+}
+
+.mfa-back-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.mfa-back-btn:hover { color: #2A221A; }
+
+/* ── Login-flow pane ─────────────────────────────────────────────── */
+.mfa-login-pane {
+  align-items: stretch;
+  text-align: left;
+}
+
+.mfa-login-heading {
+  text-align: left;
+}
+
+.mfa-login-btn {
+  margin-bottom: 16px;
+}
+
+/* Security indicator row */
+.mfa-sec-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(60, 45, 35, 0.06);
+  border-radius: 10px;
+  margin-bottom: 28px;
+}
+
+.mfa-sec-row--accent {
+  background: rgba(208, 90, 52, 0.07);
+}
+
+.mfa-sec-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(60, 45, 35, 0.07);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mfa-sec-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mfa-sec-icon--accent {
+  background: rgba(208, 90, 52, 0.15);
+}
+
+.mfa-sec-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5B4E42;
+  line-height: 1.45;
+}
+
+.mfa-sec-text strong {
+  color: #2A221A;
+  font-weight: 700;
+}
+
+/* Expiry countdown */
+.mfa-expiry-note {
+  font-size: 11px;
+  font-weight: 600;
+  color: #786B5F;
+  margin-bottom: 28px;
+}
+
+.mfa-expiry-expired {
+  color: #D94040;
+}
+
+.mfa-expiry-bar {
+  height: 3px;
+  background: rgba(60, 45, 35, 0.14);
+  border-radius: 2px;
+  margin-top: 7px;
+  overflow: hidden;
+}
+
+.mfa-expiry-fill {
+  height: 100%;
+  background: #2A221A;
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+
+/* Footer link group */
+.mfa-login-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

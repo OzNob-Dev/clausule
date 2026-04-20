@@ -1,0 +1,36 @@
+import { update } from '@api/_lib/supabase.js'
+import { generateBase32Secret, verifyTotp } from '@api/_lib/totp.js'
+import { findProfileById } from './accountRepository.js'
+
+export async function createTotpSetup({ userId }) {
+  let email = 'user'
+  const { profile } = await findProfileById(userId, 'email')
+  if (profile?.email) email = profile.email
+
+  const secret = generateBase32Secret()
+  const uri = `otpauth://totp/Clausule:${encodeURIComponent(email)}?secret=${secret}&issuer=Clausule&algorithm=SHA1&digits=6&period=30`
+
+  return { body: { secret, uri }, status: 200 }
+}
+
+export async function saveTotpSetup({ userId, body }) {
+  const code = (body.code ?? '').replace(/\D/g, '').slice(0, 6)
+  const secret = (body.secret ?? '').trim().toUpperCase()
+
+  if (code.length !== 6 || !secret) {
+    return { body: { error: 'code (6 digits) and secret are required' }, status: 400 }
+  }
+
+  if (!verifyTotp(secret, code)) return { body: { error: 'Invalid TOTP code' }, status: 401 }
+
+  const { error } = await update('profiles', `id=eq.${userId}`, { totp_secret: secret })
+  if (error) {
+    return {
+      log: ['[totp/setup POST] update error:', error],
+      body: { error: 'Failed to save TOTP configuration' },
+      status: 500,
+    }
+  }
+
+  return { body: { ok: true }, status: 200 }
+}
