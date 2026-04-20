@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTheme } from '@shared/hooks/useTheme'
 import BragRail from '@features/brag/components/BragRail'
 import BragSidebar from '@features/brag/components/BragSidebar'
+import BragEmptyState from '@features/brag/components/BragEmptyState'
 import EntryCard from '@features/brag/components/EntryCard'
 import EntryComposer from '@features/brag/components/EntryComposer'
 import ResumeTab from '@features/brag/components/ResumeTab'
@@ -14,39 +15,6 @@ import '@features/brag/styles/resume-tab.css'
 
 const MANAGER_NOTE =
   'Jordan has had a strong year. The platform migration was the headline — delivered early with consistently positive stakeholder feedback. Genuine tech lead potential here.'
-
-const INITIAL_ENTRIES = [
-  {
-    id: 1,
-    title: 'Presented at guild session — observability tooling',
-    date: '2025-11-06',
-    body: 'Ran a 45-minute guild session on distributed tracing and observability. Positive attendance — follow-up led to two new team tooling adoptions.',
-    strength: 'Exceptional',
-    strengthHint: 'Strong across all evidence types',
-    ringOffsets: [0, 0, 10],
-    pills: [
-      { label: 'Slide deck', type: 'filled' },
-      { label: '2 adoptions', type: 'gold' },
-      { label: 'Attendance data', type: 'gold' },
-      { label: 'Peer shoutout', type: 'filled' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Led architecture review for Q3 platform migration',
-    date: '2025-12-18',
-    body: 'Facilitated a cross-team architecture review covering the new event streaming layer. Produced the decision record, got sign-off from 4 teams. Migration ran on schedule with zero rollback events.',
-    strength: 'Solid',
-    strengthHint: 'Good artefact coverage — add metrics to reach Strong',
-    ringOffsets: [0, 19, 37.7],
-    pills: [
-      { label: 'Decision record', type: 'filled' },
-      { label: '4-team sign-off', type: 'filled' },
-      { label: '+ add metrics', type: 'empty' },
-      { label: '+ peer feedback', type: 'empty' },
-    ],
-  },
-]
 
 function evidenceTypeToPill(type) {
   if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
@@ -80,12 +48,66 @@ function cardFromSavedEntry({ entry, evidenceTypes, files }) {
   }
 }
 
+function evidenceTypesFromEntry(entry) {
+  return (entry.brag_entry_evidence ?? []).map(({ type }) => type).filter(Boolean)
+}
+
+function cardFromEntry(entry) {
+  const evidenceTypes = evidenceTypesFromEntry(entry)
+
+  return {
+    id: entry.id,
+    title: entry.title,
+    date: entry.entry_date,
+    body: entry.body ?? '',
+    strength: entry.strength,
+    strengthHint: entry.strength_hint,
+    ringOffsets: ringOffsets(evidenceTypes.length),
+    pills: evidenceTypes.slice(0, 4).map(evidenceTypeToPill),
+  }
+}
+
+function newestEntryFirst(a, b) {
+  const dateDiff = new Date(b.entry_date).getTime() - new Date(a.entry_date).getTime()
+  if (dateDiff) return dateDiff
+  return new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+}
+
 export default function BragEmployee() {
   useTheme()
   const profile = useProfileStore((state) => state.profile)
   const [tab, setTab]                   = useState('brag')
-  const [entries, setEntries]           = useState(INITIAL_ENTRIES)
+  const [entries, setEntries]           = useState([])
+  const [entriesLoading, setEntriesLoading] = useState(true)
+  const [entriesError, setEntriesError] = useState('')
   const [composerOpen, setComposerOpen] = useState(false)
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    async function loadEntries() {
+      setEntriesLoading(true)
+      setEntriesError('')
+
+      try {
+        const response = await fetch('/api/brag/entries?limit=100', {
+          credentials: 'same-origin',
+          signal: controller.signal,
+        })
+        const data = await response.json().catch(() => ({}))
+        if (!response.ok) throw new Error(data.error || 'Failed to load entries')
+
+        setEntries([...(data.entries ?? [])].sort(newestEntryFirst).map(cardFromEntry))
+      } catch (error) {
+        if (error.name !== 'AbortError') setEntriesError('Could not load entries. Please refresh and try again.')
+      } finally {
+        if (!controller.signal.aborted) setEntriesLoading(false)
+      }
+    }
+
+    loadEntries()
+    return () => controller.abort()
+  }, [])
 
   const saveEntry = (savedEntry) => {
     setEntries((prev) => [cardFromSavedEntry(savedEntry), ...prev])
@@ -149,11 +171,20 @@ export default function BragEmployee() {
               <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />
             )}
 
-            <div className="be-sec-label">Your entries</div>
-
-            {entries.map((entry) => (
-              <EntryCard key={entry.id} entry={entry} />
-            ))}
+            {entriesLoading ? (
+              <p className="be-entry-loading">Loading entries...</p>
+            ) : entriesError ? (
+              <p className="be-entry-load-error" role="alert">{entriesError}</p>
+            ) : entries.length ? (
+              <>
+                <div className="be-sec-label">Your entries</div>
+                {entries.map((entry) => (
+                  <EntryCard key={entry.id} entry={entry} />
+                ))}
+              </>
+            ) : (
+              <BragEmptyState onAddEntry={() => setComposerOpen(true)} />
+            )}
           </section>
 
           {/* Resume tab */}
