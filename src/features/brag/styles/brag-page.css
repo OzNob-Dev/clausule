@@ -1359,8 +1359,8 @@
   border-radius: 50%;
   background:
     radial-gradient(circle at 50% 50%, transparent 62%, var(--be-empty-canvas) 63% 70%, transparent 71%),
-    conic-gradient(from 18deg, var(--be-motion-clay) 0 28deg, transparent 28deg 76deg, var(--be-motion-gold) 76deg 108deg, transparent 108deg 156deg, var(--be-motion-green) 156deg 188deg, transparent 188deg 250deg, var(--be-motion-blue) 250deg 282deg, transparent 282deg 360deg);
-  opacity: 0.65;
+    conic-gradient(from 18deg, rgba(201, 79, 42, 0.28) 0 24deg, transparent 24deg 86deg, rgba(248, 211, 123, 0.42) 86deg 112deg, transparent 112deg 172deg, rgba(47, 111, 94, 0.24) 172deg 198deg, transparent 198deg 264deg, rgba(31, 94, 140, 0.2) 264deg 288deg, transparent 288deg 360deg);
+  opacity: 0.48;
   animation: be-empty-halo-spin 18s linear infinite;
 }
 
@@ -1368,8 +1368,8 @@
   inset: -8px;
   background:
     radial-gradient(circle at 50% 50%, transparent 61%, var(--be-empty-canvas) 62% 72%, transparent 73%),
-    conic-gradient(from 120deg, rgba(201, 79, 42, 0.32), transparent 36deg, rgba(248, 211, 123, 0.56), transparent 136deg, rgba(47, 111, 94, 0.32), transparent 236deg, rgba(31, 94, 140, 0.28), transparent 360deg);
-  opacity: 0.78;
+    conic-gradient(from 120deg, rgba(201, 79, 42, 0.16), transparent 40deg, rgba(248, 211, 123, 0.3), transparent 148deg, rgba(47, 111, 94, 0.16), transparent 252deg, rgba(31, 94, 140, 0.14), transparent 360deg);
+  opacity: 0.55;
   animation-duration: 12s;
   animation-direction: reverse;
 }
@@ -1379,8 +1379,8 @@
   inset: 0;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 48% 52%, rgba(248, 211, 123, 0.28) 0%, transparent 45%),
-    radial-gradient(circle, rgba(201, 79, 42, 0.12) 0%, transparent 70%);
+    radial-gradient(circle at 48% 52%, rgba(248, 211, 123, 0.16) 0%, transparent 42%),
+    radial-gradient(circle, rgba(201, 79, 42, 0.07) 0%, transparent 68%);
   animation: be-empty-glow-pulse 3s ease-in-out infinite;
 }
 
@@ -1408,6 +1408,7 @@
   inset: 0;
   display: grid;
   place-items: center;
+  z-index: 1;
 }
 
 .be-empty-sparkle {
@@ -1487,7 +1488,7 @@
 .be-empty-trophy-svg {
   width: 80px;
   height: 80px;
-  filter: drop-shadow(0 4px 16px rgba(201, 79, 42, 0.2));
+  filter: drop-shadow(0 6px 14px rgba(60, 45, 35, 0.14));
   transform-origin: center;
   animation: be-empty-trophy-float 4s ease-in-out infinite;
 }

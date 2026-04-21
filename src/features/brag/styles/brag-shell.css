@@ -126,7 +126,7 @@
 
 .be-avatar-pop {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   transform-origin: center;
   animation: avatar-morph-bounce-in 0.62s cubic-bezier(0.2, 1, 0.3, 1) both;
 }
@@ -134,13 +134,14 @@
 .be-avatar-pop::before {
   content: '';
   position: absolute;
-  inset: -5px;
+  inset: -6px;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 50%, transparent 56%, var(--be-identity-surface) 58% 66%, transparent 68%),
-    conic-gradient(from 24deg, var(--be-motion-clay) 0 42deg, transparent 42deg 102deg, var(--be-motion-gold) 102deg 132deg, transparent 132deg 208deg, var(--be-motion-green) 208deg 244deg, transparent 244deg 310deg, var(--be-motion-blue) 310deg 344deg, transparent 344deg 360deg);
+    radial-gradient(circle at 50% 50%, transparent 66%, var(--be-identity-surface) 68% 76%, transparent 78%),
+    conic-gradient(from 24deg, rgba(201, 79, 42, 0.36) 0 34deg, transparent 34deg 116deg, rgba(248, 211, 123, 0.48) 116deg 142deg, transparent 142deg 236deg, rgba(47, 111, 94, 0.28) 236deg 266deg, transparent 266deg 360deg);
   opacity: 0;
   pointer-events: none;
+  z-index: -1;
   animation: avatar-orbit-in 0.72s ease-out 0.08s both;
 }
 
@@ -152,6 +153,7 @@
     linear-gradient(105deg, transparent 36%, rgba(255, 255, 255, 0.56) 48%, transparent 60%);
   opacity: 0;
   pointer-events: none;
+  border-radius: inherit;
   animation: avatar-sheen-in 0.72s ease-out 0.2s both;
 }
 
@@ -226,11 +228,12 @@
   margin-bottom: 10px;
   isolation: isolate;
   background:
-    radial-gradient(circle at 28% 24%, rgba(248, 211, 123, 0.48), transparent 34%),
-    linear-gradient(135deg, #F6E9D7 0%, #D7A06E 50%, #8F371F 100%);
+    radial-gradient(circle at 30% 24%, rgba(255, 248, 239, 0.72), transparent 34%),
+    linear-gradient(135deg, #F7ECDC 0%, #DEB388 58%, #B65D38 100%);
   color: #241D16;
+  text-shadow: 0 1px 0 rgba(255, 248, 239, 0.52);
   box-shadow:
-    0 16px 30px rgba(60, 45, 35, 0.16),
+    0 12px 22px rgba(60, 45, 35, 0.13),
     inset 0 0 0 1px rgba(255, 248, 239, 0.64);
 }
 
