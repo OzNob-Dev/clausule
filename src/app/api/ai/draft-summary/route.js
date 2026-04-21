@@ -10,15 +10,40 @@
 
 import { NextResponse }              from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { RateLimiter }               from '@api/_lib/rate-limit.js'
+
+const limiter = new RateLimiter({ limit: 10, windowMs: 10 * 60 * 1000 })
+const MAX_EMPLOYEE_NAME_LENGTH = 120
+const MAX_ENTRIES = 30
+const MAX_FIELD_LENGTH = 1000
+
+function clean(value) {
+  return String(value ?? '').trim()
+}
+
+function validateEntries(entries) {
+  if (!Array.isArray(entries) || entries.length > MAX_ENTRIES) return null
+  return entries.map((entry) => ({
+    cat: clean(entry?.cat).slice(0, MAX_FIELD_LENGTH),
+    title: clean(entry?.title).slice(0, MAX_FIELD_LENGTH),
+    body: clean(entry?.body).slice(0, MAX_FIELD_LENGTH),
+  })).filter((entry) => entry.title || entry.body)
+}
 
 export async function POST(request) {
-  const { error: authError } = await requireAuth(request)
+  const { userId, error: authError } = await requireAuth(request)
   if (authError) return unauthorized()
+  const { allowed, retryAfterMs } = limiter.check(userId)
+
+  if (!allowed) {
+    return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429 })
+  }
 
   const body = await request.json().catch(() => ({}))
-  const { employeeName, entries } = body
+  const employeeName = clean(body.employeeName)
+  const entries = validateEntries(body.entries)
 
-  if (!employeeName || !Array.isArray(entries)) {
+  if (!employeeName || employeeName.length > MAX_EMPLOYEE_NAME_LENGTH || !entries?.length) {
     return NextResponse.json({ error: 'employeeName and entries required' }, { status: 400 })
   }
 
@@ -27,7 +52,7 @@ export async function POST(request) {
   }
 
   const entryText = entries
-    .map((e) => `- [${e.cat}] ${e.title}: ${e.body}`)
+    .map((e) => `- [${e.cat || 'note'}] ${e.title}: ${e.body}`)
     .join('\n')
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {

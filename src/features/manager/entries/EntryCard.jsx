@@ -17,7 +17,7 @@ export function EntryCard({ entry, onDelete, isFiltered }) {
       className={`ecard-wrap${isFiltered ? ' ecard-wrap--filtered' : ''}`}
     >
       {!editing ? (
-        <div className="ecard-view" onClick={() => setEditing(true)}>
+        <button type="button" className="ecard-view" onClick={() => setEditing(true)}>
           <div className="ecard-meta">
             <CategoryPill cat={entry.cat} />
             <span className="ecard-time">{relativeTime(entry.date)}</span>
@@ -35,7 +35,7 @@ export function EntryCard({ entry, onDelete, isFiltered }) {
               ))}
             </div>
           )}
-        </div>
+        </button>
       ) : (
         <div className="ecard-edit">
           <input

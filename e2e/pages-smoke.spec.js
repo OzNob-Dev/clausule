@@ -36,6 +36,7 @@ test('protected Next pages render their primary UI', async ({ page }) => {
     ['/new-entry', /new file note/i],
     ['/edit-entry', /edit file note/i],
     ['/brag', /brag doc/i],
+    ['/brag/feedback', /product feedback/i],
     ['/brag/settings', /security settings/i],
   ]
 

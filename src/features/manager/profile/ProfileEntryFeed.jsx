@@ -36,13 +36,13 @@ export default function ProfileEntryFeed({
       </div>
 
       {!composerOpen && (
-        <div onClick={() => onSetComposerOpen(true)} className="pf-composer-trigger">
+        <button type="button" onClick={() => onSetComposerOpen(true)} className="pf-composer-trigger">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="8" y1="3" x2="8" y2="13" />
             <line x1="3" y1="8" x2="13" y2="8" />
           </svg>
           Add entry
-        </div>
+        </button>
       )}
 
       {composerOpen && <EntryComposer onSave={onAddEntry} onClose={() => onSetComposerOpen(false)} />}

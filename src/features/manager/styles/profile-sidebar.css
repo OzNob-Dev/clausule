@@ -265,6 +265,22 @@
 
 .pf-summary-textarea:focus { border-color: var(--acc-text); }
 
+.pf-summary-view {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.pf-summary-view:focus-visible {
+  outline: 2px solid var(--acc-text);
+  outline-offset: 4px;
+}
+
 .pf-summary-actions {
   display: flex;
   align-items: center;
@@ -346,4 +362,3 @@
   width: 11px;
   height: 11px;
 }
-

@@ -40,7 +40,7 @@ export default function FeedbackScreen() {
           { label: 'What happened', color: 'var(--ring-outer)' },
           { label: 'What you expected', color: 'var(--ring-mid)' },
           { label: 'What blocked you', color: 'var(--ring-inner)' },
-          { label: 'How urgent it feels', color: '#C94F2A', missing: true },
+          { label: 'How urgent it feels', color: '#7F351F', missing: true },
         ]}
       />
 

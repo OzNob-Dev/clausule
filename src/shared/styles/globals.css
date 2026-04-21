@@ -7,17 +7,17 @@
   --card: #FAF7F3;
   --tp: #2A221A;
   --ts: #5C5048;
-  --tm: #8A7E76;
-  --tc: #9A9490;
+  --tm: #5C5048;
+  --tc: #5C5048;
   --rule: rgba(60, 45, 35, 0.10);
   --border: rgba(60, 45, 35, 0.10);
-  --acc: #D05A34;
+  --acc: #7F351F;
   --acc-text: #F5F0EA;
   --acc-tint: rgba(208, 90, 52, 0.14);
-  --bl: #D05A34;
-  --ring-outer: #D05A34;
-  --ring-mid: #B9824F;
-  --ring-inner: #2F7D5B;
+  --bl: #7F351F;
+  --ring-outer: #7F351F;
+  --ring-mid: #674415;
+  --ring-inner: #225F3D;
   --r: 8px;
   --r2: 8px;
 }
@@ -108,12 +108,12 @@ body {
   /* Text ramp (all AAA ≥7:1 on #EDE8DF / #FAF7F3) */
   --tp:  #2A221A;
   --ts:  #5C5048;
-  --tm:  #8A7E76;
-  --tc:  #9A9490;
+  --tm:  #5C5048;
+  --tc:  #5C5048;
   --tx-1: #2A221A;
   --tx-2: #5C5048;
-  --tx-3: #8A7E76;
-  --tx-4: #9A9490;
+  --tx-3: #5C5048;
+  --tx-4: #5C5048;
 
   /* Borders */
   --rule:    rgba(60, 45, 35, 0.10);

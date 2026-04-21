@@ -49,7 +49,7 @@
 .si-logo-bug {
   width: 28px;
   height: 28px;
-  background: #D05A34;
+  background: #7F351F;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -89,7 +89,7 @@
 
 .si-left-footer {
   font-size: 11px;
-  color: #786B5F;
+  color: #C8C4BE;
 }
 
 /* Right light panel */
@@ -103,12 +103,12 @@
 
   --tp:      #1A1510;
   --ts:      #3D3228;
-  --tm:      #786B5F;
+  --tm:      #5C5048;
   --rule:    rgba(26, 21, 16, 0.1);
   --rule-em: rgba(26, 21, 16, 0.18);
-  --acc:     #D05A34;
-  --acc-text: #D05A34;
-  --bl:      #D05A34;
+  --acc:     #7F351F;
+  --acc-text: #7F351F;
+  --bl:      #7F351F;
   --r:       10px;
 }
 
@@ -191,7 +191,7 @@
 .si-btn-primary {
   width: 100%;
   padding: 13px;
-  background: #D05A34;
+  background: #7F351F;
   color: #FDFCFA;
   border: none;
   border-radius: var(--r);
@@ -209,7 +209,7 @@
 
 /* New account variant — still coral, no green override */
 .si-btn-primary--signup {
-  background: #D05A34;
+  background: #7F351F;
 }
 
 .si-divider {

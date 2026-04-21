@@ -129,9 +129,9 @@ export default function ProfileSidebar({
             </>
           ) : (
             <>
-              <div onClick={() => onSetEditingSummary(true)} className="pf-summary-view">
+              <button type="button" onClick={() => onSetEditingSummary(true)} className="pf-summary-view">
                 {summaryText}
-              </div>
+              </button>
               <div className="pf-summary-hint">Click to edit · auto-saves</div>
               {summarySaved && (
                 <div className="pf-auto-saved">

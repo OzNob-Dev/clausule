@@ -1,6 +1,6 @@
 /* ── Brag doc page content ────────────────────────────────────── */
 :root {
-  --be-motion-clay: #C94F2A;
+  --be-motion-clay: #7F351F;
   --be-motion-gold: #F8D37B;
   --be-motion-green: #2F6F5E;
   --be-motion-blue: #1F5E8C;
@@ -23,7 +23,7 @@
   border: none;
   border-radius: 999px;
   background: transparent;
-  color: #8A7E76;
+  color: #5C5048;
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: 12px;
@@ -60,7 +60,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #8A7E76;
+  color: #5C5048;
 }
 
 .be-card-rule { flex: 1; height: 1px; background: rgba(60, 45, 35, 0.1); }
@@ -91,7 +91,7 @@
   text-transform: uppercase;
   letter-spacing: 0.6px;
   margin-bottom: 12px;
-  color: #8A7E76;
+  color: #5C5048;
 }
 
 .be-entry-card {
@@ -119,7 +119,7 @@
 
 .be-entry-date {
   font-size: 11px;
-  color: #8A7E76;
+  color: #5C5048;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -159,7 +159,7 @@
 
 .be-strength-hint {
   font-size: 11px;
-  color: #8A7E76;
+  color: #5C5048;
   margin-bottom: 8px;
 }
 
@@ -180,7 +180,7 @@
 
 .be-ev-pill--filled { background: rgba(208, 90, 52, 0.1); color: var(--acc); }
 .be-ev-pill--gold { background: rgba(180, 130, 40, 0.1); color: #9A7520; }
-.be-ev-pill--empty { background: rgba(60, 45, 35, 0.06); color: #9A9490; }
+.be-ev-pill--empty { background: rgba(60, 45, 35, 0.06); color: #5C5048; }
 
 .be-ev-pill-dot {
   width: 5px;
@@ -195,7 +195,7 @@
   align-items: center;
   gap: 7px;
   font-size: 13px;
-  color: #8A7E76;
+  color: #5C5048;
   cursor: pointer;
   padding: 10px 4px;
   background: transparent;
@@ -439,7 +439,7 @@
 
 .be-feedback-eyebrow {
   margin: 0 0 6px;
-  color: #C94F2A;
+  color: #7F351F;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -534,7 +534,7 @@
   width: 16px;
   height: 16px;
   margin: 1px 0 0;
-  accent-color: #C94F2A;
+  accent-color: #7F351F;
 }
 
 .be-feedback-footer {
@@ -546,7 +546,7 @@
 
 .be-feedback-footer p {
   margin: 0;
-  color: #8A7E76;
+  color: #5C5048;
   font-size: 11.5px;
   font-weight: 700;
 }
@@ -564,7 +564,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  color: #C94F2A;
+  color: #7F351F;
 }
 
 .be-feedback-sent {
@@ -593,7 +593,7 @@
   border-radius: 50%;
   background:
     radial-gradient(circle at 50% 50%, rgba(47, 111, 94, 0.16) 0 30%, transparent 31%),
-    conic-gradient(from 8deg, #C94F2A 0 10deg, transparent 10deg 32deg, #F8D37B 32deg 44deg, transparent 44deg 70deg, #2F6F5E 70deg 82deg, transparent 82deg 116deg, #1F5E8C 116deg 128deg, transparent 128deg 360deg);
+    conic-gradient(from 8deg, #7F351F 0 10deg, transparent 10deg 32deg, #F8D37B 32deg 44deg, transparent 44deg 70deg, #2F6F5E 70deg 82deg, transparent 82deg 116deg, #1F5E8C 116deg 128deg, transparent 128deg 360deg);
   animation: be-feedback-burst 1.2s ease-out both;
 }
 
@@ -611,7 +611,7 @@
   width: 9px;
   height: 9px;
   border-radius: 99px;
-  background: #C94F2A;
+  background: #7F351F;
   animation: be-feedback-spark 1.4s ease-out both;
 }
 
@@ -726,7 +726,7 @@
 .be-feedback-thread-head p,
 .be-feedback-thread-head span {
   margin: 0;
-  color: #786B5F;
+  color: #5C5048;
   font-size: 11px;
   font-weight: 800;
 }
@@ -773,7 +773,7 @@
 }
 
 .be-feedback-message span {
-  color: #786B5F;
+  color: #5C5048;
   font-size: 10.5px;
   font-weight: 800;
 }
@@ -963,7 +963,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #9A9490;
+  color: #5C5048;
   margin-bottom: 7px;
 }
 
@@ -1016,12 +1016,12 @@
 
 .be-dropzone:hover,
 .be-dropzone:focus-visible {
-  border-color: #D05A34;
+  border-color: #7F351F;
   background: rgba(208, 90, 52, 0.03);
 }
 
 .be-dropzone--active {
-  border-color: #D05A34;
+  border-color: #7F351F;
   background: rgba(208, 90, 52, 0.06);
 }
 
@@ -1032,7 +1032,7 @@
   margin-bottom: 2px;
 }
 
-.be-dropzone--active .be-dropzone-icon { color: #D05A34; }
+.be-dropzone--active .be-dropzone-icon { color: #7F351F; }
 
 .be-dropzone-text {
   font-size: 12px;
@@ -1043,7 +1043,7 @@
 
 .be-dropzone-sub {
   font-size: 11px;
-  color: #9A9490;
+  color: #5C5048;
   font-family: var(--font-sans);
 }
 
@@ -1070,7 +1070,7 @@
   flex-shrink: 0;
   width: 14px;
   height: 14px;
-  color: #8A7E76;
+  color: #5C5048;
 }
 
 .be-file-name {
@@ -1088,7 +1088,7 @@
 .be-file-size {
   flex-shrink: 0;
   font-size: 10px;
-  color: #9A9490;
+  color: #5C5048;
   font-family: var(--font-sans);
 }
 

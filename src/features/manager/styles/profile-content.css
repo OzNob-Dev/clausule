@@ -50,11 +50,20 @@
   color: var(--tx-3);
   padding: 14px 0;
   border-top: 1px dashed var(--border2);
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
   margin-top: 4px;
+  background: transparent;
+  width: 100%;
   transition: color 0.15s;
+  font-family: var(--font);
 }
 
-.pf-composer-trigger:hover { color: var(--acc-text); }
+.pf-composer-trigger:hover,
+.pf-composer-trigger:focus-visible {
+  color: var(--acc-text);
+}
 
 .pf-composer-trigger svg {
   width: 0.875rem;

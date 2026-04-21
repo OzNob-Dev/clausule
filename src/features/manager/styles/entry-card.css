@@ -11,13 +11,28 @@
 /* View mode */
 .ecard-view {
   cursor: pointer;
+  display: block;
+  width: 100%;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font-family: var(--font);
   padding: 18px 0;
+  border: 0;
   border-bottom: 1px solid var(--border);
   transition: padding-left 0.15s;
 }
 
 .ecard-view:last-child { border-bottom: none; }
-.ecard-view:hover { padding-left: 5px; }
+.ecard-view:hover,
+.ecard-view:focus-visible {
+  padding-left: 5px;
+}
+
+.ecard-view:focus-visible {
+  outline: 2px solid var(--acc-text);
+  outline-offset: 4px;
+}
 
 .ecard-meta {
   display: flex;

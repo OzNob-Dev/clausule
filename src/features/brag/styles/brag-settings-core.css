@@ -1,6 +1,6 @@
 /* ── BragSettings page — light main surface ───────────────────── */
 :root {
-  --be-motion-clay: #C94F2A;
+  --be-motion-clay: #7F351F;
   --be-motion-gold: #F8D37B;
   --be-motion-green: #2F6F5E;
   --be-motion-blue: #1F5E8C;
@@ -17,7 +17,7 @@
 
 .bss-subheading {
   font-size: 13px;
-  color: #8A7E76;
+  color: #5C5048;
   margin-bottom: 28px;
 }
 
@@ -33,7 +33,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  color: #8A7E76;
+  color: #5C5048;
   margin-bottom: 12px;
 }
 
@@ -199,7 +199,7 @@
 
 .bss-danger-desc {
   font-size: 12px;
-  color: #8A7E76;
+  color: #5C5048;
   line-height: 1.6;
 }
 
@@ -307,7 +307,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: #8A7E76;
+  color: #5C5048;
   margin-bottom: 8px;
 }
 
