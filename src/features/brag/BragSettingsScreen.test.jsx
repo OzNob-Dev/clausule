@@ -22,6 +22,7 @@ vi.mock('@shared/utils/api', () => ({
 describe('BragSettings integration', () => {
   beforeEach(() => {
     vi.resetModules()
+    vi.resetAllMocks()
     process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'true'
     process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED = 'false'
     process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED = 'false'
@@ -176,6 +177,29 @@ describe('BragSettings integration', () => {
     expect(screen.queryByText('Postbox Adrian', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
   })
 
+  it('refreshes the sidebar name from the saved profile row', async () => {
+    const { useProfileStore } = await import('@features/auth/store/useProfileStore')
+    useProfileStore.getState().setProfile({
+      firstName: '',
+      lastName: '',
+      email: 'postbox.adrian+8@gmail.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
+
+    const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockImplementation((url) => Promise.resolve(new Response(JSON.stringify(
+      url === '/api/auth/profile'
+        ? { firstName: 'awerwer', lastName: 'sadfasd', email: 'postbox.adrian+8@gmail.com' }
+        : { configured: true }
+    ), { status: 200 })))
+    render(<BragSettings />)
+
+    await waitFor(() => expect(screen.getByText('awerwer sadfasd', { selector: '.be-sidebar-name' })).toBeInTheDocument())
+    expect(screen.queryByText('Your profile', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
+  })
+
   it('renders reminder delivery and frequency choices on security settings', async () => {
     const user = userEvent.setup()
     const { useProfileStore } = await import('@features/auth/store/useProfileStore')
@@ -206,7 +230,11 @@ describe('BragSettings integration', () => {
     process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
     const { useProfileStore } = await import('@features/auth/store/useProfileStore')
     const { apiFetch } = await import('@shared/utils/api')
-    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
+    apiFetch.mockImplementation((url) => Promise.resolve(new Response(JSON.stringify(
+      url === '/api/auth/profile'
+        ? { firstName: 'Postbox', lastName: 'Adrian', email: 'postbox.adrian+8@gmail.com' }
+        : { configured: true }
+    ), { status: 200 })))
     useProfileStore.getState().setProfile({
       firstName: 'Postbox',
       lastName: 'Adrian',

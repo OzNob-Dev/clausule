@@ -33,6 +33,7 @@ export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
   const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
+  const setProfile = useProfileStore((state) => state.setProfile)
   const setSecurity = useProfileStore((state) => state.setSecurity)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
   const showMfaSection = !ssoConfigured
@@ -52,6 +53,22 @@ export default function BragSettings() {
   useEffect(() => {
     const controller = new AbortController()
 
+    apiFetch('/api/auth/profile', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        const profileData = {
+          firstName: typeof data?.firstName === 'string' ? data.firstName : undefined,
+          lastName: typeof data?.lastName === 'string' ? data.lastName : undefined,
+          email: typeof data?.email === 'string' ? data.email : undefined,
+          mobile: typeof data?.mobile === 'string' ? data.mobile : undefined,
+          jobTitle: typeof data?.jobTitle === 'string' ? data.jobTitle : undefined,
+          department: typeof data?.department === 'string' ? data.department : undefined,
+        }
+
+        if (Object.values(profileData).some((value) => value !== undefined)) setProfile(profileData)
+      })
+      .catch(() => {})
+
     apiFetch('/api/auth/totp/status', { signal: controller.signal })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
@@ -60,7 +77,7 @@ export default function BragSettings() {
       .catch(() => {})
 
     return () => controller.abort()
-  }, [setSecurity])
+  }, [setProfile, setSecurity])
 
   const displayName = profileDisplayName(profile)
 
