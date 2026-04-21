@@ -2,17 +2,10 @@ import { findProfileById, getUserSsoProvider } from './accountRepository.js'
 
 export async function bootstrapSession({ userId, email, role, authMethod }) {
   const { profile, error } = await findProfileById(userId, 'first_name,last_name,email,mobile,job_title,department,totp_secret')
-  if (error) return { error, log: '[auth/bootstrap GET]', body: { error: 'Failed to fetch bootstrap data' }, status: 500 }
+  if (error) console.error('[auth/bootstrap GET]', error)
 
   const { provider, error: authUserError } = await getUserSsoProvider(userId)
-  if (authUserError) {
-    return {
-      error: authUserError,
-      log: '[auth/bootstrap auth user GET]',
-      body: { error: 'Failed to fetch auth state' },
-      status: 500,
-    }
-  }
+  if (authUserError) console.error('[auth/bootstrap auth user GET]', authUserError)
 
   return {
     body: {

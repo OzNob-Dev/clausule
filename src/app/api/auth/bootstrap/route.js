@@ -21,6 +21,5 @@ export async function GET(request) {
   }
 
   const result = await bootstrapSession({ userId, email, role, authMethod })
-  if (result.error) console.error(result.log, result.error)
   return NextResponse.json(result.body, { status: result.status })
 }

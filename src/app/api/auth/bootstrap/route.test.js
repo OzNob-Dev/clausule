@@ -87,4 +87,30 @@ describe('auth bootstrap route', () => {
       ssoConfigured: false,
     })
   })
+
+  it('keeps authenticated users in the app when the bootstrap lookup fails', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    select.mockResolvedValue({ data: [], error: new Error('boom') })
+    getAuthUser.mockResolvedValue({
+      data: {
+        app_metadata: { provider: 'email' },
+        identities: [{ provider: 'email' }],
+      },
+    })
+
+    const response = await GET(bootstrapRequest())
+    const json = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(json.profile).toEqual({
+      firstName: '',
+      lastName: '',
+      email: 'ada@example.com',
+      mobile: '',
+      jobTitle: '',
+      department: '',
+    })
+    expect(errorSpy).toHaveBeenCalled()
+    errorSpy.mockRestore()
+  })
 })
