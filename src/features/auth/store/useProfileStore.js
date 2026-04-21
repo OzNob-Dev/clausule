@@ -6,6 +6,9 @@ const EMPTY_PROFILE = {
   firstName: '',
   lastName: '',
   email: '',
+  mobile: '',
+  jobTitle: '',
+  department: '',
 }
 
 const EMPTY_SECURITY = {

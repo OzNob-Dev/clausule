@@ -73,6 +73,10 @@ export function AuthProvider({ children }) {
     setUser(userData)
   }, [])
 
+  const updateUser = useCallback((patch) => {
+    setUser((current) => (current ? { ...current, ...patch } : current))
+  }, [])
+
   /**
    * Revoke the server-side session, expire the auth cookies, clear context
    * state, and navigate to the sign-in page.
@@ -89,7 +93,7 @@ export function AuthProvider({ children }) {
   }, [router])
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, logout }}>
+    <AuthContext.Provider value={{ user, loading, signIn, updateUser, logout }}>
       {children}
     </AuthContext.Provider>
   )

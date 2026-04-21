@@ -32,6 +32,9 @@ describe('auth bootstrap route', () => {
         first_name: 'Ada',
         last_name: 'Lovelace',
         email: 'ada@example.com',
+        mobile: '+61 400 000 000',
+        job_title: 'Engineer',
+        department: 'Platform',
         totp_secret: null,
       }],
     })
@@ -62,6 +65,9 @@ describe('auth bootstrap route', () => {
         first_name: 'Ada',
         last_name: 'Lovelace',
         email: 'ada@example.com',
+        mobile: '+61 400 000 000',
+        job_title: 'Engineer',
+        department: 'Platform',
         totp_secret: 'SECRET',
       }],
     })

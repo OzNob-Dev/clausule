@@ -32,7 +32,7 @@ test('protected Next pages render their primary UI', async ({ page }) => {
     ['/entries', /search entries by name/i],
     ['/escalated', /entries escalated to HR/i],
     ['/settings', /signal settings/i],
-    ['/profile', /manager summary/i],
+    ['/profile', /personal details/i],
     ['/new-entry', /new file note/i],
     ['/edit-entry', /edit file note/i],
     ['/brag', /brag doc/i],
