@@ -8,7 +8,7 @@ export default function BypassGate({ children }) {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (process.env.NODE_ENV !== 'production' && params.get('bypaxxx') === 'true') {
+    if (params.get('bypaxxx') === 'true') {
       localStorage.setItem('clausule_dev_accexx', 'granted')
       window.history.replaceState(null, '', window.location.pathname)
     }
