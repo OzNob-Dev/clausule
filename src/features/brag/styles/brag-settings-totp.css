@@ -9,8 +9,8 @@
   margin: -8px -10px;
   padding: 12px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(45, 140, 104, 0.28);
-  background: rgba(93, 202, 165, 0.1);
+  border: 1px solid rgba(60, 45, 35, 0.1);
+  background: #FAF7F3;
 }
 
 .bss-mfa-divider {
@@ -32,9 +32,7 @@
 }
 
 .bss-mfa-icon--on {
-  background:
-    radial-gradient(circle at 26% 24%, rgba(248, 211, 123, 0.36), transparent 34%),
-    rgba(201, 79, 42, 0.09);
+  background: rgba(201, 79, 42, 0.09);
   color: var(--be-motion-clay, var(--acc));
 }
 
@@ -118,15 +116,13 @@
   margin-top: 14px;
   padding: 14px 16px;
   border-radius: 8px;
-  border: 1px solid rgba(60, 45, 35, 0.16);
-  background: rgba(60, 45, 35, 0.03);
+  border: 1px solid rgba(60, 45, 35, 0.1);
+  background: #FAF7F3;
 }
 
 .bss-totp-empty--required {
-  border: 1px solid rgba(47, 111, 94, 0.28);
-  background:
-    radial-gradient(circle at 96% 0%, rgba(248, 211, 123, 0.18), transparent 32%),
-    linear-gradient(135deg, rgba(47, 111, 94, 0.1), rgba(31, 94, 140, 0.05));
+  border-color: rgba(47, 111, 94, 0.18);
+  background: #FAF7F3;
 }
 
 .bss-totp-empty-title {
@@ -180,7 +176,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  background: rgba(60, 45, 35, 0.04);
+  background: #FDFCFA;
   border-radius: 7px;
   padding: 9px 12px;
   border: 1px solid rgba(60, 45, 35, 0.08);
@@ -216,7 +212,7 @@
 .bss-demo-pill {
   display: inline-block;
   font-size: 11px;
-  background: rgba(201, 79, 42, 0.08);
+  background: rgba(201, 79, 42, 0.07);
   color: var(--be-motion-clay, var(--acc));
   border-radius: 5px;
   padding: 3px 10px;

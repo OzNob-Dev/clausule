@@ -401,8 +401,7 @@
   padding: 5px;
   border: 1px solid rgba(60, 45, 35, 0.12);
   border-radius: 999px;
-  background: rgba(250, 247, 243, 0.78);
-  box-shadow: 0 8px 22px rgba(60, 45, 35, 0.06);
+  background: #EEE5DA;
 }
 
 .be-feedback-tab {
@@ -420,9 +419,8 @@
 }
 
 .be-feedback-tab-active {
-  background: #FFFDF8;
-  color: var(--acc);
-  box-shadow: 0 6px 16px rgba(127, 53, 31, 0.12);
+  background: #FAF7F3;
+  color: #2A221A;
 }
 
 .be-feedback-tab:focus-visible {
@@ -433,11 +431,10 @@
 .be-feedback-form {
   width: 100%;
   max-width: 660px;
-  padding: 20px;
+  padding: 16px 18px;
   border: 1px solid rgba(60, 45, 35, 0.1);
   border-radius: 8px;
-  background: rgba(250, 247, 243, 0.92);
-  box-shadow: 0 14px 34px rgba(60, 45, 35, 0.05);
+  background: #FAF7F3;
 }
 
 .be-feedback-head {
@@ -669,11 +666,10 @@
 
 .be-feedback-conversations {
   width: 100%;
-  padding: 20px;
+  padding: 16px 18px;
   border: 1px solid rgba(60, 45, 35, 0.1);
-  border-radius: 10px;
-  background: rgba(250, 247, 243, 0.9);
-  box-shadow: 0 14px 34px rgba(60, 45, 35, 0.05);
+  border-radius: 8px;
+  background: #FAF7F3;
 }
 
 .be-feedback-conversations-head {
@@ -702,11 +698,10 @@
 }
 
 .be-feedback-thread {
-  padding: 15px;
+  padding: 14px 16px;
   border: 1px solid rgba(60, 45, 35, 0.1);
-  border-radius: 10px;
-  background: rgba(255, 253, 248, 0.82);
-  box-shadow: 0 8px 20px rgba(60, 45, 35, 0.04);
+  border-radius: 8px;
+  background: #FAF7F3;
   position: relative;
   overflow: hidden;
 }
@@ -715,9 +710,9 @@
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 3px;
+  width: 2px;
   background: var(--be-motion-clay);
-  opacity: 0.55;
+  opacity: 0.42;
 }
 
 .be-feedback-thread-head {
@@ -750,17 +745,16 @@
 
 .be-feedback-message {
   max-width: 78%;
-  padding: 12px;
-  border: 1px solid rgba(60, 45, 35, 0.12);
-  border-radius: 12px 12px 12px 3px;
-  background: #FFFFFF;
+  padding: 10px 12px;
+  border: 1px solid rgba(60, 45, 35, 0.1);
+  border-radius: 8px;
+  background: #FDFCFA;
 }
 
 .be-feedback-message--team {
   justify-self: end;
-  border-color: rgba(47, 111, 94, 0.22);
-  border-radius: 12px 12px 3px 12px;
-  background: #EAF4EF;
+  border-color: rgba(47, 111, 94, 0.18);
+  background: rgba(47, 111, 94, 0.06);
 }
 
 .be-feedback-message div {
@@ -795,8 +789,8 @@
   margin: 0;
   padding: 18px;
   border: 1px dashed rgba(60, 45, 35, 0.18);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.58);
+  border-radius: 8px;
+  background: #FAF7F3;
   color: var(--tm);
   font-size: 13px;
   font-weight: 800;
