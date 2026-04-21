@@ -28,7 +28,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(60, 45, 35, 0.07);
-  color: #5C5048;
+  color: var(--tm);
 }
 
 .bss-mfa-icon--on {
@@ -50,7 +50,7 @@
 
 .bss-mfa-sub {
   font-size: 11px;
-  color: #5C5048;
+  color: var(--tm);
   margin-top: 2px;
 }
 
@@ -61,7 +61,7 @@
   padding: 3px 9px;
   border-radius: 20px;
   background: rgba(60, 45, 35, 0.07);
-  color: #5C5048;
+  color: var(--tm);
 }
 
 .bss-mfa-status--on {
@@ -78,7 +78,7 @@
   border-radius: 5px;
   border: 1px solid rgba(60, 45, 35, 0.16);
   background: transparent;
-  color: #5C5048;
+  color: var(--tm);
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
 }
@@ -95,7 +95,7 @@
   gap: 8px;
   margin-top: 14px;
   font-size: 11px;
-  color: #5C5048;
+  color: var(--tm);
 }
 
 .bss-loading-state__dot {
@@ -143,7 +143,7 @@
   margin: 4px 0 0;
   font-size: 11px;
   line-height: 1.6;
-  color: #5C5048;
+  color: var(--tm);
 }
 
 .bss-totp-empty--required .bss-totp-empty-copy {
@@ -159,7 +159,7 @@
 
 .bss-totp-instruction {
   font-size: 12px;
-  color: #5C5048;
+  color: var(--tm);
   line-height: 1.6;
   margin-bottom: 14px;
 }
@@ -205,7 +205,7 @@
   border-radius: 5px;
   border: 1px solid rgba(60, 45, 35, 0.14);
   background: transparent;
-  color: #5C5048;
+  color: var(--tm);
   cursor: pointer;
   transition: color 0.12s, border-color 0.12s;
 }
@@ -288,7 +288,7 @@
   font-size: 11px;
   font-weight: 600;
   font-family: var(--font-sans);
-  color: #5C5048;
+  color: var(--tm);
   background: transparent;
   border: none;
   cursor: pointer;

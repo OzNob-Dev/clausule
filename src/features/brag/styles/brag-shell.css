@@ -5,7 +5,7 @@
   --be-identity-surface-strong: #CEC2B3;
   --be-identity-rule: rgba(60, 45, 35, 0.16);
   --be-identity-muted: #6D5F53;
-  --be-motion-clay: #7F351F;
+  --be-motion-clay: #C94F2A;
   --be-motion-gold: #F8D37B;
   --be-motion-green: #2F6F5E;
   --be-motion-blue: #1F5E8C;
@@ -352,7 +352,7 @@
   flex: 1;
   min-width: 0;
   overflow-y: auto;
-  background: #EDE8DF;
+  background: #F5F0EA;
 }
 
 .be-inner {

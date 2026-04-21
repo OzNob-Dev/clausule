@@ -49,7 +49,7 @@
 .si-logo-bug {
   width: 28px;
   height: 28px;
-  background: #7F351F;
+  background: var(--acc);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -103,7 +103,7 @@
 
   --tp:      #1A1510;
   --ts:      #3D3228;
-  --tm:      #5C5048;
+  --tm:      #54483F;
   --rule:    rgba(26, 21, 16, 0.1);
   --rule-em: rgba(26, 21, 16, 0.18);
   --acc:     #7F351F;
@@ -191,7 +191,7 @@
 .si-btn-primary {
   width: 100%;
   padding: 13px;
-  background: #7F351F;
+  background: var(--acc);
   color: #FDFCFA;
   border: none;
   border-radius: var(--r);
@@ -209,7 +209,7 @@
 
 /* New account variant — still coral, no green override */
 .si-btn-primary--signup {
-  background: #7F351F;
+  background: var(--acc);
 }
 
 .si-divider {
