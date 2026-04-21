@@ -25,6 +25,7 @@
 - `docs/agent/ux-writing.md`
 - `docs/agent/setup.md`
 - `docs/agent/frontend.md`
+- `docs/agent/mobile.md`
 - `docs/agent/design.md`
 - `docs/agent/backend.md`
 - `docs/agent/db.md`
@@ -75,6 +76,7 @@
 - UX writing and microcopy: `docs/agent/ux-writing.md`
 - Setup and commands: `docs/agent/setup.md`
 - UI, React, and accessibility: `docs/agent/frontend.md`
+- Mobile and small-screen compatibility: `docs/agent/mobile.md`
 - Design principles and visual direction: `docs/agent/design.md`
 - API and server logic: `docs/agent/backend.md`
 - Database and migrations: `docs/agent/db.md`

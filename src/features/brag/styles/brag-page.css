@@ -401,7 +401,8 @@
   padding: 5px;
   border: 1px solid rgba(60, 45, 35, 0.12);
   border-radius: 999px;
-  background: #EEE5DA;
+  background: rgba(250, 247, 243, 0.78);
+  box-shadow: 0 8px 22px rgba(60, 45, 35, 0.06);
 }
 
 .be-feedback-tab {
@@ -419,11 +420,9 @@
 }
 
 .be-feedback-tab-active {
-  background:
-    radial-gradient(circle at 18% 20%, rgba(248, 211, 123, 0.24), transparent 28%),
-    linear-gradient(135deg, #2A221A 0%, #38271E 58%, #1E3F46 100%);
-  color: #FFF8EF;
-  box-shadow: 0 10px 24px rgba(42, 34, 26, 0.18);
+  background: #FFFDF8;
+  color: var(--acc);
+  box-shadow: 0 6px 16px rgba(127, 53, 31, 0.12);
 }
 
 .be-feedback-tab:focus-visible {
@@ -434,13 +433,11 @@
 .be-feedback-form {
   width: 100%;
   max-width: 660px;
-  padding: 18px;
+  padding: 20px;
   border: 1px solid rgba(60, 45, 35, 0.1);
   border-radius: 8px;
-  background:
-    radial-gradient(circle at 96% 2%, rgba(248, 211, 123, 0.18), transparent 24%),
-    radial-gradient(circle at 0% 100%, rgba(47, 111, 94, 0.08), transparent 26%),
-    #FAF7F3;
+  background: rgba(250, 247, 243, 0.92);
+  box-shadow: 0 14px 34px rgba(60, 45, 35, 0.05);
 }
 
 .be-feedback-head {
@@ -672,14 +669,11 @@
 
 .be-feedback-conversations {
   width: 100%;
-  padding: 18px;
+  padding: 20px;
   border: 1px solid rgba(60, 45, 35, 0.1);
   border-radius: 10px;
-  background:
-    radial-gradient(circle at 90% 0%, rgba(248, 211, 123, 0.22), transparent 30%),
-    radial-gradient(circle at 5% 98%, rgba(47, 111, 94, 0.1), transparent 28%),
-    radial-gradient(circle at 72% 86%, rgba(31, 94, 140, 0.08), transparent 24%),
-    linear-gradient(135deg, #FFFDF8 0%, #F5EFE7 100%);
+  background: rgba(250, 247, 243, 0.9);
+  box-shadow: 0 14px 34px rgba(60, 45, 35, 0.05);
 }
 
 .be-feedback-conversations-head {
@@ -711,8 +705,8 @@
   padding: 15px;
   border: 1px solid rgba(60, 45, 35, 0.1);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 18px 42px rgba(60, 45, 35, 0.08);
+  background: rgba(255, 253, 248, 0.82);
+  box-shadow: 0 8px 20px rgba(60, 45, 35, 0.04);
   position: relative;
   overflow: hidden;
 }
@@ -721,8 +715,9 @@
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 4px;
-  background: linear-gradient(180deg, var(--be-motion-clay), var(--be-motion-gold), var(--be-motion-green), var(--be-motion-blue));
+  width: 3px;
+  background: var(--be-motion-clay);
+  opacity: 0.55;
 }
 
 .be-feedback-thread-head {
