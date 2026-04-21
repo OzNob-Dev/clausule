@@ -83,5 +83,6 @@ describe('BragRail integration', () => {
     expect(screen.getByRole('link', { name: /brag doc/i })).toHaveAttribute('href', '/brag')
     expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag/feedback')
     expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
+    expect(screen.getByRole('link', { name: /profile/i })).toHaveAttribute('href', '/profile')
   })
 })

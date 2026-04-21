@@ -1,3 +1,17 @@
+import { useState } from 'react'
+
+const reminderMethods = [
+  { value: 'email', label: 'Email', desc: 'Send reminders to the inbox tied to this account.' },
+  { value: 'sms', label: 'SMS', desc: 'Send reminders by text message to the mobile number on file.' },
+]
+
+const reminderFrequencies = [
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'quarterly', label: 'Quarterly' },
+]
+
 export default function DeleteAccountSection({
   confirmReady,
   deleteConfirmText,
@@ -8,8 +22,71 @@ export default function DeleteAccountSection({
   onConfirmDelete,
   onOpenDelete,
 }) {
+  const [reminderMethod, setReminderMethod] = useState('email')
+  const [reminderFrequency, setReminderFrequency] = useState('weekly')
+
   return (
     <>
+      <div className="st-reminder-section">
+        <div className="st-reminder-label">Reminder preferences</div>
+        <div className="st-reminder-card">
+          <div className="st-reminder-head">
+            <div>
+              <div className="st-reminder-title">Delivery and frequency</div>
+              <div className="st-reminder-desc">
+                Choose whether reminders arrive by email or SMS, then set how often they repeat.
+              </div>
+            </div>
+            <div className="st-reminder-summary" aria-live="polite">
+              {reminderMethod.toUpperCase()} · {reminderFrequency}
+            </div>
+          </div>
+
+          <fieldset className="st-reminder-group">
+            <legend className="st-reminder-legend">Delivery method</legend>
+            <div className="st-reminder-grid">
+              {reminderMethods.map(({ value, label, desc }) => (
+                <label key={value} className={`st-reminder-option${reminderMethod === value ? ' st-reminder-option--active' : ''}`}>
+                  <input
+                    className="st-reminder-input"
+                    type="radio"
+                    name="reminder-method"
+                    value={value}
+                    checked={reminderMethod === value}
+                    onChange={() => setReminderMethod(value)}
+                    aria-label={label}
+                  />
+                  <div className="st-reminder-option-body">
+                    <div className="st-reminder-option-title">{label}</div>
+                    <div className="st-reminder-option-desc">{desc}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="st-reminder-group">
+            <legend className="st-reminder-legend">Reminder frequency</legend>
+            <div className="st-frequency-grid">
+              {reminderFrequencies.map(({ value, label }) => (
+                <label key={value} className={`st-frequency-option${reminderFrequency === value ? ' st-frequency-option--active' : ''}`}>
+                  <input
+                    className="st-reminder-input"
+                    type="radio"
+                    name="reminder-frequency"
+                    value={value}
+                    checked={reminderFrequency === value}
+                    onChange={() => setReminderFrequency(value)}
+                    aria-label={label}
+                  />
+                  <span className="st-frequency-text">{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
       <div className="st-danger-section">
         <div className="st-danger-label">Danger zone</div>
         <div className="st-danger-card">

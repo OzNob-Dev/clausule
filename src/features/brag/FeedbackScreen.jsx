@@ -9,13 +9,14 @@ import { ROUTES } from '@shared/utils/routes'
 import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-page.css'
 
+function profileDisplayName(profile) {
+  return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
+}
+
 export default function FeedbackScreen() {
   const router = useRouter()
   const profile = useProfileStore((state) => state.profile)
-  const displayName =
-    profile.firstName || profile.lastName
-      ? `${profile.firstName} ${profile.lastName}`.trim()
-      : profile.email || 'Your profile'
+  const displayName = profileDisplayName(profile)
   const avatarInitials =
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
     profile.email?.[0]?.toUpperCase() ||

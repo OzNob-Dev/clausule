@@ -76,6 +76,10 @@ function newestEntryFirst(a, b) {
   return new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
 }
 
+function profileDisplayName(profile) {
+  return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
+}
+
 export default function BragEmployee() {
   useTheme()
   const profile = useProfileStore((state) => state.profile)
@@ -132,10 +136,7 @@ export default function BragEmployee() {
     setComposerOpen(false)
   }
 
-  const displayName =
-    profile.firstName || profile.lastName
-      ? `${profile.firstName} ${profile.lastName}`.trim()
-      : profile.email || 'Your profile'
+  const displayName = profileDisplayName(profile)
 
   const avatarInitials =
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||

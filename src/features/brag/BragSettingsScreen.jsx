@@ -12,6 +12,10 @@ import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
 
+function profileDisplayName(profile) {
+  return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
+}
+
 export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
   const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
@@ -30,10 +34,7 @@ export default function BragSettings() {
     setTotpExpanded(false)
   }
 
-  const displayName =
-    profile.firstName || profile.lastName
-      ? `${profile.firstName} ${profile.lastName}`.trim()
-      : profile.email || 'Your profile'
+  const displayName = profileDisplayName(profile)
 
   const avatarInitials =
     ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||

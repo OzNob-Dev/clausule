@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ROUTES } from '@shared/utils/routes'
 import '../../styles/rail-nav.css'
 
 const settingsIcon = (
@@ -38,6 +39,16 @@ const navItems = [
     icon: (
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
+      </svg>
+    ),
+  },
+  {
+    to: ROUTES.profile,
+    tip: 'Profile',
+    icon: (
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="8" cy="5.5" r="2.25"/>
+        <path d="M3 13c.8-2.5 3-4 5-4s4.2 1.5 5 4"/>
       </svg>
     ),
   },

@@ -121,4 +121,22 @@ describe('BragSettings integration', () => {
     expect(screen.queryByText(/authenticator setup required/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /set up/i })).not.toBeInTheDocument()
   })
+
+  it('shows the name in the sidebar instead of falling back to email', async () => {
+    const { useProfileStore } = await import('@features/auth/store/useProfileStore')
+    useProfileStore.getState().setProfile({
+      firstName: 'Ada',
+      lastName: '',
+      email: 'ada@example.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
+
+    const { default: BragSettings } = await import('./BragSettingsScreen')
+    render(<BragSettings />)
+
+    expect(screen.getByText('Ada')).toBeInTheDocument()
+    expect(screen.getByText('ada@example.com')).toBeInTheDocument()
+    expect(screen.queryByText('ada@example.com', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
+  })
 })
