@@ -157,7 +157,7 @@ describe('BragSettings integration', () => {
     expect(screen.queryByText('ada@example.com', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
   })
 
-  it('derives a readable sidebar name when profile names are missing', async () => {
+  it('does not derive the sidebar name from email when profile names are missing', async () => {
     const { useProfileStore } = await import('@features/auth/store/useProfileStore')
     useProfileStore.getState().setProfile({
       firstName: '',
@@ -172,8 +172,8 @@ describe('BragSettings integration', () => {
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
     render(<BragSettings />)
 
-    expect(screen.getByText('Postbox Adrian', { selector: '.be-sidebar-name' })).toBeInTheDocument()
-    expect(screen.queryByText('Your profile', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
+    expect(screen.getByText('Your profile', { selector: '.be-sidebar-name' })).toBeInTheDocument()
+    expect(screen.queryByText('Postbox Adrian', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
   })
 
   it('renders reminder delivery and frequency choices on security settings', async () => {

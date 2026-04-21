@@ -26,17 +26,7 @@ const reminderFrequencies = [
 ]
 
 function profileDisplayName(profile) {
-  const profileName = [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim()
-  if (profileName) return profileName
-
-  const emailName = profile.email
-    ?.split('@')[0]
-    ?.split('+')[0]
-    ?.replace(/[._-]+/g, ' ')
-    ?.replace(/\b\w/g, (char) => char.toUpperCase())
-    ?.trim()
-
-  return emailName || 'Your profile'
+  return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
 }
 
 export default function BragSettings() {
