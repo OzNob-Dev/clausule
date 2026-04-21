@@ -1,6 +1,10 @@
 /* ── Brag shell + sidebar ─────────────────────────────────────── */
 .be-page {
   --be-rail-surface: #2A221A;
+  --be-rail-icon: #B8B2AC;
+  --be-rail-icon-hover: #FAF7F3;
+  --be-rail-active-bg: rgba(245, 240, 234, 0.14);
+  --be-rail-focus: #F8D37B;
   --be-identity-surface: #D8CEC1;
   --be-identity-surface-strong: #CEC2B3;
   --be-identity-rule: rgba(60, 45, 35, 0.16);
@@ -59,18 +63,18 @@
   text-decoration: none;
 }
 
-.be-rail-btn { color: var(--tm); }
-.be-rail-btn:hover { color: var(--tp); }
+.be-rail-btn { color: var(--be-rail-icon); }
+.be-rail-btn:hover { color: var(--be-rail-icon-hover); }
 .be-rail-btn:focus-visible,
 .be-rail-btn-active:focus-visible,
 .be-rail-icon-btn:focus-visible {
-  outline: 2px solid var(--acc);
+  outline: 2px solid var(--be-rail-focus);
   outline-offset: 3px;
 }
 
 .be-rail-btn-active {
-  background: var(--acc-tint);
-  color: var(--acc-text);
+  background: var(--be-rail-active-bg);
+  color: var(--be-rail-icon-hover);
 }
 
 .be-rail-btn svg,
@@ -169,10 +173,10 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--tc);
+  color: var(--be-rail-icon);
 }
 
-.be-rail-icon-btn:hover { color: var(--tp); }
+.be-rail-icon-btn:hover { color: var(--be-rail-icon-hover); }
 .be-rail-icon-btn svg { width: 0.875rem; height: 0.875rem; }
 
 .be-sidebar { background: var(--be-rail-surface); }
