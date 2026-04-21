@@ -1,4 +1,10 @@
 /* ── BragSettings page — light main surface ───────────────────── */
+:root {
+  --be-motion-clay: #C94F2A;
+  --be-motion-gold: #F8D37B;
+  --be-motion-green: #2F6F5E;
+  --be-motion-blue: #1F5E8C;
+}
 
 /* Page heading */
 .bss-heading {
@@ -17,7 +23,7 @@
 
 .bss-divider {
   height: 1px;
-  background: rgba(60, 45, 35, 0.1);
+  background: linear-gradient(90deg, var(--be-motion-clay), var(--be-motion-gold), var(--be-motion-green), var(--be-motion-blue), rgba(60, 45, 35, 0.08));
   margin-bottom: 24px;
 }
 
@@ -33,7 +39,10 @@
 
 /* Card */
 .bss-card {
-  background: #FAF7F3;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(248, 211, 123, 0.14), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(47, 111, 94, 0.07), transparent 30%),
+    #FAF7F3;
   border: 1px solid rgba(60, 45, 35, 0.1);
   border-radius: var(--r2);
   padding: 20px 22px;

@@ -32,8 +32,10 @@
 }
 
 .bss-mfa-icon--on {
-  background: rgba(208, 90, 52, 0.1);
-  color: var(--acc);
+  background:
+    radial-gradient(circle at 26% 24%, rgba(248, 211, 123, 0.36), transparent 34%),
+    rgba(201, 79, 42, 0.09);
+  color: var(--be-motion-clay, var(--acc));
 }
 
 .bss-mfa-icon svg { width: 16px; height: 16px; }
@@ -63,8 +65,8 @@
 }
 
 .bss-mfa-status--on {
-  background: rgba(93, 202, 165, 0.12);
-  color: #2D8C68;
+  background: rgba(47, 111, 94, 0.12);
+  color: var(--be-motion-green, #2D8C68);
 }
 
 .bss-mfa-reconfig-btn {
@@ -82,9 +84,9 @@
 }
 
 .bss-mfa-reconfig-btn:hover {
-  background: rgba(208, 90, 52, 0.07);
-  color: var(--acc);
-  border-color: rgba(208, 90, 52, 0.22);
+  background: rgba(201, 79, 42, 0.07);
+  color: var(--be-motion-clay, var(--acc));
+  border-color: rgba(201, 79, 42, 0.22);
 }
 
 .bss-loading-state {
@@ -100,7 +102,10 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: rgba(208, 90, 52, 0.55);
+  background: var(--be-motion-clay, rgba(208, 90, 52, 0.55));
+  box-shadow:
+    12px 0 0 rgba(248, 211, 123, 0.75),
+    24px 0 0 rgba(47, 111, 94, 0.45);
   animation: bss-pulse 0.9s ease-in-out infinite alternate;
 }
 
@@ -118,8 +123,10 @@
 }
 
 .bss-totp-empty--required {
-  border: 1px solid rgba(45, 140, 104, 0.28);
-  background: rgba(93, 202, 165, 0.1);
+  border: 1px solid rgba(47, 111, 94, 0.28);
+  background:
+    radial-gradient(circle at 96% 0%, rgba(248, 211, 123, 0.18), transparent 32%),
+    linear-gradient(135deg, rgba(47, 111, 94, 0.1), rgba(31, 94, 140, 0.05));
 }
 
 .bss-totp-empty-title {
@@ -129,7 +136,7 @@
 }
 
 .bss-totp-empty--required .bss-totp-empty-title {
-  color: #225F3D;
+  color: var(--be-motion-green, #225F3D);
 }
 
 .bss-totp-empty-copy {
@@ -209,8 +216,8 @@
 .bss-demo-pill {
   display: inline-block;
   font-size: 11px;
-  background: rgba(208, 90, 52, 0.08);
-  color: var(--acc);
+  background: rgba(201, 79, 42, 0.08);
+  color: var(--be-motion-clay, var(--acc));
   border-radius: 5px;
   padding: 3px 10px;
   margin-bottom: 12px;
@@ -247,8 +254,15 @@
 }
 
 .bss-otp-row--done .bss-otp-box {
-  border-color: #2D8C68;
-  background: rgba(93, 202, 165, 0.07);
+  border-color: var(--be-motion-green, #2D8C68);
+  background: rgba(47, 111, 94, 0.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bss-loading-state__dot,
+  .bss-otp-row--error .bss-otp-box {
+    animation: none;
+  }
 }
 
 @keyframes bss-shake {
