@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@features/brag/components/BragRail', () => ({
@@ -154,6 +155,51 @@ describe('BragSettings integration', () => {
     expect(screen.getByText('Ada')).toBeInTheDocument()
     expect(screen.getByText('ada@example.com')).toBeInTheDocument()
     expect(screen.queryByText('ada@example.com', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
+  })
+
+  it('derives a readable sidebar name when profile names are missing', async () => {
+    const { useProfileStore } = await import('@features/auth/store/useProfileStore')
+    useProfileStore.getState().setProfile({
+      firstName: '',
+      lastName: '',
+      email: 'postbox.adrian+8@gmail.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
+
+    const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
+    render(<BragSettings />)
+
+    expect(screen.getByText('Postbox Adrian', { selector: '.be-sidebar-name' })).toBeInTheDocument()
+    expect(screen.queryByText('Your profile', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
+  })
+
+  it('renders reminder delivery and frequency choices on security settings', async () => {
+    const user = userEvent.setup()
+    const { useProfileStore } = await import('@features/auth/store/useProfileStore')
+    useProfileStore.getState().setProfile({
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      email: 'ada@example.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
+
+    const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
+    render(<BragSettings />)
+
+    expect(screen.getByText('Reminder preferences')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /email/i })).toBeChecked()
+    expect(screen.getByRole('radio', { name: /weekly/i })).toBeChecked()
+
+    await user.click(screen.getByRole('radio', { name: /sms/i }))
+    await user.click(screen.getByRole('radio', { name: /quarterly/i }))
+
+    expect(screen.getByText('SMS · quarterly')).toBeInTheDocument()
   })
 
   it('uses the saved TOTP status to correct stale MFA settings', async () => {

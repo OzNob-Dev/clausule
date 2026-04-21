@@ -150,6 +150,125 @@
   background: rgba(184, 50, 50, 0.06);
 }
 
+/* Reminder preferences */
+.bss-reminders {
+  padding-top: 28px;
+  border-top: 1px solid rgba(60, 45, 35, 0.1);
+}
+
+.bss-reminder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bss-reminder-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.bss-reminder-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #2A221A;
+  margin-bottom: 4px;
+}
+
+.bss-reminder-desc,
+.bss-reminder-option-desc {
+  color: var(--tm);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.bss-reminder-summary {
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: rgba(47, 111, 94, 0.1);
+  color: #225F3D;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+}
+
+.bss-reminder-group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.bss-reminder-legend {
+  color: var(--tm);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.bss-reminder-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bss-reminder-option,
+.bss-frequency-option {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1.5px solid rgba(60, 45, 35, 0.12);
+  border-radius: var(--r);
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.bss-reminder-option--active,
+.bss-frequency-option--active {
+  background: rgba(47, 111, 94, 0.08);
+  border-color: rgba(47, 111, 94, 0.55);
+}
+
+.bss-reminder-option:focus-within,
+.bss-frequency-option:focus-within {
+  box-shadow: 0 0 0 3px rgba(47, 111, 94, 0.2);
+}
+
+.bss-reminder-input {
+  accent-color: #2F6F5E;
+  flex-shrink: 0;
+}
+
+.bss-reminder-option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bss-reminder-option-title,
+.bss-frequency-text {
+  color: #2A221A;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.bss-frequency-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.bss-frequency-option {
+  justify-content: center;
+  padding: 10px;
+}
+
 /* Identity sidebar note */
 .bss-identity-note {
   font-size: 12px;
@@ -215,6 +334,21 @@
 }
 
 .bss-btn-delete:hover { background: #B83232; color: #FAF7F3; }
+
+@media (max-width: 720px) {
+  .bss-reminder-head,
+  .bss-reminder-grid,
+  .bss-frequency-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bss-reminder-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .bss-reminder-summary { width: fit-content; }
+}
 
 /* ── Modals ────────────────────────────────────────────────────── */
 @keyframes modal-shake {
