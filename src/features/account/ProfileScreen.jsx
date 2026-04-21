@@ -2,15 +2,16 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AppShell } from '@shared/components/layout/AppShell'
 import { Button } from '@shared/components/ui/Button'
 import { Modal } from '@shared/components/ui/Modal'
 import BragRail from '@features/brag/components/BragRail'
+import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
 import '@features/brag/styles/brag-shell.css'
+import '@features/brag/styles/brag-settings-core.css'
 import '@features/account/styles/profile.css'
 
 const EMPTY_FORM = {
@@ -35,15 +36,6 @@ function normalize(form) {
 
 function fieldClass(full = false) {
   return `profile-field${full ? ' profile-field--full' : ''}`
-}
-
-function DisplayLine({ label, value }) {
-  return (
-    <div className="profile-line">
-      <span className="profile-line-label">{label}</span>
-      <strong className="profile-line-value">{value || 'Not set'}</strong>
-    </div>
-  )
 }
 
 export default function ProfileScreen() {
@@ -187,18 +179,25 @@ export default function ProfileScreen() {
   }
 
   return (
-    <AppShell rail={<BragRail activePage="profile" />}>
-      <div className="profile-page">
-        <header className="profile-hero">
-          <div>
-            <div className="profile-kicker">Account</div>
-            <h1 className="profile-title">Personal details</h1>
-            <p className="profile-subtitle">Keep the contact details tied to your account current. Email changes are verified before they go live.</p>
-          </div>
-          <div className="profile-avatar" aria-hidden="true">{initials}</div>
-        </header>
+    <div className="be-page">
+      <BragRail activePage="profile" />
+      <BragIdentitySidebar
+        avatarInitials={initials}
+        displayName={displayName}
+        email={current.email}
+        noteLabel="Profile"
+        note="Keep the contact details tied to your account current. Email changes are verified before they go live."
+        overviewLabel="Sign-in"
+        status={ssoText}
+        statusSub={current.mobile || 'Mobile not set'}
+      />
 
-        <div className="profile-grid">
+      <main className="be-main" aria-labelledby="profile-page-title">
+        <div className="be-inner profile-page">
+          <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
+          <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>
+          <div className="bss-divider" />
+
           <form className="profile-card" onSubmit={onSubmit}>
             <div className="profile-section">
               <div className="profile-section-title">Identity</div>
@@ -293,27 +292,6 @@ export default function ProfileScreen() {
               <Button type="submit" variant="primary" disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</Button>
             </div>
           </form>
-
-          <aside className="profile-card profile-summary">
-            <div className="profile-summary-head">
-              <div className="profile-avatar profile-avatar--large" aria-hidden="true">{initials}</div>
-              <div>
-                <div className="profile-summary-name">{displayName}</div>
-                <div className="profile-summary-sub">{current.email || 'No email set'}</div>
-              </div>
-            </div>
-
-            <div className="profile-summary-lines">
-              <DisplayLine label="Sign-in" value={ssoText} />
-              <DisplayLine label="Mobile" value={current.mobile} />
-              <DisplayLine label="Job title" value={current.jobTitle} />
-              <DisplayLine label="Department" value={current.department} />
-            </div>
-
-            <div className="profile-note">
-              If you update your mobile without SSO, this can affect your 2FA path and any recovery steps that depend on the number.
-            </div>
-          </aside>
         </div>
 
         <Modal
@@ -390,7 +368,7 @@ export default function ProfileScreen() {
             )}
           </div>
         </Modal>
-      </div>
-    </AppShell>
+      </main>
+    </div>
   )
 }
