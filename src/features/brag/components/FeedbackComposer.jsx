@@ -3,7 +3,7 @@ import { useState } from 'react'
 const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Other']
 const FEELINGS = ['Love it', 'Confusing', 'Blocked', 'Just noting']
 
-export default function FeedbackComposer({ onClose }) {
+export default function FeedbackComposer({ userEmail, onClose }) {
   const [category, setCategory] = useState('Idea')
   const [feeling, setFeeling] = useState('Just noting')
   const [subject, setSubject] = useState('')
@@ -64,14 +64,27 @@ export default function FeedbackComposer({ onClose }) {
         </div>
       ) : sent ? (
         <div className="be-feedback-sent" role="status" aria-live="polite">
-          <div className="be-feedback-orbit" aria-hidden="true">
-            <span className="be-feedback-orbit-ring" />
-            <svg className="be-feedback-orbit-chat" viewBox="0 0 56 56" fill="none">
-              <path d="M17 29 25 37 41 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <div className="be-feedback-party" aria-hidden="true">
+            <span className="be-feedback-party-burst" />
+            <span className="be-feedback-party-spark be-feedback-party-spark--one" />
+            <span className="be-feedback-party-spark be-feedback-party-spark--two" />
+            <span className="be-feedback-party-spark be-feedback-party-spark--three" />
+            <svg className="be-feedback-party-mail" viewBox="0 0 72 72" fill="none">
+              <path d="M14 24h44v30H14V24Z" fill="currentColor" opacity="0.12" />
+              <path d="M14 24h44v30H14V24Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+              <path d="m15 26 21 17 21-17" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M42 18 54 8l2 15 12 8-16 3-8 13-3-15-14-6 15-8Z" fill="#C94F2A" />
+              <path d="M48 16 54 8l1 10 8 6-10 1-5 9-2-10-9-4 11-4Z" fill="#F8D37B" />
             </svg>
           </div>
-          <h2>Feedback sent.</h2>
-          <p>Thank you for helping shape Clausule.</p>
+          <h2>Your feedback has landed.</h2>
+          <p>
+            Thank you for making Clausule sharper. We sent a tiny paper trail to
+            {' '}
+            <span className="be-feedback-sent-email">{userEmail || 'your account email'}</span>
+            {' '}
+            so you know it made it through.
+          </p>
           <button type="button" className="be-comp-save" onClick={onClose}>Back to brag doc</button>
         </div>
       ) : (

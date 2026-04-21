@@ -16,7 +16,7 @@ describe('FeedbackComposer', () => {
       headers: { 'Content-Type': 'application/json' },
     }))
 
-    render(<FeedbackComposer onClose={vi.fn()} />)
+    render(<FeedbackComposer userEmail="ada@example.com" onClose={vi.fn()} />)
 
     await user.selectOptions(screen.getByLabelText(/what is this about/i), 'Bug')
     await user.selectOptions(screen.getByLabelText(/how does it feel/i), 'Blocked')
@@ -25,7 +25,8 @@ describe('FeedbackComposer', () => {
     await user.type(screen.getByLabelText(/what would make it better/i), 'Show an error and retry option.')
     await user.click(screen.getByRole('button', { name: /send feedback/i }))
 
-    await waitFor(() => expect(screen.getByText(/feedback sent/i)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/your feedback has landed/i)).toBeInTheDocument())
+    expect(screen.getByText('ada@example.com')).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledWith('/api/feedback', expect.objectContaining({ method: 'POST', credentials: 'same-origin', body: expect.stringContaining('"category":"Bug"') }))
   })
 

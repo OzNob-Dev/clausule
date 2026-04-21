@@ -47,7 +47,7 @@ export default function FeedbackScreen() {
       <main className="be-main" aria-labelledby="feedback-page-title">
         <div className="be-inner">
           <h1 id="feedback-page-title" className="sr-only">Product feedback</h1>
-          <FeedbackComposer onClose={() => router.push(ROUTES.brag)} />
+          <FeedbackComposer userEmail={profile.email} onClose={() => router.push(ROUTES.brag)} />
         </div>
       </main>
     </div>

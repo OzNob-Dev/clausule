@@ -43,7 +43,7 @@ describe('feedback route', () => {
     insert.mockResolvedValue({ error: null })
   })
 
-  it('emails product feedback to the app owners', async () => {
+  it('emails product feedback to the app owners and confirms receipt to the user', async () => {
     const response = await POST(request())
     const data = await response.json()
 
@@ -53,6 +53,11 @@ describe('feedback route', () => {
       subject: 'Clausule feedback: Keyboard shortcuts',
       to: [{ email: 'owners@clausule.app' }],
       htmlContent: expect.stringContaining('ada@example.com'),
+    }))
+    expect(sendTransacEmail).toHaveBeenCalledWith(expect.objectContaining({
+      subject: 'Clausule received your feedback',
+      to: [{ email: 'ada@example.com' }],
+      htmlContent: expect.stringContaining('Your note made it through.'),
     }))
     expect(insert).toHaveBeenCalledWith('app_feedback', expect.objectContaining({
       user_id: 'user-1',

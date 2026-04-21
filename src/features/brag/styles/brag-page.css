@@ -470,6 +470,63 @@
   text-align: center;
 }
 
+.be-feedback-party {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 132px;
+  height: 132px;
+  margin-bottom: 18px;
+  color: #2F6F5E;
+}
+
+.be-feedback-party-burst {
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(47, 111, 94, 0.16) 0 30%, transparent 31%),
+    conic-gradient(from 8deg, #C94F2A 0 10deg, transparent 10deg 32deg, #F8D37B 32deg 44deg, transparent 44deg 70deg, #2F6F5E 70deg 82deg, transparent 82deg 116deg, #1F5E8C 116deg 128deg, transparent 128deg 360deg);
+  animation: be-feedback-burst 1.2s ease-out both;
+}
+
+.be-feedback-party-mail {
+  position: relative;
+  z-index: 1;
+  width: 78px;
+  height: 78px;
+  filter: drop-shadow(0 14px 20px rgba(47, 111, 94, 0.18));
+  animation: be-feedback-mail-pop 1.15s cubic-bezier(0.2, 1.35, 0.32, 1) both;
+}
+
+.be-feedback-party-spark {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 99px;
+  background: #C94F2A;
+  animation: be-feedback-spark 1.4s ease-out both;
+}
+
+.be-feedback-party-spark--one {
+  top: 16px;
+  left: 26px;
+}
+
+.be-feedback-party-spark--two {
+  right: 18px;
+  bottom: 38px;
+  background: #1F5E8C;
+  animation-delay: 0.12s;
+}
+
+.be-feedback-party-spark--three {
+  right: 36px;
+  top: 12px;
+  background: #F8D37B;
+  animation-delay: 0.2s;
+}
+
 .be-feedback-sent h2 {
   margin: 0 0 8px;
   color: #2A221A;
@@ -482,6 +539,11 @@
   color: #5C5048;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.be-feedback-sent-email {
+  color: #2A221A;
+  font-weight: 900;
 }
 
 .be-feedback-saving p {
@@ -555,6 +617,55 @@
   50% {
     opacity: 1;
     transform: translateY(-8px) scale(1.06);
+  }
+}
+
+@keyframes be-feedback-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.32) rotate(-18deg);
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.72;
+    transform: scale(1) rotate(12deg);
+  }
+}
+
+@keyframes be-feedback-mail-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.62) rotate(-8deg);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.08) rotate(5deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
+}
+
+@keyframes be-feedback-spark {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.35);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-18px) scale(1);
   }
 }
 
@@ -1294,6 +1405,9 @@
   .be-composer-orbit-pen,
   .be-feedback-saving-mark span,
   .be-feedback-saving-mark svg,
+  .be-feedback-party-burst,
+  .be-feedback-party-mail,
+  .be-feedback-party-spark,
   .be-loading-ring,
   .be-loading-pencil,
   .be-loading-lines span,
