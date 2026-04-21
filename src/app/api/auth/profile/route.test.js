@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { requireAuth } from '@api/_lib/auth.js'
-import { select, update } from '@api/_lib/supabase.js'
+import { getAuthUser, select, update } from '@api/_lib/supabase.js'
 import { findProfileById } from '@features/auth/server/accountRepository.js'
 import { verifyEmailOtpCode } from '@features/auth/server/emailOtpVerification.js'
 import { GET, PATCH } from './route.js'
@@ -11,6 +11,7 @@ vi.mock('@api/_lib/auth.js', () => ({
 }))
 
 vi.mock('@api/_lib/supabase.js', () => ({
+  getAuthUser: vi.fn(),
   select: vi.fn(),
   update: vi.fn(),
 }))
@@ -38,6 +39,7 @@ describe('auth profile route', () => {
       }],
       error: null,
     })
+    getAuthUser.mockResolvedValue({ data: { user_metadata: {} }, error: null })
     findProfileById.mockResolvedValue({
       profile: {
         first_name: 'Ada',
@@ -77,6 +79,30 @@ describe('auth profile route', () => {
       jobTitle: 'Engineer',
       department: 'Platform',
     })
+  })
+
+  it('falls back to auth metadata names when the profile row has blank names', async () => {
+    select.mockResolvedValue({
+      data: [{
+        first_name: '',
+        last_name: null,
+        email: 'postbox.adrian+8@gmail.com',
+        mobile: '',
+        job_title: null,
+        department: null,
+      }],
+      error: null,
+    })
+    getAuthUser.mockResolvedValue({
+      data: { user_metadata: { first_name: 'awerwer', last_name: 'sadfasd' } },
+      error: null,
+    })
+
+    const response = await GET(new Request('http://localhost/api/auth/profile'))
+    const json = await response.json()
+
+    expect(json.firstName).toBe('awerwer')
+    expect(json.lastName).toBe('sadfasd')
   })
 
   it('requires email verification and mobile confirmation before saving changed contact details', async () => {

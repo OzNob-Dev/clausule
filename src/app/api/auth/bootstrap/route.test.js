@@ -113,4 +113,31 @@ describe('auth bootstrap route', () => {
     expect(errorSpy).toHaveBeenCalled()
     errorSpy.mockRestore()
   })
+
+  it('falls back to auth metadata names when profile names are blank', async () => {
+    select.mockResolvedValue({
+      data: [{
+        first_name: '',
+        last_name: null,
+        email: 'postbox.adrian+8@gmail.com',
+        mobile: '',
+        job_title: null,
+        department: null,
+        totp_secret: null,
+      }],
+    })
+    getAuthUser.mockResolvedValue({
+      data: {
+        user_metadata: { first_name: 'awerwer', last_name: 'sadfasd' },
+        app_metadata: { provider: 'email' },
+        identities: [{ provider: 'email' }],
+      },
+    })
+
+    const response = await GET(bootstrapRequest())
+    const json = await response.json()
+
+    expect(json.profile.firstName).toBe('awerwer')
+    expect(json.profile.lastName).toBe('sadfasd')
+  })
 })

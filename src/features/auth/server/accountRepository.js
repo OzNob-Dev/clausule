@@ -40,9 +40,15 @@ export function ssoProviderForAuthUser(user) {
   return user?.identities?.find((identity) => identity?.provider && identity.provider !== 'email')?.provider ?? null
 }
 
-export async function getUserSsoProvider(userId) {
+export async function getAuthUserDetails(userId) {
   const { data, error } = await getAuthUser(userId)
-  return { provider: ssoProviderForAuthUser(data?.user ?? data), error }
+  const user = data?.user ?? data
+  return { user, provider: ssoProviderForAuthUser(user), error }
+}
+
+export async function getUserSsoProvider(userId) {
+  const { provider, error } = await getAuthUserDetails(userId)
+  return { provider, error }
 }
 
 export function accountActive(profile, hasPaid) {

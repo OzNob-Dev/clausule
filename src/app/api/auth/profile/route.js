@@ -7,10 +7,14 @@
 
 import { NextResponse }              from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
-import { select, update }            from '@api/_lib/supabase.js'
+import { getAuthUser, select, update } from '@api/_lib/supabase.js'
 import { validateEmail }             from '@shared/utils/emailValidation'
 import { findProfileById }           from '@features/auth/server/accountRepository.js'
 import { verifyEmailOtpCode }        from '@features/auth/server/emailOtpVerification.js'
+
+function authMetaName(user, key) {
+  return user?.user_metadata?.[key] ?? user?.raw_user_meta_data?.[key] ?? ''
+}
 
 export async function GET(request) {
   const { userId, error: authError } = await requireAuth(request)
@@ -27,9 +31,12 @@ export async function GET(request) {
   }
 
   const row = rows?.[0]
+  const { data: authUser } = await getAuthUser(userId)
+  const user = authUser?.user ?? authUser
+
   return NextResponse.json({
-    firstName: row?.first_name ?? '',
-    lastName:  row?.last_name  ?? '',
+    firstName: row?.first_name || authMetaName(user, 'first_name'),
+    lastName:  row?.last_name || authMetaName(user, 'last_name'),
     email:     row?.email      ?? '',
     mobile:    row?.mobile     ?? '',
     jobTitle:  row?.job_title  ?? '',
