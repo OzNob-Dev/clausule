@@ -113,14 +113,14 @@
   100% { opacity: 0; transform: translateX(68%) rotate(-18deg); }
 }
 
-@keyframes avatar-orbit-in {
+@keyframes avatar-ground-in {
   0% {
     opacity: 0;
-    transform: scale(0.7) rotate(-34deg);
+    transform: translateY(8px) scaleX(0.56);
   }
   100% {
     opacity: 1;
-    transform: scale(1) rotate(10deg);
+    transform: translateY(0) scaleX(1);
   }
 }
 
@@ -134,15 +134,17 @@
 .be-avatar-pop::before {
   content: '';
   position: absolute;
-  inset: -6px;
-  border-radius: 50%;
+  left: 8px;
+  right: 8px;
+  bottom: -7px;
+  height: 8px;
+  border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 50%, transparent 66%, var(--be-identity-surface) 68% 76%, transparent 78%),
-    conic-gradient(from 24deg, rgba(201, 79, 42, 0.36) 0 34deg, transparent 34deg 116deg, rgba(248, 211, 123, 0.48) 116deg 142deg, transparent 142deg 236deg, rgba(47, 111, 94, 0.28) 236deg 266deg, transparent 266deg 360deg);
+    linear-gradient(90deg, transparent, rgba(201, 79, 42, 0.22), rgba(248, 211, 123, 0.34), transparent);
   opacity: 0;
   pointer-events: none;
   z-index: -1;
-  animation: avatar-orbit-in 0.72s ease-out 0.08s both;
+  animation: avatar-ground-in 0.5s ease-out 0.08s both;
 }
 
 .be-avatar-pop::after {
