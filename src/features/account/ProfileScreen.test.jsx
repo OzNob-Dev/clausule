@@ -54,4 +54,14 @@ describe('ProfileScreen', () => {
       credentials: 'same-origin',
     }))
   })
+
+  it('shows the brag rail with profile selected', async () => {
+    const { default: ProfileScreen } = await import('./ProfileScreen')
+
+    render(<ProfileScreen />)
+
+    const profileLink = screen.getByRole('link', { name: /profile/i })
+    expect(profileLink).toHaveAttribute('href', '/profile')
+    expect(profileLink).toHaveAttribute('aria-current', 'page')
+  })
 })

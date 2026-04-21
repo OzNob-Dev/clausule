@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation'
 import { AppShell } from '@shared/components/layout/AppShell'
 import { Button } from '@shared/components/ui/Button'
 import { Modal } from '@shared/components/ui/Modal'
+import BragRail from '@features/brag/components/BragRail'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
+import '@features/brag/styles/brag-shell.css'
 import '@features/account/styles/profile.css'
 
 const EMPTY_FORM = {
@@ -185,7 +187,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <AppShell>
+    <AppShell rail={<BragRail activePage="profile" />}>
       <div className="profile-page">
         <header className="profile-hero">
           <div>
