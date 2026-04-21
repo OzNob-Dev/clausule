@@ -1,5 +1,5 @@
 import { BrevoClient } from '@getbrevo/brevo'
-import { insert } from '@api/_lib/supabase.js'
+import { insert, select } from '@api/_lib/supabase.js'
 
 const CATEGORIES = new Set(['Bug', 'Idea', 'Usability', 'Other'])
 const FEELINGS = new Set(['Love it', 'Confusing', 'Blocked', 'Just noting'])
@@ -29,7 +29,7 @@ export async function sendAppFeedback({ body, user }) {
   if (!subject) return { body: { error: 'subject is required' }, status: 400 }
   if (!message) return { body: { error: 'message is required' }, status: 400 }
 
-  const { error: insertError } = await insert('app_feedback', {
+  const { data: feedbackRows, error: insertError } = await insert('app_feedback', {
     user_id: user.userId,
     user_email: user.email ?? null,
     category,
@@ -43,6 +43,8 @@ export async function sendAppFeedback({ body, user }) {
   if (insertError) {
     return { log: ['[feedback] audit insert error:', insertError], body: { error: 'Failed to save feedback' }, status: 500 }
   }
+
+  const feedback = { ...(feedbackRows?.[0] ?? {}), replies: [] }
 
   if (!process.env.BREVO_API_KEY) {
     return { log: ['[feedback] BREVO_API_KEY not set'], body: { error: 'Feedback service not configured' }, status: 500 }
@@ -93,5 +95,26 @@ export async function sendAppFeedback({ body, user }) {
     return { log: ['[feedback] Brevo error:', err?.message ?? err], body: { error: 'Failed to send feedback' }, status: 502 }
   }
 
-  return { body: { ok: true }, status: 200 }
+  return { body: { ok: true, feedback }, status: 200 }
+}
+
+export async function listAppFeedback({ userId }) {
+  const query = new URLSearchParams({
+    user_id: `eq.${userId}`,
+    order: 'created_at.desc',
+    select: 'id,category,feeling,subject,message,improvement,contact_ok,created_at,app_feedback_replies(id,author_name,body,from_team,created_at)',
+  })
+  const { data, error } = await select('app_feedback', query.toString())
+  if (error) return { log: ['[feedback] list error:', error], body: { error: 'Failed to fetch feedback' }, status: 500 }
+
+  return {
+    body: {
+      feedback: (data ?? []).map((thread) => ({
+        ...thread,
+        replies: (thread.app_feedback_replies ?? []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at)),
+        app_feedback_replies: undefined,
+      })),
+    },
+    status: 200,
+  }
 }

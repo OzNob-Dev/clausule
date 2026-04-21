@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { POST } from './route.js'
-import { insert } from '@api/_lib/supabase.js'
+import { GET, POST } from './route.js'
+import { insert, select } from '@api/_lib/supabase.js'
 
 const sendTransacEmail = vi.fn()
 
@@ -11,6 +11,7 @@ vi.mock('@api/_lib/auth.js', () => ({
 
 vi.mock('@api/_lib/supabase.js', () => ({
   insert: vi.fn(),
+  select: vi.fn(),
 }))
 
 vi.mock('@getbrevo/brevo', () => ({
@@ -40,7 +41,20 @@ describe('feedback route', () => {
     vi.clearAllMocks()
     process.env.BREVO_API_KEY = 'brevo-key'
     process.env.APP_FEEDBACK_EMAIL = 'owners@clausule.app'
-    insert.mockResolvedValue({ error: null })
+    insert.mockResolvedValue({
+      data: [{
+        id: 'feedback-1',
+        category: 'Idea',
+        feeling: 'Love it',
+        subject: 'Keyboard shortcuts',
+        message: 'Please add faster entry shortcuts.',
+        improvement: 'Let me press j/k to move.',
+        contact_ok: true,
+        created_at: '2026-04-20T10:00:00.000Z',
+      }],
+      error: null,
+    })
+    select.mockResolvedValue({ data: [], error: null })
   })
 
   it('emails product feedback to the app owners and confirms receipt to the user', async () => {
@@ -48,7 +62,10 @@ describe('feedback route', () => {
     const data = await response.json()
 
     expect(response.status).toBe(200)
-    expect(data).toEqual({ ok: true })
+    expect(data).toEqual({
+      ok: true,
+      feedback: expect.objectContaining({ id: 'feedback-1', replies: [] }),
+    })
     expect(sendTransacEmail).toHaveBeenCalledWith(expect.objectContaining({
       subject: 'Clausule feedback: Keyboard shortcuts',
       to: [{ email: 'owners@clausule.app' }],
@@ -79,5 +96,38 @@ describe('feedback route', () => {
     expect(data).toEqual({ error: 'subject is required' })
     expect(sendTransacEmail).not.toHaveBeenCalled()
     expect(insert).not.toHaveBeenCalled()
+  })
+
+  it('lists feedback threads for the signed-in user', async () => {
+    select.mockResolvedValue({
+      data: [{
+        id: 'feedback-1',
+        category: 'Bug',
+        feeling: 'Blocked',
+        subject: 'Export stuck',
+        message: 'Spinner never ends.',
+        improvement: null,
+        contact_ok: true,
+        created_at: '2026-04-20T10:00:00.000Z',
+        app_feedback_replies: [{
+          id: 'reply-1',
+          author_name: 'Clausule team',
+          body: 'We are on it.',
+          from_team: true,
+          created_at: '2026-04-20T11:00:00.000Z',
+        }],
+      }],
+      error: null,
+    })
+
+    const response = await GET(new Request('http://localhost/api/feedback'))
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.feedback[0]).toEqual(expect.objectContaining({
+      id: 'feedback-1',
+      replies: [expect.objectContaining({ body: 'We are on it.' })],
+    }))
+    expect(select).toHaveBeenCalledWith('app_feedback', expect.stringContaining('user_id=eq.user-1'))
   })
 })

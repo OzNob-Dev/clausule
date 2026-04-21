@@ -3,7 +3,7 @@ import { useState } from 'react'
 const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Other']
 const FEELINGS = ['Love it', 'Confusing', 'Blocked', 'Just noting']
 
-export default function FeedbackComposer({ userEmail, onClose }) {
+export default function FeedbackComposer({ userEmail, onClose, onSent }) {
   const [category, setCategory] = useState('Idea')
   const [feeling, setFeeling] = useState('Just noting')
   const [subject, setSubject] = useState('')
@@ -37,7 +37,9 @@ export default function FeedbackComposer({ userEmail, onClose }) {
         }),
       })
 
+      const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error('Send failed')
+      onSent?.(data.feedback)
       setSent(true)
     } catch {
       setError('Could not send this feedback. Please try again.')

@@ -11,8 +11,8 @@ vi.mock('@features/brag/components/BragSidebar', () => ({
   default: () => <aside aria-label="Feedback guidance">Feedback sidebar</aside>,
 }))
 
-vi.mock('@features/brag/components/FeedbackComposer', () => ({
-  default: () => <div role="form" aria-label="Send app feedback">Feedback composer</div>,
+vi.mock('@features/brag/components/FeedbackCenter', () => ({
+  default: () => <section aria-label="Feedback centre">Feedback centre</section>,
 }))
 
 vi.mock('next/navigation', () => ({
@@ -24,6 +24,6 @@ describe('FeedbackScreen', () => {
     render(<FeedbackScreen />)
 
     expect(screen.getByRole('complementary', { name: /feedback guidance/i })).toBeInTheDocument()
-    expect(screen.getByRole('form', { name: /send app feedback/i })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: /feedback centre/i })).toBeInTheDocument()
   })
 })

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import BragRail from '@features/brag/components/BragRail'
 import BragSidebar from '@features/brag/components/BragSidebar'
-import FeedbackComposer from '@features/brag/components/FeedbackComposer'
+import FeedbackCenter from '@features/brag/components/FeedbackCenter'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { ROUTES } from '@shared/utils/routes'
 import '@features/brag/styles/brag-shell.css'
@@ -47,7 +47,7 @@ export default function FeedbackScreen() {
       <main className="be-main" aria-labelledby="feedback-page-title">
         <div className="be-inner">
           <h1 id="feedback-page-title" className="sr-only">Product feedback</h1>
-          <FeedbackComposer userEmail={profile.email} onClose={() => router.push(ROUTES.brag)} />
+          <FeedbackCenter userEmail={profile.email} onClose={() => router.push(ROUTES.brag)} />
         </div>
       </main>
     </div>
