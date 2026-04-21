@@ -15,6 +15,7 @@ function buildMessages(thread) {
 export default function FeedbackCenter({ userEmail, onClose }) {
   const [threads, setThreads] = useState([])
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState('compose')
 
   useEffect(() => {
     let alive = true
@@ -42,9 +43,47 @@ export default function FeedbackCenter({ userEmail, onClose }) {
 
   return (
     <section className="be-feedback-center" aria-label="Feedback centre">
-      <FeedbackComposer userEmail={userEmail} onClose={onClose} onSent={addThread} />
+      <div className="be-feedback-tabs" role="tablist" aria-label="Feedback sections">
+        <button
+          type="button"
+          id="feedback-compose-tab"
+          className={activeTab === 'compose' ? 'be-feedback-tab be-feedback-tab-active' : 'be-feedback-tab'}
+          role="tab"
+          aria-selected={activeTab === 'compose'}
+          aria-controls="feedback-compose-panel"
+          onClick={() => setActiveTab('compose')}
+        >
+          Send feedback
+        </button>
+        <button
+          type="button"
+          id="feedback-centre-tab"
+          className={activeTab === 'centre' ? 'be-feedback-tab be-feedback-tab-active' : 'be-feedback-tab'}
+          role="tab"
+          aria-selected={activeTab === 'centre'}
+          aria-controls="feedback-centre-panel"
+          onClick={() => setActiveTab('centre')}
+        >
+          Feedback centre
+        </button>
+      </div>
 
-      <div className="be-feedback-conversations">
+      <div
+        id="feedback-compose-panel"
+        role="tabpanel"
+        aria-labelledby="feedback-compose-tab"
+        hidden={activeTab !== 'compose'}
+      >
+        <FeedbackComposer userEmail={userEmail} onClose={onClose} onSent={addThread} />
+      </div>
+
+      <div
+        id="feedback-centre-panel"
+        className="be-feedback-conversations"
+        role="tabpanel"
+        aria-labelledby="feedback-centre-tab"
+        hidden={activeTab !== 'centre'}
+      >
         <div className="be-feedback-conversations-head">
           <p className="be-feedback-eyebrow">Feedback centre</p>
           <h2>Back and forth with the Clausule team.</h2>

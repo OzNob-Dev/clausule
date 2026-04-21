@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import FeedbackCenter from './FeedbackCenter'
 
@@ -9,6 +10,7 @@ describe('FeedbackCenter', () => {
   })
 
   it('shows feedback threads with Clausule team replies', async () => {
+    const user = userEvent.setup()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
       feedback: [{
         id: 'feedback-1',
@@ -31,6 +33,9 @@ describe('FeedbackCenter', () => {
     }))
 
     render(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
+
+    expect(screen.getByRole('tab', { name: /send feedback/i })).toHaveAttribute('aria-selected', 'true')
+    await user.click(screen.getByRole('tab', { name: /feedback centre/i }))
 
     await waitFor(() => expect(screen.getByText('Keyboard shortcuts')).toBeInTheDocument())
     expect(screen.getByText('Please add j/k navigation.')).toBeInTheDocument()
