@@ -1,25 +1,40 @@
 /* ── Brag doc page content ────────────────────────────────────── */
 .be-tabs {
-  display: flex;
-  border-bottom: 1px solid rgba(60, 45, 35, 0.14);
+  display: inline-flex;
+  width: fit-content;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid rgba(60, 45, 35, 0.12);
+  border-radius: 999px;
   margin-bottom: 24px;
+  background: #EEE5DA;
 }
 
 .be-tab {
-  padding: 11px 18px;
-  font-size: 13px;
-  font-weight: 700;
-  font-family: var(--font-sans);
+  min-height: 40px;
+  padding: 0 16px;
   border: none;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
+  border-radius: 999px;
   background: transparent;
-  cursor: pointer;
   color: #8A7E76;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 900;
+  transition: background 0.15s, box-shadow 0.15s, color 0.15s;
 }
 
 .be-tab:hover { color: #3A2E28; }
-.be-tab--active { border-color: var(--acc); color: var(--acc); }
+.be-tab--active {
+  background: #2A221A;
+  color: #FFF8EF;
+  box-shadow: 0 10px 24px rgba(42, 34, 26, 0.18);
+}
+
+.be-tab:focus-visible {
+  outline: 3px solid rgba(201, 79, 42, 0.34);
+  outline-offset: 2px;
+}
 
 .be-card {
   border-radius: var(--r2);
@@ -1554,6 +1569,14 @@
 
   .be-feedback-tabs {
     width: 100%;
+  }
+
+  .be-tabs {
+    width: 100%;
+  }
+
+  .be-tab {
+    flex: 1;
   }
 
   .be-feedback-tab {
