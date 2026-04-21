@@ -36,7 +36,6 @@ describe('auth bootstrap route', () => {
         job_title: 'Engineer',
         department: 'Platform',
         totp_secret: null,
-        authenticator_app_configured: false,
       }],
     })
   })
@@ -69,8 +68,7 @@ describe('auth bootstrap route', () => {
         mobile: '+61 400 000 000',
         job_title: 'Engineer',
         department: 'Platform',
-        totp_secret: null,
-        authenticator_app_configured: true,
+        totp_secret: 'SECRET',
       }],
     })
     getAuthUser.mockResolvedValue({

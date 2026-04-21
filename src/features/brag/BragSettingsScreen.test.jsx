@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@features/brag/components/BragRail', () => ({
@@ -12,6 +12,10 @@ vi.mock('@features/brag/components/TotpSetupPanel', () => ({
 
 vi.mock('@features/brag/components/DeleteAccountModal', () => ({
   default: () => null,
+}))
+
+vi.mock('@shared/utils/api', () => ({
+  apiFetch: vi.fn(),
 }))
 
 describe('BragSettings integration', () => {
@@ -34,6 +38,8 @@ describe('BragSettings integration', () => {
     useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
     render(<BragSettings />)
 
     const row = screen.getByText('Google').closest('.bss-sso-row')
@@ -58,6 +64,8 @@ describe('BragSettings integration', () => {
     useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
     render(<BragSettings />)
 
     expect(screen.queryByText('Single sign-on')).not.toBeInTheDocument()
@@ -75,6 +83,8 @@ describe('BragSettings integration', () => {
     useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
     render(<BragSettings />)
 
     expect(screen.getByText(/authenticator setup required/i)).toBeInTheDocument()
@@ -96,6 +106,8 @@ describe('BragSettings integration', () => {
     useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
     render(<BragSettings />)
 
     expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).not.toHaveClass('bss-mfa-row--needs-setup')
@@ -113,6 +125,8 @@ describe('BragSettings integration', () => {
     useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
     render(<BragSettings />)
 
     expect(screen.getByText('Two-factor authentication')).toBeInTheDocument()
@@ -133,10 +147,33 @@ describe('BragSettings integration', () => {
     useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
     render(<BragSettings />)
 
     expect(screen.getByText('Ada')).toBeInTheDocument()
     expect(screen.getByText('ada@example.com')).toBeInTheDocument()
     expect(screen.queryByText('ada@example.com', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
+  })
+
+  it('uses the saved TOTP status to correct stale MFA settings', async () => {
+    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
+    const { useProfileStore } = await import('@features/auth/store/useProfileStore')
+    const { apiFetch } = await import('@shared/utils/api')
+    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
+    useProfileStore.getState().setProfile({
+      firstName: 'Postbox',
+      lastName: 'Adrian',
+      email: 'postbox.adrian+8@gmail.com',
+    })
+    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
+    useProfileStore.setState({ hasSecuritySnapshot: true })
+
+    const { default: BragSettings } = await import('./BragSettingsScreen')
+    render(<BragSettings />)
+
+    await waitFor(() => expect(screen.getByLabelText('Authenticator app is active')).toHaveTextContent('Active'))
+    expect(screen.getByText('Postbox Adrian')).toBeInTheDocument()
+    expect(screen.queryByText(/authenticator setup required/i)).not.toBeInTheDocument()
   })
 })

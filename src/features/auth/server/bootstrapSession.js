@@ -1,7 +1,7 @@
 import { findProfileById, getUserSsoProvider } from './accountRepository.js'
 
 export async function bootstrapSession({ userId, email, role, authMethod }) {
-  const { profile, error } = await findProfileById(userId, 'first_name,last_name,email,mobile,job_title,department,totp_secret,authenticator_app_configured')
+  const { profile, error } = await findProfileById(userId, 'first_name,last_name,email,mobile,job_title,department,totp_secret')
   if (error) console.error('[auth/bootstrap GET]', error)
 
   const { provider, error: authUserError } = await getUserSsoProvider(userId)
@@ -19,7 +19,7 @@ export async function bootstrapSession({ userId, email, role, authMethod }) {
         department: profile?.department ?? '',
       },
       security: {
-        authenticatorAppConfigured: Boolean(profile?.authenticator_app_configured || profile?.totp_secret),
+        authenticatorAppConfigured: Boolean(profile?.totp_secret),
         authenticatedWithOtp: authMethod === 'otp',
         ssoConfigured: Boolean(provider),
       },

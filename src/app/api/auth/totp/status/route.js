@@ -15,7 +15,7 @@ export async function GET(request) {
 
   const { data: rows, error } = await select(
     'profiles',
-    `id=eq.${userId}&select=totp_secret,authenticator_app_configured&limit=1`
+    `id=eq.${userId}&select=totp_secret&limit=1`
   )
 
   if (error) {
@@ -23,6 +23,6 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed to fetch TOTP status' }, { status: 500 })
   }
 
-  const configured = Boolean(rows?.[0]?.authenticator_app_configured || rows?.[0]?.totp_secret)
+  const configured = Boolean(rows?.[0]?.totp_secret)
   return NextResponse.json({ configured })
 }

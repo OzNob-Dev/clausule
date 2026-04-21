@@ -27,9 +27,6 @@ describe('saveTotpSetup', () => {
     const result = await saveTotpSetup({ userId: 'user-1', body: { code: '123456', secret: 'abcd1234' } })
 
     expect(result).toEqual({ body: { ok: true }, status: 200 })
-    expect(update).toHaveBeenCalledWith('profiles', 'id=eq.user-1', {
-      totp_secret: 'ABCD1234',
-      authenticator_app_configured: true,
-    })
+    expect(update).toHaveBeenCalledWith('profiles', 'id=eq.user-1', { totp_secret: 'ABCD1234' })
   })
 })

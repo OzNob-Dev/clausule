@@ -18,13 +18,14 @@ describe('totp status route', () => {
     requireAuth.mockReturnValue({ userId: 'user-1', error: null })
   })
 
-  it('reports configured when the explicit profile flag is set', async () => {
-    select.mockResolvedValue({ data: [{ totp_secret: null, authenticator_app_configured: true }] })
+  it('reports configured when a TOTP secret is saved', async () => {
+    select.mockResolvedValue({ data: [{ totp_secret: 'SECRET' }] })
 
     const response = await GET(new Request('http://localhost/api/auth/totp/status'))
     const json = await response.json()
 
     expect(response.status).toBe(200)
     expect(json).toEqual({ configured: true })
+    expect(select).toHaveBeenCalledWith('profiles', 'id=eq.user-1&select=totp_secret&limit=1')
   })
 })

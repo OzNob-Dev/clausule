@@ -28,16 +28,16 @@ export const useProfileStore = create((set) => ({
   setProfile: (nextProfile) =>
     set((state) => ({
       profile: {
-        ...state.profile,
         ...EMPTY_PROFILE,
+        ...state.profile,
         ...nextProfile,
       },
     })),
   setSecurity: (nextSecurity) =>
     set((state) => ({
       security: {
-        ...state.security,
         ...EMPTY_SECURITY,
+        ...state.security,
         ...nextSecurity,
       },
       hasSecuritySnapshot: true,

@@ -22,7 +22,7 @@ describe('check-email route', () => {
 
   it('returns SSO provider details for SSO accounts', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-1', totp_secret: null, authenticator_app_configured: false, is_active: true, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', totp_secret: null, is_active: true, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-1' }] })
     getAuthUser.mockResolvedValueOnce({
       data: {
@@ -35,14 +35,14 @@ describe('check-email route', () => {
     const data = await response.json()
 
     expect(data).toEqual({ exists: true, isActive: true, isDeleted: false, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true })
-    expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Ctotp_secret%2Cauthenticator_app_configured%2Cis_active%2Cis_deleted&limit=1')
+    expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
     expect(select).toHaveBeenCalledWith('subscriptions', 'user_id=eq.user-1&status=in.%28active%2Ctrialing%29&select=id&limit=1')
     expect(getAuthUser).toHaveBeenCalledWith('user-1')
   })
 
   it('treats paid legacy SSO profiles without is_active as active', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-legacy', totp_secret: null, authenticator_app_configured: false, is_active: null, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-legacy', totp_secret: null, is_active: null, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-legacy' }] })
     getAuthUser.mockResolvedValueOnce({
       data: {
@@ -59,7 +59,7 @@ describe('check-email route', () => {
 
   it('returns MFA account details for non-SSO accounts', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-2', totp_secret: null, authenticator_app_configured: true, is_active: true, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-2', totp_secret: 'SECRET', is_active: true, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-2' }] })
     getAuthUser.mockResolvedValueOnce({
       data: {
@@ -76,7 +76,7 @@ describe('check-email route', () => {
 
   it('returns not found for unpaid accounts', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-3', totp_secret: null, authenticator_app_configured: false, is_active: false, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-3', totp_secret: null, is_active: false, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [] })
     getAuthUser.mockResolvedValueOnce({ data: { app_metadata: { provider: 'email' }, identities: [{ provider: 'email' }] } })
 
@@ -88,7 +88,7 @@ describe('check-email route', () => {
 
   it('returns not found for paid accounts without MFA or SSO', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-4', totp_secret: null, authenticator_app_configured: false, is_active: true, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-4', totp_secret: null, is_active: true, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-4' }] })
     getAuthUser.mockResolvedValueOnce({ data: { app_metadata: { provider: 'email' }, identities: [{ provider: 'email' }] } })
 
@@ -100,7 +100,7 @@ describe('check-email route', () => {
 
   it('returns deleted status for deleted profiles', async () => {
     select
-      .mockResolvedValueOnce({ data: [{ id: 'user-5', totp_secret: 'SECRET', authenticator_app_configured: true, is_active: true, is_deleted: true }] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-5', totp_secret: 'SECRET', is_active: true, is_deleted: true }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-5' }] })
     getAuthUser.mockResolvedValueOnce({ data: { app_metadata: { provider: 'email' }, identities: [{ provider: 'email' }] } })
 

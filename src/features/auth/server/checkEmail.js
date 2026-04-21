@@ -21,7 +21,7 @@ export function ssoProvider(user) {
 }
 
 export async function checkEmailAccount(email) {
-  const { profile, error: profileError } = await findProfileByEmail(email, 'id,totp_secret,authenticator_app_configured,is_active,is_deleted')
+  const { profile, error: profileError } = await findProfileByEmail(email, 'id,totp_secret,is_active,is_deleted')
   if (profileError) return { error: profileError, log: 'profile lookup failed' }
 
   if (!profile) return { result: NOT_FOUND_RESULT }
@@ -37,7 +37,7 @@ export async function checkEmailAccount(email) {
       exists: true,
       isActive: accountActive(profile, hasPaid),
       isDeleted: Boolean(profile.is_deleted),
-      hasMfa: Boolean(profile.totp_secret || profile.authenticator_app_configured),
+      hasMfa: Boolean(profile.totp_secret),
       hasSso: Boolean(provider),
       ssoProvider: provider,
       hasPaid,

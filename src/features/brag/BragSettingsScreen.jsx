@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BragRail from '@features/brag/components/BragRail'
 import BragSettingsDangerZone from '@features/brag/components/BragSettingsDangerZone'
 import BragSettingsIdentity from '@features/brag/components/BragSettingsIdentity'
@@ -8,6 +8,7 @@ import DeleteAccountModal from '@features/brag/components/DeleteAccountModal'
 import MfaSecuritySection from '@features/brag/components/MfaSecuritySection'
 import SsoStatusSection from '@features/brag/components/SsoStatusSection'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { apiFetch } from '@shared/utils/api'
 import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
@@ -33,6 +34,19 @@ export default function BragSettings() {
     setSecurity({ authenticatorAppConfigured: true })
     setTotpExpanded(false)
   }
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    apiFetch('/api/auth/totp/status', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (typeof data?.configured === 'boolean') setSecurity({ authenticatorAppConfigured: data.configured })
+      })
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [setSecurity])
 
   const displayName = profileDisplayName(profile)
 
