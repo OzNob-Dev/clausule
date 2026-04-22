@@ -16,6 +16,7 @@
 - The change crosses data, auth, privacy, or deploy boundaries.
 - The safe implementation is unclear.
 - The request conflicts with repo guidance or existing behavior.
+- A task is likely to take longer than 3 minutes; pause first and share an estimated duration before proceeding.
 
 ## Output Discipline
 

@@ -49,6 +49,7 @@
 - Preserve user work
 - Make minimal safe edits
 - Do not change behavior without checking the relevant topic doc
+- If a task is likely to take longer than 3 minutes, pause and confirm with the user first with an estimated duration
 
 ## Conflict Rules
 
