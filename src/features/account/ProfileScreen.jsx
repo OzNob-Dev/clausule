@@ -37,13 +37,13 @@ function fieldClass(full = false) {
   return cn('min-w-0', full && 'col-span-full')
 }
 
-const sectionLabelClass = 'mb-2 block text-[11px] font-extrabold text-[#5A4F45]'
-const inputClass = 'block min-w-0 w-full box-border rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[14px] py-3 font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[#AAA29A] focus:border-[rgba(201,79,42,0.55)] focus:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]'
-const textInputClass = `${inputClass} min-h-[48px]`
+const sectionLabelClass = 'mb-1.5 block text-[11px] font-extrabold text-[#5A4F45]'
+const inputClass = 'block min-w-0 w-full box-border rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-[10px] font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[#AAA29A] focus:border-[rgba(201,79,42,0.55)] focus:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]'
+const textInputClass = `${inputClass} min-h-[40px]`
 const copyClass = 'text-[11.5px] font-medium leading-[1.55] text-tm'
-const buttonClass = 'inline-flex min-h-[48px] items-center justify-center cursor-pointer rounded-[10px] px-8 py-3 font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45 max-[680px]:w-full'
-const ghostButtonClass = `${buttonClass} min-w-[96px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] text-ts hover:bg-[rgba(60,45,35,0.06)]`
-const primaryButtonClass = `${buttonClass} min-w-[170px] border border-transparent bg-[#C1907E] text-[#FAF7F3] hover:opacity-88`
+const buttonClass = 'inline-flex items-center justify-center rounded-[5px] font-sans text-xs transition-[background,opacity] duration-150 disabled:cursor-not-allowed disabled:opacity-55 max-[680px]:w-full'
+const ghostButtonClass = `${buttonClass} border border-[rgba(60,45,35,0.14)] bg-transparent px-[14px] py-[7px] text-tm hover:bg-[rgba(60,45,35,0.06)]`
+const primaryButtonClass = `${buttonClass} border-0 bg-acc px-4 py-[7px] font-semibold text-[#FAF7F3] hover:opacity-88`
 
 export default function ProfileScreen() {
   const router = useRouter()
@@ -201,7 +201,7 @@ export default function ProfileScreen() {
 
       <main className="be-main" aria-labelledby="profile-page-title">
         <div className="be-inner max-w-[660px]">
-          <form className="rounded-[8px] border border-[rgba(60,45,35,0.1)] bg-card px-6 py-5 max-[680px]:p-4" onSubmit={onSubmit}>
+          <form className="rounded-[8px] border border-[rgba(60,45,35,0.1)] bg-card px-[18px] py-4 max-[680px]:p-4" onSubmit={onSubmit}>
             <div className="mb-4">
               <p className="mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Profile</p>
               <h1 id="profile-page-title" className="m-0 text-[22px] font-extrabold tracking-normal text-[#2A221A]">Personal details</h1>
@@ -210,7 +210,7 @@ export default function ProfileScreen() {
 
             <div>
               <div className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Identity</div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-5 max-[680px]:grid-cols-1">
+              <div className="grid grid-cols-2 gap-3 max-[680px]:grid-cols-1">
                 <div className={fieldClass()}>
                   <label className={sectionLabelClass} htmlFor="firstName">First name</label>
                   <input
@@ -235,9 +235,9 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-5">
               <div className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Contact</div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-6 max-[680px]:grid-cols-1">
+              <div className="grid grid-cols-2 gap-3 max-[680px]:grid-cols-1">
                 <div className={fieldClass(true)}>
                   <label className={sectionLabelClass} htmlFor="email">Email</label>
                   <input
@@ -249,7 +249,7 @@ export default function ProfileScreen() {
                     onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
                     required
                   />
-                  <p className="mt-3.5 text-[11.5px] font-medium leading-[1.55] text-tm">{emailWarning}</p>
+                  <p className="mt-2 text-[11.5px] font-medium leading-[1.55] text-tm">{emailWarning}</p>
                 </div>
                 <div className={fieldClass(true)}>
                   <label className={sectionLabelClass} htmlFor="mobile">Mobile</label>
@@ -262,14 +262,14 @@ export default function ProfileScreen() {
                     onChange={(event) => setForm((state) => ({ ...state, mobile: event.target.value }))}
                     required
                   />
-                  <p className="mt-3.5 text-[11.5px] font-medium leading-[1.55] text-tm">Use the number you want tied to account recovery and contact updates.</p>
+                  <p className="mt-2 text-[11.5px] font-medium leading-[1.55] text-tm">Use the number you want tied to account recovery and contact updates.</p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-5">
               <div className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Work profile</div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-5 max-[680px]:grid-cols-1">
+              <div className="grid grid-cols-2 gap-3 max-[680px]:grid-cols-1">
                 <div className={fieldClass()}>
                   <label className={sectionLabelClass} htmlFor="jobTitle">Job title</label>
                   <input
@@ -296,7 +296,7 @@ export default function ProfileScreen() {
             {error && <div className="mt-4 rounded-[8px] bg-[rgba(184,50,50,0.08)] px-[14px] py-3 text-[11.5px] font-medium leading-[1.55] text-[#9e2d2d]" role="alert">{error}</div>}
             {success && <div className="mt-4 rounded-[8px] bg-[rgba(53,121,73,0.08)] px-[14px] py-3 text-[11.5px] font-medium leading-[1.55] text-[#2f6f43]" role="status">{success}</div>}
 
-            <div className="mt-10 flex items-center justify-end gap-3 border-t border-[rgba(60,45,35,0.1)] pt-6 max-[680px]:flex-col-reverse">
+            <div className="mt-5 flex items-center justify-end gap-2 max-[680px]:flex-col-reverse">
               <button type="button" className={ghostButtonClass} onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
               <button type="submit" className={primaryButtonClass} disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
             </div>
