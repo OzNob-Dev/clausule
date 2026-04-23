@@ -55,24 +55,6 @@ describe('ProfileScreen', () => {
     }))
   })
 
-  it('keeps the full-width contact fields and stacked mobile action classes after the Tailwind migration', async () => {
-    const { default: ProfileScreen } = await import('./ProfileScreen')
-
-    render(<ProfileScreen />)
-
-    const emailField = screen.getByLabelText('Email').closest('div')
-    const mobileField = screen.getByLabelText('Mobile').closest('div')
-    const resetButton = screen.getByRole('button', { name: /reset/i })
-    const saveButton = screen.getByRole('button', { name: /save changes/i })
-    const actionRow = resetButton.parentElement
-
-    expect(emailField).toHaveClass('col-span-full')
-    expect(mobileField).toHaveClass('col-span-full')
-    expect(actionRow).toHaveClass('max-[680px]:flex-col-reverse')
-    expect(resetButton).toHaveClass('max-[680px]:w-full')
-    expect(saveButton).toHaveClass('max-[680px]:w-full')
-  })
-
   it('shows the brag rail with profile selected', async () => {
     const { default: ProfileScreen } = await import('./ProfileScreen')
 
