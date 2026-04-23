@@ -1,5 +1,6 @@
-/* ── Minimal reset ───────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --canvas: #F5F0EA;
@@ -51,26 +52,9 @@ body {
   border: 0;
 }
 
-/* ── Animations ──────────────────────────────────────────────── */
-@keyframes ps-confirm {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.12); }
-  100% { transform: scale(1); }
-}
-.ps-confirm { animation: ps-confirm 0.3s ease; }
-
 @keyframes think {
   0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
   40%           { opacity: 1;   transform: scale(1);   }
-}
-.think-dot { animation: think 1.2s infinite ease-in-out; }
-.think-dot:nth-child(2) { animation-delay: 0.15s; }
-.think-dot:nth-child(3) { animation-delay: 0.3s; }
-
-/* ── Nav item hover ──────────────────────────────────────────── */
-.nav-item:not([aria-current="page"]):hover {
-  background: rgba(255,255,255,0.07);
-  color: var(--ts);
 }
 
 /* ── Kanban scrollbar ────────────────────────────────────────── */
@@ -130,44 +114,4 @@ body {
 
   /* Semantic tints stay the same, only the text aliases shift */
   --blt: var(--bl);
-}
-
-/* ── Mobile: rail nav becomes a fixed bottom bar ─────────────── */
-@media (max-width: 640px) {
-  .rail-aside {
-    position: fixed !important;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: auto !important;
-    width: 100% !important;
-    height: 56px !important;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 8px;
-    z-index: 100;
-    border-right: none;
-    border-top: 1px solid var(--border);
-  }
-
-  .rail-logo,
-  .rail-footer { display: none !important; }
-
-  .rail-items {
-    flex-direction: row;
-    flex: none;
-    gap: 0;
-    justify-content: space-around;
-    width: 100%;
-    align-items: center;
-  }
-
-  .rail-items a {
-    width: 44px;
-    height: 44px;
-  }
-
-  /* Offset main content above the bottom nav */
-  .app-main { padding-bottom: 56px; }
 }

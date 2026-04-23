@@ -8,7 +8,6 @@ import SsoButtons from '@features/auth/components/SsoButtons'
 import { useSignInFlow } from '@features/auth/hooks/useSignInFlow'
 import MfaLoginEmailStep from '@features/mfa/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@features/mfa/components/MfaLoginAppStep'
-import '@features/auth/styles/signin.css'
 import '@features/mfa/styles/mfa-layout.css'
 
 export default function SignIn() {
@@ -51,11 +50,11 @@ export default function SignIn() {
   }
 
   return (
-    <div className="si-wrap">
-      <div className="si-card">
+    <div className="w-full min-h-screen flex items-center justify-center p-6 bg-[#F5F0EA] font-sans text-[#1A1510] bg-[repeating-linear-gradient(to_bottom,transparent,transparent_47px,rgba(26,21,16,0.028)_47px,rgba(26,21,16,0.028)_48px)]">
+      <div className="flex w-[820px] max-w-full border border-[rgba(26,21,16,0.18)] rounded-2xl overflow-hidden relative z-10 max-sm:flex-col">
         <SignInBrandPanel />
 
-        <div className="si-right">
+        <div className="flex-1 bg-[#FDFCFA] py-10 px-9 flex flex-col justify-center max-sm:pt-8 max-sm:pb-10 max-sm:px-5">
           <SignInEmailForm
             email={flow.email}
             result={flow.result}

@@ -1,5 +1,4 @@
 import { KanbanCard } from './KanbanCard'
-import '@features/manager/styles/kanban.css'
 
 const COLUMNS = [
   { id: 'g', label: 'Going well',    dot: '#1D9E75', color: 'var(--teal)', countBg: 'rgba(93,202,165,0.14)',  countColor: 'var(--teal)'  },
@@ -9,36 +8,36 @@ const COLUMNS = [
 
 export function KanbanBoard({ employees }) {
   return (
-    <div className="kb-board">
-      <div className="kb-grid">
+    <div className="flex-1 min-h-0 overflow-x-auto overflow-y-hidden">
+      <div className="grid grid-cols-3 gap-3 pt-[14px] px-[18px] pb-[18px] h-full min-w-[max(100%,480px)]">
         {COLUMNS.map(({ id, label, dot, color, countBg, countColor }) => {
           const people = employees.filter((e) => e.ps === id)
           return (
-            <div key={id} className="kb-col">
+            <div key={id} className="flex flex-col overflow-hidden">
               {/* Column header */}
-              <div className="kb-col-head">
+              <div className="flex items-center justify-between px-1 pt-0 pb-[10px]">
                 <div
-                  className="kb-col-label"
-                  style={{ '--col-color': color }}
+                  className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.8px]"
+                  style={{ color: color }}
                 >
                   <span
-                    className="kb-col-dot"
-                    style={{ '--dot-bg': dot }}
+                    className="shrink-0 w-2.5 h-2.5 rounded-[3px]"
+                    style={{ background: dot }}
                   />
                   {label}
                 </div>
                 <span
-                  className="kb-count"
-                  style={{ '--cnt-bg': countBg, '--cnt-color': countColor }}
+                  className="text-[11px] font-bold py-[3px] px-[9px] rounded-full"
+                  style={{ background: countBg, color: countColor }}
                 >
                   {people.length}
                 </span>
               </div>
 
               {/* Cards */}
-              <div className="kb-col-body">
+              <div className="kb-col-body overflow-y-auto">
                 {people.length === 0 ? (
-                  <div className="kb-empty">None</div>
+                  <div className="text-xs py-5 px-0 text-center text-tc">None</div>
                 ) : (
                   people.map((emp) => <KanbanCard key={emp.name} emp={emp} />)
                 )}

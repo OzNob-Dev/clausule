@@ -37,11 +37,6 @@
 .be-btn-generate:disabled { opacity: 0.5; cursor: default; }
 .be-btn-generate svg { width: 0.875rem; height: 0.875rem; }
 
-.be-thinking-dots {
-  display: inline-flex;
-  gap: 4px;
-}
-
 .be-cv-card {
   position: relative;
   background: #FAF7F3;

@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+  content: ['./src/**/*.{js,jsx,ts,tsx,mdx}'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -10,45 +10,47 @@ export default {
         serif: ['DM Sans', 'sans-serif'],
       },
       colors: {
-        // Surfaces (warm brown, dark-first)
-        nav: '#2A221A',
-        canvas: '#2C241C',
-        card: '#342B22',
+        nav: 'var(--nav)',
+        canvas: 'var(--canvas)',
+        card: 'var(--card)',
+        'bg-doc': 'var(--bg-doc)',
+        'bg-comp': 'var(--bg-comp)',
+        
+        acc: 'var(--acc)',
+        'acc-text': 'var(--acc-text)',
+        'acc-tint': 'var(--acc-tint)',
+        'acc-bg': 'var(--acc-bg)',
+        'acc-border': 'var(--acc-border)',
 
-        // Brand accent — terracotta
-        accent: '#D05A34',
-        'accent-text': '#F5A070',
-        'accent-tint': 'rgba(208,90,52,0.18)',
+        tp: 'var(--tp)',
+        ts: 'var(--ts)',
+        tm: 'var(--tm)',
+        tc: 'var(--tc)',
+        'tx-1': 'var(--tx-1)',
+        'tx-2': 'var(--tx-2)',
+        'tx-3': 'var(--tx-3)',
+        'tx-4': 'var(--tx-4)',
 
-        // Text ramp (all AAA ≥7:1 on surfaces)
-        tp: '#FBF7F2',
-        ts: '#C8C4BE',
-        tm: '#B8B2AC',
-        tc: '#B3B0AB',
+        bl: 'var(--bl)',
+        blb: 'var(--blb, rgba(133,183,235,0.14))',
+        blt: 'var(--blt, #85B7EB)',
 
-        // Semantic: blue = performance (8.0:1)
-        bl:  '#85B7EB',
-        blb: 'rgba(133,183,235,0.14)',
-        blt: '#85B7EB',
+        at: 'var(--at, #EF9F27)',
+        ab: 'var(--ab, rgba(239,159,39,0.14))',
 
-        // Semantic: amber = conduct / warning (7.8:1)
-        at: '#EF9F27',
-        ab: 'rgba(239,159,39,0.14)',
+        gt: 'var(--gt, #5DCAA5)',
+        gb: 'var(--gb, rgba(93,202,165,0.14))',
 
-        // Semantic: teal = development / success (8.4:1)
-        gt: '#5DCAA5',
-        gb: 'rgba(93,202,165,0.14)',
+        rt: 'var(--rt, #F09595)',
+        rb: 'var(--rb, rgba(240,149,149,0.14))',
+        red: 'var(--red, #B83232)',
+        'red-bg': 'var(--red-bg, rgba(184,50,50,0.12))',
 
-        // Semantic: red = escalation / danger (7.6:1)
-        rt: '#F09595',
-        rb: 'rgba(240,149,149,0.14)',
+        border: 'var(--border)',
+        border2: 'var(--border2, var(--border))',
+        'rule-em': 'var(--rule-em)',
+        rule: 'var(--rule)',
 
-        // Category dots
-        cat: {
-          perf:    '#85B7EB',
-          conduct: '#EF9F27',
-          dev:     '#5DCAA5',
-        },
       },
       borderRadius: {
         clausule: '10px',

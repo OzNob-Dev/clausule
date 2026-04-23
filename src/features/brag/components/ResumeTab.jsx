@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
 import ResumeDocument from './ResumeDocument'
 
 const GENERATED_BULLETS = [
@@ -27,9 +28,7 @@ function GenerateButton({ disabled, generating, visible, onClick }) {
     <button onClick={onClick} disabled={disabled || generating} className="be-btn-generate">
       {generating ? (
         <>
-          <span className="be-thinking-dots" aria-hidden="true">
-            {[0, 1, 2].map((i) => <span key={i} className="think-dot" />)}
-          </span>
+          <ThinkingDots />
           <span>Generating…</span>
         </>
       ) : (

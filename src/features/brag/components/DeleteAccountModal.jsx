@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@features/auth/context/AuthContext'
+import { cn } from '@shared/utils/cn'
 
 export default function DeleteAccountModal({ open, onClose }) {
   const { logout } = useAuth()
@@ -30,12 +31,10 @@ export default function DeleteAccountModal({ open, onClose }) {
 
   const handleConfirm = async () => {
     if (!confirmReady) {
-      const el = inputRef.current
-      if (el) {
-        el.classList.remove('bss-confirm-input--shake')
-        void el.offsetWidth
-        el.classList.add('bss-confirm-input--shake')
-      }
+      inputRef.current?.animate?.(
+        [{ transform: 'translateX(0)' }, { transform: 'translateX(-4px)' }, { transform: 'translateX(4px)' }, { transform: 'translateX(0)' }],
+        { duration: 320, easing: 'ease-in-out' }
+      )
       return
     }
 
@@ -64,15 +63,15 @@ export default function DeleteAccountModal({ open, onClose }) {
 
   return (
     <div
-      className={`bss-overlay${visible ? ' bss-overlay--open' : ''}`}
+      className={cn('fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity duration-200', visible ? 'opacity-100' : 'opacity-0')}
       role="dialog"
       aria-modal="true"
       aria-labelledby="delete-modal-title"
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
-      <div className={`bss-modal${visible ? ' bss-modal--open' : ''}`}>
-        <div className="bss-modal-icon-wrap" aria-hidden="true">
-          <svg viewBox="0 0 20 20" fill="none" stroke="#B83232" strokeWidth="1.8" strokeLinecap="round">
+      <div className={cn('w-full max-w-[34rem] rounded-[var(--r2)] border border-rule-em bg-card p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)] transition-all duration-200', visible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-[0.98] opacity-0')}>
+        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-red/20 bg-red-bg text-red" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-[18px] w-[18px]">
             <polyline points="3 6 5 6 17 6"/>
             <path d="M8 6V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/>
             <path d="M16 6l-1 11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
@@ -81,12 +80,12 @@ export default function DeleteAccountModal({ open, onClose }) {
             <line x1="12" y1="11" x2="12" y2="15"/>
           </svg>
         </div>
-        <div className="bss-modal-title" id="delete-modal-title">Delete your account?</div>
-        <div className="bss-modal-body">
+        <div className="text-[18px] font-bold tracking-[-0.3px] text-tp" id="delete-modal-title">Delete your account?</div>
+        <div className="mt-3 text-[14px] leading-[1.7] text-tm">
           This will <strong>permanently delete</strong> your brag doc and all associated entries, evidence files, and records from our servers. This action <strong>cannot be undone</strong>.
         </div>
-        <div className="bss-modal-confirm-wrap">
-          <label className="bss-confirm-label" htmlFor="delete-confirm-input">
+        <div className="mb-5 mt-5">
+          <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.6px] text-tm" htmlFor="delete-confirm-input">
             Type <span>DELETE</span> to confirm
           </label>
           <input
@@ -97,22 +96,18 @@ export default function DeleteAccountModal({ open, onClose }) {
             onChange={(e) => setDeleteConfirm(e.target.value)}
             placeholder="DELETE"
             autoFocus
-            className="bss-confirm-input"
+            className="w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-red"
           />
         </div>
-        <div className="bss-modal-actions">
-          <button
-            onClick={handleConfirm}
-            disabled={deleting}
-            className={`bss-btn-delete-confirm${confirmReady ? ' bss-btn-delete-confirm--ready' : ''}`}
-          >
+        <div className="flex flex-col gap-2">
+          <button onClick={handleConfirm} disabled={deleting} className={cn('rounded-[var(--r)] border-none px-4 py-3 text-[14px] font-bold text-[#FAF7F3] cursor-pointer transition-opacity duration-150 disabled:cursor-default disabled:opacity-60', confirmReady ? 'bg-red' : 'bg-red/70')}>
             {deleting ? 'Deleting account...' : 'Yes, permanently delete my account'}
           </button>
-          <button className="bss-btn-modal-cancel" onClick={handleClose} disabled={deleting}>
+          <button className="rounded-[var(--r)] border border-rule bg-transparent px-4 py-3 text-[14px] font-bold text-tp cursor-pointer transition-colors duration-150 hover:border-tp disabled:cursor-default disabled:opacity-60" onClick={handleClose} disabled={deleting}>
             Cancel
           </button>
         </div>
-        {deleteError && <p className="bss-error-text" role="alert">{deleteError}</p>}
+        {deleteError && <p className="mt-4 text-[12px] font-medium text-red" role="alert">{deleteError}</p>}
       </div>
     </div>
   )

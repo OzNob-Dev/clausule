@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppShell } from '@features/manager/components/AppShell'
 import { DateCategoryFields, EntryTextFields, Field, NoteTypeButtons } from '@features/manager/entries/EntryFormFields'
-import '@features/manager/styles/entry-form.css'
 
 const EMPLOYEES = ['Jordan Ellis', 'Sara Chen', "Marcus O'Brien", 'Priya Lal', 'Tom Walsh', 'Riya Nair']
 
@@ -26,25 +25,25 @@ export default function NewEntry() {
 
   return (
     <AppShell>
-      <div className="ef-page">
-        <div className="ef-header">
-          <button className="ef-back-btn" onClick={() => router.back()} aria-label="Go back">
+      <div className="flex-1 overflow-y-auto pt-10 px-8 pb-[100px] max-w-[640px] mx-auto max-sm:py-6 max-sm:px-4 max-sm:pb-[80px]">
+        <div className="flex items-center gap-3 mb-1.5">
+          <button className="bg-transparent border-none cursor-pointer text-tx-3 p-0 flex items-center transition-colors duration-150 hover:text-tx-1 [&>svg]:w-4 [&>svg]:h-4" onClick={() => router.back()} aria-label="Go back">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
               <polyline points="10 4 6 8 10 12"/>
             </svg>
           </button>
-          <div className="ef-title">New file note</div>
+          <div className="text-[22px] font-black text-tx-1 tracking-[-0.6px]">New file note</div>
         </div>
-        <div className="ef-subtitle">Document this interaction clearly and factually.</div>
+        <div className="text-[13px] text-tx-3 mb-7">Document this interaction clearly and factually.</div>
 
-        <div className="ef-divider" />
+        <div className="h-[1px] bg-border mb-6" />
 
         {/* Employee */}
         <Field label="Employee">
           <select
             value={form.employee}
             onChange={(e) => set('employee', e.target.value)}
-            className="ef-input"
+            className="w-full bg-[#FAF7F3] border-[1.5px] border-border2 rounded-[var(--r)] py-[11px] px-[13px] text-sm font-medium text-tx-1 outline-none font-sans transition-colors duration-150 focus:border-acc-text"
             style={{ appearance: 'none', cursor: 'pointer' }}
           >
             <option value="">Select employee…</option>
@@ -62,7 +61,7 @@ export default function NewEntry() {
         />
 
         {/* Checks */}
-        <div className="ef-checks">
+        <div className="flex gap-4 mb-6 text-[11px] font-semibold text-tx-3 [&_label]:flex [&_label]:items-center [&_label]:gap-1.5 [&_label]:cursor-pointer [&_input]:accent-acc">
           <label>
             <input type="checkbox" checked={form.confidential} onChange={(e) => set('confidential', e.target.checked)} />
             Confidential
@@ -74,19 +73,19 @@ export default function NewEntry() {
         </div>
 
         {(!form.employee || !form.title) && (
-          <p className="ef-required-msg">Employee and title are required.</p>
+          <p className="text-[11px] text-tx-3 mb-4">Employee and title are required.</p>
         )}
 
         {/* Actions */}
-        <div className="ef-actions">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleSave}
             disabled={!form.employee || !form.title}
-            className="ef-btn-save"
+            className="bg-acc text-[#FAF7F3] border-none rounded-[var(--r)] text-[13px] font-bold py-[11px] px-6 cursor-pointer font-sans transition-opacity duration-150 hover:opacity-90 disabled:opacity-40 disabled:cursor-default"
           >
             Save entry
           </button>
-          <button onClick={() => router.back()} className="ef-btn-cancel">
+          <button onClick={() => router.back()} className="text-[13px] font-semibold text-tx-3 bg-transparent border-none cursor-pointer font-sans">
             Cancel
           </button>
         </div>

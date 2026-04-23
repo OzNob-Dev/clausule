@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import { cn } from '@shared/utils/cn'
 import { CategoryPill } from '@shared/components/ui/CategoryPill'
 import { relativeTime } from '@shared/utils/relativeTime'
-import '@features/manager/styles/entry-card.css'
 
 export function EntryCard({ entry, onDelete, isFiltered }) {
   const [editing, setEditing] = useState(false)
@@ -14,64 +14,67 @@ export function EntryCard({ entry, onDelete, isFiltered }) {
   return (
     <div
       data-cat={entry.cat}
-      className={`ecard-wrap${isFiltered ? ' ecard-wrap--filtered' : ''}`}
+      className={cn(
+        "transition-opacity duration-150",
+        isFiltered && "opacity-20 pointer-events-none"
+      )}
     >
       {!editing ? (
-        <button type="button" className="ecard-view" onClick={() => setEditing(true)}>
-          <div className="ecard-meta">
+        <button type="button" className="group block w-full border-0 border-b border-border bg-transparent px-0 py-[18px] text-left font-sans text-inherit cursor-pointer transition-[padding-left] duration-150 last:border-b-0 hover:pl-[5px] focus-visible:pl-[5px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-acc-text focus-visible:outline-offset-4" onClick={() => setEditing(true)}>
+          <div className="flex items-center gap-2 mb-2">
             <CategoryPill cat={entry.cat} />
-            <span className="ecard-time">{relativeTime(entry.date)}</span>
+            <span className="text-[11px] font-semibold text-tx-3">{relativeTime(entry.date)}</span>
             {entry.type && (
-              <span className="ecard-type">· {entry.type}</span>
+              <span className="text-[11px] text-tc">· {entry.type}</span>
             )}
-            <span className="ecard-hint">click to edit</span>
+            <span className="ml-auto opacity-0 transition-opacity duration-150 text-[10px] font-semibold text-tc group-hover:opacity-100">click to edit</span>
           </div>
-          <h4 className="ecard-title">{title}</h4>
-          <p className="ecard-body">{body}</p>
+          <h4 className="text-[17px] font-extrabold text-tx-1 tracking-[-0.3px] leading-[1.25] mb-2">{title}</h4>
+          <p className="text-[13px] text-tx-2 leading-[1.75]">{body}</p>
           {entry.tags?.length > 0 && (
-            <div className="ecard-tags">
+            <div className="flex gap-[6px] flex-wrap mt-2">
               {entry.tags.map((tag) => (
-                <span key={tag} className="ecard-tag">#{tag}</span>
+                <span key={tag} className="text-[10px] font-bold py-[2px] px-2 rounded-full bg-[rgba(255,255,255,0.07)] text-tx-3">#{tag}</span>
               ))}
             </div>
           )}
         </button>
       ) : (
-        <div className="ecard-edit">
+        <div className="mb-1 rounded-[var(--r2)] border-[1.5px] border-border2 bg-bg-comp px-[18px] py-4">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             autoFocus
-            className="ecard-edit-title"
+            className="mb-2.5 w-full border-none border-b-[1.5px] border-dashed border-border2 bg-transparent pb-[6px] font-sans text-base font-bold text-tx-1 outline-none"
           />
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={3}
-            className="ecard-edit-body"
+            className="mb-3 w-full resize-none rounded-[var(--r)] border-[1.5px] border-border bg-[rgba(255,255,255,0.05)] px-3 py-2.5 font-sans text-[13px] leading-[1.75] text-tx-1 outline-none transition-colors duration-150 focus:border-acc-text"
           />
-          <div className="ecard-edit-foot">
+          <div className="flex items-center justify-between">
             {confirmDelete ? (
-              <div className="ecard-del-confirm">
-                <span className="ecard-del-confirm__text">Delete this entry?</span>
-                <div className="ecard-del-confirm__actions">
-                  <button onClick={() => setConfirmDelete(false)} className="ecard-cancel-btn">Cancel</button>
-                  <button onClick={() => onDelete(entry.id)} className="ecard-del-confirm__yes">Delete</button>
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-semibold text-tx-2">Delete this entry?</span>
+                <div className="flex gap-[6px]">
+                  <button onClick={() => setConfirmDelete(false)} className="border-none bg-transparent font-sans text-xs font-semibold text-tx-3 cursor-pointer">Cancel</button>
+                  <button onClick={() => onDelete(entry.id)} className="rounded-[var(--r)] border-none bg-red px-3 py-[5px] font-sans text-[11px] font-bold text-[#FAF7F3] cursor-pointer">Delete</button>
                 </div>
               </div>
             ) : (
-              <button onClick={() => setConfirmDelete(true)} className="ecard-del-btn">
+              <button onClick={() => setConfirmDelete(true)} className="flex items-center gap-[6px] border-none bg-transparent font-sans text-[11px] font-bold text-red cursor-pointer transition-opacity duration-150 hover:opacity-80 [&>svg]:h-3 [&>svg]:w-3">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <polyline points="3 6 4 14 12 14 13 6"/><line x1="1" y1="6" x2="15" y2="6"/>
                 </svg>
                 Delete
               </button>
             )}
-            <div className="ecard-edit-actions">
-              <button onClick={() => { setEditing(false); setConfirmDelete(false) }} className="ecard-cancel-btn">
+            <div className="flex gap-[6px]">
+              <button onClick={() => { setEditing(false); setConfirmDelete(false) }} className="border-none bg-transparent font-sans text-xs font-semibold text-tx-3 cursor-pointer">
                 Cancel
               </button>
-              <button onClick={handleSave} className="ecard-save-btn">
+              <button onClick={handleSave} className="rounded-[var(--r)] border-none bg-acc px-[14px] py-[6px] font-sans text-xs font-bold text-[#FAF7F3] cursor-pointer">
                 Save
               </button>
             </div>
