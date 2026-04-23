@@ -56,7 +56,7 @@ export default function SignIn() {
       <div className="su-shell">
         <SignInBrandPanel />
 
-        <div className="su-shell-right su-page">
+        <div className="su-shell-right su-page flex-col justify-start">
           <div className="su-narrow">
             <SignInEmailForm
               email={flow.email}
