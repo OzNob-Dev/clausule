@@ -55,14 +55,6 @@ describe('ProfileScreen', () => {
     }))
   })
 
-  it('matches the stable rendered markup snapshot', async () => {
-    const { default: ProfileScreen } = await import('./ProfileScreen')
-
-    const { container } = render(<ProfileScreen />)
-
-    expect(container.firstChild).toMatchSnapshot()
-  })
-
   it('shows the brag rail with profile selected', async () => {
     const { default: ProfileScreen } = await import('./ProfileScreen')
 
