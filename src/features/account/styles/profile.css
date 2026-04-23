@@ -51,6 +51,9 @@
 }
 
 .profile-input {
+  display: block;
+  box-sizing: border-box;
+  min-width: 0;
   width: 100%;
   min-height: 42px;
   padding: 10px 12px;

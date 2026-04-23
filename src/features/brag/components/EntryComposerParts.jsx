@@ -3,15 +3,15 @@ const EVIDENCE_TYPES = ['Work artefact', 'Metrics / data', 'Peer recognition', '
 export function EvidenceTypeGroup({ selectedTypes, onToggle }) {
   return (
     <>
-      <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.8px] text-tx-4">Evidence types - tick all that apply</div>
-      <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Evidence types">
+      <div className="be-comp-ev-label">Evidence types - tick all that apply</div>
+      <div className="be-comp-ev-types" role="group" aria-label="Evidence types">
         {EVIDENCE_TYPES.map((type) => (
           <button
             key={type}
             type="button"
             onClick={() => onToggle(type)}
             aria-pressed={selectedTypes.has(type)}
-            className={selectedTypes.has(type) ? 'rounded-full border border-transparent bg-acc-bg px-2.5 py-1 text-[11px] font-bold text-acc-text' : 'rounded-full border border-rule bg-transparent px-2.5 py-1 text-[11px] font-bold text-tx-3'}
+            className={selectedTypes.has(type) ? 'be-comp-ev-type be-comp-ev-type--sel' : 'be-comp-ev-type'}
           >
             {type}
           </button>
@@ -23,7 +23,7 @@ export function EvidenceTypeGroup({ selectedTypes, onToggle }) {
 
 function FileIcon({ type }) {
   return (
-    <svg className="h-4 w-4 shrink-0 text-tm" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <svg className="be-file-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
       {type.startsWith('image/') ? (
         <><rect x="1" y="1" width="14" height="14" rx="2"/><circle cx="5.5" cy="5.5" r="1.5"/><polyline points="1 11 5 7 8 10 11 7 15 11"/></>
       ) : type.startsWith('video/') ? (
@@ -42,9 +42,9 @@ function formatFileSize(size) {
 export function FileDropzone({ active, fileInputRef, onAddFiles, onDrop, onSetActive }) {
   return (
     <>
-      <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.8px] text-tx-4">Evidence files</div>
+      <div className="be-comp-ev-label">Evidence files</div>
       <div
-        className={active ? 'mb-3 flex cursor-pointer flex-col items-center justify-center rounded-[var(--r2)] border-2 border-dashed border-acc bg-acc-bg px-4 py-6 text-center outline-none' : 'mb-3 flex cursor-pointer flex-col items-center justify-center rounded-[var(--r2)] border-2 border-dashed border-border bg-transparent px-4 py-6 text-center outline-none'}
+        className={active ? 'be-dropzone be-dropzone--active' : 'be-dropzone'}
         onDragOver={(e) => { e.preventDefault(); onSetActive(true) }}
         onDragLeave={() => onSetActive(false)}
         onDrop={onDrop}
@@ -53,22 +53,22 @@ export function FileDropzone({ active, fileInputRef, onAddFiles, onDrop, onSetAc
         tabIndex={0}
         onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
         aria-label="Drop evidence files here or press Enter to browse"
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
           multiple
           onChange={(e) => { onAddFiles(e.target.files); e.target.value = '' }}
-          style={{ display: 'none' }}
-          aria-hidden="true"
-        />
-        <svg className="mb-2 h-6 w-6 text-tx-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            style={{ display: 'none' }}
+            aria-hidden="true"
+          />
+        <svg className="be-dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="17 8 12 3 7 8"/>
           <line x1="12" y1="3" x2="12" y2="15"/>
         </svg>
-        <span className="text-sm font-bold text-tp">Drop files here or click to browse</span>
-        <span className="mt-1 text-[11px] text-tm">Screenshots, videos, PDFs, documents</span>
+        <span className="be-dropzone-text">Drop files here or click to browse</span>
+        <span className="be-dropzone-sub">Screenshots, videos, PDFs, documents</span>
       </div>
     </>
   )
@@ -78,13 +78,13 @@ export function AttachedFileList({ files, onRemove }) {
   if (!files.length) return null
 
   return (
-    <ul className="mb-3 space-y-2" aria-label="Attached files">
+    <ul className="be-file-list" aria-label="Attached files">
       {files.map((file) => (
-        <li key={file.id} className="flex items-center gap-2 rounded-[var(--r)] border border-rule bg-[rgba(255,255,255,0.04)] px-3 py-2 text-sm">
+        <li key={file.id} className="be-file-item">
           <FileIcon type={file.type} />
-          <span className="min-w-0 flex-1 truncate text-tp">{file.name}</span>
-          <span className="text-[11px] text-tm">{formatFileSize(file.size)}</span>
-          <button type="button" onClick={() => onRemove(file.id)} className="ml-1 inline-flex h-7 w-7 items-center justify-center rounded-[var(--r)] border-none bg-transparent text-tm cursor-pointer hover:text-tp" aria-label={`Remove ${file.name}`}>
+          <span className="be-file-name">{file.name}</span>
+          <span className="be-file-size">{formatFileSize(file.size)}</span>
+          <button type="button" onClick={() => onRemove(file.id)} className="be-file-remove" aria-label={`Remove ${file.name}`}>
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
               <line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/>
             </svg>
