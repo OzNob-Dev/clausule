@@ -2,6 +2,10 @@ import { useState } from 'react'
 
 const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Other']
 const FEELINGS = ['Love it', 'Confusing', 'Blocked', 'Just noting']
+const fieldClass =
+  'w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-acc'
+const areaClass =
+  'w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-acc resize-y leading-[1.55]'
 
 export default function FeedbackComposer({ userEmail, onClose, onSent }) {
   const [category, setCategory] = useState('Idea')
@@ -100,34 +104,34 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
             <div className="be-feedback-grid">
               <label>
                 <span>What is this about?</span>
-                <select value={category} onChange={(e) => setCategory(e.target.value)} autoFocus>
+                <select className={fieldClass} value={category} onChange={(e) => setCategory(e.target.value)} autoFocus>
                   {CATEGORIES.map((value) => <option key={value}>{value}</option>)}
                 </select>
               </label>
               <label>
                 <span>How does it feel?</span>
-                <select value={feeling} onChange={(e) => setFeeling(e.target.value)}>
+                <select className={fieldClass} value={feeling} onChange={(e) => setFeeling(e.target.value)}>
                   {FEELINGS.map((value) => <option key={value}>{value}</option>)}
                 </select>
               </label>
               <label className="be-feedback-grid-wide">
                 <span>Short summary</span>
-                <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What should we know?" />
+                <input className={fieldClass} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What should we know?" />
               </label>
             </div>
 
             <label className="be-feedback-wide">
               <span>Feedback for the app owners</span>
-              <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder="Tell us what happened, what felt good, or what got in your way." />
+              <textarea className={areaClass} value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder="Tell us what happened, what felt good, or what got in your way." />
             </label>
 
             <label className="be-feedback-wide">
               <span>What would make it better?</span>
-              <textarea value={improvement} onChange={(e) => setImprovement(e.target.value)} rows={3} placeholder="A workflow, design, feature, or rough idea is perfect." />
+              <textarea className={areaClass} value={improvement} onChange={(e) => setImprovement(e.target.value)} rows={3} placeholder="A workflow, design, feature, or rough idea is perfect." />
             </label>
 
             <label className="be-feedback-check">
-              <input type="checkbox" checked={contactOk} onChange={(e) => setContactOk(e.target.checked)} />
+              <input className="h-4 w-4 shrink-0 accent-acc" type="checkbox" checked={contactOk} onChange={(e) => setContactOk(e.target.checked)} />
               <span>The Clausule team may contact me about this feedback.</span>
             </label>
 

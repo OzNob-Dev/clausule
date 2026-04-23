@@ -38,6 +38,9 @@ function fieldClass(full = false) {
   return `profile-field${full ? ' profile-field--full' : ''}`
 }
 
+const fieldInputClass =
+  'w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-tp'
+
 export default function ProfileScreen() {
   const router = useRouter()
   const { updateUser } = useAuth()
@@ -206,7 +209,7 @@ export default function ProfileScreen() {
                   <label className="profile-label" htmlFor="firstName">First name</label>
                   <input
                     id="firstName"
-                    className="profile-input"
+                    className={fieldInputClass}
                     value={form.firstName}
                     autoComplete="given-name"
                     onChange={(event) => setForm((state) => ({ ...state, firstName: event.target.value }))}
@@ -217,7 +220,7 @@ export default function ProfileScreen() {
                   <label className="profile-label" htmlFor="lastName">Last name</label>
                   <input
                     id="lastName"
-                    className="profile-input"
+                    className={fieldInputClass}
                     value={form.lastName}
                     autoComplete="family-name"
                     onChange={(event) => setForm((state) => ({ ...state, lastName: event.target.value }))}
@@ -233,7 +236,7 @@ export default function ProfileScreen() {
                   <label className="profile-label" htmlFor="email">Email</label>
                   <input
                     id="email"
-                    className="profile-input"
+                    className={fieldInputClass}
                     type="email"
                     value={form.email}
                     autoComplete="email"
@@ -246,7 +249,7 @@ export default function ProfileScreen() {
                   <label className="profile-label" htmlFor="mobile">Mobile</label>
                   <input
                     id="mobile"
-                    className="profile-input"
+                    className={fieldInputClass}
                     type="tel"
                     value={form.mobile}
                     autoComplete="tel"
@@ -265,7 +268,7 @@ export default function ProfileScreen() {
                   <label className="profile-label" htmlFor="jobTitle">Job title</label>
                   <input
                     id="jobTitle"
-                    className="profile-input"
+                    className={fieldInputClass}
                     value={form.jobTitle}
                     autoComplete="organization-title"
                     onChange={(event) => setForm((state) => ({ ...state, jobTitle: event.target.value }))}
@@ -275,7 +278,7 @@ export default function ProfileScreen() {
                   <label className="profile-label" htmlFor="department">Department</label>
                   <input
                     id="department"
-                    className="profile-input"
+                    className={fieldInputClass}
                     value={form.department}
                     autoComplete="organization"
                     onChange={(event) => setForm((state) => ({ ...state, department: event.target.value }))}
@@ -332,7 +335,7 @@ export default function ProfileScreen() {
                   A code was sent to {current.email}. Enter it here to confirm the new sign-in email.
                 </div>
                 <input
-                  className="profile-input"
+                  className={fieldInputClass}
                   inputMode="numeric"
                   value={emailCode}
                   onChange={(event) => setEmailCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
@@ -359,7 +362,7 @@ export default function ProfileScreen() {
                   I understand and want to continue
                 </label>
                 <input
-                  className="profile-input"
+                  className={fieldInputClass}
                   value={mobileCheck}
                   onChange={(event) => setMobileCheck(event.target.value)}
                   placeholder="Re-enter the new mobile number"

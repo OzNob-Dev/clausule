@@ -1,6 +1,11 @@
 import { useState, useRef } from 'react'
 import { AttachedFileList, EvidenceTypeGroup, FileDropzone } from './EntryComposerParts'
 
+const fieldClass =
+  'mb-[10px] w-full border-0 border-b border-rule bg-transparent pb-[10px] font-sans text-[15px] font-medium text-tp outline-none placeholder:text-[#AAA29A] focus:border-tp'
+const bodyClass =
+  'mb-[14px] w-full resize-y bg-transparent font-sans text-[13px] leading-[1.7] text-tm outline-none placeholder:text-[#AAA29A]'
+
 export default function EntryComposer({ onSave, onClose }) {
   const [title, setTitle]         = useState('')
   const [body, setBody]           = useState('')
@@ -83,14 +88,14 @@ export default function EntryComposer({ onSave, onClose }) {
       <div className="be-composer" role="form" aria-label="Add a new entry">
         <input
           type="text"
-          className="be-comp-title"
+          className={fieldClass}
           placeholder="What did you achieve?"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           autoFocus
         />
         <textarea
-          className="be-comp-body"
+          className={bodyClass}
           rows={4}
           placeholder="Describe what you did, what the impact was, and how you know it worked."
           value={body}
