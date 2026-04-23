@@ -9,9 +9,7 @@ import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
-import '@features/brag/styles/brag-shell.css'
-import '@features/brag/styles/brag-settings-core.css'
-import '@features/account/styles/profile.css'
+import { cn } from '@shared/utils/cn'
 
 const EMPTY_FORM = {
   firstName: '',
@@ -21,6 +19,52 @@ const EMPTY_FORM = {
   jobTitle: '',
   department: '',
 }
+
+// Layout
+const pageClass = 'flex w-full min-h-screen bg-[var(--canvas)]'
+const mainClass = 'flex-1 min-w-0 overflow-y-auto bg-[#F5F0EA]'
+const innerClass = 'max-w-[640px] mx-auto px-8 pt-11 pb-24'
+
+// Typography (from brag-settings-core)
+const headingClass = 'text-[22px] font-black tracking-[-0.5px] text-[#2A221A] mb-1.5'
+const subheadingClass = 'text-[13px] text-tm mb-7'
+const dividerClass = 'h-px bg-gradient-to-r from-[#C94F2A] via-[#F8D37B] to-[rgba(60,45,35,0.08)] mb-6'
+
+// Card & sections
+const cardClass = 'bg-[#FAF7F3] border border-[rgba(60,45,35,0.1)] rounded-[var(--r2)] px-[22px] py-[18px]'
+const sectionClass = '[&+&]:mt-5 [&+&]:pt-5 [&+&]:border-t [&+&]:border-[rgba(60,45,35,0.1)]'
+const sectionTitleClass = 'text-[9px] font-bold uppercase tracking-[0.8px] text-tm mb-3'
+const fieldsClass = 'grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1'
+
+// Form
+const labelClass = 'block text-xs font-bold text-[#2A221A] mb-1.5'
+const inputClass = 'block box-border min-w-0 w-full min-h-[42px] px-3 py-2.5 rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent text-[#2A221A] font-[inherit] focus-visible:outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]'
+const helpClass = 'text-xs leading-relaxed text-tm mt-2'
+
+// Alerts
+const alertClass = 'mt-4 rounded-[14px] px-[14px] py-3 text-xs leading-[1.55]'
+const alertErrorClass = 'bg-[rgba(184,50,50,0.08)] text-[#9e2d2d]'
+const alertSuccessClass = 'bg-[rgba(53,121,73,0.08)] text-[#2f6f43]'
+
+// Buttons
+const btnClass = 'rounded-[var(--r)] px-4 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 cursor-pointer disabled:cursor-default disabled:opacity-45'
+const btnGhostClass = 'border-[1.5px] border-[rgba(60,45,35,0.14)] bg-transparent text-tm hover:enabled:border-[rgba(60,45,35,0.24)] hover:enabled:text-tp'
+const btnPrimaryClass = 'border-none bg-acc text-[#FAF7F3] hover:enabled:opacity-90'
+const actionsClass = 'mt-5 pt-[18px] border-t border-[rgba(60,45,35,0.1)] flex justify-end gap-2.5 max-[680px]:flex-col-reverse'
+const actionsBtnClass = 'max-[680px]:w-full'
+
+// Modal
+const modalClass = 'grid gap-4'
+const modalCopyClass = 'text-xs leading-relaxed text-tm'
+const changeListClass = 'grid grid-cols-[auto_1fr] gap-x-[14px] gap-y-2 m-0 p-[14px] rounded-2xl bg-[rgba(60,45,35,0.04)] max-[680px]:grid-cols-1'
+const changeListDtClass = 'text-[11px] font-extrabold uppercase tracking-[0.14em] text-tm'
+const changeListDdClass = 'm-0 text-xs font-bold text-tp text-right max-[680px]:text-left'
+const verifyClass = 'grid gap-2.5'
+const verifyTitleClass = 'text-[13px] font-extrabold text-tp'
+const verifyMetaClass = 'min-h-[18px] text-xs leading-relaxed text-tm'
+const warningBaseClass = 'grid gap-2.5 p-[14px] rounded-2xl'
+const warningTitleClass = 'text-[13px] font-extrabold text-tp'
+const checkClass = 'flex items-center gap-2.5 text-xs font-bold text-tp'
 
 function normalize(form) {
   return {
@@ -33,8 +77,8 @@ function normalize(form) {
   }
 }
 
-function fieldClass(full = false) {
-  return `profile-field min-w-0${full ? ' profile-field--full' : ''}`
+function getFieldClass(full = false) {
+  return cn('min-w-0', full && 'col-span-full')
 }
 
 export default function ProfileScreen() {
@@ -178,7 +222,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <div className="be-page">
+    <div className={pageClass}>
       <BragRail activePage="profile" />
       <BragIdentitySidebar
         avatarInitials={initials}
@@ -191,32 +235,32 @@ export default function ProfileScreen() {
         statusSub={current.mobile || 'Mobile not set'}
       />
 
-      <main className="be-main" aria-labelledby="profile-page-title">
-        <div className="be-inner profile-page">
-          <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
-          <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>
-          <div className="bss-divider" />
+      <main className={mainClass} aria-labelledby="profile-page-title">
+        <div className={innerClass}>
+          <h1 id="profile-page-title" className={headingClass}>Personal details</h1>
+          <p className={subheadingClass}>Manage the identity, contact, and work details connected to your account.</p>
+          <div className={dividerClass} />
 
-          <form className="profile-card" onSubmit={onSubmit}>
-            <div className="profile-section">
-              <div className="profile-section-title">Identity</div>
-              <div className="profile-fields">
-                <div className={fieldClass()}>
-                  <label className="profile-label" htmlFor="firstName">First name</label>
+          <form className={cardClass} onSubmit={onSubmit}>
+            <div className={sectionClass}>
+              <div className={sectionTitleClass}>Identity</div>
+              <div className={fieldsClass}>
+                <div className={getFieldClass()}>
+                  <label className={labelClass} htmlFor="firstName">First name</label>
                   <input
                     id="firstName"
-                    className="profile-input"
+                    className={inputClass}
                     value={form.firstName}
                     autoComplete="given-name"
                     onChange={(event) => setForm((state) => ({ ...state, firstName: event.target.value }))}
                     required
                   />
                 </div>
-                <div className={fieldClass()}>
-                  <label className="profile-label" htmlFor="lastName">Last name</label>
+                <div className={getFieldClass()}>
+                  <label className={labelClass} htmlFor="lastName">Last name</label>
                   <input
                     id="lastName"
-                    className="profile-input"
+                    className={inputClass}
                     value={form.lastName}
                     autoComplete="family-name"
                     onChange={(event) => setForm((state) => ({ ...state, lastName: event.target.value }))}
@@ -225,56 +269,56 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            <div className="profile-section">
-              <div className="profile-section-title">Contact</div>
-              <div className="profile-fields">
-                <div className={fieldClass(true)}>
-                  <label className="profile-label" htmlFor="email">Email</label>
+            <div className={sectionClass}>
+              <div className={sectionTitleClass}>Contact</div>
+              <div className={fieldsClass}>
+                <div className={getFieldClass(true)}>
+                  <label className={labelClass} htmlFor="email">Email</label>
                   <input
                     id="email"
-                    className="profile-input"
+                    className={inputClass}
                     type="email"
                     value={form.email}
                     autoComplete="email"
                     onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
                     required
                   />
-                  <p className="profile-help">{emailWarning}</p>
+                  <p className={helpClass}>{emailWarning}</p>
                 </div>
-                <div className={fieldClass(true)}>
-                  <label className="profile-label" htmlFor="mobile">Mobile</label>
+                <div className={getFieldClass(true)}>
+                  <label className={labelClass} htmlFor="mobile">Mobile</label>
                   <input
                     id="mobile"
-                    className="profile-input"
+                    className={inputClass}
                     type="tel"
                     value={form.mobile}
                     autoComplete="tel"
                     onChange={(event) => setForm((state) => ({ ...state, mobile: event.target.value }))}
                     required
                   />
-                  <p className="profile-help">Use the number you want tied to account recovery and contact updates.</p>
+                  <p className={helpClass}>Use the number you want tied to account recovery and contact updates.</p>
                 </div>
               </div>
             </div>
 
-            <div className="profile-section">
-              <div className="profile-section-title">Work profile</div>
-              <div className="profile-fields">
-                <div className={fieldClass()}>
-                  <label className="profile-label" htmlFor="jobTitle">Job title</label>
+            <div className={sectionClass}>
+              <div className={sectionTitleClass}>Work profile</div>
+              <div className={fieldsClass}>
+                <div className={getFieldClass()}>
+                  <label className={labelClass} htmlFor="jobTitle">Job title</label>
                   <input
                     id="jobTitle"
-                    className="profile-input"
+                    className={inputClass}
                     value={form.jobTitle}
                     autoComplete="organization-title"
                     onChange={(event) => setForm((state) => ({ ...state, jobTitle: event.target.value }))}
                   />
                 </div>
-                <div className={fieldClass()}>
-                  <label className="profile-label" htmlFor="department">Department</label>
+                <div className={getFieldClass()}>
+                  <label className={labelClass} htmlFor="department">Department</label>
                   <input
                     id="department"
-                    className="profile-input"
+                    className={inputClass}
                     value={form.department}
                     autoComplete="organization"
                     onChange={(event) => setForm((state) => ({ ...state, department: event.target.value }))}
@@ -283,12 +327,12 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            {error && <div className="profile-alert profile-alert--error" role="alert">{error}</div>}
-            {success && <div className="profile-alert profile-alert--success" role="status">{success}</div>}
+            {error && <div className={cn(alertClass, alertErrorClass)} role="alert">{error}</div>}
+            {success && <div className={cn(alertClass, alertSuccessClass)} role="status">{success}</div>}
 
-            <div className="profile-actions">
-              <button type="button" className="profile-btn profile-btn--ghost" onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
-              <button type="submit" className="profile-btn profile-btn--primary" disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
+            <div className={actionsClass}>
+              <button type="button" className={cn(btnClass, btnGhostClass, actionsBtnClass)} onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
+              <button type="submit" className={cn(btnClass, btnPrimaryClass, actionsBtnClass)} disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
             </div>
           </form>
         </div>
@@ -299,45 +343,45 @@ export default function ProfileScreen() {
           title="Verify changes"
           footer={
             <>
-              <button type="button" className="profile-btn profile-btn--ghost" onClick={resetVerification} disabled={saving}>Cancel</button>
-              <button type="button" className="profile-btn profile-btn--primary" onClick={submitConfirm} disabled={saving || !finalReady}>Finalise</button>
+              <button type="button" className={cn(btnClass, btnGhostClass)} onClick={resetVerification} disabled={saving}>Cancel</button>
+              <button type="button" className={cn(btnClass, btnPrimaryClass)} onClick={submitConfirm} disabled={saving || !finalReady}>Finalise</button>
             </>
           }
         >
-          <div className="profile-modal">
-            <p className="profile-modal-copy">
+          <div className={modalClass}>
+            <p className={modalCopyClass}>
               We need a final check before saving contact changes.
             </p>
 
-            <dl className="profile-change-list">
+            <dl className={changeListClass}>
               {emailChanged && (
                 <>
-                  <dt>Email</dt>
-                  <dd>{initial.email || 'Not set'}{' -> '}{current.email}</dd>
+                  <dt className={changeListDtClass}>Email</dt>
+                  <dd className={changeListDdClass}>{initial.email || 'Not set'}{' -> '}{current.email}</dd>
                 </>
               )}
               {mobileChanged && (
                 <>
-                  <dt>Mobile</dt>
-                  <dd>{initial.mobile || 'Not set'}{' -> '}{current.mobile}</dd>
+                  <dt className={changeListDtClass}>Mobile</dt>
+                  <dd className={changeListDdClass}>{initial.mobile || 'Not set'}{' -> '}{current.mobile}</dd>
                 </>
               )}
             </dl>
 
             {emailChanged && (
-              <div className="profile-verify">
-                <div className="profile-verify-title">Email verification</div>
-                <div className="profile-verify-copy">
+              <div className={verifyClass}>
+                <div className={verifyTitleClass}>Email verification</div>
+                <div className={modalCopyClass}>
                   A code was sent to {current.email}. Enter it here to confirm the new sign-in email.
                 </div>
                 <input
-                  className="profile-input"
+                  className={inputClass}
                   inputMode="numeric"
                   value={emailCode}
                   onChange={(event) => setEmailCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="6-digit code"
                 />
-                <div className="profile-verify-meta">
+                <div className={verifyMetaClass}>
                   {emailCodeState === 'sending' && 'Sending code...'}
                   {emailCodeState === 'sent' && 'Code sent'}
                   {emailCodeState === 'error' && 'Code delivery failed'}
@@ -346,19 +390,19 @@ export default function ProfileScreen() {
             )}
 
             {mobileChanged && (
-              <div className={`profile-warning${security.ssoConfigured ? '' : ' profile-warning--strong'}`}>
-                <div className="profile-warning-title">Mobile change warning</div>
-                <p>
+              <div className={cn(warningBaseClass, security.ssoConfigured ? 'bg-[rgba(200,83,42,0.07)]' : 'bg-[rgba(184,50,50,0.1)]')}>
+                <div className={warningTitleClass}>Mobile change warning</div>
+                <p className="m-0 text-xs leading-relaxed text-tp">
                   {security.ssoConfigured
                     ? 'You sign in with SSO, so this should not interrupt your 2FA setup.'
                     : 'This can affect your 2FA and recovery path if you did not sign in with SSO.'}
                 </p>
-                <label className="profile-check">
-                  <input type="checkbox" checked={mobileAck} onChange={(event) => setMobileAck(event.target.checked)} />
+                <label className={checkClass}>
+                  <input type="checkbox" className="w-4 h-4" checked={mobileAck} onChange={(event) => setMobileAck(event.target.checked)} />
                   I understand and want to continue
                 </label>
                 <input
-                  className="profile-input"
+                  className={inputClass}
                   value={mobileCheck}
                   onChange={(event) => setMobileCheck(event.target.value)}
                   placeholder="Re-enter the new mobile number"
