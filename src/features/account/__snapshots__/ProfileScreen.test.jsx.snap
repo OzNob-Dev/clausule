@@ -338,14 +338,14 @@ exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
               class="min-w-0"
             >
               <label
-                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                class="mb-1.5 block text-[11px] font-extrabold text-tm"
                 for="firstName"
               >
                 First name
               </label>
               <input
                 autocomplete="given-name"
-                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                class="block box-border min-w-0 w-full min-h-[40px] rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-0 font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-colors duration-200 focus-visible:border-[rgba(201,79,42,0.55)] focus-visible:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]"
                 id="firstName"
                 required=""
                 value="Ada"
@@ -355,14 +355,14 @@ exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
               class="min-w-0"
             >
               <label
-                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                class="mb-1.5 block text-[11px] font-extrabold text-tm"
                 for="lastName"
               >
                 Last name
               </label>
               <input
                 autocomplete="family-name"
-                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                class="block box-border min-w-0 w-full min-h-[40px] rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-0 font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-colors duration-200 focus-visible:border-[rgba(201,79,42,0.55)] focus-visible:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]"
                 id="lastName"
                 value="Lovelace"
               />
@@ -384,14 +384,14 @@ exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
               class="min-w-0 col-span-full"
             >
               <label
-                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                class="mb-1.5 block text-[11px] font-extrabold text-tm"
                 for="email"
               >
                 Email
               </label>
               <input
                 autocomplete="email"
-                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                class="block box-border min-w-0 w-full min-h-[40px] rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-0 font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-colors duration-200 focus-visible:border-[rgba(201,79,42,0.55)] focus-visible:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]"
                 id="email"
                 required=""
                 type="email"
@@ -407,14 +407,14 @@ exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
               class="min-w-0 col-span-full"
             >
               <label
-                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                class="mb-1.5 block text-[11px] font-extrabold text-tm"
                 for="mobile"
               >
                 Mobile
               </label>
               <input
                 autocomplete="tel"
-                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                class="block box-border min-w-0 w-full min-h-[40px] rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-0 font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-colors duration-200 focus-visible:border-[rgba(201,79,42,0.55)] focus-visible:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]"
                 id="mobile"
                 required=""
                 type="tel"
@@ -443,14 +443,14 @@ exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
               class="min-w-0"
             >
               <label
-                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                class="mb-1.5 block text-[11px] font-extrabold text-tm"
                 for="jobTitle"
               >
                 Job title
               </label>
               <input
                 autocomplete="organization-title"
-                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                class="block box-border min-w-0 w-full min-h-[40px] rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-0 font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-colors duration-200 focus-visible:border-[rgba(201,79,42,0.55)] focus-visible:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]"
                 id="jobTitle"
                 value="Engineer"
               />
@@ -459,14 +459,14 @@ exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
               class="min-w-0"
             >
               <label
-                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                class="mb-1.5 block text-[11px] font-extrabold text-tm"
                 for="department"
               >
                 Department
               </label>
               <input
                 autocomplete="organization"
-                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                class="block box-border min-w-0 w-full min-h-[40px] rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-0 font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-colors duration-200 focus-visible:border-[rgba(201,79,42,0.55)] focus-visible:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]"
                 id="department"
                 value="Platform"
               />
@@ -474,17 +474,17 @@ exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
           </div>
         </div>
         <div
-          class="mt-5 flex justify-end gap-2.5 border-t border-[rgba(60,45,35,0.1)] pt-[18px] max-[680px]:flex-col-reverse"
+          class="mt-5 flex justify-end gap-2 border-t border-[rgba(60,45,35,0.1)] pt-[18px] max-[680px]:flex-col-reverse"
         >
           <button
-            class="cursor-pointer rounded-[var(--r)] px-4 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45 border-[1.5px] border-[rgba(60,45,35,0.14)] bg-transparent text-tm hover:border-[rgba(60,45,35,0.24)] hover:text-tp disabled:hover:border-[rgba(60,45,35,0.14)] disabled:hover:text-tm"
+            class="cursor-pointer rounded-[5px] font-sans text-xs transition-[background,opacity] duration-150 disabled:cursor-not-allowed disabled:opacity-55 border border-[rgba(60,45,35,0.14)] bg-transparent px-[14px] py-[7px] text-tm hover:bg-[rgba(60,45,35,0.06)]"
             disabled=""
             type="button"
           >
             Reset
           </button>
           <button
-            class="cursor-pointer rounded-[var(--r)] px-4 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45 border-0 bg-acc text-[#FAF7F3] hover:opacity-90 disabled:hover:opacity-45"
+            class="cursor-pointer rounded-[5px] font-sans text-xs transition-[background,opacity] duration-150 disabled:cursor-not-allowed disabled:opacity-55 border-0 bg-acc px-4 py-[7px] font-semibold text-[#FAF7F3] hover:opacity-88"
             disabled=""
             type="submit"
           >

@@ -37,12 +37,13 @@ function fieldClass(full = false) {
   return cn('min-w-0', full && 'col-span-full')
 }
 
-const inputClass = 'block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A]'
-const inputFocusClass = 'outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]'
+const sectionLabelClass = 'mb-1.5 block text-[11px] font-extrabold text-tm'
+const inputClass = 'block box-border min-w-0 w-full min-h-[40px] rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-0 font-sans text-[13px] font-medium text-[#2A221A]'
+const inputFocusClass = 'outline-none transition-colors duration-200 focus-visible:border-[rgba(201,79,42,0.55)] focus-visible:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]'
 const copyClass = 'text-xs leading-[1.6] text-tm'
-const buttonBaseClass = 'cursor-pointer rounded-[var(--r)] px-4 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45'
-const ghostButtonClass = `${buttonBaseClass} border-[1.5px] border-[rgba(60,45,35,0.14)] bg-transparent text-tm hover:border-[rgba(60,45,35,0.24)] hover:text-tp disabled:hover:border-[rgba(60,45,35,0.14)] disabled:hover:text-tm`
-const primaryButtonClass = `${buttonBaseClass} border-0 bg-acc text-[#FAF7F3] hover:opacity-90 disabled:hover:opacity-45`
+const buttonBaseClass = 'cursor-pointer rounded-[5px] font-sans text-xs transition-[background,opacity] duration-150 disabled:cursor-not-allowed disabled:opacity-55'
+const ghostButtonClass = `${buttonBaseClass} border border-[rgba(60,45,35,0.14)] bg-transparent px-[14px] py-[7px] text-tm hover:bg-[rgba(60,45,35,0.06)]`
+const primaryButtonClass = `${buttonBaseClass} border-0 bg-acc px-4 py-[7px] font-semibold text-[#FAF7F3] hover:opacity-88`
 
 export default function ProfileScreen() {
   const router = useRouter()
@@ -209,7 +210,7 @@ export default function ProfileScreen() {
               <div className="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm">Identity</div>
               <div className="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1">
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="firstName">First name</label>
+                  <label className={sectionLabelClass} htmlFor="firstName">First name</label>
                   <input
                     id="firstName"
                     className={`${inputClass} ${inputFocusClass}`}
@@ -220,7 +221,7 @@ export default function ProfileScreen() {
                   />
                 </div>
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="lastName">Last name</label>
+                  <label className={sectionLabelClass} htmlFor="lastName">Last name</label>
                   <input
                     id="lastName"
                     className={`${inputClass} ${inputFocusClass}`}
@@ -236,7 +237,7 @@ export default function ProfileScreen() {
               <div className="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm">Contact</div>
               <div className="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1">
                 <div className={fieldClass(true)}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="email">Email</label>
+                  <label className={sectionLabelClass} htmlFor="email">Email</label>
                   <input
                     id="email"
                     className={`${inputClass} ${inputFocusClass}`}
@@ -249,7 +250,7 @@ export default function ProfileScreen() {
                   <p className="mt-2 text-xs leading-[1.6] text-tm">{emailWarning}</p>
                 </div>
                 <div className={fieldClass(true)}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="mobile">Mobile</label>
+                  <label className={sectionLabelClass} htmlFor="mobile">Mobile</label>
                   <input
                     id="mobile"
                     className={`${inputClass} ${inputFocusClass}`}
@@ -268,7 +269,7 @@ export default function ProfileScreen() {
               <div className="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm">Work profile</div>
               <div className="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1">
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="jobTitle">Job title</label>
+                  <label className={sectionLabelClass} htmlFor="jobTitle">Job title</label>
                   <input
                     id="jobTitle"
                     className={`${inputClass} ${inputFocusClass}`}
@@ -278,7 +279,7 @@ export default function ProfileScreen() {
                   />
                 </div>
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="department">Department</label>
+                  <label className={sectionLabelClass} htmlFor="department">Department</label>
                   <input
                     id="department"
                     className={`${inputClass} ${inputFocusClass}`}
@@ -293,7 +294,7 @@ export default function ProfileScreen() {
             {error && <div className="mt-4 rounded-[14px] bg-[rgba(184,50,50,0.08)] px-[14px] py-3 text-xs leading-[1.55] text-[#9e2d2d]" role="alert">{error}</div>}
             {success && <div className="mt-4 rounded-[14px] bg-[rgba(53,121,73,0.08)] px-[14px] py-3 text-xs leading-[1.55] text-[#2f6f43]" role="status">{success}</div>}
 
-            <div className="mt-5 flex justify-end gap-2.5 border-t border-[rgba(60,45,35,0.1)] pt-[18px] max-[680px]:flex-col-reverse">
+            <div className="mt-5 flex justify-end gap-2 border-t border-[rgba(60,45,35,0.1)] pt-[18px] max-[680px]:flex-col-reverse">
               <button type="button" className={ghostButtonClass} onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
               <button type="submit" className={primaryButtonClass} disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
             </div>
