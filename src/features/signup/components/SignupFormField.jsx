@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
-export function FieldLabel({ children }) {
-  return <label className="su-field-label">{children}</label>
+export function FieldLabel({ children, htmlFor }) {
+  return <label className="su-field-label" htmlFor={htmlFor}>{children}</label>
 }
 
 export function FieldInput({ error, onBlur, className = '', ...props }) {

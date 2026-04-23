@@ -74,12 +74,19 @@ function SignUpInner() {
 
           {/* Right light panel — su-page scopes the --su-* design tokens */}
           <div className="su-shell-right su-page">
-            <SignupStepAccount
-              emailLocked={redirectedFromSignIn}
-              hideSso={redirectedFromSignIn}
-              onNext={handleStep1}
-              initialData={step1Initial}
-            />
+            <div className="su-step1-layout">
+              <div className="su-step1-form">
+                <SignupStepAccount
+                  emailLocked={redirectedFromSignIn}
+                  hideSso={redirectedFromSignIn}
+                  onNext={handleStep1}
+                  initialData={step1Initial}
+                />
+              </div>
+              <aside className="su-aside" aria-label="Plan summary">
+                <SignupAside />
+              </aside>
+            </div>
             <p className="su-shell-signin-note">
               Already have an account?{' '}
               <Link href="/">Sign in</Link>

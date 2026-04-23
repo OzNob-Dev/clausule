@@ -82,8 +82,9 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
 
       <div className="su-name-row">
         <div className="su-name-col">
-          <FieldLabel>First name</FieldLabel>
+          <FieldLabel htmlFor="su-first-name">First name</FieldLabel>
           <FieldInput
+            id="su-first-name"
             type="text"
             placeholder="Jordan"
             value={firstName}
@@ -95,8 +96,9 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
           />
         </div>
         <div className="su-name-col">
-          <FieldLabel>Last name</FieldLabel>
+          <FieldLabel htmlFor="su-last-name">Last name</FieldLabel>
           <FieldInput
+            id="su-last-name"
             type="text"
             placeholder="Ellis"
             value={lastName}
@@ -106,8 +108,9 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
       </div>
 
       <div className="su-field">
-        <FieldLabel>Email</FieldLabel>
+        <FieldLabel htmlFor="su-email">Email</FieldLabel>
         <FieldInput
+          id="su-email"
           type="email"
           placeholder="you@email.com"
           value={email}

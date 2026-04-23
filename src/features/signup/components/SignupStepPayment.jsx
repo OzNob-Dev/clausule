@@ -67,14 +67,15 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
       </div>
 
       <div className="su-pay-field">
-        <FieldLabel>Name on card</FieldLabel>
-        <FieldInput type="text" placeholder="Jordan Ellis" value={cardName} onChange={(event) => setCardName(event.target.value)} />
+        <FieldLabel htmlFor="su-card-name">Name on card</FieldLabel>
+        <FieldInput id="su-card-name" type="text" placeholder="Jordan Ellis" value={cardName} onChange={(event) => setCardName(event.target.value)} />
       </div>
 
       <div className="su-pay-field su-card-input-wrap">
-        <FieldLabel>Card number</FieldLabel>
+        <FieldLabel htmlFor="su-card-number">Card number</FieldLabel>
         <div className="su-card-input-wrap">
           <FieldInput
+            id="su-card-number"
             type="text"
             placeholder="1234 5678 9012 3456"
             maxLength={19}
@@ -102,8 +103,9 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
 
       <div className="su-expiry-cvc-row">
         <div>
-          <FieldLabel>Expiry</FieldLabel>
+          <FieldLabel htmlFor="su-card-expiry">Expiry</FieldLabel>
           <FieldInput
+            id="su-card-expiry"
             type="text"
             placeholder="MM / YY"
             maxLength={7}
@@ -112,8 +114,9 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
           />
         </div>
         <div>
-          <FieldLabel>CVC</FieldLabel>
+          <FieldLabel htmlFor="su-card-cvc">CVC</FieldLabel>
           <FieldInput
+            id="su-card-cvc"
             type="text"
             placeholder="123"
             maxLength={4}

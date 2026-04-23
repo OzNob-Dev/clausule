@@ -66,6 +66,7 @@
 }
 
 .su-input {
+  box-sizing: border-box;
   width: 100%;
   background: var(--su-card);
   border: 1.5px solid var(--su-border-em);
