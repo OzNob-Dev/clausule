@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppShell } from '@features/manager/components/AppShell'
-import { DateCategoryFields, EntryTextFields, Field, NoteTypeButtons } from '@features/manager/entries/EntryFormFields'
+import { DateCategoryFields, EntryTextFields, Field, NoteTypeButtons, controlClass } from '@features/manager/entries/EntryFormFields'
 
 const EMPLOYEES = ['Jordan Ellis', 'Sara Chen', "Marcus O'Brien", 'Priya Lal', 'Tom Walsh', 'Riya Nair']
 
@@ -43,7 +43,7 @@ export default function NewEntry() {
           <select
             value={form.employee}
             onChange={(e) => set('employee', e.target.value)}
-            className="w-full bg-[#FAF7F3] border-[1.5px] border-border2 rounded-[var(--r)] py-[11px] px-[13px] text-sm font-medium text-tx-1 outline-none font-sans transition-colors duration-150 focus:border-acc-text"
+            className={controlClass}
             style={{ appearance: 'none', cursor: 'pointer' }}
           >
             <option value="">Select employee…</option>

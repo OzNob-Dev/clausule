@@ -47,8 +47,8 @@
   color: var(--su-tx1);
 }
 
-.su-pay-field { margin-bottom: 18px; }
-.su-card-input-wrap { position: relative; }
+.su-pay-field { margin-bottom: 18px; min-width: 0; }
+.su-card-input-wrap { position: relative; min-width: 0; }
 
 .su-card-icons {
   position: absolute;
@@ -77,7 +77,7 @@
   margin-bottom: 18px;
 }
 
-.su-expiry-cvc-row > div { flex: 1; }
+.su-expiry-cvc-row > div { flex: 1; min-width: 0; }
 
 .su-secure-note {
   display: flex;

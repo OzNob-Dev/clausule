@@ -2,6 +2,9 @@ import { cn } from '@shared/utils/cn'
 
 export const CATEGORIES = ['Performance', 'Conduct', 'Development']
 export const NOTE_TYPES = ['Check-in', 'Note', 'Concern', 'Growth', 'Incident', 'Commendation']
+export const controlClass =
+  'block box-border min-w-0 w-full rounded-[var(--r)] border-[1.5px] border-border2 bg-canvas px-[13px] py-[11px] text-sm font-medium text-tx-1 outline-none font-sans transition-colors duration-150 placeholder:text-tx-3 focus:border-acc-text'
+export const areaClass = cn(controlClass, 'resize-y min-h-[140px] leading-[1.75]')
 
 export function Field({ label, children }) {
   return (
@@ -15,21 +18,21 @@ export function Field({ label, children }) {
 export function DateCategoryFields({ form, onChange }) {
   return (
     <div className="grid grid-cols-2 gap-4 mb-5 max-sm:grid-cols-1">
-      <div>
+      <div className="min-w-0">
         <div className="text-[10px] font-bold text-tx-4 uppercase tracking-[0.8px] mb-[7px]">Date</div>
         <input
           type="date"
           value={form.date}
           onChange={(e) => onChange('date', e.target.value)}
-          className="w-full bg-[#FAF7F3] border-[1.5px] border-border2 rounded-[var(--r)] py-[11px] px-[13px] text-sm font-medium text-tx-1 outline-none font-sans transition-colors duration-150 focus:border-acc-text"
+          className={controlClass}
         />
       </div>
-      <div>
+      <div className="min-w-0">
         <div className="text-[10px] font-bold text-tx-4 uppercase tracking-[0.8px] mb-[7px]">Category</div>
         <select
           value={form.category}
           onChange={(e) => onChange('category', e.target.value)}
-          className="w-full bg-[#FAF7F3] border-[1.5px] border-border2 rounded-[var(--r)] py-[11px] px-[13px] text-sm font-medium text-tx-1 outline-none font-sans transition-colors duration-150 focus:border-acc-text"
+          className={controlClass}
           style={{ appearance: 'none', cursor: 'pointer' }}
         >
           {CATEGORIES.map((category) => <option key={category}>{category}</option>)}
@@ -69,7 +72,7 @@ export function EntryTextFields({ form, onChange, titlePlaceholder, detailsPlace
           value={form.title}
           onChange={(e) => onChange('title', e.target.value)}
           placeholder={titlePlaceholder}
-          className="w-full bg-[#FAF7F3] border-[1.5px] border-border2 rounded-[var(--r)] py-[11px] px-[13px] text-sm font-medium text-tx-1 outline-none font-sans transition-colors duration-150 focus:border-acc-text"
+          className={controlClass}
         />
       </Field>
 
@@ -79,7 +82,7 @@ export function EntryTextFields({ form, onChange, titlePlaceholder, detailsPlace
           onChange={(e) => onChange('details', e.target.value)}
           rows={6}
           placeholder={detailsPlaceholder}
-          className="w-full bg-[#FAF7F3] border-[1.5px] border-border2 rounded-[var(--r)] py-[11px] px-[13px] text-sm font-medium text-tx-1 outline-none font-sans transition-colors duration-150 focus:border-acc-text resize-y min-h-[140px] leading-[1.75]"
+          className={areaClass}
         />
       </Field>
     </>

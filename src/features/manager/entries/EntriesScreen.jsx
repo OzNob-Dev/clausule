@@ -4,8 +4,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { AppShell } from '@features/manager/components/AppShell'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
+import { cn } from '@shared/utils/cn'
 import { ALL_EMP, SAMPLE_ENTRIES } from '@shared/data/employees'
 import { relativeTime } from '@shared/utils/relativeTime'
+import { controlClass } from '@features/manager/entries/EntryFormFields'
 
 const CAT_DOT = {
   perf:    'var(--blue)',
@@ -62,7 +64,7 @@ export default function Entries() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search entries, names, themes…"
-              className="w-full bg-[#FAF7F3] border-[1.5px] border-border2 rounded-[var(--r)] py-3 pr-11 pl-3.5 text-base font-medium text-tx-1 outline-none font-sans transition-colors duration-200 focus:border-acc-text"
+              className={cn(controlClass, 'py-3 pl-3.5 pr-11 text-base')}
             />
             <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-tx-4 [&>svg]:w-4 [&>svg]:h-4" aria-label="Search">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">

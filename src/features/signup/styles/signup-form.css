@@ -45,7 +45,7 @@
   margin-bottom: 18px;
 }
 
-.su-name-col { flex: 1; }
+.su-name-col { flex: 1; min-width: 0; }
 .su-field { margin-bottom: 18px; }
 
 .su-field-hint {
@@ -66,7 +66,9 @@
 }
 
 .su-input {
+  display: block;
   box-sizing: border-box;
+  min-width: 0;
   width: 100%;
   background: var(--su-card);
   border: 1.5px solid var(--su-border-em);

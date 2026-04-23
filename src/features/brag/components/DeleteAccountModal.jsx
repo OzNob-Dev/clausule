@@ -96,7 +96,7 @@ export default function DeleteAccountModal({ open, onClose }) {
             onChange={(e) => setDeleteConfirm(e.target.value)}
             placeholder="DELETE"
             autoFocus
-            className="w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-red"
+            className="block box-border min-w-0 w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-red"
           />
         </div>
         <div className="flex flex-col gap-2">

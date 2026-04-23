@@ -52,7 +52,7 @@ export default function EditEntry() {
 
         {/* Employee — read-only */}
         <Field label="Employee">
-          <div className="w-full py-[11px] px-[13px] text-sm font-medium outline-none font-sans rounded-[var(--r)] border-[1.5px] bg-[rgba(60,45,35,0.03)] border-border text-tx-2 cursor-default">{form.employee}</div>
+          <div className="block box-border min-w-0 w-full py-[11px] px-[13px] text-sm font-medium outline-none font-sans rounded-[var(--r)] border-[1.5px] bg-[rgba(60,45,35,0.03)] border-border text-tx-2 cursor-default">{form.employee}</div>
         </Field>
 
         <DateCategoryFields form={form} onChange={set} />

@@ -51,7 +51,7 @@ export function EntryCard({ entry, onDelete, isFiltered }) {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={3}
-            className="mb-3 w-full resize-none rounded-[var(--r)] border-[1.5px] border-border bg-[rgba(255,255,255,0.05)] px-3 py-2.5 font-sans text-[13px] leading-[1.75] text-tx-1 outline-none transition-colors duration-150 focus:border-acc-text"
+            className="mb-3 block box-border min-w-0 w-full resize-none rounded-[var(--r)] border-[1.5px] border-border bg-[rgba(255,255,255,0.05)] px-3 py-2.5 font-sans text-[13px] leading-[1.75] text-tx-1 outline-none transition-colors duration-150 focus:border-acc-text"
           />
           <div className="flex items-center justify-between">
             {confirmDelete ? (

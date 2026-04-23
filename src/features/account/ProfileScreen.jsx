@@ -35,7 +35,7 @@ function normalize(form) {
 }
 
 function fieldClass(full = false) {
-  return `profile-field${full ? ' profile-field--full' : ''}`
+  return `profile-field min-w-0${full ? ' profile-field--full' : ''}`
 }
 
 const fieldInputClass =
