@@ -1,11 +1,10 @@
 import Link from 'next/link'
-import { authShell } from '@features/signup/components/signupClasses'
 
 export default function SignUpPrompt() {
   return (
-    <p className={authShell.signinNote}>
+    <p className="su-shell-signin-note">
       No account yet?{' '}
-      <Link href="/signup" className={authShell.signinLink}>Sign up</Link>
+      <Link href="/signup">Sign up</Link>
     </p>
   )
 }

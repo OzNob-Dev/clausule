@@ -8,7 +8,9 @@ import SsoButtons from '@features/auth/components/SsoButtons'
 import { useSignInFlow } from '@features/auth/hooks/useSignInFlow'
 import MfaLoginEmailStep from '@features/mfa/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@features/mfa/components/MfaLoginAppStep'
-import { authShell } from '@features/signup/components/signupClasses'
+import '@features/mfa/styles/mfa-layout.css'
+import '@features/signup/styles/signup-theme.css'
+import '@features/signup/styles/signup-form.css'
 
 export default function SignIn() {
   const flow = useSignInFlow()
@@ -50,12 +52,12 @@ export default function SignIn() {
   }
 
   return (
-    <div className={`${authShell.page} ${authShell.ruled} ${authShell.shellWrap}`}>
-      <div className={authShell.shell}>
+    <div className="su-shell-wrap su-page">
+      <div className="su-shell">
         <SignInBrandPanel />
 
-        <div className={`${authShell.lightPanel} justify-start`}>
-          <div className={authShell.narrow}>
+        <div className="su-shell-right su-page flex-col justify-start">
+          <div className="su-narrow">
             <SignInEmailForm
               email={flow.email}
               result={flow.result}

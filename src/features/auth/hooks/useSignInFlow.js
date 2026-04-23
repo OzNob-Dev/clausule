@@ -27,7 +27,7 @@ const SSO_ERROR_LABELS = {
 }
 
 function hasSessionCookie() {
-  return document.cookie.includes(SESSION_COOKIE)
+  return document.cookie.split('; ').some((cookie) => cookie.startsWith(SESSION_COOKIE))
 }
 
 function ssoErrorFromUrl() {
@@ -61,21 +61,13 @@ export function useSignInFlow() {
 
   useEffect(() => {
     if (!hasSessionCookie()) return
-
-    const checkSession = async () => {
-      try {
-        const res = await apiFetch('/api/auth/me')
+    apiFetch('/api/auth/me')
+      .then(async (res) => {
         if (!res.ok) return
         const { user } = await res.json()
         router.replace(homePathForRole(user.role))
-      } catch {}
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      void checkSession()
-    })
-
-    return () => window.cancelAnimationFrame(frame)
+      })
+      .catch(() => {})
   }, [router])
 
   useEffect(() => {

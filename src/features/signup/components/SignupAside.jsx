@@ -1,5 +1,3 @@
-import { signupUi } from './signupClasses'
-
 const INCLUDES = [
   'Brag doc with evidence rings and strength scoring',
   'Resume generator. Polished CV from your entries',
@@ -7,24 +5,24 @@ const INCLUDES = [
 
 function PricingCard() {
   return (
-    <div className={signupUi.asideCard}>
-      <div className={signupUi.asideLabel}>Individual plan</div>
-      <div className={signupUi.asidePrice}>
-        $5<span className={signupUi.asidePricePeriod}>/mo</span>
+    <div className="su-aside-card">
+      <div className="su-aside-label">Individual plan</div>
+      <div className="su-aside-price">
+        $5<span className="su-aside-price-period">/mo</span>
       </div>
-      <div className={signupUi.asidePriceNote}>Cancel any time from your account settings.</div>
+      <div className="su-aside-price-note">Cancel any time from your account settings.</div>
     </div>
   )
 }
 
 function IncludesCard() {
   return (
-    <div className={signupUi.asideCard}>
-      <div className={signupUi.asideLabel}>What's included</div>
-      <div className={signupUi.asideList}>
+    <div className="su-aside-card">
+      <div className="su-aside-label">What's included</div>
+      <div className="su-aside-feature-list">
         {INCLUDES.map((feature) => (
-          <div key={feature} className={signupUi.asideFeature}>
-            <div className={signupUi.asideDot} />
+          <div key={feature} className="su-aside-feature">
+            <div className="su-aside-dot" />
             {feature}
           </div>
         ))}
@@ -35,7 +33,7 @@ function IncludesCard() {
 
 export default function SignupAside() {
   return (
-    <div className={signupUi.asideWrap}>
+    <div className="su-aside-wrap">
       <PricingCard />
       <IncludesCard />
     </div>

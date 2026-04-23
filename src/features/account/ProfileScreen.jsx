@@ -10,8 +10,8 @@ import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
 import '@features/brag/styles/brag-shell.css'
-import { cn } from '@shared/utils/cn'
-import { bragSettingsUi, bragShell, profileUi } from '@features/brag/components/bragClasses'
+import '@features/brag/styles/brag-settings-core.css'
+import '@features/account/styles/profile.css'
 
 const EMPTY_FORM = {
   firstName: '',
@@ -34,7 +34,7 @@ function normalize(form) {
 }
 
 function fieldClass(full = false) {
-  return cn(profileUi.field, full && profileUi.fieldFull)
+  return `profile-field min-w-0${full ? ' profile-field--full' : ''}`
 }
 
 export default function ProfileScreen() {
@@ -178,7 +178,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <div className={bragShell.page}>
+    <div className="be-page">
       <BragRail activePage="profile" />
       <BragIdentitySidebar
         avatarInitials={initials}
@@ -191,21 +191,21 @@ export default function ProfileScreen() {
         statusSub={current.mobile || 'Mobile not set'}
       />
 
-      <main className={bragShell.main} aria-labelledby="profile-page-title">
-        <div className={cn(bragShell.inner, profileUi.page)}>
-          <h1 id="profile-page-title" className={bragSettingsUi.heading}>Personal details</h1>
-          <p className={bragSettingsUi.subheading}>Manage the identity, contact, and work details connected to your account.</p>
-          <div className={bragSettingsUi.divider} />
+      <main className="be-main" aria-labelledby="profile-page-title">
+        <div className="be-inner profile-page">
+          <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
+          <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>
+          <div className="bss-divider" />
 
-          <form className={profileUi.card} onSubmit={onSubmit}>
-            <div className={profileUi.section}>
-              <div className={profileUi.sectionTitle}>Identity</div>
-              <div className={profileUi.fields}>
+          <form className="profile-card" onSubmit={onSubmit}>
+            <div className="profile-section">
+              <div className="profile-section-title">Identity</div>
+              <div className="profile-fields">
                 <div className={fieldClass()}>
-                  <label className={profileUi.label} htmlFor="firstName">First name</label>
+                  <label className="profile-label" htmlFor="firstName">First name</label>
                   <input
                     id="firstName"
-                    className={profileUi.input}
+                    className="profile-input"
                     value={form.firstName}
                     autoComplete="given-name"
                     onChange={(event) => setForm((state) => ({ ...state, firstName: event.target.value }))}
@@ -213,10 +213,10 @@ export default function ProfileScreen() {
                   />
                 </div>
                 <div className={fieldClass()}>
-                  <label className={profileUi.label} htmlFor="lastName">Last name</label>
+                  <label className="profile-label" htmlFor="lastName">Last name</label>
                   <input
                     id="lastName"
-                    className={profileUi.input}
+                    className="profile-input"
                     value={form.lastName}
                     autoComplete="family-name"
                     onChange={(event) => setForm((state) => ({ ...state, lastName: event.target.value }))}
@@ -225,56 +225,56 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            <div className={profileUi.sectionSpacing}>
-              <div className={profileUi.sectionTitle}>Contact</div>
-              <div className={profileUi.fields}>
+            <div className="profile-section">
+              <div className="profile-section-title">Contact</div>
+              <div className="profile-fields">
                 <div className={fieldClass(true)}>
-                  <label className={profileUi.label} htmlFor="email">Email</label>
+                  <label className="profile-label" htmlFor="email">Email</label>
                   <input
                     id="email"
-                    className={profileUi.input}
+                    className="profile-input"
                     type="email"
                     value={form.email}
                     autoComplete="email"
                     onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
                     required
                   />
-                  <p className={profileUi.help}>{emailWarning}</p>
+                  <p className="profile-help">{emailWarning}</p>
                 </div>
                 <div className={fieldClass(true)}>
-                  <label className={profileUi.label} htmlFor="mobile">Mobile</label>
+                  <label className="profile-label" htmlFor="mobile">Mobile</label>
                   <input
                     id="mobile"
-                    className={profileUi.input}
+                    className="profile-input"
                     type="tel"
                     value={form.mobile}
                     autoComplete="tel"
                     onChange={(event) => setForm((state) => ({ ...state, mobile: event.target.value }))}
                     required
                   />
-                  <p className={profileUi.help}>Use the number you want tied to account recovery and contact updates.</p>
+                  <p className="profile-help">Use the number you want tied to account recovery and contact updates.</p>
                 </div>
               </div>
             </div>
 
-            <div className={profileUi.sectionSpacing}>
-              <div className={profileUi.sectionTitle}>Work profile</div>
-              <div className={profileUi.fields}>
+            <div className="profile-section">
+              <div className="profile-section-title">Work profile</div>
+              <div className="profile-fields">
                 <div className={fieldClass()}>
-                  <label className={profileUi.label} htmlFor="jobTitle">Job title</label>
+                  <label className="profile-label" htmlFor="jobTitle">Job title</label>
                   <input
                     id="jobTitle"
-                    className={profileUi.input}
+                    className="profile-input"
                     value={form.jobTitle}
                     autoComplete="organization-title"
                     onChange={(event) => setForm((state) => ({ ...state, jobTitle: event.target.value }))}
                   />
                 </div>
                 <div className={fieldClass()}>
-                  <label className={profileUi.label} htmlFor="department">Department</label>
+                  <label className="profile-label" htmlFor="department">Department</label>
                   <input
                     id="department"
-                    className={profileUi.input}
+                    className="profile-input"
                     value={form.department}
                     autoComplete="organization"
                     onChange={(event) => setForm((state) => ({ ...state, department: event.target.value }))}
@@ -283,12 +283,12 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            {error && <div className={cn(profileUi.alert, profileUi.alertError)} role="alert">{error}</div>}
-            {success && <div className={cn(profileUi.alert, profileUi.alertSuccess)} role="status">{success}</div>}
+            {error && <div className="profile-alert profile-alert--error" role="alert">{error}</div>}
+            {success && <div className="profile-alert profile-alert--success" role="status">{success}</div>}
 
-            <div className={profileUi.actions}>
-              <button type="button" className={cn(profileUi.btn, profileUi.btnGhost)} onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
-              <button type="submit" className={cn(profileUi.btn, profileUi.btnPrimary)} disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
+            <div className="profile-actions">
+              <button type="button" className="profile-btn profile-btn--ghost" onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
+              <button type="submit" className="profile-btn profile-btn--primary" disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
             </div>
           </form>
         </div>
@@ -299,45 +299,45 @@ export default function ProfileScreen() {
           title="Verify changes"
           footer={
             <>
-              <button type="button" className={cn(profileUi.btn, profileUi.btnGhost)} onClick={resetVerification} disabled={saving}>Cancel</button>
-              <button type="button" className={cn(profileUi.btn, profileUi.btnPrimary)} onClick={submitConfirm} disabled={saving || !finalReady}>Finalise</button>
+              <button type="button" className="profile-btn profile-btn--ghost" onClick={resetVerification} disabled={saving}>Cancel</button>
+              <button type="button" className="profile-btn profile-btn--primary" onClick={submitConfirm} disabled={saving || !finalReady}>Finalise</button>
             </>
           }
         >
-          <div className={profileUi.modal}>
-            <p className={profileUi.modalCopy}>
+          <div className="profile-modal">
+            <p className="profile-modal-copy">
               We need a final check before saving contact changes.
             </p>
 
-            <dl className={profileUi.changeList}>
+            <dl className="profile-change-list">
               {emailChanged && (
                 <>
-                  <dt className={profileUi.changeTerm}>Email</dt>
-                  <dd className={profileUi.changeDesc}>{initial.email || 'Not set'}{' -> '}{current.email}</dd>
+                  <dt>Email</dt>
+                  <dd>{initial.email || 'Not set'}{' -> '}{current.email}</dd>
                 </>
               )}
               {mobileChanged && (
                 <>
-                  <dt className={profileUi.changeTerm}>Mobile</dt>
-                  <dd className={profileUi.changeDesc}>{initial.mobile || 'Not set'}{' -> '}{current.mobile}</dd>
+                  <dt>Mobile</dt>
+                  <dd>{initial.mobile || 'Not set'}{' -> '}{current.mobile}</dd>
                 </>
               )}
             </dl>
 
             {emailChanged && (
-              <div className={profileUi.verify}>
-                <div className={profileUi.verifyTitle}>Email verification</div>
-                <div className={profileUi.verifyCopy}>
+              <div className="profile-verify">
+                <div className="profile-verify-title">Email verification</div>
+                <div className="profile-verify-copy">
                   A code was sent to {current.email}. Enter it here to confirm the new sign-in email.
                 </div>
                 <input
-                  className={profileUi.input}
+                  className="profile-input"
                   inputMode="numeric"
                   value={emailCode}
                   onChange={(event) => setEmailCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="6-digit code"
                 />
-                <div className={profileUi.verifyMeta}>
+                <div className="profile-verify-meta">
                   {emailCodeState === 'sending' && 'Sending code...'}
                   {emailCodeState === 'sent' && 'Code sent'}
                   {emailCodeState === 'error' && 'Code delivery failed'}
@@ -346,19 +346,19 @@ export default function ProfileScreen() {
             )}
 
             {mobileChanged && (
-              <div className={cn(profileUi.warning, !security.ssoConfigured && profileUi.warningStrong)}>
-                <div className={profileUi.warningTitle}>Mobile change warning</div>
-                <p className={profileUi.warningCopy}>
+              <div className={`profile-warning${security.ssoConfigured ? '' : ' profile-warning--strong'}`}>
+                <div className="profile-warning-title">Mobile change warning</div>
+                <p>
                   {security.ssoConfigured
                     ? 'You sign in with SSO, so this should not interrupt your 2FA setup.'
                     : 'This can affect your 2FA and recovery path if you did not sign in with SSO.'}
                 </p>
-                <label className={profileUi.check}>
+                <label className="profile-check">
                   <input type="checkbox" checked={mobileAck} onChange={(event) => setMobileAck(event.target.checked)} />
                   I understand and want to continue
                 </label>
                 <input
-                  className={profileUi.input}
+                  className="profile-input"
                   value={mobileCheck}
                   onChange={(event) => setMobileCheck(event.target.value)}
                   placeholder="Re-enter the new mobile number"

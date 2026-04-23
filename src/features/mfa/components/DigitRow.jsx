@@ -1,18 +1,15 @@
-import { cn } from '@shared/utils/cn'
-import { mfaUi } from './mfaClasses'
-
 const VARIANTS = {
   mfa: {
-    row: mfaUi.otpRow,
-    box: mfaUi.otpBox,
-    error: mfaUi.otpRowError,
-    done: mfaUi.otpRowDone,
+    row: 'mfa-otp-row',
+    box: 'mfa-otp-box',
+    error: 'mfa-otp-row--error',
+    done: 'mfa-otp-row--valid',
   },
   bss: {
-    row: mfaUi.otpRow,
-    box: mfaUi.otpBox,
-    error: mfaUi.otpRowError,
-    done: mfaUi.otpRowDone,
+    row: 'bss-otp-row',
+    box: 'bss-otp-box',
+    error: 'bss-otp-row--error',
+    done: 'bss-otp-row--done',
   },
 }
 
@@ -21,7 +18,11 @@ export default function DigitRow({ digits, inputRefs, inputState, onChange, onKe
 
   return (
     <div
-      className={cn(classes.row, inputState === 'error' && classes.error, inputState === 'done' && classes.done)}
+      className={[
+        classes.row,
+        inputState === 'error' ? classes.error : '',
+        inputState === 'done' ? classes.done : '',
+      ].join(' ')}
       onPaste={onPaste}
       role="group"
       aria-label={ariaLabel}

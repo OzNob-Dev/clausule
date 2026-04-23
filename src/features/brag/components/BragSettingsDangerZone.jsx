@@ -1,18 +1,16 @@
-import { bragSettingsUi } from './bragClasses'
-
 export default function BragSettingsDangerZone({ onDelete }) {
   return (
-    <div className={bragSettingsUi.dangerSection}>
-      <div className={bragSettingsUi.dangerLabel}>Danger zone</div>
-      <div className={bragSettingsUi.dangerCard}>
-        <div className={bragSettingsUi.dangerRow}>
+    <div className="bss-danger-section">
+      <div className="bss-danger-label">Danger zone</div>
+      <div className="bss-danger-card">
+        <div className="bss-danger-row">
           <div>
-            <div className={bragSettingsUi.dangerTitle}>Delete account</div>
-            <div className={bragSettingsUi.dangerDesc}>
+            <div className="bss-danger-title">Delete account</div>
+            <div className="bss-danger-desc">
               Permanently removes your account and all brag doc entries, files, and records. This cannot be undone.
             </div>
           </div>
-          <button className={bragSettingsUi.deleteBtn} onClick={onDelete}>
+          <button className="bss-btn-delete" onClick={onDelete}>
             Delete account
           </button>
         </div>
