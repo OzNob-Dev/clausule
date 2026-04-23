@@ -37,7 +37,7 @@ function fieldClass(full = false) {
   return cn('min-w-0', full && 'col-span-full')
 }
 
-const sectionLabelClass = 'mb-1.5 text-[11px] font-extrabold text-tm'
+const sectionLabelClass = 'mb-1.5 text-[11px] font-extrabold text-[#5A4F45]'
 const inputClass = 'block min-w-0 w-full box-border rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-[10px] font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[#AAA29A] focus:border-[rgba(201,79,42,0.55)] focus:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]'
 const textInputClass = `${inputClass} min-h-[40px]`
 const copyClass = 'text-[11.5px] font-medium leading-[1.55] text-tm'
@@ -201,13 +201,13 @@ export default function ProfileScreen() {
 
       <main className="be-main" aria-labelledby="profile-page-title">
         <div className="be-inner max-w-[660px]">
-          <div className="mb-4">
-            <p className="mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Profile</p>
-            <h1 id="profile-page-title" className="m-0 text-[22px] font-extrabold tracking-normal text-[#2A221A]">Personal details</h1>
-          </div>
-          <p className="mb-4 text-[12px] font-medium leading-[1.55] text-tm">Manage the identity, contact, and work details connected to your account.</p>
-
           <form className="rounded-[8px] border border-[rgba(60,45,35,0.1)] bg-card px-[18px] py-4 max-[680px]:p-4" onSubmit={onSubmit}>
+            <div className="mb-4">
+              <p className="mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Profile</p>
+              <h1 id="profile-page-title" className="m-0 text-[22px] font-extrabold tracking-normal text-[#2A221A]">Personal details</h1>
+              <p className="mt-3 text-[12px] font-medium leading-[1.55] text-tm">Manage the identity, contact, and work details connected to your account.</p>
+            </div>
+
             <div>
               <div className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Identity</div>
               <div className="grid grid-cols-2 gap-3 max-[680px]:grid-cols-1">
