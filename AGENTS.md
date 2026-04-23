@@ -56,7 +56,7 @@
 
 - More specific docs win.
 - If two topic docs disagree, follow the one that matches the file area.
-- If uncertainty remains, ask before changing behavior.
+- Ask for clarification ONLY if the request modifies database schemas, changes public APIs, or if dependencies are missing. Do not ask questions for minor implementation details.
 
 ## Change Rules
 

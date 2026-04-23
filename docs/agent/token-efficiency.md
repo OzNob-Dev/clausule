@@ -1,14 +1,14 @@
 # Token Efficiency
 
-- Keep replies short and direct.
-- Prefer the smallest useful answer.
+- Keep replies under 3 sentences unless explaining a complex tradeoff.
+- Never output more than 100 words in a summary.
 - Omit filler, restatements, and long explanations unless asked.
 - Show only what changed or what is needed next.
 
 ## Response Rules
 
 - Use one line when possible.
-- Use short lists only when they improve clarity.
+- Use lists of maximum 5 items only when they improve clarity.
 - Avoid repeating the user’s request.
 - Prefer concrete outputs over commentary.
 
@@ -16,7 +16,7 @@
 
 - Show changed functions, not full files, unless the full file is required.
 - Avoid inline diffs and patch-style explanations in responses.
-- Keep examples minimal and relevant.
+- Limit code examples to maximum 15 lines.
 
 ## When To Expand
 
