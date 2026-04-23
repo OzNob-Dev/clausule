@@ -37,11 +37,13 @@ function fieldClass(full = false) {
   return cn('min-w-0', full && 'col-span-full')
 }
 
-const inputClass = 'block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]'
-const copyClass = 'text-xs leading-[1.6] text-tm'
-const buttonClass = 'cursor-pointer rounded-[var(--r)] px-4 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45 max-[680px]:w-full'
-const ghostButtonClass = `${buttonClass} border-[1.5px] border-[rgba(60,45,35,0.14)] bg-transparent text-tm hover:border-[rgba(60,45,35,0.24)] hover:text-tp disabled:hover:border-[rgba(60,45,35,0.14)] disabled:hover:text-tm`
-const primaryButtonClass = `${buttonClass} border-0 bg-acc text-[#FAF7F3] hover:opacity-90 disabled:hover:opacity-45`
+const sectionLabelClass = 'mb-1.5 text-[11px] font-extrabold text-tm'
+const inputClass = 'block min-w-0 w-full box-border rounded-[8px] border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] px-[11px] py-[10px] font-sans text-[13px] font-medium text-[#2A221A] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[#AAA29A] focus:border-[rgba(201,79,42,0.55)] focus:shadow-[0_0_0_3px_rgba(201,79,42,0.1)]'
+const textInputClass = `${inputClass} min-h-[40px]`
+const copyClass = 'text-[11.5px] font-medium leading-[1.55] text-tm'
+const buttonClass = 'cursor-pointer rounded-[8px] px-7 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45 max-[680px]:w-full'
+const ghostButtonClass = `${buttonClass} border border-[rgba(60,45,35,0.14)] bg-[#FDFCFA] text-ts hover:bg-[rgba(60,45,35,0.06)]`
+const primaryButtonClass = `${buttonClass} border border-transparent bg-[#C1907E] text-[#FAF7F3] hover:opacity-88`
 
 export default function ProfileScreen() {
   const router = useRouter()
@@ -198,20 +200,22 @@ export default function ProfileScreen() {
       />
 
       <main className="be-main" aria-labelledby="profile-page-title">
-        <div className="be-inner max-w-[640px]">
-          <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
-          <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>
-          <div className="bss-divider" />
+        <div className="be-inner max-w-[660px]">
+          <div className="mb-4">
+            <p className="mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Profile</p>
+            <h1 id="profile-page-title" className="m-0 text-[22px] font-extrabold tracking-normal text-[#2A221A]">Personal details</h1>
+          </div>
+          <p className="mb-4 text-[12px] font-medium leading-[1.55] text-tm">Manage the identity, contact, and work details connected to your account.</p>
 
-          <form className="rounded-[var(--r2)] border border-[rgba(60,45,35,0.1)] bg-card px-[22px] py-[18px] max-[680px]:p-[18px]" onSubmit={onSubmit}>
+          <form className="rounded-[8px] border border-[rgba(60,45,35,0.1)] bg-card px-[18px] py-4 max-[680px]:p-4" onSubmit={onSubmit}>
             <div>
-              <div className="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm">Identity</div>
-              <div className="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1">
+              <div className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Identity</div>
+              <div className="grid grid-cols-2 gap-3 max-[680px]:grid-cols-1">
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="firstName">First name</label>
+                  <label className={sectionLabelClass} htmlFor="firstName">First name</label>
                   <input
                     id="firstName"
-                    className={inputClass}
+                    className={textInputClass}
                     value={form.firstName}
                     autoComplete="given-name"
                     onChange={(event) => setForm((state) => ({ ...state, firstName: event.target.value }))}
@@ -219,10 +223,10 @@ export default function ProfileScreen() {
                   />
                 </div>
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="lastName">Last name</label>
+                  <label className={sectionLabelClass} htmlFor="lastName">Last name</label>
                   <input
                     id="lastName"
-                    className={inputClass}
+                    className={textInputClass}
                     value={form.lastName}
                     autoComplete="family-name"
                     onChange={(event) => setForm((state) => ({ ...state, lastName: event.target.value }))}
@@ -231,56 +235,56 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            <div className="mt-5 border-t border-[rgba(60,45,35,0.1)] pt-5">
-              <div className="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm">Contact</div>
-              <div className="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1">
+            <div className="mt-4">
+              <div className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Contact</div>
+              <div className="grid grid-cols-2 gap-3 max-[680px]:grid-cols-1">
                 <div className={fieldClass(true)}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="email">Email</label>
+                  <label className={sectionLabelClass} htmlFor="email">Email</label>
                   <input
                     id="email"
-                    className={inputClass}
+                    className={textInputClass}
                     type="email"
                     value={form.email}
                     autoComplete="email"
                     onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
                     required
                   />
-                  <p className="mt-2 text-xs leading-[1.6] text-tm">{emailWarning}</p>
+                  <p className="mt-1.5 text-[11.5px] font-medium leading-[1.55] text-tm">{emailWarning}</p>
                 </div>
                 <div className={fieldClass(true)}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="mobile">Mobile</label>
+                  <label className={sectionLabelClass} htmlFor="mobile">Mobile</label>
                   <input
                     id="mobile"
-                    className={inputClass}
+                    className={textInputClass}
                     type="tel"
                     value={form.mobile}
                     autoComplete="tel"
                     onChange={(event) => setForm((state) => ({ ...state, mobile: event.target.value }))}
                     required
                   />
-                  <p className="mt-2 text-xs leading-[1.6] text-tm">Use the number you want tied to account recovery and contact updates.</p>
+                  <p className="mt-1.5 text-[11.5px] font-medium leading-[1.55] text-tm">Use the number you want tied to account recovery and contact updates.</p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-5 border-t border-[rgba(60,45,35,0.1)] pt-5">
-              <div className="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm">Work profile</div>
-              <div className="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1">
+            <div className="mt-4">
+              <div className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-acc">Work profile</div>
+              <div className="grid grid-cols-2 gap-3 max-[680px]:grid-cols-1">
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="jobTitle">Job title</label>
+                  <label className={sectionLabelClass} htmlFor="jobTitle">Job title</label>
                   <input
                     id="jobTitle"
-                    className={inputClass}
+                    className={textInputClass}
                     value={form.jobTitle}
                     autoComplete="organization-title"
                     onChange={(event) => setForm((state) => ({ ...state, jobTitle: event.target.value }))}
                   />
                 </div>
                 <div className={fieldClass()}>
-                  <label className="mb-1.5 block text-xs font-bold text-[#2A221A]" htmlFor="department">Department</label>
+                  <label className={sectionLabelClass} htmlFor="department">Department</label>
                   <input
                     id="department"
-                    className={inputClass}
+                    className={textInputClass}
                     value={form.department}
                     autoComplete="organization"
                     onChange={(event) => setForm((state) => ({ ...state, department: event.target.value }))}
@@ -289,10 +293,10 @@ export default function ProfileScreen() {
               </div>
             </div>
 
-            {error && <div className="mt-4 rounded-[14px] bg-[rgba(184,50,50,0.08)] px-[14px] py-3 text-xs leading-[1.55] text-[#9e2d2d]" role="alert">{error}</div>}
-            {success && <div className="mt-4 rounded-[14px] bg-[rgba(53,121,73,0.08)] px-[14px] py-3 text-xs leading-[1.55] text-[#2f6f43]" role="status">{success}</div>}
+            {error && <div className="mt-4 rounded-[8px] bg-[rgba(184,50,50,0.08)] px-[14px] py-3 text-[11.5px] font-medium leading-[1.55] text-[#9e2d2d]" role="alert">{error}</div>}
+            {success && <div className="mt-4 rounded-[8px] bg-[rgba(53,121,73,0.08)] px-[14px] py-3 text-[11.5px] font-medium leading-[1.55] text-[#2f6f43]" role="status">{success}</div>}
 
-            <div className="mt-5 flex justify-end gap-2.5 border-t border-[rgba(60,45,35,0.1)] pt-[18px] max-[680px]:flex-col-reverse">
+            <div className="mt-[14px] flex justify-end gap-2 max-[680px]:flex-col-reverse">
               <button type="button" className={ghostButtonClass} onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
               <button type="submit" className={primaryButtonClass} disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
             </div>
@@ -337,7 +341,7 @@ export default function ProfileScreen() {
                   A code was sent to {current.email}. Enter it here to confirm the new sign-in email.
                 </div>
                 <input
-                  className={inputClass}
+                  className={textInputClass}
                   inputMode="numeric"
                   value={emailCode}
                   onChange={(event) => setEmailCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
@@ -367,7 +371,7 @@ export default function ProfileScreen() {
                   I understand and want to continue
                 </label>
                 <input
-                  className={inputClass}
+                  className={textInputClass}
                   value={mobileCheck}
                   onChange={(event) => setMobileCheck(event.target.value)}
                   placeholder="Re-enter the new mobile number"
