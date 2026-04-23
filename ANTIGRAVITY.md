@@ -1,6 +1,6 @@
-# Agent Guidance
+# Antigravity Guidance
 
-- This file is the index.
+- This file is the Antigravity entrypoint.
 - Keep repo-wide rules here.
 - Put detailed guidance in `docs/agent/*.md`.
 
