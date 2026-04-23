@@ -1,0 +1,498 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfileScreen > matches the stable rendered markup snapshot 1`] = `
+<div
+  class="be-page"
+>
+  <aside
+    aria-label="App navigation"
+    class="be-rail be-sidebar max-sm:fixed max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:z-[100] max-sm:h-[56px] max-sm:w-full max-sm:flex-row max-sm:justify-around max-sm:border-t max-sm:border-r-0 max-sm:px-2 max-sm:py-0"
+  >
+    <img
+      alt=""
+      aria-hidden="true"
+      class="be-rail-logo max-sm:hidden"
+      src="/favicon.svg"
+    />
+    <nav
+      aria-label="Primary"
+      class="be-rail-nav max-sm:flex-none max-sm:w-full max-sm:flex-row max-sm:justify-around max-sm:gap-0"
+    >
+      <a
+        aria-label="Brag doc"
+        class="be-rail-btn max-sm:h-11 max-sm:w-11 text-[var(--be-rail-icon)] hover:text-[var(--be-rail-icon-hover)]"
+        href="/brag"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M8 2l1 2.5L11.5 5l-2 2 .5 3L8 8.5 5.5 10l.5-3-2-2L6.5 4.5z"
+          />
+          <circle
+            cx="13"
+            cy="12"
+            r="1.5"
+          />
+        </svg>
+      </a>
+      <a
+        aria-label="Feedback"
+        class="be-rail-btn max-sm:h-11 max-sm:w-11 text-[var(--be-rail-icon)] hover:text-[var(--be-rail-icon-hover)]"
+        href="/brag/feedback"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M3 3h10v7H7l-4 3V3Z"
+          />
+          <path
+            d="M6 6h4M6 8h3"
+          />
+        </svg>
+      </a>
+      <a
+        aria-label="Settings"
+        class="be-rail-btn max-sm:h-11 max-sm:w-11 text-[var(--be-rail-icon)] hover:text-[var(--be-rail-icon-hover)]"
+        href="/brag/settings"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          viewBox="0 0 16 16"
+        >
+          <circle
+            cx="8"
+            cy="8"
+            r="2.5"
+          />
+          <path
+            d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M12.8 3.2l-1.1 1.1M4.3 11.7l-1.1 1.1"
+          />
+        </svg>
+      </a>
+      <a
+        aria-current="page"
+        aria-label="Profile"
+        class="be-rail-btn max-sm:h-11 max-sm:w-11 be-rail-btn-active"
+        href="/profile"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          viewBox="0 0 16 16"
+        >
+          <circle
+            cx="8"
+            cy="5.5"
+            r="2.25"
+          />
+          <path
+            d="M3 13c.8-2.5 3-4 5-4s4.2 1.5 5 4"
+          />
+        </svg>
+      </a>
+    </nav>
+    <div
+      class="be-rail-foot max-sm:hidden"
+    >
+      <button
+        aria-label="Sign out"
+        class="be-rail-icon-btn"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"
+          />
+          <polyline
+            points="11 11 14 8 11 5"
+          />
+          <line
+            x1="14"
+            x2="6"
+            y1="8"
+            y2="8"
+          />
+        </svg>
+      </button>
+    </div>
+  </aside>
+  <aside
+    aria-label="Profile"
+    class="be-identity be-sidebar"
+  >
+    <div
+      class="be-sidebar-header"
+    >
+      <div
+        class="be-sidebar-eyebrow"
+      >
+        Clausule
+      </div>
+    </div>
+    <div
+      class="be-sidebar-body"
+    >
+      <div>
+        <div
+          aria-hidden="true"
+          class="be-sidebar-avatar be-avatar-pop"
+        >
+          AL
+        </div>
+        <div
+          class="be-sidebar-name"
+        >
+          Ada Lovelace
+        </div>
+        <div
+          class="be-sidebar-role"
+        >
+          ada@example.com
+        </div>
+      </div>
+      <div
+        class="be-divider"
+        role="separator"
+      />
+      <div>
+        <div
+          class="be-notes-label"
+        >
+          Profile
+        </div>
+        <p
+          class="be-note-quote"
+        >
+          Keep the contact details tied to your account current. Email changes are verified before they go live.
+        </p>
+      </div>
+      <div
+        class="be-divider"
+        role="separator"
+      />
+      <div>
+        <div
+          class="be-overview-label"
+        >
+          Sign-in
+        </div>
+        <div
+          class="be-strength-row"
+        >
+          <div
+            aria-hidden="true"
+            class="be-sidebar-rings"
+          >
+            <svg
+              height="50"
+              viewBox="0 0 50 50"
+              width="50"
+            >
+              <circle
+                cx="25"
+                cy="25"
+                fill="none"
+                r="20"
+                stroke="rgba(255,255,255,0.07)"
+                stroke-width="4"
+              />
+              <circle
+                cx="25"
+                cy="25"
+                fill="none"
+                r="20"
+                stroke-dasharray="125.7"
+                stroke-dashoffset="31"
+                stroke-linecap="round"
+                stroke-width="4"
+                style="stroke: var(--ring-outer);"
+                transform="rotate(-90 25 25)"
+              />
+            </svg>
+            <svg
+              class="be-sidebar-rings-overlay"
+              height="50"
+              viewBox="0 0 50 50"
+              width="50"
+            >
+              <circle
+                cx="25"
+                cy="25"
+                fill="none"
+                r="13"
+                stroke="rgba(255,255,255,0.05)"
+                stroke-width="4"
+              />
+              <circle
+                cx="25"
+                cy="25"
+                fill="none"
+                r="13"
+                stroke-dasharray="81.7"
+                stroke-dashoffset="20"
+                stroke-linecap="round"
+                stroke-width="4"
+                style="stroke: var(--ring-mid);"
+                transform="rotate(-90 25 25)"
+              />
+            </svg>
+            <svg
+              class="be-sidebar-rings-overlay"
+              height="50"
+              viewBox="0 0 50 50"
+              width="50"
+            >
+              <circle
+                cx="25"
+                cy="25"
+                fill="none"
+                r="6"
+                stroke="rgba(255,255,255,0.04)"
+                stroke-width="4"
+              />
+              <circle
+                cx="25"
+                cy="25"
+                fill="none"
+                r="6"
+                stroke-dasharray="37.7"
+                stroke-dashoffset="9"
+                stroke-linecap="round"
+                stroke-width="4"
+                style="stroke: var(--ring-inner);"
+                transform="rotate(-90 25 25)"
+              />
+            </svg>
+          </div>
+          <div>
+            <div
+              class="be-overview-status"
+            >
+              Passwordless or email sign-in
+            </div>
+            <div
+              class="be-overview-sub"
+            >
+              +61 400 000 000
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <main
+    aria-labelledby="profile-page-title"
+    class="be-main"
+  >
+    <div
+      class="be-inner max-w-[640px]"
+    >
+      <h1
+        class="bss-heading"
+        id="profile-page-title"
+      >
+        Personal details
+      </h1>
+      <p
+        class="bss-subheading"
+      >
+        Manage the identity, contact, and work details connected to your account.
+      </p>
+      <div
+        class="bss-divider"
+      />
+      <form
+        class="rounded-[var(--r2)] border border-[rgba(60,45,35,0.1)] bg-card px-[22px] py-[18px] max-[680px]:p-[18px]"
+      >
+        <div>
+          <div
+            class="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm"
+          >
+            Identity
+          </div>
+          <div
+            class="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1"
+          >
+            <div
+              class="min-w-0"
+            >
+              <label
+                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                for="firstName"
+              >
+                First name
+              </label>
+              <input
+                autocomplete="given-name"
+                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                id="firstName"
+                required=""
+                value="Ada"
+              />
+            </div>
+            <div
+              class="min-w-0"
+            >
+              <label
+                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                for="lastName"
+              >
+                Last name
+              </label>
+              <input
+                autocomplete="family-name"
+                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                id="lastName"
+                value="Lovelace"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-5 border-t border-[rgba(60,45,35,0.1)] pt-5"
+        >
+          <div
+            class="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm"
+          >
+            Contact
+          </div>
+          <div
+            class="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1"
+          >
+            <div
+              class="min-w-0 col-span-full"
+            >
+              <label
+                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                for="email"
+              >
+                Email
+              </label>
+              <input
+                autocomplete="email"
+                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                id="email"
+                required=""
+                type="email"
+                value="ada@example.com"
+              />
+              <p
+                class="mt-2 text-xs leading-[1.6] text-tm"
+              >
+                Your sign-in email stays unchanged.
+              </p>
+            </div>
+            <div
+              class="min-w-0 col-span-full"
+            >
+              <label
+                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                for="mobile"
+              >
+                Mobile
+              </label>
+              <input
+                autocomplete="tel"
+                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                id="mobile"
+                required=""
+                type="tel"
+                value="+61 400 000 000"
+              />
+              <p
+                class="mt-2 text-xs leading-[1.6] text-tm"
+              >
+                Use the number you want tied to account recovery and contact updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-5 border-t border-[rgba(60,45,35,0.1)] pt-5"
+        >
+          <div
+            class="mb-3 text-[9px] font-bold uppercase tracking-[0.8px] text-tm"
+          >
+            Work profile
+          </div>
+          <div
+            class="grid grid-cols-2 gap-[14px] max-[680px]:grid-cols-1"
+          >
+            <div
+              class="min-w-0"
+            >
+              <label
+                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                for="jobTitle"
+              >
+                Job title
+              </label>
+              <input
+                autocomplete="organization-title"
+                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                id="jobTitle"
+                value="Engineer"
+              />
+            </div>
+            <div
+              class="min-w-0"
+            >
+              <label
+                class="mb-1.5 block text-xs font-bold text-[#2A221A]"
+                for="department"
+              >
+                Department
+              </label>
+              <input
+                autocomplete="organization"
+                class="block min-w-0 w-full box-border min-h-[42px] rounded-[var(--r)] border-[1.5px] border-[rgba(60,45,35,0.12)] bg-transparent px-3 py-[10px] font-inherit text-[#2A221A] outline-none focus-visible:border-[#2A221A] focus-visible:shadow-[0_0_0_3px_rgba(60,45,35,0.08)]"
+                id="department"
+                value="Platform"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-5 flex justify-end gap-2.5 border-t border-[rgba(60,45,35,0.1)] pt-[18px] max-[680px]:flex-col-reverse"
+        >
+          <button
+            class="cursor-pointer rounded-[var(--r)] px-4 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45 border-[1.5px] border-[rgba(60,45,35,0.14)] bg-transparent text-tm hover:border-[rgba(60,45,35,0.24)] hover:text-tp disabled:hover:border-[rgba(60,45,35,0.14)] disabled:hover:text-tm"
+            disabled=""
+            type="button"
+          >
+            Reset
+          </button>
+          <button
+            class="cursor-pointer rounded-[var(--r)] px-4 py-[11px] font-sans text-[13px] font-bold transition-[background-color,border-color,opacity,color] duration-150 disabled:cursor-default disabled:opacity-45 border-0 bg-acc text-[#FAF7F3] hover:opacity-90 disabled:hover:opacity-45"
+            disabled=""
+            type="submit"
+          >
+            Save changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+`;
