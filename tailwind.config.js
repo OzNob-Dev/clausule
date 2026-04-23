@@ -4,10 +4,27 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      spacing: {
+        'field-x': '13px',
+        'field-y': '11px',
+        'shell-x': '36px',
+        'shell-y': '40px',
+      },
       fontFamily: {
         sans: ['DM Sans', 'sans-serif'],
         // serif alias resolves to DM Sans — no serif typeface in the app shell
         serif: ['DM Sans', 'sans-serif'],
+      },
+      fontSize: {
+        label: ['10px', { lineHeight: '1.2', letterSpacing: '0.08em' }],
+        helper: ['12px', { lineHeight: '1.6' }],
+        field: ['15px', { lineHeight: '1.5' }],
+      },
+      maxWidth: {
+        shell: '1080px',
+        auth: '440px',
+        prose: '640px',
+        modal: '34rem',
       },
       colors: {
         nav: 'var(--nav)',
@@ -55,6 +72,10 @@ export default {
       borderRadius: {
         clausule: '10px',
         clausule2: '16px',
+      },
+      boxShadow: {
+        surface: '0 24px 80px rgba(0,0,0,0.18)',
+        float: '0 4px 16px rgba(60,45,35,0.07)',
       },
     },
   },

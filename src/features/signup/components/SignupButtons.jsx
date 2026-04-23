@@ -1,7 +1,9 @@
 import { BackIcon } from './SignupIcons'
+import { cn } from '@shared/utils/cn'
+import { signupUi } from './signupClasses'
 
 export function CtaBtn({ onClick, terra = false, children, as: As = 'button', href, ...props }) {
-  const className = `su-cta-btn${terra ? ' su-cta-btn--terra' : ''}`
+  const className = cn(signupUi.cta, terra && signupUi.ctaTerra)
 
   if (As === 'a') {
     return <a href={href} className={className}>{children}</a>
@@ -12,7 +14,7 @@ export function CtaBtn({ onClick, terra = false, children, as: As = 'button', hr
 
 export function BackBtn({ onClick }) {
   return (
-    <button onClick={onClick} className="su-back-btn" type="button">
+    <button onClick={onClick} className={signupUi.back} type="button">
       <BackIcon /> Back
     </button>
   )

@@ -4,28 +4,21 @@ import { useMfaSetupFlow } from '@features/mfa/hooks/useMfaSetupFlow'
 import MfaOtpStep from '@features/mfa/components/MfaOtpStep'
 import MfaSuccessStep from '@features/mfa/components/MfaSuccessStep'
 import MfaTotpStep from '@features/mfa/components/MfaTotpStep'
-import '@features/mfa/styles/mfa-layout.css'
-import '@features/mfa/styles/mfa-factors.css'
-import '@features/mfa/styles/code-email.css'
+import { cn } from '@shared/utils/cn'
+import { mfaUi } from '@features/mfa/components/mfaClasses'
 
 export default function MfaSetup() {
   const flow = useMfaSetupFlow()
   const stepLabels = ['Verify email', 'Secure account', 'All set']
 
   return (
-    <div className="mfa-wrap">
-      <div className="mfa-card" role="main">
-
-        {/* Progress */}
-        <nav className="mfa-progress" aria-label="Setup progress">
+    <div className={mfaUi.setupWrap}>
+      <div className={mfaUi.setupCard} role="main">
+        <nav className={mfaUi.progress} aria-label="Setup progress">
           {[1, 2, 3].map((n) => (
             <div
               key={n}
-              className={[
-                'mfa-seg',
-                flow.step > n   ? 'mfa-seg--done'   : '',
-                flow.step === n ? 'mfa-seg--active' : '',
-              ].join(' ')}
+              className={cn(mfaUi.progressSeg, flow.step > n && mfaUi.progressSegDone, flow.step === n && mfaUi.progressSegActive)}
               aria-label={`Step ${n}: ${stepLabels[n - 1]}${flow.step > n ? ' (complete)' : flow.step === n ? ' (current)' : ''}`}
             />
           ))}
@@ -64,7 +57,6 @@ export default function MfaSetup() {
         )}
 
         {flow.step === 3 && <MfaSuccessStep onEnterApp={flow.enterApp} />}
-
       </div>
     </div>
   )

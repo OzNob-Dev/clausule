@@ -10,8 +10,9 @@ import SsoStatusSection from '@features/brag/components/SsoStatusSection'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { apiFetch } from '@shared/utils/api'
 import '@features/brag/styles/brag-shell.css'
-import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
+import { cn } from '@shared/utils/cn'
+import { bragSettingsUi, bragShell } from '@features/brag/components/bragClasses'
 
 const reminderMethods = [
   { value: 'email', label: 'Email', desc: 'Send reminders to the inbox tied to this account.' },
@@ -87,16 +88,16 @@ export default function BragSettings() {
     '?'
 
   return (
-    <div className="be-page">
+    <div className={bragShell.page}>
       <BragRail activePage="settings" />
 
       <BragSettingsIdentity avatarInitials={avatarInitials} displayName={displayName} email={profile.email} />
 
-      <main className="be-main" aria-labelledby="brag-settings-title">
-        <div className="be-inner">
-          <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
-          <p className="bss-subheading">Manage how you sign in to Clausule.</p>
-          <div className="bss-divider" />
+      <main className={bragShell.main} aria-labelledby="brag-settings-title">
+        <div className={bragShell.inner}>
+          <h1 id="brag-settings-title" className={bragSettingsUi.heading}>Security settings</h1>
+          <p className={bragSettingsUi.subheading}>Manage how you sign in to Clausule.</p>
+          <div className={bragSettingsUi.divider} />
 
           {ssoConfigured && (
             <SsoStatusSection
@@ -117,55 +118,55 @@ export default function BragSettings() {
             />
           )}
 
-          <section className="bss-reminders" aria-labelledby="bss-reminders-title">
-            <div className="bss-section-label" id="bss-reminders-title">Reminder preferences</div>
-            <div className="bss-card bss-reminder-card">
-              <div className="bss-reminder-head">
+          <section aria-labelledby="bss-reminders-title">
+            <div className={bragSettingsUi.sectionLabel} id="bss-reminders-title">Reminder preferences</div>
+            <div className={bragSettingsUi.card}>
+              <div className={bragSettingsUi.remindersHead}>
                 <div>
-                  <div className="bss-reminder-title">Delivery and frequency</div>
-                  <div className="bss-reminder-desc">Choose where reminders arrive and how often they repeat.</div>
+                  <div className={bragSettingsUi.remindersTitle}>Delivery and frequency</div>
+                  <div className={bragSettingsUi.remindersDesc}>Choose where reminders arrive and how often they repeat.</div>
                 </div>
-                <div className="bss-reminder-summary" aria-live="polite">
+                <div className={bragSettingsUi.remindersSummary} aria-live="polite">
                   {reminderMethod.toUpperCase()} · {reminderFrequency}
                 </div>
               </div>
 
-              <fieldset className="bss-reminder-group">
-                <legend className="bss-reminder-legend">Delivery method</legend>
-                <div className="bss-reminder-grid">
+              <fieldset className={bragSettingsUi.reminderGroup}>
+                <legend className={bragSettingsUi.reminderLegend}>Delivery method</legend>
+                <div className={bragSettingsUi.reminderGrid}>
                   {reminderMethods.map(({ value, label, desc }) => (
-                    <label key={value} className={`bss-reminder-option${reminderMethod === value ? ' bss-reminder-option--active' : ''}`}>
+                    <label key={value} className={cn(bragSettingsUi.reminderOption, reminderMethod === value && bragSettingsUi.reminderOptionActive)}>
                       <input
-                        className="bss-reminder-input"
+                        className={bragSettingsUi.reminderInput}
                         type="radio"
                         name="reminder-method"
                         value={value}
                         checked={reminderMethod === value}
                         onChange={() => setReminderMethod(value)}
                       />
-                      <span className="bss-reminder-option-body">
-                        <span className="bss-reminder-option-title">{label}</span>
-                        <span className="bss-reminder-option-desc">{desc}</span>
+                      <span className={bragSettingsUi.reminderOptionBody}>
+                        <span className={bragSettingsUi.reminderOptionTitle}>{label}</span>
+                        <span className={bragSettingsUi.reminderOptionDesc}>{desc}</span>
                       </span>
                     </label>
                   ))}
                 </div>
               </fieldset>
 
-              <fieldset className="bss-reminder-group">
-                <legend className="bss-reminder-legend">Reminder frequency</legend>
-                <div className="bss-frequency-grid">
+              <fieldset className={bragSettingsUi.reminderGroup}>
+                <legend className={bragSettingsUi.reminderLegend}>Reminder frequency</legend>
+                <div className={bragSettingsUi.frequencyGrid}>
                   {reminderFrequencies.map(({ value, label }) => (
-                    <label key={value} className={`bss-frequency-option${reminderFrequency === value ? ' bss-frequency-option--active' : ''}`}>
+                    <label key={value} className={cn(bragSettingsUi.frequencyOption, reminderFrequency === value && bragSettingsUi.frequencyOptionActive)}>
                       <input
-                        className="bss-reminder-input"
+                        className={bragSettingsUi.reminderInput}
                         type="radio"
                         name="reminder-frequency"
                         value={value}
                         checked={reminderFrequency === value}
                         onChange={() => setReminderFrequency(value)}
                       />
-                      <span className="bss-frequency-text">{label}</span>
+                      <span className={bragSettingsUi.frequencyText}>{label}</span>
                     </label>
                   ))}
                 </div>

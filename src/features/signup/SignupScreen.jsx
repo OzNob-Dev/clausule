@@ -10,11 +10,7 @@ import SignupProgress from '@features/signup/components/SignupProgress'
 import SignupStepAccount from '@features/signup/components/SignupStepAccount'
 import SignupStepDone from '@features/signup/components/SignupStepDone'
 import SignupStepPayment from '@features/signup/components/SignupStepPayment'
-import '@features/signup/styles/signup-theme.css'
-import '@features/signup/styles/signup-form.css'
-import '@features/signup/styles/signup-payment.css'
-import '@features/signup/styles/signup-success.css'
-import '@features/signup/styles/signup-aside.css'
+import { authShell } from '@features/signup/components/signupClasses'
 
 // ── Root component ─────────────────────────────────────────────────
 function SignUpInner() {
@@ -53,29 +49,27 @@ function SignUpInner() {
 
   if (step === 1) {
     return (
-      <div className="su-shell-wrap">
-        <div className="su-shell">
-          {/* Left dark brand panel */}
-          <div className="su-shell-left">
-            <div className="su-shell-logo">
-              <div className="su-shell-bug">
+      <div className={`${authShell.page} ${authShell.ruled} ${authShell.shellWrap}`}>
+        <div className={authShell.shell}>
+          <div className={authShell.darkPanel}>
+            <div className={authShell.brandRow}>
+              <div className={authShell.brandBug}>
                 <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" style={{ width: 15, height: 15 }}>
                   <path d="M3 5h12M3 9h8M3 13h5" />
                 </svg>
               </div>
-              <Link href="/" className="su-shell-brand">clausule</Link>
+              <Link href="/" className={authShell.brandTextDark}>clausule</Link>
             </div>
-            <div className="su-shell-body">
-              <h1 className="su-shell-headline">Thoughtful records.<br />Better conversations.</h1>
-              <p className="su-shell-subtext">The file note tool built for managers who care about their people — and a brag doc for the people themselves.</p>
+            <div className={authShell.leftBody}>
+              <h1 className={authShell.headline}>Thoughtful records.<br />Better conversations.</h1>
+              <p className={authShell.headlineSub}>The file note tool built for managers who care about their people — and a brag doc for the people themselves.</p>
             </div>
-            <div className="su-shell-footer">Built for teams who care</div>
+            <div className={authShell.footer}>Built for teams who care</div>
           </div>
 
-          {/* Right light panel — su-page scopes the --su-* design tokens */}
-          <div className="su-shell-right su-page">
-            <div className="su-step1-layout">
-              <div className="su-step1-form">
+          <div className={authShell.lightPanel}>
+            <div className={authShell.stepLayout}>
+              <div>
                 <SignupStepAccount
                   emailLocked={redirectedFromSignIn}
                   hideSso={redirectedFromSignIn}
@@ -83,13 +77,13 @@ function SignUpInner() {
                   initialData={step1Initial}
                 />
               </div>
-              <aside className="su-aside" aria-label="Plan summary">
+              <aside aria-label="Plan summary">
                 <SignupAside />
               </aside>
             </div>
-            <p className="su-shell-signin-note">
+            <p className={authShell.signinNote}>
               Already have an account?{' '}
-              <Link href="/">Sign in</Link>
+              <Link href="/" className={authShell.signinLink}>Sign in</Link>
             </p>
           </div>
         </div>
@@ -98,31 +92,26 @@ function SignUpInner() {
   }
 
   return (
-    <div className="su-page">
-      <div className="su-bg-lines" aria-hidden="true" />
-
-      {/* Topbar */}
-      <div className="su-topbar">
-        <div className="su-topbar-brand">
-          <div className="su-logo-bug">
+    <div className={`${authShell.page} ${authShell.ruled}`}>
+      <div className={authShell.topbar}>
+        <div className={authShell.topbarBrand}>
+          <div className={authShell.topbarBug}>
             <svg viewBox="0 0 18 18" fill="none" stroke="#F5F0EA" strokeWidth="2.2" strokeLinecap="round" style={{ width: 14, height: 14 }}>
               <path d="M3 5h12M3 9h8M3 13h5" />
             </svg>
           </div>
-          <span className="su-brand-name">clausule</span>
+          <span className={authShell.brandTextLight}>clausule</span>
         </div>
-        <Link href="/" className="su-signin-link">
+        <Link href="/" className="text-[13px] font-semibold text-[#3D3228]">
           Already have an account?{' '}
           <span>Sign in</span>
         </Link>
       </div>
 
-      {/* Progress */}
       {step < 3 && <SignupProgress step={step} />}
 
-      {/* Main */}
-      <div className="su-main">
-        <div className="su-narrow">
+      <div className={authShell.main}>
+        <div className={authShell.narrow}>
           {step === 2 && (
             <SignupStepPayment
               onNext={(data) => { setStep2Data(data); completePayment() }}

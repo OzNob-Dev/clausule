@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ROUTES } from '@shared/utils/routes'
 import { CtaBtn } from './SignupButtons'
 import { ArrowIcon, CheckIcon } from './SignupIcons'
+import { signupUi } from './signupClasses'
 
 const NEXT_STEPS = [
   { label: 'Set up MFA', desc: '- ensure your account is secure.' },
@@ -29,23 +30,23 @@ export default function SignupStepDone({ email }) {
 
   return (
     <div>
-      <div className="su-success-ring">
+      <div className={signupUi.successRing}>
         <svg viewBox="0 0 34 34" fill="none" stroke="#F5F0EA" strokeWidth="2.5" strokeLinecap="round" style={{ width: 34, height: 34 }}>
           <polyline points="7 17 13 23 27 11" />
         </svg>
       </div>
 
-      <div className="su-step-heading">You're in.</div>
-      <div className="su-step-sub su-done-sub">
+      <div className={signupUi.heading}>You're in.</div>
+      <div className={`${signupUi.sub} ${signupUi.doneSub}`}>
         Your Clausule account is ready. We've sent a confirmation to <strong>{email || 'you@email.com'}</strong>.
       </div>
 
-      <div className="su-includes">
-        <div className="su-includes-label">What to do next</div>
-        <div className="su-includes-list">
+      <div className={signupUi.includes}>
+        <div className={signupUi.includesLabel}>What to do next</div>
+        <div className={signupUi.includesList}>
           {NEXT_STEPS.map((step) => (
-            <div key={step.label} className="su-include-item">
-              <div className="su-check-circle su-check-circle--acc"><CheckIcon /></div>
+            <div key={step.label} className={signupUi.includeItem}>
+              <div className={signupUi.checkCircle}><CheckIcon /></div>
               <div><strong>{step.label}</strong> {step.desc}</div>
             </div>
           ))}
@@ -55,7 +56,7 @@ export default function SignupStepDone({ email }) {
       <CtaBtn onClick={handleEnter} disabled={busy}>
         {busy ? 'Loading ...' : 'Setup Multi-Factor Authentication'} <ArrowIcon />
       </CtaBtn>
-      <div className="su-questions-note">
+      <div className={signupUi.questions}>
         Questions? <a href="mailto:help@clausule.com">help@clausule.com</a>
       </div>
     </div>
