@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@shared/components/ui/Button'
 import { Modal } from '@shared/components/ui/Modal'
 import BragRail from '@features/brag/components/BragRail'
 import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
@@ -288,8 +287,8 @@ export default function ProfileScreen() {
             {success && <div className="profile-alert profile-alert--success" role="status">{success}</div>}
 
             <div className="profile-actions">
-              <Button type="button" variant="ghost" onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</Button>
-              <Button type="submit" variant="primary" disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</Button>
+              <button type="button" className="profile-btn profile-btn--ghost" onClick={() => setForm(baseline)} disabled={!dirty || saving}>Reset</button>
+              <button type="submit" className="profile-btn profile-btn--primary" disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
             </div>
           </form>
         </div>
@@ -300,8 +299,8 @@ export default function ProfileScreen() {
           title="Verify changes"
           footer={
             <>
-              <Button type="button" variant="ghost" onClick={resetVerification} disabled={saving}>Cancel</Button>
-              <Button type="button" variant="primary" onClick={submitConfirm} disabled={saving || !finalReady}>Finalise</Button>
+              <button type="button" className="profile-btn profile-btn--ghost" onClick={resetVerification} disabled={saving}>Cancel</button>
+              <button type="button" className="profile-btn profile-btn--primary" onClick={submitConfirm} disabled={saving || !finalReady}>Finalise</button>
             </>
           }
         >

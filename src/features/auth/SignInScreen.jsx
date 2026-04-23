@@ -51,10 +51,10 @@ export default function SignIn() {
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center p-6 bg-canvas font-sans text-tp bg-[repeating-linear-gradient(to_bottom,transparent,transparent_47px,rgba(42,34,26,0.028)_47px,rgba(42,34,26,0.028)_48px)]">
-      <div className="flex w-[820px] max-w-full border border-rule-em rounded-2xl overflow-hidden relative z-10 max-sm:flex-col">
+      <div className="flex w-[1080px] max-w-full border border-rule-em rounded-2xl overflow-hidden relative z-10 max-sm:flex-col">
         <SignInBrandPanel />
 
-        <div className="flex-1 bg-card py-10 px-9 flex flex-col justify-start max-sm:pt-8 max-sm:pb-10 max-sm:px-5">
+        <div className="flex-1 min-w-0 bg-card py-10 px-9 flex flex-col justify-start max-sm:pt-8 max-sm:pb-10 max-sm:px-5">
           <SignInEmailForm
             email={flow.email}
             result={flow.result}
