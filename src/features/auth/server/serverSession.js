@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { requireAuth } from '@api/_lib/auth.js'
+import { requireActiveAuth } from '@api/_lib/auth.js'
 import { bootstrapSession } from './bootstrapSession.js'
 import { authTestBypassBootstrap, authTestBypassUser, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
@@ -15,7 +15,7 @@ export async function getServerAuth() {
   }
 
   const cookieStore = await cookies()
-  return requireAuth(authRequestFromCookieHeader(cookieStore.toString()))
+  return requireActiveAuth(authRequestFromCookieHeader(cookieStore.toString()))
 }
 
 export async function getServerBootstrapSession() {

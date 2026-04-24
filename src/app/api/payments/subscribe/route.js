@@ -23,7 +23,7 @@
  */
 
 import { NextResponse }                     from 'next/server'
-import { requireAuth }                      from '@api/_lib/auth.js'
+import { requireActiveAuth }                      from '@api/_lib/auth.js'
 import { createSubscription,
          paymentSystemConfigured }          from '@features/payments/server/createSubscription.js'
 import { issueRecoverableSession }          from '@features/auth/server/recoverableSession.js'
@@ -34,7 +34,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Payment system not configured' }, { status: 500 })
   }
 
-  const { userId: authedId, error: authError } = requireAuth(request)
+  const { userId: authedId, error: authError } = await requireActiveAuth(request)
   const body = await request.json().catch(() => ({}))
 
   try {

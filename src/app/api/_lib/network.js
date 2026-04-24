@@ -5,6 +5,20 @@ function timeoutError(label, timeoutMs) {
   })
 }
 
+export async function withTimeout(work, { timeoutMs = 10_000, timeoutLabel = 'Request' } = {}) {
+  let timer
+  try {
+    return await Promise.race([
+      Promise.resolve().then(work),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(timeoutError(timeoutLabel, timeoutMs)), timeoutMs)
+      }),
+    ])
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 export async function fetchWithTimeout(url, init = {}, { timeoutMs = 10_000, timeoutLabel = 'Request' } = {}) {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(timeoutError(timeoutLabel, timeoutMs)), timeoutMs)

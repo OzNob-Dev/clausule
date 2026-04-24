@@ -5,12 +5,12 @@
  */
 
 import { NextResponse } from 'next/server'
-import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
 import { deleteEntry, getEntry, updateEntry } from '@features/brag/server/entries.js'
 
 export async function GET(request, { params }) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const result = await getEntry({ userId, entryId: params.id })
   if (result.log) console.error(...result.log)
@@ -18,8 +18,8 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const result = await updateEntry({ userId, entryId: params.id, body: await request.json().catch(() => ({})) })
   if (result.log) console.error(...result.log)
@@ -27,8 +27,8 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const result = await deleteEntry({ userId, entryId: params.id })
   if (result.log) console.error(...result.log)

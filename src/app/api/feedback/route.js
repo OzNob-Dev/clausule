@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { listAppFeedback, sendAppFeedback } from '@features/brag/server/appFeedback.js'
 
 export async function GET(request) {
-  const auth = requireAuth(request)
-  if (auth.error) return unauthorized()
+  const auth = await requireActiveAuth(request)
+  if (auth.error) return authErrorResponse(auth.error)
 
   const result = await listAppFeedback({ userId: auth.userId })
   if (result.log) console.error(...result.log)
@@ -13,8 +13,8 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const auth = requireAuth(request)
-  if (auth.error) return unauthorized()
+  const auth = await requireActiveAuth(request)
+  if (auth.error) return authErrorResponse(auth.error)
   const { allowed, retryAfterMs, error } = await consumeDistributedRateLimit({
     scope: 'feedback_post_user',
     identifier: auth.userId,

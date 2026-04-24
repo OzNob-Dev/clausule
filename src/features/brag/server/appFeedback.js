@@ -1,5 +1,6 @@
 import { BrevoClient } from '@getbrevo/brevo'
 import { insert, select } from '@api/_lib/supabase.js'
+import { withTimeout } from '@api/_lib/network.js'
 
 const CATEGORIES = new Set(['Bug', 'Idea', 'Usability', 'Other'])
 const FEELINGS = new Set(['Love it', 'Confusing', 'Blocked', 'Just noting'])
@@ -57,44 +58,50 @@ export async function sendAppFeedback({ body, user }) {
 
   try {
     const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY })
-    await client.transactionalEmails.sendTransacEmail({
-      subject: `Clausule feedback: ${subject}`,
-      sender: { name: 'Clausule', email: 'noreply@clausule.app' },
-      to: [{ email: toEmail }],
-      htmlContent: `
-        <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:28px 24px;background:#FAF7F3;border-radius:12px;color:#1A1510;">
-          <p style="margin:0 0 8px;color:#5C5048;font-size:13px;">Product feedback</p>
-          <h2 style="margin:0 0 18px;font-size:22px;">${escapeHtml(subject)}</h2>
-          <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">
-            <tr><td style="padding:8px 0;color:#5C5048;">From</td><td style="padding:8px 0;text-align:right;">${escapeHtml(user.email || user.userId)}</td></tr>
-            <tr><td style="padding:8px 0;color:#5C5048;">Category</td><td style="padding:8px 0;text-align:right;">${escapeHtml(category)}</td></tr>
-            <tr><td style="padding:8px 0;color:#5C5048;">Feeling</td><td style="padding:8px 0;text-align:right;">${escapeHtml(feeling)}</td></tr>
-            <tr><td style="padding:8px 0;color:#5C5048;">May contact</td><td style="padding:8px 0;text-align:right;">${contactOk ? 'Yes' : 'No'}</td></tr>
-          </table>
-          <h3 style="margin:0 0 8px;font-size:15px;">Feedback</h3>
-          <p style="white-space:pre-wrap;margin:0 0 18px;line-height:1.6;color:#3D3228;">${escapeHtml(message)}</p>
-          ${improvement ? `<h3 style="margin:0 0 8px;font-size:15px;">What would make it better</h3><p style="white-space:pre-wrap;margin:0;line-height:1.6;color:#3D3228;">${escapeHtml(improvement)}</p>` : ''}
-        </div>
-      `,
-    })
-
-    if (user.email) {
-      await client.transactionalEmails.sendTransacEmail({
-        subject: 'Clausule received your feedback',
+    await withTimeout(
+      () => client.transactionalEmails.sendTransacEmail({
+        subject: `Clausule feedback: ${subject}`,
         sender: { name: 'Clausule', email: 'noreply@clausule.app' },
-        to: [{ email: user.email }],
+        to: [{ email: toEmail }],
         htmlContent: `
           <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:28px 24px;background:#FAF7F3;border-radius:12px;color:#1A1510;">
-            <p style="margin:0 0 8px;color:#7F351F;font-size:13px;font-weight:700;">Feedback received</p>
-            <h2 style="margin:0 0 14px;font-size:22px;">Your note made it through.</h2>
-            <p style="margin:0 0 18px;line-height:1.6;color:#3D3228;">Thanks for helping sharpen Clausule. The team has your feedback and can follow up at this email if you said that was okay.</p>
-            <div style="padding:14px 16px;background:#FFFFFF;border:1px solid rgba(60,45,35,0.12);border-radius:10px;">
-              <p style="margin:0 0 6px;color:#5C5048;font-size:13px;">You sent</p>
-              <p style="margin:0;font-weight:700;">${escapeHtml(subject)}</p>
-            </div>
+            <p style="margin:0 0 8px;color:#5C5048;font-size:13px;">Product feedback</p>
+            <h2 style="margin:0 0 18px;font-size:22px;">${escapeHtml(subject)}</h2>
+            <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">
+              <tr><td style="padding:8px 0;color:#5C5048;">From</td><td style="padding:8px 0;text-align:right;">${escapeHtml(user.email || user.userId)}</td></tr>
+              <tr><td style="padding:8px 0;color:#5C5048;">Category</td><td style="padding:8px 0;text-align:right;">${escapeHtml(category)}</td></tr>
+              <tr><td style="padding:8px 0;color:#5C5048;">Feeling</td><td style="padding:8px 0;text-align:right;">${escapeHtml(feeling)}</td></tr>
+              <tr><td style="padding:8px 0;color:#5C5048;">May contact</td><td style="padding:8px 0;text-align:right;">${contactOk ? 'Yes' : 'No'}</td></tr>
+            </table>
+            <h3 style="margin:0 0 8px;font-size:15px;">Feedback</h3>
+            <p style="white-space:pre-wrap;margin:0 0 18px;line-height:1.6;color:#3D3228;">${escapeHtml(message)}</p>
+            ${improvement ? `<h3 style="margin:0 0 8px;font-size:15px;">What would make it better</h3><p style="white-space:pre-wrap;margin:0;line-height:1.6;color:#3D3228;">${escapeHtml(improvement)}</p>` : ''}
           </div>
         `,
-      })
+      }),
+      { timeoutMs: 10_000, timeoutLabel: 'Brevo feedback owner email' }
+    )
+
+    if (user.email) {
+      await withTimeout(
+        () => client.transactionalEmails.sendTransacEmail({
+          subject: 'Clausule received your feedback',
+          sender: { name: 'Clausule', email: 'noreply@clausule.app' },
+          to: [{ email: user.email }],
+          htmlContent: `
+            <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:28px 24px;background:#FAF7F3;border-radius:12px;color:#1A1510;">
+              <p style="margin:0 0 8px;color:#7F351F;font-size:13px;font-weight:700;">Feedback received</p>
+              <h2 style="margin:0 0 14px;font-size:22px;">Your note made it through.</h2>
+              <p style="margin:0 0 18px;line-height:1.6;color:#3D3228;">Thanks for helping sharpen Clausule. The team has your feedback and can follow up at this email if you said that was okay.</p>
+              <div style="padding:14px 16px;background:#FFFFFF;border:1px solid rgba(60,45,35,0.12);border-radius:10px;">
+                <p style="margin:0 0 6px;color:#5C5048;font-size:13px;">You sent</p>
+                <p style="margin:0;font-weight:700;">${escapeHtml(subject)}</p>
+              </div>
+            </div>
+          `,
+        }),
+        { timeoutMs: 10_000, timeoutLabel: 'Brevo feedback receipt email' }
+      )
     }
   } catch (err) {
     return { log: ['[feedback] Brevo error:', err?.message ?? err], body: { ok: true, feedback }, status: 200 }

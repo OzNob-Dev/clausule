@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { BrevoClient } from '@getbrevo/brevo'
 import { createUser, rpc } from '@api/_lib/supabase.js'
+import { withTimeout } from '@api/_lib/network.js'
 import { findProfileByEmail } from '@features/auth/server/accountRepository.js'
 import {
   beginBackendOperation,
@@ -28,23 +29,26 @@ async function sendInvoiceEmail({ email, firstName, amountCents, periodStart, pe
   const invoiceNumber = `INV-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`
   const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY })
 
-  await client.transactionalEmails.sendTransacEmail({
-    subject: `Your Clausule invoice ${invoiceNumber}`,
-    sender: { name: 'Clausule', email: 'noreply@clausule.app' },
-    to: [{ email }],
-    htmlContent: `
-      <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#FAF7F3;border-radius:12px;color:#1A1510;">
-        <p style="margin:0 0 8px;color:#786B5F;font-size:13px;">Invoice ${invoiceNumber}</p>
-        <h2 style="margin:0 0 12px;font-size:22px;">Thanks${firstName ? `, ${firstName}` : ''}</h2>
-        <p style="margin:0 0 24px;color:#5B4E42;">Your Clausule subscription is active.</p>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-          <tr><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;">${PLAN_LABEL}</td><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;text-align:right;">${money(amountCents)} / month</td></tr>
-          <tr><td style="padding:12px 0;font-weight:700;">Paid today</td><td style="padding:12px 0;text-align:right;font-weight:700;">${money(amountCents)}</td></tr>
-        </table>
-        <p style="margin:0;color:#786B5F;font-size:13px;">Billing period: ${periodStart.toLocaleDateString('en-AU')} to ${periodEnd.toLocaleDateString('en-AU')}.</p>
-      </div>
-    `,
-  })
+  await withTimeout(
+    () => client.transactionalEmails.sendTransacEmail({
+      subject: `Your Clausule invoice ${invoiceNumber}`,
+      sender: { name: 'Clausule', email: 'noreply@clausule.app' },
+      to: [{ email }],
+      htmlContent: `
+        <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#FAF7F3;border-radius:12px;color:#1A1510;">
+          <p style="margin:0 0 8px;color:#786B5F;font-size:13px;">Invoice ${invoiceNumber}</p>
+          <h2 style="margin:0 0 12px;font-size:22px;">Thanks${firstName ? `, ${firstName}` : ''}</h2>
+          <p style="margin:0 0 24px;color:#5B4E42;">Your Clausule subscription is active.</p>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+            <tr><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;">${PLAN_LABEL}</td><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;text-align:right;">${money(amountCents)} / month</td></tr>
+            <tr><td style="padding:12px 0;font-weight:700;">Paid today</td><td style="padding:12px 0;text-align:right;font-weight:700;">${money(amountCents)}</td></tr>
+          </table>
+          <p style="margin:0;color:#786B5F;font-size:13px;">Billing period: ${periodStart.toLocaleDateString('en-AU')} to ${periodEnd.toLocaleDateString('en-AU')}.</p>
+        </div>
+      `,
+    }),
+    { timeoutMs: 10_000, timeoutLabel: 'Brevo invoice email' }
+  )
 }
 
 function error(body, status) {

@@ -9,7 +9,7 @@
  */
 
 import { NextResponse }              from 'next/server'
-import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
 import { fetchWithTimeout } from '@api/_lib/network.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 const MAX_EMPLOYEE_NAME_LENGTH = 120
@@ -30,8 +30,8 @@ function validateEntries(entries) {
 }
 
 export async function POST(request) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
   const { allowed, retryAfterMs, error: limitError } = await consumeDistributedRateLimit({
     scope: 'ai_draft_summary_user',
     identifier: userId,

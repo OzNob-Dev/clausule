@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { requireAuth } from '@api/_lib/auth.js'
+import { requireActiveAuth } from '@api/_lib/auth.js'
 import { getAuthUser, select } from '@api/_lib/supabase.js'
 import { GET } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
-  requireAuth: vi.fn(),
-  unauthorized: vi.fn((message = 'Unauthenticated') => Response.json({ error: message }, { status: 401 })),
+  requireActiveAuth: vi.fn(),
+  authErrorResponse: vi.fn((message = 'Unauthenticated') => Response.json({ error: message === 'Auth lookup failed' ? 'Failed to verify session' : message }, { status: message === 'Auth lookup failed' ? 500 : 401 })),
 }))
 
 vi.mock('@api/_lib/supabase.js', () => ({
@@ -21,7 +21,7 @@ describe('auth bootstrap route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     delete process.env.NEXT_PUBLIC_AUTH_TEST_BYPASS
-    requireAuth.mockReturnValue({
+    requireActiveAuth.mockResolvedValue({
       userId: 'user-1',
       email: 'ada@example.com',
       role: 'employee',
@@ -169,6 +169,6 @@ describe('auth bootstrap route', () => {
         ssoConfigured: false,
       },
     })
-    expect(requireAuth).not.toHaveBeenCalled()
+    expect(requireActiveAuth).not.toHaveBeenCalled()
   })
 })

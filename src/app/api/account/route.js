@@ -8,13 +8,13 @@
  */
 
 import { NextResponse }                       from 'next/server'
-import { requireAuth, unauthorized,
+import { authErrorResponse, requireActiveAuth,
          clearAuthCookies }                   from '@api/_lib/auth.js'
 import { del, update }                        from '@api/_lib/supabase.js'
 
 export async function DELETE(request) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const deletedAt = new Date().toISOString()
   const { error: deleteError } = await update('profiles', `id=eq.${userId}`, {

@@ -11,6 +11,8 @@
 - Return clear errors for recoverable failures.
 - Avoid hidden retries that can duplicate writes.
 - Preserve user state across transient failures when possible.
+- Keep auth or recovery codes unverifiable unless the associated delivery step completed successfully.
+- Treat third-party email sends like other network calls: bound them with timeouts and log only safe failure details.
 
 ## Review Triggers
 

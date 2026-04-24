@@ -13,6 +13,7 @@
 import { NextResponse }                        from 'next/server'
 import { verifyAccessToken, ACCESS_TOKEN_TTL_S,
          REFRESH_TOKEN_TTL_S }                 from './jwt.js'
+import { select } from './supabase.js'
 import { authTestBypassUser, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 const IS_PROD = process.env.NODE_ENV === 'production'
@@ -130,8 +131,35 @@ export function requireAuth(request) {
   }
 }
 
+export async function requireActiveAuth(request) {
+  const auth = requireAuth(request)
+  if (auth.error || isAuthTestBypassEnabled()) return auth
+
+  const { data, error } = await select(
+    'profiles',
+    `id=eq.${auth.userId}&select=id,is_active,is_deleted&limit=1`
+  )
+  if (error) {
+    return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'Auth lookup failed' }
+  }
+
+  const profile = data?.[0]
+  if (!profile?.id || !profile.is_active || profile.is_deleted) {
+    return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'User not found' }
+  }
+
+  return auth
+}
+
 // ── Standard error responses ─────────────────────────────────────────────────
 
 export function unauthorized(message = 'Unauthenticated') {
   return NextResponse.json({ error: message }, { status: 401 })
+}
+
+export function authErrorResponse(error) {
+  if (error === 'Auth lookup failed') {
+    return NextResponse.json({ error: 'Failed to verify session' }, { status: 500 })
+  }
+  return unauthorized(error)
 }

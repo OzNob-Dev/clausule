@@ -14,22 +14,22 @@
  */
 
 import { NextResponse }               from 'next/server'
-import { requireAuth, unauthorized }  from '@api/_lib/auth.js'
+import { authErrorResponse, requireActiveAuth }  from '@api/_lib/auth.js'
 import { createTotpSetup, saveTotpSetup } from '@features/auth/server/totpSetup.js'
 
 // ── Route handlers ────────────────────────────────────────────────────────────
 
 export async function GET(request) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const result = await createTotpSetup({ userId })
   return NextResponse.json(result.body, { status: result.status })
 }
 
 export async function POST(request) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const result = await saveTotpSetup({ userId, body: await request.json().catch(() => ({})) })
   if (result.log) console.error(...result.log)

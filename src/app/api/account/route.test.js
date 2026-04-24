@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { requireAuth, clearAuthCookies } from '@api/_lib/auth.js'
+import { clearAuthCookies, requireActiveAuth } from '@api/_lib/auth.js'
 import { del, update } from '@api/_lib/supabase.js'
 import { DELETE } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
-  requireAuth: vi.fn(),
-  unauthorized: vi.fn((message = 'Unauthenticated') => Response.json({ error: message }, { status: 401 })),
+  requireActiveAuth: vi.fn(),
+  authErrorResponse: vi.fn((message = 'Unauthenticated') => Response.json({ error: message === 'Auth lookup failed' ? 'Failed to verify session' : message }, { status: message === 'Auth lookup failed' ? 500 : 401 })),
   clearAuthCookies: vi.fn(() => ['clausule_at=; Max-Age=0', 'clausule_rt=; Max-Age=0']),
 }))
 
@@ -17,7 +17,7 @@ vi.mock('@api/_lib/supabase.js', () => ({
 describe('account route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    requireAuth.mockReturnValue({ userId: 'user-1', error: null })
+    requireActiveAuth.mockResolvedValue({ userId: 'user-1', error: null })
     update.mockResolvedValue({ data: [{ id: 'user-1' }], error: null })
     del.mockResolvedValue({ data: null, error: null })
   })

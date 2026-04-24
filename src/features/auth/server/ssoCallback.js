@@ -1,6 +1,27 @@
+import crypto from 'node:crypto'
 import { homePathForRole } from '@shared/utils/routes'
 import { accountActive, findProfileByEmail, hasActiveSubscription } from './accountRepository.js'
 import { exchangeSsoCode } from './ssoProviders.js'
+
+function ssoStateSecret() {
+  return process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || 'clausule-dev-sso-state'
+}
+
+function verifySignedState(rawValue) {
+  const dotIdx = rawValue.lastIndexOf('.')
+  if (dotIdx === -1) return null
+  const body = rawValue.slice(0, dotIdx)
+  const sig = rawValue.slice(dotIdx + 1)
+  const expected = crypto.createHmac('sha256', ssoStateSecret()).update(body).digest('base64url')
+  if (sig.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+    return null
+  }
+  try {
+    return JSON.parse(Buffer.from(body, 'base64url').toString('utf8'))
+  } catch {
+    return null
+  }
+}
 
 export function parseSsoState(cookieHeader) {
   const rawCookie = (cookieHeader ?? '')
@@ -11,7 +32,8 @@ export function parseSsoState(cookieHeader) {
   if (!rawCookie) return { error: 'state_mismatch' }
 
   try {
-    return { state: JSON.parse(decodeURIComponent(rawCookie.split('=').slice(1).join('='))) }
+    const state = verifySignedState(decodeURIComponent(rawCookie.split('=').slice(1).join('=')))
+    return state ? { state } : { error: 'invalid_state' }
   } catch {
     return { error: 'invalid_state' }
   }

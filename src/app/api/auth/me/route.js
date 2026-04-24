@@ -9,17 +9,17 @@
  */
 
 import { NextResponse }              from 'next/server'
-import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
 
 export async function GET(request) {
-  const { userId, email, role, error } = requireAuth(request)
+  const { userId, email, role, error } = await requireActiveAuth(request)
 
   if (error === 'Token expired') {
     return NextResponse.json({ error: 'Token expired' }, { status: 401 })
   }
 
   if (error) {
-    return unauthorized(error)
+    return authErrorResponse(error)
   }
 
   return NextResponse.json({ user: { id: userId, email, role } })

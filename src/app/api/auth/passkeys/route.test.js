@@ -12,20 +12,30 @@ vi.mock('@api/_lib/supabase.js', () => ({
   select: vi.fn(),
 }))
 
-describe('totp status route', () => {
+describe('passkeys route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     requireActiveAuth.mockResolvedValue({ userId: 'user-1', error: null })
   })
 
-  it('reports configured when a TOTP secret is saved', async () => {
-    select.mockResolvedValue({ data: [{ totp_secret: 'SECRET' }] })
+  it('lists only the authenticated user devices', async () => {
+    select.mockResolvedValueOnce({
+      data: [{ id: 'device-1', name: 'MacBook', type: 'laptop', method: 'Passkey', added_at: '2026-04-25', is_current: false }],
+      error: null,
+    })
 
-    const response = await GET(new Request('http://localhost/api/auth/totp/status'))
+    const response = await GET(new Request('http://localhost/api/auth/passkeys'))
     const json = await response.json()
 
     expect(response.status).toBe(200)
-    expect(json).toEqual({ configured: true })
-    expect(select).toHaveBeenCalledWith('profiles', 'id=eq.user-1&select=totp_secret&limit=1')
+    expect(json).toEqual([{
+      id: 'device-1',
+      name: 'MacBook',
+      type: 'laptop',
+      method: 'Passkey',
+      addedAt: '2026-04-25',
+      isCurrent: false,
+    }])
+    expect(select).toHaveBeenCalledWith('passkeys', 'user_id=eq.user-1&select=id,name,type,method,added_at,is_current&order=added_at.asc')
   })
 })

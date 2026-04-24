@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { requireAuth } from '@api/_lib/auth.js'
+import { requireActiveAuth } from '@api/_lib/auth.js'
 import { getAuthUser, select, update, updateAuthUser } from '@api/_lib/supabase.js'
 import { findProfileById } from '@features/auth/server/accountRepository.js'
 import { verifyEmailOtpCode } from '@features/auth/server/emailOtpVerification.js'
 import { GET, PATCH } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
-  requireAuth: vi.fn(),
-  unauthorized: vi.fn((message = 'Unauthenticated') => Response.json({ error: message }, { status: 401 })),
+  requireActiveAuth: vi.fn(),
+  authErrorResponse: vi.fn((message = 'Unauthenticated') => Response.json({ error: message === 'Auth lookup failed' ? 'Failed to verify session' : message }, { status: message === 'Auth lookup failed' ? 500 : 401 })),
 }))
 
 vi.mock('@api/_lib/supabase.js', () => ({
@@ -28,7 +28,7 @@ vi.mock('@features/auth/server/emailOtpVerification.js', () => ({
 describe('auth profile route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    requireAuth.mockResolvedValue({ userId: 'user-1', error: null })
+    requireActiveAuth.mockResolvedValue({ userId: 'user-1', error: null })
     select.mockResolvedValue({
       data: [{
         first_name: 'Ada',

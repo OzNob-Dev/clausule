@@ -10,12 +10,12 @@
  */
 
 import { NextResponse }               from 'next/server'
-import { requireAuth, unauthorized }  from '@api/_lib/auth.js'
+import { authErrorResponse, requireActiveAuth }  from '@api/_lib/auth.js'
 import { select, del }                from '@api/_lib/supabase.js'
 
 export async function DELETE(request, { params }) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const deviceId = params.id
 

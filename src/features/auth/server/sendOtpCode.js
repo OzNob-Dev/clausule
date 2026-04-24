@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { BrevoClient } from '@getbrevo/brevo'
-import { insert } from '@api/_lib/supabase.js'
+import { del, insert, update } from '@api/_lib/supabase.js'
+import { withTimeout } from '@api/_lib/network.js'
 import { validateEmail } from '@shared/utils/emailValidation'
 
 function generateOtp() {
@@ -34,34 +35,48 @@ export async function sendOtpCode(body) {
 
   const code = generateOtp()
   const salt = crypto.randomBytes(16).toString('hex')
-  const { error: dbError } = await insert('otp_codes', {
+  const now = new Date().toISOString()
+  const { data: rows, error: dbError } = await insert('otp_codes', {
     email,
     code_hash: `${salt}:${hashCode(code, salt)}`,
-  })
+    delivered_at: null,
+  }, { expectRows: 'single' })
 
   if (dbError) return { log: ['[send-code] DB insert error:', dbError], body: { error: 'Failed to create verification code' }, status: 500 }
 
+  const otpId = rows?.[0]?.id
   try {
     const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY })
-    await client.transactionalEmails.sendTransacEmail({
-      subject: 'Your Clausule sign-in code',
-      sender: { name: 'Clausule', email: 'noreply@clausule.app' },
-      to: [{ email }],
-      htmlContent: `
-        <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;
-                    background:#FAF7F3;border-radius:12px;">
-          <h2 style="margin:0 0 8px;font-size:20px;color:#2A221A;">Your sign-in code</h2>
-          <p style="color:#5C5048;margin:0 0 24px;">
-            Use the code below to sign in to Clausule. It expires in 10 minutes.
-          </p>
-          <div style="display:flex;gap:8px;margin-bottom:24px;">${digitBoxes(code)}</div>
-          <p style="color:#8A7E76;font-size:13px;margin:0;">
-            If you didn't request this, you can safely ignore this email.
-          </p>
-        </div>
-      `,
-    })
+    await withTimeout(
+      () => client.transactionalEmails.sendTransacEmail({
+        subject: 'Your Clausule sign-in code',
+        sender: { name: 'Clausule', email: 'noreply@clausule.app' },
+        to: [{ email }],
+        htmlContent: `
+          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;
+                      background:#FAF7F3;border-radius:12px;">
+            <h2 style="margin:0 0 8px;font-size:20px;color:#2A221A;">Your sign-in code</h2>
+            <p style="color:#5C5048;margin:0 0 24px;">
+              Use the code below to sign in to Clausule. It expires in 10 minutes.
+            </p>
+            <div style="display:flex;gap:8px;margin-bottom:24px;">${digitBoxes(code)}</div>
+            <p style="color:#8A7E76;font-size:13px;margin:0;">
+              If you didn't request this, you can safely ignore this email.
+            </p>
+          </div>
+        `,
+      }),
+      { timeoutMs: 10_000, timeoutLabel: 'Brevo OTP email' }
+    )
+    if (otpId) {
+      const { error: deliveredError } = await update('otp_codes', `id=eq.${otpId}`, { delivered_at: now }, { expectRows: 'single' })
+      if (deliveredError) {
+        await del('otp_codes', `id=eq.${otpId}`)
+        return { log: ['[send-code] delivered_at update error:', deliveredError], body: { error: 'Failed to send email' }, status: 500 }
+      }
+    }
   } catch (err) {
+    if (otpId) await del('otp_codes', `id=eq.${otpId}`)
     return { log: ['[send-code] Brevo error:', err?.message ?? err], body: { error: 'Failed to send email' }, status: 502 }
   }
 

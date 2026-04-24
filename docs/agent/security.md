@@ -40,6 +40,7 @@
 - Treat `src/features/auth/server/*` and `src/features/mfa/*` as security-sensitive.
 - Check whether a change could expose profile, feedback, or entry content.
 - Keep secret material server-only and short-lived where possible.
+- Do not expose matched account existence or exact SSO provider identity to unauthenticated callers.
 
 ## Anti-Patterns
 

@@ -10,12 +10,14 @@ const cleanupPath = path.resolve(__dirname, '../../supabase/migrations/010_backe
 const replayWindowPath = path.resolve(__dirname, '../../supabase/migrations/011_backend_operation_replay_window.sql')
 const distributedReliabilityPath = path.resolve(__dirname, '../../supabase/migrations/012_distributed_reliability.sql')
 const bragAtomicWritesPath = path.resolve(__dirname, '../../supabase/migrations/013_brag_entry_atomic_writes.sql')
+const authDeliveryHardeningPath = path.resolve(__dirname, '../../supabase/migrations/014_auth_delivery_and_order_hardening.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
 const replayWindowSql = readFileSync(replayWindowPath, 'utf8')
 const distributedReliabilitySql = readFileSync(distributedReliabilityPath, 'utf8')
 const bragAtomicWritesSql = readFileSync(bragAtomicWritesPath, 'utf8')
+const authDeliveryHardeningSql = readFileSync(authDeliveryHardeningPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -75,5 +77,12 @@ describe('backend hardening migration', () => {
     expect(bragAtomicWritesSql).toContain('create or replace function public.update_brag_entry_with_evidence')
     expect(bragAtomicWritesSql).toContain('grant execute on function public.create_brag_entry_with_evidence')
     expect(bragAtomicWritesSql).toContain('grant execute on function public.update_brag_entry_with_evidence')
+  })
+
+  it('gates OTP verification on successful delivery', () => {
+    expect(authDeliveryHardeningSql).toContain('add column if not exists delivered_at timestamptz')
+    expect(authDeliveryHardeningSql).toContain('where used_at is null and delivered_at is not null')
+    expect(authDeliveryHardeningSql).toContain('and otp.delivered_at is not null')
+    expect(authDeliveryHardeningSql).toContain('create or replace function public.consume_email_otp_code')
   })
 })

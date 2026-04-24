@@ -24,6 +24,7 @@
 ## Notes
 
 - Migration names are numbered and ordered.
+- This repo has legacy duplicate `006_*` filenames; do not rename applied files in place, and use new forward-only migrations plus docs/tests to normalize behavior.
 - Database work should include the API and tests that depend on it.
 - When a migration changes read or write shape, update the affected route docs and tests.
 

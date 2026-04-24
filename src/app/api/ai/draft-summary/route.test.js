@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { POST } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
-  requireAuth: vi.fn(() => ({ userId: 'user-1', error: null })),
-  unauthorized: vi.fn(() => Response.json({ error: 'Unauthenticated' }, { status: 401 })),
+  requireActiveAuth: vi.fn(async () => ({ userId: 'user-1', error: null })),
+  authErrorResponse: vi.fn((message = 'Unauthenticated') => Response.json({ error: message === 'Auth lookup failed' ? 'Failed to verify session' : message }, { status: message === 'Auth lookup failed' ? 500 : 401 })),
 }))
 
 vi.mock('@features/auth/server/distributedRateLimit.js', () => ({

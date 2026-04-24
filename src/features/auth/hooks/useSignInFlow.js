@@ -9,7 +9,6 @@ import { validateEmail } from '@shared/utils/emailValidation'
 import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { homePathForRole } from '@shared/utils/routes'
-import { ssoAuthPath } from '@shared/utils/sso'
 
 const OTP_TTL_SECONDS = 600
 const RESEND_COOLDOWN_SECONDS = 30
@@ -142,8 +141,9 @@ export function useSignInFlow() {
           return
         }
 
-        if (data.nextStep === 'sso' && data.ssoProvider) {
-          window.location.href = ssoAuthPath(data.ssoProvider)
+        if (data.nextStep === 'sso') {
+          setEmailStatus('idle')
+          setSsoError('Use your sign-in provider below to continue.')
           return
         }
 

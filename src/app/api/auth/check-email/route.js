@@ -6,7 +6,7 @@
  * the user to the correct MFA step.
  *
  * Body:     { email: string }
- * Response: { exists: boolean, nextStep: 'signup'|'otp'|'mfa'|'sso', ssoProvider: string | null }
+ * Response: { nextStep: 'signup'|'otp'|'mfa'|'sso' }
  */
 
 import { NextResponse }   from 'next/server'

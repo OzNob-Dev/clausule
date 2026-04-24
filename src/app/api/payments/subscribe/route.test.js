@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { requireAuth } from '@api/_lib/auth.js'
+import { requireActiveAuth } from '@api/_lib/auth.js'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { rpc } from '@api/_lib/supabase.js'
 import { createSubscription, paymentSystemConfigured } from '@features/payments/server/createSubscription.js'
 import { POST } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
-  requireAuth: vi.fn(() => ({ userId: null, error: 'Unauthenticated' })),
+  requireActiveAuth: vi.fn(async () => ({ userId: null, error: 'Unauthenticated' })),
 }))
 
 vi.mock('@api/_lib/supabase.js', () => ({
@@ -68,7 +68,7 @@ function completedOperation() {
 describe('subscribe route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    requireAuth.mockReturnValue({ userId: null, error: 'Unauthenticated' })
+    requireActiveAuth.mockResolvedValue({ userId: null, error: 'Unauthenticated' })
     paymentSystemConfigured.mockReturnValue(true)
     createSubscription.mockResolvedValue({
       body: { ok: true, subscriptionId: 'sub_1', clientSecret: 'secret_1', role: 'employee' },

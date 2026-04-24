@@ -1,20 +1,6 @@
-import {
-  accountActive,
-  findProfileByEmail,
-  getUserSsoProvider,
-  hasActiveSubscription,
-  ssoProviderForAuthUser,
-} from './accountRepository.js'
+import { accountActive, findProfileByEmail, getUserSsoProvider, hasActiveSubscription } from './accountRepository.js'
 
-const NOT_FOUND_RESULT = {
-  exists: false,
-  nextStep: 'signup',
-  ssoProvider: null,
-}
-
-export function ssoProvider(user) {
-  return ssoProviderForAuthUser(user)
-}
+const NOT_FOUND_RESULT = { nextStep: 'signup' }
 
 export async function checkEmailAccount(email) {
   const { profile, error: profileError } = await findProfileByEmail(email, 'id,totp_secret,is_active,is_deleted')
@@ -30,7 +16,6 @@ export async function checkEmailAccount(email) {
 
   return {
     result: {
-      exists: true,
       nextStep: !accountActive(profile, hasPaid) || profile.is_deleted
         ? 'signup'
         : provider
@@ -38,7 +23,6 @@ export async function checkEmailAccount(email) {
           : profile.totp_secret
             ? 'mfa'
             : 'otp',
-      ssoProvider: provider,
     },
   }
 }

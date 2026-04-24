@@ -6,7 +6,7 @@
  */
 
 import { NextResponse }              from 'next/server'
-import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
 import { getAuthUser, select, update, updateAuthUser } from '@api/_lib/supabase.js'
 import { validateEmail }             from '@shared/utils/emailValidation'
 import { findProfileById }           from '@features/auth/server/accountRepository.js'
@@ -17,8 +17,8 @@ function authMetaName(user, key) {
 }
 
 export async function GET(request) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const { data: rows, error } = await select(
     'profiles',
@@ -49,8 +49,8 @@ function trimOrEmpty(value) {
 }
 
 export async function PATCH(request) {
-  const { userId, error: authError } = await requireAuth(request)
-  if (authError) return unauthorized()
+  const { userId, error: authError } = await requireActiveAuth(request)
+  if (authError) return authErrorResponse(authError)
 
   const body = await request.json().catch(() => ({}))
   const firstName = trimOrEmpty(body.firstName)
