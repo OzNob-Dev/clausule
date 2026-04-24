@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SsoProviderIcon from '@shared/components/SsoProviderIcon'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { getActiveSsoProviders, ssoAuthPath, ssoConfigFromEnv } from '@shared/utils/sso'
@@ -26,6 +26,16 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
   const [agreedError, setAgreedError] = useState(false)
   const activeSsoProviders = hideSso ? [] : getActiveSsoProviders(ssoConfigFromEnv)
   const hasSso = activeSsoProviders.length > 0
+
+  useEffect(() => {
+    setFirstName(initialData.firstName)
+    setLastName(initialData.lastName)
+    setEmail(initialData.email)
+    setAgreed(initialData.agreed)
+    setEmailDirty(false)
+    setNameError(false)
+    setAgreedError(false)
+  }, [initialData])
 
   const emailResult = validateEmail(email)
   const showEmailFeedback = emailDirty && email.trim().length > 0

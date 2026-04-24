@@ -80,44 +80,21 @@ function profileDisplayName(profile) {
   return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
 }
 
-export default function BragEmployee() {
+export function mapEntryToCard(entry) {
+  return cardFromEntry(entry)
+}
+
+export default function BragEmployee({ initialEntries = [], initialEntriesError = '' }) {
   useTheme()
   const profile = useProfileStore((state) => state.profile)
   const [tab, setTab]                   = useState('brag')
-  const [entries, setEntries]           = useState([])
-  const [entriesLoading, setEntriesLoading] = useState(true)
-  const [entriesError, setEntriesError] = useState('')
+  const [entries, setEntries]           = useState(() => initialEntries.map(cardFromEntry))
+  const [entriesLoading] = useState(false)
+  const [entriesError] = useState(initialEntriesError)
   const [composerOpen, setComposerOpen] = useState(false)
   const panelKey = entriesLoading ? 'loading' : composerOpen ? 'composer' : entriesError ? 'error' : entries.length ? 'entries' : 'empty'
   const [visiblePanel, setVisiblePanel] = useState(panelKey)
   const [panelExiting, setPanelExiting] = useState(false)
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function loadEntries() {
-      setEntriesLoading(true)
-      setEntriesError('')
-
-      try {
-        const response = await fetch('/api/brag/entries?limit=100', {
-          credentials: 'same-origin',
-          signal: controller.signal,
-        })
-        const data = await response.json().catch(() => ({}))
-        if (!response.ok) throw new Error(data.error || 'Failed to load entries')
-
-        setEntries([...(data.entries ?? [])].sort(newestEntryFirst).map(cardFromEntry))
-      } catch (error) {
-        if (error.name !== 'AbortError') setEntriesError('Could not load entries. Please refresh and try again.')
-      } finally {
-        if (!controller.signal.aborted) setEntriesLoading(false)
-      }
-    }
-
-    loadEntries()
-    return () => controller.abort()
-  }, [])
 
   useEffect(() => {
     if (panelKey === visiblePanel) return undefined

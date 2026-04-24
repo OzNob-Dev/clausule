@@ -5,7 +5,6 @@ import SignInBrandPanel from '@features/auth/components/SignInBrandPanel'
 import SignInEmailForm from '@features/auth/components/SignInEmailForm'
 import SignUpPrompt from '@features/auth/components/SignUpPrompt'
 import SsoButtons from '@features/auth/components/SsoButtons'
-import { useActiveSessionRedirect } from '@features/auth/hooks/useActiveSessionRedirect'
 import { useSignInFlow } from '@features/auth/hooks/useSignInFlow'
 import MfaLoginEmailStep from '@features/mfa/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@features/mfa/components/MfaLoginAppStep'
@@ -14,10 +13,7 @@ import '@features/signup/styles/signup-theme.css'
 import '@features/signup/styles/signup-form.css'
 
 export default function SignIn() {
-  const checkingSession = useActiveSessionRedirect()
   const flow = useSignInFlow()
-
-  if (checkingSession) return null
 
   if (flow.step === 'app') {
     return (

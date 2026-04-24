@@ -15,9 +15,15 @@ const STATS = [
 
 export default function Dashboard() {
   const [query, setQuery] = useState('')
-  const filtered = query
-    ? ALL_EMP.filter((e) => e.name.toLowerCase().includes(query.toLowerCase()))
+  const normalizedQuery = query.trim().toLowerCase()
+  const filteredEmployees = normalizedQuery
+    ? ALL_EMP.filter((employee) => employee.name.toLowerCase().includes(normalizedQuery))
     : ALL_EMP
+  const employeesByStatus = { g: [], y: [], r: [] }
+
+  filteredEmployees.forEach((employee) => {
+    if (employeesByStatus[employee.ps]) employeesByStatus[employee.ps].push(employee)
+  })
 
   return (
     <AppShell>
@@ -60,7 +66,7 @@ export default function Dashboard() {
         </div>
 
         {/* Kanban */}
-        <KanbanBoard employees={filtered} />
+        <KanbanBoard employeesByStatus={employeesByStatus} />
       </div>
     </AppShell>
   )

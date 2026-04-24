@@ -3,7 +3,6 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useActiveSessionRedirect } from '@features/auth/hooks/useActiveSessionRedirect'
 import { SignupProvider, useSignup } from '@features/signup/context/SignupContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import SignupAside from '@features/signup/components/SignupAside'
@@ -140,10 +139,6 @@ function SignUpInner() {
 }
 
 export default function SignUp() {
-  const checkingSession = useActiveSessionRedirect()
-
-  if (checkingSession) return null
-
   return (
     <SignupProvider>
       <Suspense>

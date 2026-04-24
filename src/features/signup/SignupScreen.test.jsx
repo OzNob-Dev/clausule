@@ -1,20 +1,10 @@
 import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SignupScreen from './SignupScreen'
 
-const { replace, apiFetch } = vi.hoisted(() => ({
-  replace: vi.fn(),
-  apiFetch: vi.fn(),
-}))
-
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace }),
   useSearchParams: () => new URLSearchParams(),
-}))
-
-vi.mock('@shared/utils/api', () => ({
-  apiFetch,
 }))
 
 vi.mock('@features/signup/context/SignupContext', () => ({
@@ -56,25 +46,16 @@ vi.mock('@features/signup/components/SignupStepPayment', () => ({
 
 describe('SignupScreen', () => {
   beforeEach(() => {
-    replace.mockReset()
-    apiFetch.mockReset()
-    apiFetch.mockResolvedValue({ ok: false })
-    document.cookie = 'clausule_session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'
   })
 
   afterEach(() => {
     vi.clearAllMocks()
   })
 
-  it('redirects active sessions to the brag screen', async () => {
-    document.cookie = 'clausule_session=active; path=/'
-    apiFetch.mockResolvedValue({ ok: true })
-
+  it('renders the first signup step', () => {
     render(<SignupScreen />)
 
-    await waitFor(() => {
-      expect(apiFetch).toHaveBeenCalledWith('/api/auth/me')
-      expect(replace).toHaveBeenCalledWith('/brag')
-    })
+    expect(screen.getByText('Account')).toBeInTheDocument()
+    expect(screen.getByText('Aside')).toBeInTheDocument()
   })
 })

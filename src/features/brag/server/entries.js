@@ -1,5 +1,7 @@
 import { del, insert, select, update } from '@api/_lib/supabase.js'
 
+/** @typedef {import('@shared/types/contracts').BragEntry} BragEntry */
+
 const VALID_EVIDENCE_TYPES = new Set([
   'Work artefact',
   'Metrics / data',
@@ -36,7 +38,7 @@ export async function listEntries({ userId, searchParams }) {
 
   const { data, error } = await select('brag_entries', query.toString())
   if (error) return { log: ['[brag/entries GET]', error], body: { error: 'Failed to fetch entries' }, status: 500 }
-  return { body: { entries: data ?? [] }, status: 200 }
+  return { body: { /** @type {BragEntry[]} */ entries: data ?? [] }, status: 200 }
 }
 
 export async function createEntry({ userId, body }) {

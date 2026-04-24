@@ -1,9 +1,15 @@
 import { findProfileById, getAuthUserDetails } from './accountRepository.js'
 
+/** @typedef {import('@shared/types/contracts').AuthBootstrap} AuthBootstrap */
+
 function authMetaName(user, key) {
   return user?.user_metadata?.[key] ?? user?.raw_user_meta_data?.[key] ?? ''
 }
 
+/**
+ * @param {{ userId: string, email: string, role: import('@shared/types/contracts').Role, authMethod: import('@shared/types/contracts').AuthMethod }} param0
+ * @returns {Promise<{ body: AuthBootstrap, status: 200 }>}
+ */
 export async function bootstrapSession({ userId, email, role, authMethod }) {
   const { profile, error } = await findProfileById(userId, 'first_name,last_name,email,mobile,job_title,department,totp_secret')
   if (error) console.error('[auth/bootstrap GET]', error)

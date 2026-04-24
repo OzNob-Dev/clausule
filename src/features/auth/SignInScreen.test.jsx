@@ -1,20 +1,7 @@
 import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SignInScreen from './SignInScreen'
-
-const { replace, apiFetch } = vi.hoisted(() => ({
-  replace: vi.fn(),
-  apiFetch: vi.fn(),
-}))
-
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace }),
-}))
-
-vi.mock('@shared/utils/api', () => ({
-  apiFetch,
-}))
 
 vi.mock('@features/auth/hooks/useSignInFlow', () => ({
   useSignInFlow: () => ({
@@ -60,25 +47,17 @@ vi.mock('@features/mfa/components/MfaLoginAppStep', () => ({
 
 describe('SignInScreen', () => {
   beforeEach(() => {
-    replace.mockReset()
-    apiFetch.mockReset()
-    apiFetch.mockResolvedValue({ ok: false })
-    document.cookie = 'clausule_session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'
   })
 
   afterEach(() => {
     vi.clearAllMocks()
   })
 
-  it('redirects active sessions to the brag screen', async () => {
-    document.cookie = 'clausule_session=active; path=/'
-    apiFetch.mockResolvedValue({ ok: true })
-
+  it('renders the email sign-in flow when no MFA step is active', () => {
     render(<SignInScreen />)
 
-    await waitFor(() => {
-      expect(apiFetch).toHaveBeenCalledWith('/api/auth/me')
-      expect(replace).toHaveBeenCalledWith('/brag')
-    })
+    expect(screen.getByText('Brand')).toBeInTheDocument()
+    expect(screen.getByText('Form')).toBeInTheDocument()
+    expect(screen.getByText('SSO')).toBeInTheDocument()
   })
 })

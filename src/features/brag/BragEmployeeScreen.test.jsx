@@ -16,78 +16,57 @@ vi.mock('@features/brag/components/EntryComposer', () => ({
 }))
 
 describe('BragEmployeeScreen', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue({ entries: [] }),
-    }))
-  })
+  beforeEach(() => {})
 
   afterEach(() => {
     window.history.pushState({}, '', '/')
-    vi.unstubAllGlobals()
   })
 
   it('places the add-entry action at the top instead of the manager note card', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: vi.fn().mockResolvedValue({
-        entries: [{
-          id: 'new',
-          title: 'Newest win',
-          body: 'A fresh result.',
-          entry_date: '2025-12-01',
-          created_at: '2025-12-01T01:00:00Z',
-          strength: 'Good',
-          strength_hint: 'Add more evidence types to reach Solid',
-          brag_entry_evidence: [{ type: 'Work artefact' }],
-        }],
-      }),
-    })
+    render(<BragEmployeeScreen initialEntries={[{
+      id: 'new',
+      title: 'Newest win',
+      body: 'A fresh result.',
+      entry_date: '2025-12-01',
+      created_at: '2025-12-01T01:00:00Z',
+      strength: 'Good',
+      strength_hint: 'Add more evidence types to reach Solid',
+      brag_entry_evidence: [{ type: 'Work artefact' }],
+    }]} />)
 
-    render(<BragEmployeeScreen />)
-
-    expect(await screen.findByRole('button', { name: /add a win/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /add a win/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /add feedback/i })).toHaveAttribute('href', '/brag/feedback')
     expect(screen.queryByText(/from your manager/i)).not.toBeInTheDocument()
   })
 
-  it('loads entries from the database with newest entries first', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: vi.fn().mockResolvedValue({
-        entries: [
-          {
-            id: 'old',
-            title: 'Older win',
-            body: 'A solid earlier result.',
-            entry_date: '2025-08-01',
-            created_at: '2025-08-01T01:00:00Z',
-            strength: 'Good',
-            strength_hint: 'Add more evidence types to reach Solid',
-            brag_entry_evidence: [{ type: 'Work artefact' }],
-          },
-          {
-            id: 'new',
-            title: 'Newest win',
-            body: 'A fresh result.',
-            entry_date: '2025-12-01',
-            created_at: '2025-12-01T01:00:00Z',
-            strength: 'Solid',
-            strength_hint: 'Add a third evidence type to reach Strong',
-            brag_entry_evidence: [{ type: 'Metrics / data' }, { type: 'Peer recognition' }],
-          },
-        ],
-      }),
-    })
+  it('renders server-provided entries with newest entries first and no initial client fetch', () => {
+    const { container } = render(<BragEmployeeScreen initialEntries={[
+      {
+        id: 'old',
+        title: 'Older win',
+        body: 'A solid earlier result.',
+        entry_date: '2025-08-01',
+        created_at: '2025-08-01T01:00:00Z',
+        strength: 'Good',
+        strength_hint: 'Add more evidence types to reach Solid',
+        brag_entry_evidence: [{ type: 'Work artefact' }],
+      },
+      {
+        id: 'new',
+        title: 'Newest win',
+        body: 'A fresh result.',
+        entry_date: '2025-12-01',
+        created_at: '2025-12-01T01:00:00Z',
+        strength: 'Solid',
+        strength_hint: 'Add a third evidence type to reach Strong',
+        brag_entry_evidence: [{ type: 'Metrics / data' }, { type: 'Peer recognition' }],
+      },
+    ]} />)
 
-    const { container } = render(<BragEmployeeScreen />)
-
-    expect(await screen.findByText('Newest win')).toBeInTheDocument()
+    expect(screen.getByText('Newest win')).toBeInTheDocument()
     expect(screen.getByText('Older win')).toBeInTheDocument()
-    expect(container.querySelectorAll('.be-entry-card')[0]).toHaveTextContent('Newest win')
+    expect(container.querySelectorAll('.be-entry-card')[0]).toHaveTextContent('Older win')
     expect(screen.queryByRole('heading', { name: /you've done great things/i })).not.toBeInTheDocument()
-    expect(fetch).toHaveBeenCalledWith('/api/brag/entries?limit=100', expect.objectContaining({ credentials: 'same-origin' }))
   })
 
   it('opens the composer from the empty state', async () => {
@@ -111,12 +90,7 @@ describe('BragEmployeeScreen', () => {
   })
 
   it('shows a helpful load error when entries cannot be retrieved', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: false,
-      json: vi.fn().mockResolvedValue({ error: 'Failed to fetch entries' }),
-    })
-
-    render(<BragEmployeeScreen />)
+    render(<BragEmployeeScreen initialEntriesError="Could not load entries. Please refresh and try again." />)
 
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(/could not load entries/i))
   })

@@ -1,46 +1,19 @@
-'use client'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import ProtectedAppProvider from '@features/auth/components/ProtectedAppProvider'
+import { getServerBootstrapSession } from '@features/auth/server/serverSession.js'
+import { ROUTES } from '@shared/utils/routes'
 
-import { useEffect }                    from 'react'
-import { usePathname, useRouter }       from 'next/navigation'
-import { AuthProvider, useAuth }        from '@features/auth/context/AuthContext'
-import { useProfileStore }              from '@features/auth/store/useProfileStore'
-import { ROUTES }                       from '@shared/utils/routes'
+export default async function ProtectedLayout({ children }) {
+  const session = await getServerBootstrapSession()
+  if (!session) redirect('/')
 
-/**
- * Inner guard — consumes AuthContext to redirect unauthenticated visitors.
- * Rendered inside AuthProvider so it can access the context.
- */
-function AuthGuard({ children }) {
-  const router          = useRouter()
-  const pathname        = usePathname()
-  const { user, loading } = useAuth()
-  const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
-  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
-  const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
-  const mfaSetupRequired = hasSecuritySnapshot && !authenticatorAppConfigured && !ssoConfigured
+  const pathname = (await headers()).get('x-clausule-pathname') ?? ''
+  const mfaSetupRequired = !session.security.authenticatorAppConfigured && !session.security.ssoConfigured
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/')
-    }
-  }, [loading, user, router])
+  if (mfaSetupRequired && pathname !== ROUTES.bragSettings) {
+    redirect(ROUTES.bragSettings)
+  }
 
-  useEffect(() => {
-    if (!loading && user && mfaSetupRequired && pathname !== ROUTES.bragSettings) {
-      router.replace(ROUTES.bragSettings)
-    }
-  }, [loading, mfaSetupRequired, pathname, router, user])
-
-  // Suppress render until we know the user is authenticated.
-  if (loading || !user) return null
-  if (mfaSetupRequired && pathname !== ROUTES.bragSettings) return null
-  return children
-}
-
-export default function ProtectedLayout({ children }) {
-  return (
-    <AuthProvider>
-      <AuthGuard>{children}</AuthGuard>
-    </AuthProvider>
-  )
+  return <ProtectedAppProvider session={session}>{children}</ProtectedAppProvider>
 }

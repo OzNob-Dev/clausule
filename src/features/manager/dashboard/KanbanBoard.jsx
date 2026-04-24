@@ -6,12 +6,17 @@ const COLUMNS = [
   { id: 'r', label: 'Needs work',    dot: '#E24B4A', color: 'var(--red)',  countBg: 'rgba(240,149,149,0.14)', countColor: 'var(--red)'   },
 ]
 
-export function KanbanBoard({ employees }) {
+export function KanbanBoard({ employeesByStatus, employees = [] }) {
+  const groupedEmployees = employeesByStatus ?? employees.reduce((groups, employee) => {
+    if (groups[employee.ps]) groups[employee.ps].push(employee)
+    return groups
+  }, { g: [], y: [], r: [] })
+
   return (
     <div className="flex-1 min-h-0 overflow-x-auto overflow-y-hidden">
       <div className="grid grid-cols-3 gap-3 pt-[14px] px-[18px] pb-[18px] h-full min-w-[max(100%,480px)]">
         {COLUMNS.map(({ id, label, dot, color, countBg, countColor }) => {
-          const people = employees.filter((e) => e.ps === id)
+          const people = groupedEmployees[id] ?? []
           return (
             <div key={id} className="flex flex-col overflow-hidden">
               {/* Column header */}

@@ -4,12 +4,12 @@
  * AuthContext — provides authenticated user state to the protected component tree.
  *
  * The JWT lives in an httpOnly cookie (clausule_at); the client never accesses
- * it directly. On mount AuthProvider calls /api/auth/me to hydrate user claims
- * from the cookie, attempting a silent token refresh on 401 before giving up.
+ * it directly. Protected routes provide the initial authenticated session from
+ * the server so the client context can focus on local auth UI actions.
  *
  * Provided value:
  *   user    { id, email, role } | null
- *   loading boolean — true during initial hydration
+ *   loading boolean — kept for compatibility with existing consumers
  *   signIn  (userData) => void — call after successful authentication to hydrate
  *   logout  () => Promise<void> — revokes server session, clears cookies, redirects
  */
@@ -23,47 +23,26 @@ import {
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
-import { apiFetch } from '@shared/utils/api'
 
 const AuthContext = createContext(null)
 
-export function AuthProvider({ children }) {
-  const router            = useRouter()
-  const [user, setUser]   = useState(null)
-  const [loading, setLoading] = useState(true)
+export function AuthProvider({ children, initialSession = null }) {
+  const router = useRouter()
+  const [user, setUser] = useState(initialSession?.user ?? null)
+  const [loading] = useState(false)
 
   useEffect(() => {
-    const controller = new AbortController()
-    const { signal } = controller
-    const { setProfile, setSecurity, clearProfile } = useProfileStore.getState()
-
-    async function hydrate() {
-      try {
-        const res = await apiFetch('/api/auth/bootstrap', { signal })
-
-        if (res.ok) {
-          const { user: userData, profile, security } = await res.json()
-          setUser(userData)
-          setProfile(profile)
-          setSecurity(security)
-        } else {
-          clearProfile()
-          setUser(null)
-        }
-        setLoading(false)
-      } catch (err) {
-        // AbortError means cleanup ran (Strict Mode remount or unmount) — skip state update.
-        if (err.name !== 'AbortError') {
-          clearProfile()
-          setUser(null)
-          setLoading(false)
-        }
-      }
+    if (!initialSession) {
+      useProfileStore.getState().clearProfile()
+      setUser(null)
+      return
     }
 
-    hydrate()
-    return () => controller.abort()
-  }, [])
+    const { setProfile, setSecurity } = useProfileStore.getState()
+    setUser(initialSession.user)
+    setProfile(initialSession.profile)
+    setSecurity(initialSession.security)
+  }, [initialSession])
 
   /**
    * Hydrate the context after a successful sign-in without an extra round-trip.

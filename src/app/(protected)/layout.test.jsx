@@ -1,78 +1,94 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import ProtectedLayout from './layout'
-import { useProfileStore } from '@features/auth/store/useProfileStore'
 
-const replace = vi.fn()
-let pathname = '/brag'
-let auth = { user: { id: 'user-1', email: 'ada@example.com', role: 'employee' }, loading: false }
-
-vi.mock('next/navigation', () => ({
-  usePathname: () => pathname,
-  useRouter: () => ({ replace }),
+const { redirect } = vi.hoisted(() => ({
+  redirect: vi.fn((value) => {
+    throw new Error(`redirect:${value}`)
+  }),
 }))
 
-vi.mock('@features/auth/context/AuthContext', () => ({
-  AuthProvider: ({ children }) => <>{children}</>,
-  useAuth: () => auth,
+let pathname = '/brag'
+let session = {
+  user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+  profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com', mobile: '', jobTitle: '', department: '' },
+  security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: false },
+}
+
+vi.mock('next/navigation', () => ({
+  redirect,
+}))
+
+vi.mock('next/headers', () => ({
+  headers: async () => ({ get: (key) => (key === 'x-clausule-pathname' ? pathname : null) }),
+}))
+
+vi.mock('@features/auth/components/ProtectedAppProvider', () => ({
+  default: ({ children }) => <>{children}</>,
+}))
+
+vi.mock('@features/auth/server/serverSession.js', () => ({
+  getServerBootstrapSession: vi.fn(async () => session),
 }))
 
 describe('ProtectedLayout MFA lock', () => {
   beforeEach(() => {
     pathname = '/brag'
-    auth = { user: { id: 'user-1', email: 'ada@example.com', role: 'employee' }, loading: false }
-    replace.mockClear()
-    localStorage.clear()
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
-    process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED = 'false'
-    process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED = 'false'
-    useProfileStore.getState().clearProfile()
+    session = {
+      user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+      profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com', mobile: '', jobTitle: '', department: '' },
+      security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: false },
+    }
+    redirect.mockClear()
+  })
+
+  it('redirects unauthenticated users to sign in', async () => {
+    session = null
+
+    await expect(ProtectedLayout({ children: <div>Blocked app</div> })).rejects.toThrow('redirect:/')
+    expect(redirect).toHaveBeenCalledWith('/')
   })
 
   it('redirects protected routes to brag settings until MFA is configured', async () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
+    session = {
+      ...session,
+      security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false },
+    }
 
-    render(<ProtectedLayout><div>Blocked app</div></ProtectedLayout>)
-
-    expect(screen.queryByText('Blocked app')).not.toBeInTheDocument()
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/brag/settings'))
+    await expect(ProtectedLayout({ children: <div>Blocked app</div> })).rejects.toThrow('redirect:/brag/settings')
+    expect(redirect).toHaveBeenCalledWith('/brag/settings')
   })
 
-  it('allows brag settings while MFA setup is incomplete', () => {
+  it('allows brag settings while MFA setup is incomplete', async () => {
     pathname = '/brag/settings'
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
+    session = {
+      ...session,
+      security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false },
+    }
 
-    render(<ProtectedLayout><div>Security settings</div></ProtectedLayout>)
+    render(await ProtectedLayout({ children: <div>Security settings</div> }))
 
     expect(screen.getByText('Security settings')).toBeInTheDocument()
-    expect(replace).not.toHaveBeenCalled()
+    expect(redirect).not.toHaveBeenCalled()
   })
 
-  it('allows app access after MFA is configured', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true })
-
-    render(<ProtectedLayout><div>Unlocked app</div></ProtectedLayout>)
+  it('allows app access after MFA is configured', async () => {
+    render(await ProtectedLayout({ children: <div>Unlocked app</div> }))
 
     expect(screen.getByText('Unlocked app')).toBeInTheDocument()
-    expect(replace).not.toHaveBeenCalled()
+    expect(redirect).not.toHaveBeenCalled()
   })
 
-  it('redirects even when the session did not use OTP', async () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
+  it('allows app access when SSO is configured without MFA', async () => {
+    session = {
+      ...session,
+      security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true },
+    }
 
-    render(<ProtectedLayout><div>SSO app</div></ProtectedLayout>)
-
-    expect(screen.queryByText('SSO app')).not.toBeInTheDocument()
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/brag/settings'))
-  })
-
-  it('allows app access when SSO is configured without MFA', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
-
-    render(<ProtectedLayout><div>SSO enabled app</div></ProtectedLayout>)
+    render(await ProtectedLayout({ children: <div>SSO enabled app</div> }))
 
     expect(screen.getByText('SSO enabled app')).toBeInTheDocument()
-    expect(replace).not.toHaveBeenCalled()
+    expect(redirect).not.toHaveBeenCalled()
   })
 })

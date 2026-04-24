@@ -6,7 +6,7 @@
 
 import { NextResponse } from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
-import { createPasskeyRegistrationOptions, pendingChallenges } from '@features/auth/server/passkeyRegistration.js'
+import { createPasskeyRegistrationOptions } from '@features/auth/server/passkeyRegistration.js'
 
 export async function POST(request) {
   const { userId, error: authError } = await requireAuth(request)
@@ -15,5 +15,3 @@ export async function POST(request) {
   const result = await createPasskeyRegistrationOptions({ request, userId })
   return NextResponse.json(result.body, { status: result.status })
 }
-
-export { pendingChallenges }
