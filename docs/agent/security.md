@@ -15,6 +15,7 @@
 - Keep session cookies and token handling explicit and bounded.
 - Preserve existing auth failure behavior unless the change is deliberate.
 - Keep unauthenticated account-discovery endpoints minimal; return only the next allowed auth step, not internal account state.
+- Keep WebAuthn challenges server-stored or otherwise one-time consumable; signed client state alone is not enough for replay safety.
 
 ## High-Risk Areas
 
@@ -42,6 +43,7 @@
 - Keep secret material server-only and short-lived where possible.
 - Do not expose matched account existence or exact SSO provider identity to unauthenticated callers.
 - Require proof of email possession before creating durable signup accounts or other unauthenticated account state.
+- Treat passkey assertion verification as a full sign-in path: verify RP/origin binding, user verification flags, signature validity, and sign-count monotonicity before issuing a session.
 
 ## Anti-Patterns
 

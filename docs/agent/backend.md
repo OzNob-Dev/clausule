@@ -15,6 +15,7 @@
 - Prefer explicit failure responses over silent fallback behavior.
 - Keep server-only integrations isolated from client-facing modules.
 - For signup or recovery flows, verify ownership of the target email before committing durable account creation.
+- For passkey sign-in, keep challenge issuance and assertion verification in server modules and reuse the standard recoverable-session path.
 
 ## Reliability
 

@@ -1,51 +1,17 @@
-import crypto from 'node:crypto'
 import { insert } from '@api/_lib/supabase.js'
 import { findProfileById } from './accountRepository.js'
 import { consumePasskeyChallenge, storePasskeyChallenge } from './passkeyChallenge.js'
-
-const RP_NAME = process.env.NEXT_PUBLIC_RP_NAME ?? 'Clausule'
-const CHALLENGE_TTL_MS = 5 * 60 * 1000
-
-export function getRpId(request) {
-  if (process.env.NEXT_PUBLIC_RP_ID) return process.env.NEXT_PUBLIC_RP_ID
-  const host = request.headers.get('host') ?? 'localhost'
-  return host.split(':')[0]
-}
-
-export function getExpectedOrigin(request) {
-  if (process.env.NEXT_PUBLIC_ORIGIN) return process.env.NEXT_PUBLIC_ORIGIN
-  const host = request.headers.get('host') ?? 'localhost:3000'
-  const proto = /^(localhost|127\.|0\.0\.0\.0)/.test(host) ? 'http' : 'https'
-  return `${proto}://${host}`
-}
-
-function signChallenge(challengeBytes) {
-  const secret = process.env.WEBAUTHN_CHALLENGE_SECRET ?? ''
-  const b64 = challengeBytes.toString('base64url')
-  const sig = crypto.createHmac('sha256', secret).update(b64).digest('base64url')
-  return `${b64}.${sig}`
-}
-
-function verifySignedChallenge(signedChallenge) {
-  const dotIdx = signedChallenge.lastIndexOf('.')
-  if (dotIdx === -1) return null
-  const b64 = signedChallenge.slice(0, dotIdx)
-  const sig = signedChallenge.slice(dotIdx + 1)
-  const expected = crypto
-    .createHmac('sha256', process.env.WEBAUTHN_CHALLENGE_SECRET ?? '')
-    .update(b64)
-    .digest('base64url')
-  const valid = sig.length === expected.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))
-  return valid ? b64 : null
-}
-
-function fromB64url(str) {
-  return Buffer.from(str.replace(/-/g, '+').replace(/_/g, '/'), 'base64')
-}
-
-function jsonError(error, status = 400) {
-  return { body: { error }, status }
-}
+import {
+  fromB64url,
+  getChallengeTtlMs,
+  getExpectedOrigin,
+  getRpId,
+  getRpName,
+  jsonError,
+  signChallenge,
+  verifySignedChallenge,
+} from './passkeyShared.js'
+import crypto from 'node:crypto'
 
 export async function createPasskeyRegistrationOptions({ request, userId }) {
   const rpId = getRpId(request)
@@ -55,7 +21,7 @@ export async function createPasskeyRegistrationOptions({ request, userId }) {
 
   const challengeBytes = crypto.randomBytes(32)
   const signedChallenge = signChallenge(challengeBytes)
-  const expiresAt = new Date(Date.now() + CHALLENGE_TTL_MS).toISOString()
+  const expiresAt = new Date(Date.now() + getChallengeTtlMs()).toISOString()
 
   const { error: challengeError } = await storePasskeyChallenge({
     userId,
@@ -74,7 +40,7 @@ export async function createPasskeyRegistrationOptions({ request, userId }) {
   return {
     body: {
       options: {
-        rp: { id: rpId, name: RP_NAME },
+        rp: { id: rpId, name: getRpName() },
         user: {
           id: Buffer.from(userId).toString('base64url'),
           name: profile.email,

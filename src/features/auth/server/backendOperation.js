@@ -58,6 +58,15 @@ export function authAttemptOperationKey({ operationType, email, code }) {
   return `${operationType}:${normalizeEmail(email)}:${authAttemptDigest(email, code)}`
 }
 
+export function passkeyAttemptOperationKey({ credentialId, signedChallenge }) {
+  const credential = String(credentialId ?? '').trim()
+  const digest = crypto
+    .createHmac('sha256', authAttemptKeySecret())
+    .update(`${credential}:${String(signedChallenge ?? '').trim()}`)
+    .digest('hex')
+  return `login_passkey:${credential}:${digest}`
+}
+
 export async function beginBackendOperation({ operationKey, operationType, email = null, userId = null }) {
   const { data, error } = await rpc('begin_backend_operation', {
     p_operation_key: operationKey,

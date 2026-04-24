@@ -19,6 +19,7 @@
 
 - Cover screen behavior, route behavior, and critical flows.
 - Preserve accessibility assertions where they already exist.
+- For auth hardening, cover both service-level verification logic and route-level replay/session recovery behavior.
 
 ## Repo Anchors
 
