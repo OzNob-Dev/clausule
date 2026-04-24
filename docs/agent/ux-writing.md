@@ -12,7 +12,9 @@
 - Write clear comms that are easy to scan and hard to misread.
 - Avoid jargon unless the audience already uses it.
 - Prefer casual, natural wording over polished corporate language.
+- When writing content, prefer warm, approachable prose.
 - Avoid buzzwords, hype, and consultant-style phrasing.
+- Do not use em dashes.
 
 ## Empty States
 
@@ -27,6 +29,7 @@
 - Human
 - Direct
 - Casual
+- Warm
 - Not cute at the expense of clarity
 
 ## Review Checks

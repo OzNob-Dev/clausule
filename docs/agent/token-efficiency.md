@@ -12,6 +12,7 @@
 - Avoid repeating the user’s request.
 - Prefer concrete outputs over commentary.
 - Prefer plain, casual wording over buzzwords or overly polished phrasing.
+- Do not use em dashes.
 
 ## Code Output
 
