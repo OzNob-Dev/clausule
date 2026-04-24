@@ -14,8 +14,8 @@
 - Never expose server-only secrets to client code.
 - Keep session cookies and token handling explicit and bounded.
 - Preserve existing auth failure behavior unless the change is deliberate.
-- Keep unauthenticated account-discovery endpoints minimal; return only the next allowed auth step, not internal account state.
-- Keep WebAuthn challenges server-stored or otherwise one-time consumable; signed client state alone is not enough for replay safety.
+- Keep unauthenticated account-discovery surfaces minimal and generic.
+- Keep one-time auth challenges server-stored or otherwise one-time consumable.
 
 ## High-Risk Areas
 
@@ -37,13 +37,11 @@
 
 ## Must Do
 
-- Review `src/app/api/_lib/auth.js` before changing cookies or token logic.
-- Treat `src/features/auth/server/*` and `src/features/mfa/*` as security-sensitive.
-- Check whether a change could expose profile, feedback, or entry content.
 - Keep secret material server-only and short-lived where possible.
-- Do not expose matched account existence or exact SSO provider identity to unauthenticated callers.
-- Require proof of email possession before creating durable signup accounts or other unauthenticated account state.
-- Treat passkey assertion verification as a full sign-in path: verify RP/origin binding, user verification flags, signature validity, and sign-count monotonicity before issuing a session.
+- Require proof of identity before creating durable unauthenticated account state.
+- Verify RP/origin binding, user verification, signature validity, and replay counters before issuing a passkey session.
+- Ensure one auth method cannot silently bypass another required method.
+- Keep canonical account-state rules consistent across login, refresh, bootstrap, and protected endpoints.
 
 ## Anti-Patterns
 
@@ -51,3 +49,4 @@
 - Using client-side checks for access control
 - Expanding cookie scope without reason
 - Returning internal auth state to the browser
+- Letting signup, checkout, or recovery flows mint sessions for existing accounts without checking allowed auth methods

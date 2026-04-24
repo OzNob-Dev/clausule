@@ -10,6 +10,7 @@
 - Do not log secrets, tokens, or unnecessary PII.
 - Keep error messages specific enough for debugging and safe for users.
 - Add tracing or metrics only when they solve a real operational gap.
+- Keep client-facing errors stable even when server logs stay detailed.
 
 ## Good Signals
 
@@ -17,10 +18,17 @@
 - Validation failures
 - Dependency failures
 - Unexpected empty states
+- Replay detection
+- Cleanup failures
 
-## Repo Anchors
+## Watch Fors
 
-- `src/app/api/_lib/auth.js` for auth state and cookie handling
-- `src/app/api/_lib/supabase.js` for database request failures
-- `src/features/brag/server/appFeedback.js` for feedback send/list paths
-- `src/app/api/ai/draft-summary/route.js` for upstream failures
+- Raw upstream or database errors leaking into client responses.
+- Logs that mix failure classes, making incidents hard to group.
+- Silent cleanup failures for challenge, replay, token, or limiter state.
+
+## Preferred Techniques
+
+- Use stable log prefixes or fields by subsystem and failure class.
+- Distinguish validation, dependency, authorization, and data-consistency failures.
+- Log enough context to debug retries and replay behavior without logging secrets.

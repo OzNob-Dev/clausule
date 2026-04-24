@@ -16,9 +16,14 @@
 - The change is ambiguous or unbounded.
 - A risky path is not explained.
 - Tests do not cover the changed behavior where practical.
+- Auth, payment, or identity changes rely on app-only assumptions instead of explicit invariants.
+- One sign-in path can bypass another required sign-in method.
+- Side effects can fire before durable state is committed.
+- Retry or replay behavior is unclear, unbounded, or untested.
 
-## Repo Anchors
+## Focus Areas
 
-- API changes: verify `route.test.js` coverage
-- Screen changes: verify `*.test.jsx` coverage
-- Migration changes: verify dependent route and feature tests
+- Canonical source of truth for identity and account state.
+- DB-enforced ownership, uniqueness, and one-time consumption.
+- Replay-safe session issuance and conflict-safe writes.
+- Distributed abuse controls and bounded external calls.

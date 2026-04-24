@@ -21,10 +21,16 @@
 - Preserve accessibility assertions where they already exist.
 - For auth hardening, cover both service-level verification logic and route-level replay/session recovery behavior.
 
-## Repo Anchors
+## Watch Fors
 
-- `src/features/brag/BragEmployeeScreen.test.jsx`
-- `src/features/brag/components/EntryComposer.test.jsx`
-- `src/app/api/auth/verify-code/route.test.js`
-- `src/app/api/feedback/route.test.js`
-- `e2e/auth-and-brag.spec.js`
+- Route tests that only cover happy paths for auth, recovery, or payments.
+- Migration tests that only assert SQL text shape instead of runtime semantics.
+- Missing coverage for partial failures, replay attempts, duplicate submissions, and cleanup behavior.
+- Missing coverage for conflicting auth methods or inconsistent account-state checks.
+
+## Preferred Techniques
+
+- Test both first success and retry-after-partial-failure behavior.
+- Add regression tests for one-time challenge consumption and duplicate-submit rejection.
+- Cover durable-before-side-effect ordering and conflict-safe retries.
+- Treat malformed WebAuthn, token, and callback payloads as required security tests.

@@ -1,60 +1,29 @@
 # Backend
 
-- API routes live in `src/app/api/*`.
-- Shared route helpers live in `src/app/api/_lib`.
-- Feature server logic lives in `src/features/*/server`.
+- Keep handlers thin and push business rules into server-side services.
+- Treat auth, input validation, rate limits, and permissions as boundary concerns.
+- Normalize and validate all request data before side effects.
+- Keep response shapes stable unless contract changes are deliberate.
 
-## Rules
+## Watch Fors
 
-- Require auth before touching user-scoped data.
-- Validate and normalize request data before side effects.
-- Return consistent JSON shapes and HTTP status codes.
-- Keep route handlers thin; move business logic into server modules.
-- Log only what is needed for debugging and never leak secrets.
-- Treat auth, rate limits, and permission checks as boundary concerns, not business logic.
-- Prefer explicit failure responses over silent fallback behavior.
-- Keep server-only integrations isolated from client-facing modules.
-- For signup or recovery flows, verify ownership of the target email before committing durable account creation.
-- For passkey sign-in, keep challenge issuance and assertion verification in server modules and reuse the standard recoverable-session path.
+- Auth-method bypasses where one sign-in path can silently skip another required factor.
+- Multi-step writes that acknowledge success before durable state is complete.
+- Session issuance paths that are not replay-safe after a partial failure.
+- Existing-account reuse in signup or checkout flows without verifying allowed auth state.
+- Server helpers that drift into client concerns or UI shaping.
 
-## Reliability
+## Preferred Techniques
 
-- Make mutations idempotent where practical.
-- Use clear retry guidance for throttled or transient failures.
-- Abort long-running requests when the client disconnects.
-- Put multi-step consistency-critical writes behind DB functions or other atomic boundaries instead of acknowledging partial success.
-
-## Patterns
-
-- `GET` reads data
-- `POST` creates data
-- `PATCH` updates data
-- `DELETE` removes data
+- Use staged identity proof: verify ownership first, then decide the next allowed auth step.
+- Use one recoverable session path for all login-like entrypoints.
+- Keep a single canonical account-state check and reuse it everywhere.
+- Make write flows idempotent or explicitly conflict-safe.
+- Isolate privileged database access behind a small server-only layer.
 
 ## Review Triggers
 
-- Auth or session changes
-- New external integrations
-- Non-trivial input validation
-- Data-shaping or pagination logic
-- Any route that writes data
-
-## Good Fits
-
-- `src/app/api/feedback/route.js`
-- `src/app/api/brag/entries/[id]/route.js`
-- `src/features/brag/server/entries.js`
-
-## Must Do
-
-- Check `src/app/api/_lib/auth.js` before changing any auth behavior.
-- Keep `src/app/api/_lib/supabase.js` the only path to service-role database access.
-- Verify user-scoped routes against `requireAuth` and the matching tests.
-- Keep response bodies compatible with current callers unless migration is deliberate.
-
-## Anti-Patterns
-
-- Putting business rules directly in route files
-- Returning raw database errors to clients
-- Adding silent retries around writes
-- Mixing client-only code into server helpers
+- Any auth, session, signup, recovery, payment, or MFA change.
+- Any write path with retries, side effects, or background cleanup.
+- Any new external dependency or long-running network call.
+- Any route that changes authorization scope, response shape, or durable state.
