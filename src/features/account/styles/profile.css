@@ -61,7 +61,8 @@
   border: 1.5px solid rgba(60, 45, 35, 0.12);
   background: transparent;
   color: #2A221A;
-  font: inherit;
+  font-size: 13px;
+  font-family: var(--font-sans);
 }
 
 .profile-input:focus-visible {

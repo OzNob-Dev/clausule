@@ -3,21 +3,13 @@
 import BragRail from '@features/brag/components/BragRail'
 import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
-import { cn } from '@shared/utils/cn'
 import { useProfileForm } from '@features/account/hooks/useProfileForm'
 import { useProfileSave } from '@features/account/hooks/useProfileSave'
 import { useProfileVerification } from '@features/account/hooks/useProfileVerification'
 import { VerifyChangesModal } from '@features/account/components/VerifyChangesModal'
 import '@features/brag/styles/brag-shell.css'
-import {
-  pageClass, mainClass, innerClass,
-  headingClass, subheadingClass, dividerClass,
-  cardClass, sectionClass, sectionTitleClass, fieldsClass,
-  labelClass, inputClass, helpClass,
-  alertClass, alertErrorClass, alertSuccessClass,
-  actionsClass, actionsBtnClass, btnClass, btnGhostClass, btnPrimaryClass,
-  getFieldClass,
-} from '@features/account/styles'
+import '@features/brag/styles/brag-settings-core.css'
+import '@features/account/styles/profile.css'
 
 export default function ProfileScreen() {
   const profile  = useProfileStore((s) => s.profile)
@@ -49,7 +41,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <div className={cn(pageClass, 'be-page')}>
+    <div className="be-page">
       <BragRail activePage="profile" />
       <BragIdentitySidebar
         avatarInitials={initials}
@@ -62,70 +54,70 @@ export default function ProfileScreen() {
         statusSub={current.mobile || 'Mobile not set'}
       />
 
-      <main className={mainClass} aria-labelledby="profile-page-title">
-        <div className={innerClass}>
-          <h1 id="profile-page-title" className={headingClass}>Personal details</h1>
-          <p className={subheadingClass}>Manage the identity, contact, and work details connected to your account.</p>
-          <div className={dividerClass} />
+      <main className="be-main" aria-labelledby="profile-page-title">
+        <div className="be-inner">
+          <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
+          <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>
+          <div className="bss-divider" />
 
-          <form className={cardClass} onSubmit={onSubmit}>
-            <div className={sectionClass}>
-              <div className={sectionTitleClass}>Identity</div>
-              <div className={fieldsClass}>
-                <div className={getFieldClass()}>
-                  <label className={labelClass} htmlFor="firstName">First name</label>
-                  <input id="firstName" className={inputClass} value={form.firstName} autoComplete="given-name"
+          <form className="profile-card" onSubmit={onSubmit}>
+            <div className="profile-section">
+              <div className="profile-section-title">Identity</div>
+              <div className="profile-fields">
+                <div className="profile-field">
+                  <label className="profile-label" htmlFor="firstName">First name</label>
+                  <input id="firstName" className="profile-input" value={form.firstName} autoComplete="given-name"
                     onChange={(e) => setForm((s) => ({ ...s, firstName: e.target.value }))} required />
                 </div>
-                <div className={getFieldClass()}>
-                  <label className={labelClass} htmlFor="lastName">Last name</label>
-                  <input id="lastName" className={inputClass} value={form.lastName} autoComplete="family-name"
+                <div className="profile-field">
+                  <label className="profile-label" htmlFor="lastName">Last name</label>
+                  <input id="lastName" className="profile-input" value={form.lastName} autoComplete="family-name"
                     onChange={(e) => setForm((s) => ({ ...s, lastName: e.target.value }))} />
                 </div>
               </div>
             </div>
 
-            <div className={sectionClass}>
-              <div className={sectionTitleClass}>Contact</div>
-              <div className={fieldsClass}>
-                <div className={getFieldClass(true)}>
-                  <label className={labelClass} htmlFor="email">Email</label>
-                  <input id="email" className={inputClass} type="email" value={form.email} autoComplete="email"
+            <div className="profile-section">
+              <div className="profile-section-title">Contact</div>
+              <div className="profile-fields">
+                <div className="profile-field profile-field--full">
+                  <label className="profile-label" htmlFor="email">Email</label>
+                  <input id="email" className="profile-input" type="email" value={form.email} autoComplete="email"
                     onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))} required />
-                  <p className={helpClass}>{emailWarning}</p>
+                  <p className="profile-help">{emailWarning}</p>
                 </div>
-                <div className={getFieldClass(true)}>
-                  <label className={labelClass} htmlFor="mobile">Mobile</label>
-                  <input id="mobile" className={inputClass} type="tel" value={form.mobile} autoComplete="tel"
+                <div className="profile-field profile-field--full">
+                  <label className="profile-label" htmlFor="mobile">Mobile</label>
+                  <input id="mobile" className="profile-input" type="tel" value={form.mobile} autoComplete="tel"
                     onChange={(e) => setForm((s) => ({ ...s, mobile: e.target.value }))} required />
-                  <p className={helpClass}>Use the number you want tied to account recovery and contact updates.</p>
+                  <p className="profile-help">Use the number you want tied to account recovery and contact updates.</p>
                 </div>
               </div>
             </div>
 
-            <div className={sectionClass}>
-              <div className={sectionTitleClass}>Work profile</div>
-              <div className={fieldsClass}>
-                <div className={getFieldClass()}>
-                  <label className={labelClass} htmlFor="jobTitle">Job title</label>
-                  <input id="jobTitle" className={inputClass} value={form.jobTitle} autoComplete="organization-title"
+            <div className="profile-section">
+              <div className="profile-section-title">Work profile</div>
+              <div className="profile-fields">
+                <div className="profile-field">
+                  <label className="profile-label" htmlFor="jobTitle">Job title</label>
+                  <input id="jobTitle" className="profile-input" value={form.jobTitle} autoComplete="organization-title"
                     onChange={(e) => setForm((s) => ({ ...s, jobTitle: e.target.value }))} />
                 </div>
-                <div className={getFieldClass()}>
-                  <label className={labelClass} htmlFor="department">Department</label>
-                  <input id="department" className={inputClass} value={form.department} autoComplete="organization"
+                <div className="profile-field">
+                  <label className="profile-label" htmlFor="department">Department</label>
+                  <input id="department" className="profile-input" value={form.department} autoComplete="organization"
                     onChange={(e) => setForm((s) => ({ ...s, department: e.target.value }))} />
                 </div>
               </div>
             </div>
 
-            {error   && <div className={cn(alertClass, alertErrorClass)}   role="alert">{error}</div>}
-            {success && <div className={cn(alertClass, alertSuccessClass)} role="status">{success}</div>}
+            {error   && <div className="profile-alert profile-alert--error"   role="alert">{error}</div>}
+            {success && <div className="profile-alert profile-alert--success" role="status">{success}</div>}
 
-            <div className={actionsClass}>
-              <button type="button" className={cn(btnClass, btnGhostClass, actionsBtnClass)}
+            <div className="profile-actions">
+              <button type="button" className="profile-btn profile-btn--ghost"
                 onClick={resetForm} disabled={!dirty || saving}>Reset</button>
-              <button type="submit" className={cn(btnClass, btnPrimaryClass, actionsBtnClass)}
+              <button type="submit" className="profile-btn profile-btn--primary"
                 disabled={!dirty || saving || !baseReady}>{saving ? 'Saving...' : 'Save changes'}</button>
             </div>
           </form>
