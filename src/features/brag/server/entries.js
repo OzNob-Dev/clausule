@@ -26,8 +26,8 @@ function entrySelect() {
 }
 
 export async function listEntries({ userId, searchParams }) {
-  const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10), 100)
-  const offset = parseInt(searchParams.get('offset') ?? '0', 10)
+  const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10) || 20, 100)
+  const offset = Math.max(0, parseInt(searchParams.get('offset') ?? '0', 10) || 0)
   const query = new URLSearchParams({
     user_id: `eq.${userId}`,
     order: 'entry_date.desc,created_at.desc',
@@ -48,6 +48,8 @@ export async function createEntry({ userId, body }) {
   const visible = body.visible_to_manager !== false
 
   if (!title) return { body: { error: 'title is required' }, status: 400 }
+  if (title.length > 500) return { body: { error: 'title is too long' }, status: 400 }
+  if (entryBody.length > 10_000) return { body: { error: 'body is too long' }, status: 400 }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(entryDate)) return { body: { error: 'entry_date must be YYYY-MM-DD' }, status: 400 }
 
   const evidenceTypes = validEvidenceTypes(body.evidence_types)
@@ -90,7 +92,10 @@ export async function updateEntry({ userId, entryId, body }) {
   const patch = {}
   if (body.title !== undefined) patch.title = String(body.title).trim()
   if (body.body !== undefined) patch.body = String(body.body).trim() || null
-  if (body.entry_date !== undefined) patch.entry_date = body.entry_date
+  if (body.entry_date !== undefined) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(body.entry_date)) return { body: { error: 'entry_date must be YYYY-MM-DD' }, status: 400 }
+    patch.entry_date = body.entry_date
+  }
   if (body.visible_to_manager !== undefined) patch.visible_to_manager = Boolean(body.visible_to_manager)
 
   if (Array.isArray(body.evidence_types)) {
@@ -101,6 +106,8 @@ export async function updateEntry({ userId, entryId, body }) {
   }
 
   if (body.title !== undefined && !patch.title) return { body: { error: 'title cannot be empty' }, status: 400 }
+  if (patch.title?.length > 500) return { body: { error: 'title is too long' }, status: 400 }
+  if (patch.body?.length > 10_000) return { body: { error: 'body is too long' }, status: 400 }
 
   const { data, error } = await rpc('update_brag_entry_with_evidence', {
     p_entry_id: entryId,

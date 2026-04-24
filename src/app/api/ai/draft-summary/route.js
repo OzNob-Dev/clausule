@@ -89,5 +89,10 @@ export async function POST(request) {
   }
 
   const data = await res.json()
-  return NextResponse.json({ text: data.content[0].text })
+  const text = data?.content?.[0]?.text
+  if (!text) {
+    console.error('[draft-summary] unexpected Anthropic response shape:', JSON.stringify(data))
+    return NextResponse.json({ error: 'AI request failed' }, { status: 502 })
+  }
+  return NextResponse.json({ text })
 }

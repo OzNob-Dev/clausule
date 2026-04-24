@@ -3,9 +3,11 @@ import { generateBase32Secret, verifyTotp } from '@api/_lib/totp.js'
 import { findProfileById } from './accountRepository.js'
 
 export async function createTotpSetup({ userId }) {
-  let email = 'user'
-  const { profile } = await findProfileById(userId, 'email')
-  if (profile?.email) email = profile.email
+  const { profile, error: profileError } = await findProfileById(userId, 'email')
+  if (profileError || !profile?.email) {
+    return { body: { error: 'Failed to load profile' }, status: 500 }
+  }
+  const email = profile.email
 
   const secret = generateBase32Secret()
   const uri = `otpauth://totp/Clausule:${encodeURIComponent(email)}?secret=${secret}&issuer=Clausule&algorithm=SHA1&digits=6&period=30`
