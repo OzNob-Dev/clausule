@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { totpCode } from '@api/_lib/totp.js'
 import { createPersistentSession } from '@api/_lib/session.js'
-import { select } from '@api/_lib/supabase.js'
+import { rpc, select } from '@api/_lib/supabase.js'
 import { POST } from './route.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
+  rpc: vi.fn(),
   select: vi.fn(),
 }))
 
@@ -28,6 +29,35 @@ describe('totp verify route', () => {
     vi.clearAllMocks()
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-04-19T10:00:00Z'))
+    rpc.mockImplementation(async (fn) => {
+      if (fn === 'begin_backend_operation') {
+        return {
+          data: [{
+            status: 'started',
+            status_code: 200,
+            user_id: null,
+            session_email: null,
+            session_role: null,
+            response_body: null,
+          }],
+          error: null,
+        }
+      }
+      if (fn === 'complete_backend_operation') {
+        return {
+          data: [{
+            status: 'completed',
+            status_code: 200,
+            user_id: 'user-1',
+            session_email: 'ada@example.com',
+            session_role: 'employee',
+            response_body: { ok: true, role: 'employee' },
+          }],
+          error: null,
+        }
+      }
+      return { data: null, error: null }
+    })
   })
 
   it('loads the profile case-insensitively and accepts a valid TOTP', async () => {
@@ -43,5 +73,34 @@ describe('totp verify route', () => {
       role: 'employee',
       authMethod: 'totp',
     })
+  })
+
+  it('replays a completed TOTP login after session creation fails once', async () => {
+    select.mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', totp_secret: SECRET, is_active: true, is_deleted: false }] })
+    createPersistentSession
+      .mockRejectedValueOnce(new Error('session failed'))
+      .mockResolvedValueOnce({ accessToken: 'access-token', refreshToken: 'refresh-token' })
+
+    const first = await POST(request())
+    const firstBody = await first.json()
+
+    rpc.mockImplementationOnce(async () => ({
+      data: [{
+        status: 'completed',
+        status_code: 200,
+        user_id: 'user-1',
+        session_email: 'ada@example.com',
+        session_role: 'employee',
+        response_body: { ok: true, role: 'employee' },
+      }],
+      error: null,
+    }))
+
+    const second = await POST(request())
+
+    expect(first.status).toBe(500)
+    expect(firstBody).toEqual({ error: 'Failed to create session' })
+    expect(second.status).toBe(200)
+    expect(select).toHaveBeenCalledTimes(1)
   })
 })

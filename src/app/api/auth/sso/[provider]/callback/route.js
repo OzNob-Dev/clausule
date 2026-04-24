@@ -5,9 +5,10 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createPersistentSession, appendSessionCookies } from '@api/_lib/session.js'
 import { clearAuthCookies } from '@api/_lib/auth.js'
+import { beginBackendOperation } from '@features/auth/server/backendOperation.js'
 import { resolveSsoCallback } from '@features/auth/server/ssoCallback.js'
+import { issueRecoverableSession } from '@features/auth/server/recoverableSession.js'
 
 export async function GET(request, { params }) {
   const { provider } = await params
@@ -42,6 +43,35 @@ export async function POST(request, { params }) {
 
 async function handleCallback({ request, provider, code, state, appleUser }) {
   const origin = new URL(request.url).origin
+  const operationKey = `sso:${provider}:${state}`
+  const operation = await beginBackendOperation({
+    operationKey,
+    operationType: 'sso',
+  })
+  if (operation.error) {
+    console.error(`[sso/${provider}] begin operation:`, operation.error)
+    return redirect(origin, 'account_error')
+  }
+  if (operation.replay) {
+    return issueRecoverableSession({
+      operation,
+      operationKey,
+      operationType: 'sso',
+      email: operation.replay.session.email,
+      userId: operation.replay.session.userId,
+      body: operation.replay.body,
+      status: operation.replay.status,
+      session: operation.replay.session,
+      failureMessage: 'Failed to create session',
+      successFactory: ({ body }) => {
+        const response = NextResponse.redirect(`${origin}${body.destination}`)
+        clearSsoState(response)
+        return response
+      },
+      failureFactory: () => redirect(origin, 'account_error'),
+    })
+  }
+
   const result = await resolveSsoCallback({
     origin,
     provider,
@@ -55,15 +85,23 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
   if (result.type === 'signup') return redirectToSignup(origin, result.provider, result.userInfo)
   if (result.type === 'error') return redirect(origin, result.error)
 
-  try {
-    const res = NextResponse.redirect(`${origin}${result.destination}`)
-    clearSsoState(res)
-    const session = await createPersistentSession(result.session)
-    return appendSessionCookies(res, session)
-  } catch (err) {
-    console.error(`[sso/${provider}] session creation:`, err.message)
-    return redirect(origin, 'account_error')
-  }
+  return issueRecoverableSession({
+    operation,
+    operationKey,
+    operationType: 'sso',
+    email: result.session.email,
+    userId: result.session.userId,
+    body: { destination: result.destination },
+    status: 302,
+    session: result.session,
+    failureMessage: 'Failed to create session',
+    successFactory: ({ body }) => {
+      const response = NextResponse.redirect(`${origin}${body.destination}`)
+      clearSsoState(response)
+      return response
+    },
+    failureFactory: () => redirect(origin, 'account_error'),
+  })
 }
 
 function parseAppleUser(userParam) {

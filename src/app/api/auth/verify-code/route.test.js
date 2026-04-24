@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { rpc, select } from '@api/_lib/supabase.js'
+import { beginBackendOperation, completeBackendOperation } from '@features/auth/server/backendOperation.js'
 import { POST } from './route.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
@@ -11,6 +12,11 @@ vi.mock('@api/_lib/supabase.js', () => ({
 vi.mock('@api/_lib/session.js', () => ({
   createPersistentSession: vi.fn(async () => ({ accessToken: 'access-token', refreshToken: 'refresh-token' })),
   appendSessionCookies: vi.fn((response) => response),
+}))
+
+vi.mock('@features/auth/server/backendOperation.js', () => ({
+  beginBackendOperation: vi.fn(),
+  completeBackendOperation: vi.fn(),
 }))
 
 function request(email = 'Ada@Example.com', code = '123456') {
@@ -24,6 +30,21 @@ function request(email = 'Ada@Example.com', code = '123456') {
 describe('verify-code route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    beginBackendOperation.mockResolvedValue({
+      row: {
+        status: 'started',
+        status_code: 200,
+        user_id: null,
+        session_email: null,
+        session_role: null,
+        response_body: null,
+      },
+      replay: null,
+    })
+    completeBackendOperation.mockResolvedValue({ data: [{ status: 'completed' }], error: null })
+    rpc.mockImplementation(async (fn) => {
+      return { data: null, error: null }
+    })
   })
 
   it('loads the profile case-insensitively after a valid OTP', async () => {
@@ -57,5 +78,39 @@ describe('verify-code route', () => {
     expect(data).toEqual({ error: 'Invalid or expired code - request a new one' })
     expect(select).not.toHaveBeenCalled()
     expect(createPersistentSession).not.toHaveBeenCalled()
+  })
+
+  it('replays a completed OTP login after session creation fails once', async () => {
+    select.mockResolvedValue({ data: [{ id: 'user-1', role: 'employee', is_active: true, is_deleted: false }] })
+    createPersistentSession
+      .mockRejectedValueOnce(new Error('session failed'))
+      .mockResolvedValueOnce({ accessToken: 'access-token', refreshToken: 'refresh-token' })
+    rpc.mockResolvedValueOnce({ data: [{ id: 'otp-1' }], error: null })
+
+    const first = await POST(request())
+    const firstBody = await first.json()
+
+    beginBackendOperation.mockImplementation(async () => ({
+      row: {
+        status: 'completed',
+        status_code: 200,
+        user_id: 'user-1',
+        session_email: 'ada@example.com',
+        session_role: 'employee',
+        response_body: { ok: true, role: 'employee' },
+      },
+      replay: {
+        body: { ok: true, role: 'employee' },
+        status: 200,
+        session: { userId: 'user-1', email: 'ada@example.com', role: 'employee' },
+      },
+    }))
+
+    const second = await POST(request())
+
+    expect(first.status).toBe(500)
+    expect(firstBody).toEqual({ error: 'Failed to create session' })
+    expect(second.status).toBe(200)
+    expect(select).toHaveBeenCalledTimes(1)
   })
 })

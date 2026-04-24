@@ -24,10 +24,10 @@
 
 import { NextResponse }                     from 'next/server'
 import { requireAuth }                      from '@api/_lib/auth.js'
-import { appendSessionCookies,
-         createPersistentSession }          from '@api/_lib/session.js'
 import { createSubscription,
          paymentSystemConfigured }          from '@features/payments/server/createSubscription.js'
+import { issueRecoverableSession }          from '@features/auth/server/recoverableSession.js'
+import { subscribeOperationKey, subscribeOperationType } from '@features/auth/server/backendOperation.js'
 
 export async function POST(request) {
   if (!paymentSystemConfigured()) {
@@ -35,20 +35,29 @@ export async function POST(request) {
   }
 
   const { userId: authedId, error: authError } = requireAuth(request)
+  const body = await request.json().catch(() => ({}))
 
   try {
     const result = await createSubscription({
-      body: await request.json().catch(() => ({})),
+      body,
       authedId: authError ? null : authedId,
     })
     if (!result.session) return NextResponse.json(result.body, { status: result.status })
-
-    const response = NextResponse.json(result.body)
-    const session = await createPersistentSession(result.session)
-    return appendSessionCookies(response, session)
+    return issueRecoverableSession({
+      operationKey: subscribeOperationKey({ authedId: authError ? null : authedId, email: body.email, paymentMethodId: body.paymentMethodId }),
+      operationType: subscribeOperationType(),
+      email: result.session.email,
+      userId: result.session.userId,
+      body: result.body,
+      status: result.status,
+      session: result.session,
+      failureMessage: 'Failed to create session',
+    })
   } catch (err) {
     if (err.log) console.error(...err.log)
-    console.error('[subscribe] Stripe error:', err.message)
-    return NextResponse.json({ error: err.message }, { status: err.status ?? 500 })
+    console.error('[subscribe] error:', err)
+    const status = err.status === 409 ? 409 : err.status === 400 ? 400 : 500
+    const message = status === 409 ? 'Active subscription already exists' : status === 400 ? 'Invalid subscription request' : 'Failed to create subscription'
+    return NextResponse.json({ error: message }, { status })
   }
 }

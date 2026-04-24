@@ -39,7 +39,7 @@ export function registerOperationKey({ email }) {
 
 export function subscribeOperationKey({ authedId, email, paymentMethodId }) {
   const owner = authedId || normalizeEmail(email)
-  return `subscribe:${owner}:${String(paymentMethodId ?? '').trim()}:individual:usd:500:month`
+  return `subscribe:${owner}:individual:usd:500:month`
 }
 
 export async function beginBackendOperation({ operationKey, operationType, email = null, userId = null }) {

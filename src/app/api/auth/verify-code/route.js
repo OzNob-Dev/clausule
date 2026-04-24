@@ -18,10 +18,10 @@
  */
 
 import { NextResponse }                    from 'next/server'
-import { appendSessionCookies,
-         createPersistentSession }         from '@api/_lib/session.js'
 import { RateLimiter }                     from '@api/_lib/rate-limit.js'
+import { beginBackendOperation }          from '@features/auth/server/backendOperation.js'
 import { verifyEmailOtpLogin }             from '@features/auth/server/loginVerification.js'
+import { issueRecoverableSession }         from '@features/auth/server/recoverableSession.js'
 
 // 5 attempts per 10 minutes per email.
 const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
@@ -44,16 +44,41 @@ export async function POST(request) {
     )
   }
 
+  const operationKey = `login:otp:${email}:${code}`
+  const operation = await beginBackendOperation({
+    operationKey,
+    operationType: 'login_otp',
+    email,
+  })
+  if (operation.error) {
+    console.error('[verify-code] begin operation error:', operation.error)
+    return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
+  }
+  if (operation.replay) {
+    return issueRecoverableSession({
+      operation,
+      operationKey,
+      operationType: 'login_otp',
+      email,
+      body: operation.replay.body,
+      status: operation.replay.status,
+      session: operation.replay.session,
+      failureMessage: 'Failed to create session',
+    })
+  }
+
   const result = await verifyEmailOtpLogin({ email, code })
   if (result.log) console.error(...result.log)
   if (!result.session) return NextResponse.json(result.body, { status: result.status })
 
-  try {
-    const response = NextResponse.json(result.body)
-    const session = await createPersistentSession(result.session)
-    return appendSessionCookies(response, session)
-  } catch (err) {
-    console.error('[verify-code] refresh token insert failed:', err)
-    return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
-  }
+  return issueRecoverableSession({
+    operation,
+    operationKey,
+    operationType: 'login_otp',
+    email,
+    body: result.body,
+    status: result.status,
+    session: result.session,
+    failureMessage: 'Failed to create session',
+  })
 }

@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { select } from '@api/_lib/supabase.js'
+import { rpc, select } from '@api/_lib/supabase.js'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { GET } from './route.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
+  rpc: vi.fn(),
   select: vi.fn(),
 }))
 
@@ -47,6 +48,35 @@ describe('Google SSO callback', () => {
     process.env.GOOGLE_CLIENT_ID = 'google-client'
     process.env.GOOGLE_CLIENT_SECRET = 'google-secret'
     mockGoogleProfile()
+    rpc.mockImplementation(async (fn) => {
+      if (fn === 'begin_backend_operation') {
+        return {
+          data: [{
+            status: 'started',
+            status_code: 200,
+            user_id: null,
+            session_email: null,
+            session_role: null,
+            response_body: null,
+          }],
+          error: null,
+        }
+      }
+      if (fn === 'complete_backend_operation') {
+        return {
+          data: [{
+            status: 'completed',
+            status_code: 302,
+            user_id: 'user-1',
+            session_email: 'ada@example.com',
+            session_role: 'employee',
+            response_body: { destination: '/brag' },
+          }],
+          error: null,
+        }
+      }
+      return { data: null, error: null }
+    })
   })
 
   it('redirects an existing unpaid SSO user to prefilled signup without issuing a session', async () => {
@@ -98,5 +128,34 @@ describe('Google SSO callback', () => {
       role: 'employee',
       authMethod: 'sso',
     })
+  })
+
+  it('replays a completed SSO callback after session creation fails once', async () => {
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', first_name: 'Ada', last_name: 'Lovelace', is_active: true, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [] })
+    createPersistentSession
+      .mockRejectedValueOnce(new Error('session failed'))
+      .mockResolvedValueOnce({ accessToken: 'access-token', refreshToken: 'refresh-token' })
+
+    const first = await GET(callbackRequest(), { params: { provider: 'google' } })
+
+    rpc.mockImplementationOnce(async () => ({
+      data: [{
+        status: 'completed',
+        status_code: 302,
+        user_id: 'user-1',
+        session_email: 'ada@example.com',
+        session_role: 'employee',
+        response_body: { destination: '/brag' },
+      }],
+      error: null,
+    }))
+
+    const second = await GET(callbackRequest(), { params: { provider: 'google' } })
+
+    expect(new URL(first.headers.get('location')).searchParams.get('sso_error')).toBe('account_error')
+    expect(new URL(second.headers.get('location')).pathname).toBe('/brag')
+    expect(select).toHaveBeenCalledTimes(2)
   })
 })

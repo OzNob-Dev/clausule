@@ -85,7 +85,7 @@ describe('createSubscription', () => {
     expect(result.status).toBe(200)
     expect(rpc).toHaveBeenCalledWith('begin_backend_operation', expect.objectContaining({
       p_operation_type: 'subscribe',
-      p_operation_key: 'subscribe:ada@example.com:pm_1:individual:usd:500:month',
+      p_operation_key: 'subscribe:ada@example.com:individual:usd:500:month',
       p_email: 'ada@example.com',
     }))
     expect(rpc).toHaveBeenCalledWith('finalize_individual_subscription', expect.objectContaining({
@@ -95,7 +95,7 @@ describe('createSubscription', () => {
       p_last_name: 'Lovelace',
       p_stripe_customer_id: 'cus_1',
       p_stripe_subscription_id: 'sub_1',
-      p_retry_key: 'subscribe:ada@example.com:pm_1:individual:usd:500:month',
+      p_retry_key: 'subscribe:ada@example.com:individual:usd:500:month',
       p_activate: false,
     }))
     expect(rpc).toHaveBeenCalledWith('complete_backend_operation', expect.objectContaining({
@@ -108,7 +108,7 @@ describe('createSubscription', () => {
     expect(global.fetch).toHaveBeenNthCalledWith(
       1,
       'https://api.stripe.com/v1/customers',
-      expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': 'subscribe:ada@example.com:pm_1:individual:usd:500:month:customer' }) })
+      expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': 'subscribe:ada@example.com:individual:usd:500:month:customer' }) })
     )
     expect(result.body.clientSecret).toBe('secret_1')
   })

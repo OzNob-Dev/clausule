@@ -12,10 +12,10 @@
  */
 
 import { NextResponse }                 from 'next/server'
-import { appendSessionCookies,
-         createPersistentSession }      from '@api/_lib/session.js'
 import { RateLimiter }                  from '@api/_lib/rate-limit.js'
+import { beginBackendOperation }        from '@features/auth/server/backendOperation.js'
 import { verifyTotpLogin }              from '@features/auth/server/loginVerification.js'
+import { issueRecoverableSession }      from '@features/auth/server/recoverableSession.js'
 import { validateEmail }                from '@shared/utils/emailValidation'
 
 // 5 attempts per 10 minutes per email — matches verify-code policy.
@@ -38,15 +38,40 @@ export async function POST(request) {
     )
   }
 
+  const operationKey = `login:totp:${email}:${code}`
+  const operation = await beginBackendOperation({
+    operationKey,
+    operationType: 'login_totp',
+    email,
+  })
+  if (operation.error) {
+    console.error('[totp/verify POST] begin operation error:', operation.error)
+    return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
+  }
+  if (operation.replay) {
+    return issueRecoverableSession({
+      operation,
+      operationKey,
+      operationType: 'login_totp',
+      email,
+      body: operation.replay.body,
+      status: operation.replay.status,
+      session: operation.replay.session,
+      failureMessage: 'Failed to create session',
+    })
+  }
+
   const result = await verifyTotpLogin({ email, code })
   if (!result.session) return NextResponse.json(result.body, { status: result.status })
 
-  try {
-    const response = NextResponse.json(result.body)
-    const session  = await createPersistentSession(result.session)
-    return appendSessionCookies(response, session)
-  } catch (err) {
-    console.error('[totp/verify POST] session error:', err)
-    return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
-  }
+  return issueRecoverableSession({
+    operation,
+    operationKey,
+    operationType: 'login_totp',
+    email,
+    body: result.body,
+    status: result.status,
+    session: result.session,
+    failureMessage: 'Failed to create session',
+  })
 }

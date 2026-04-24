@@ -19,31 +19,70 @@
 import { NextResponse }                    from 'next/server'
 import { getRefreshToken,
          clearAuthCookies }                from '@api/_lib/auth.js'
-import { appendSessionCookies,
-         createPersistentSession }         from '@api/_lib/session.js'
+import { hashRefreshToken }                from '@api/_lib/jwt.js'
+import { beginBackendOperation }          from '@features/auth/server/backendOperation.js'
 import { rotateRefreshSession }            from '@features/auth/server/refreshSession.js'
-
-function withClearedCookies(response) {
-  clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
-  return response
-}
+import { issueRecoverableSession }         from '@features/auth/server/recoverableSession.js'
 
 export async function POST(request) {
   const rawToken = getRefreshToken(request)
+  if (!rawToken) {
+    const result = await rotateRefreshSession(rawToken)
+    if (!result.session) {
+      const response = NextResponse.json(result.body, { status: result.status })
+      clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+      return response
+    }
+  }
+
+  const operationKey = `refresh:${hashRefreshToken(rawToken)}`
+  const operation = await beginBackendOperation({
+    operationKey,
+    operationType: 'refresh',
+  })
+  if (operation.error) {
+    console.error('[refresh] begin operation error:', operation.error)
+    const response = NextResponse.json({ error: 'Failed to rotate session' }, { status: 500 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
+  }
+  if (operation.replay) {
+    return issueRecoverableSession({
+      operation,
+      operationKey,
+      operationType: 'refresh',
+      email: operation.replay.session.email,
+      userId: operation.replay.session.userId,
+      body: operation.replay.body,
+      status: operation.replay.status,
+      session: operation.replay.session,
+      failureMessage: 'Failed to rotate session',
+      clearCookiesOnFailure: true,
+    })
+  }
+
   const result = await rotateRefreshSession(rawToken)
 
   if (result.log?.[0] === 'warn') console.warn(result.log[1])
   if (result.log?.[0] === 'error') console.error(...result.log.slice(1))
   if (!result.session) return result.clearCookies
-    ? withClearedCookies(NextResponse.json(result.body, { status: result.status }))
+    ? (() => {
+        const response = NextResponse.json(result.body, { status: result.status })
+        clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+        return response
+      })()
     : NextResponse.json(result.body, { status: result.status })
 
-  try {
-    const response = NextResponse.json(result.body)
-    const session = await createPersistentSession(result.session)
-    return appendSessionCookies(response, session)
-  } catch (err) {
-    console.error('[refresh] failed to insert rotated refresh token:', err)
-    return withClearedCookies(NextResponse.json({ error: 'Failed to rotate session' }, { status: 500 }))
-  }
+  return issueRecoverableSession({
+    operation,
+    operationKey,
+    operationType: 'refresh',
+    email: result.session.email,
+    userId: result.session.userId,
+    body: result.body,
+    status: result.status,
+    session: result.session,
+    failureMessage: 'Failed to rotate session',
+    clearCookiesOnFailure: true,
+  })
 }

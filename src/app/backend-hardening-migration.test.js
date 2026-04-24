@@ -6,8 +6,10 @@ import { describe, expect, it } from 'vitest'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const hardeningPath = path.resolve(__dirname, '../../supabase/migrations/008_backend_hardening.sql')
 const retryPath = path.resolve(__dirname, '../../supabase/migrations/009_retry_safety_and_consistency.sql')
+const cleanupPath = path.resolve(__dirname, '../../supabase/migrations/010_backend_operation_cleanup.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
+const cleanupSql = readFileSync(cleanupPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -34,5 +36,13 @@ describe('backend hardening migration', () => {
     expect(retrySql).toContain('create or replace function public.complete_backend_operation')
     expect(retrySql).toContain('add column if not exists retry_key text')
     expect(retrySql).toContain('idx_subscriptions_retry_key_unique')
+  })
+
+  it('makes backend operations explicitly internal and adds cleanup support', () => {
+    expect(cleanupSql).toContain('alter table backend_operations disable row level security;')
+    expect(cleanupSql).toContain('cleanup_backend_operations')
+    expect(cleanupSql).toContain("interval '30 minutes'")
+    expect(cleanupSql).toContain("interval '1 day'")
+    expect(cleanupSql).toContain("operation_type in ('register', 'subscribe', 'login_otp', 'login_totp', 'refresh', 'sso')")
   })
 })

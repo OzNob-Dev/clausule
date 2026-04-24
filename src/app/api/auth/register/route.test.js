@@ -205,10 +205,18 @@ describe('register route', () => {
 
     const first = await POST(registerRequest())
     const firstBody = await first.json()
+
+    rpc.mockImplementation(async (fn) => {
+      if (fn === 'begin_backend_operation') return completedOperation('user-8')
+      if (fn === 'complete_backend_operation') return completedOperation('user-8')
+      if (fn === 'finalize_individual_subscription') return { data: [{ role: 'employee' }], error: null }
+      return { data: null, error: null }
+    })
+
     const second = await POST(registerRequest())
 
     expect(first.status).toBe(500)
-    expect(firstBody).toEqual({ error: 'session failed' })
+    expect(firstBody).toEqual({ error: 'Failed to create session' })
     expect(second.status).toBe(200)
     expect(createPersistentSession).toHaveBeenNthCalledWith(2, {
       userId: 'user-8',
