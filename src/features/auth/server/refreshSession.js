@@ -1,6 +1,7 @@
-import { del, rpc, update } from '@api/_lib/supabase.js'
+import { del, getAuthUser, rpc, update } from '@api/_lib/supabase.js'
 import { hashRefreshToken } from '@api/_lib/jwt.js'
-import { findProfileById } from './accountRepository.js'
+import { findProfileById, hasActiveSubscription } from './accountRepository.js'
+import { reconcileProfileEmail } from './reconcileProfileEmail.js'
 
 export async function rotateRefreshSession(rawToken) {
   if (!rawToken) return { clearCookies: true, body: { error: 'No refresh token' }, status: 401 }
@@ -39,12 +40,32 @@ export async function rotateRefreshSession(rawToken) {
   }
 
   const { profile } = await findProfileById(row.user_id, 'id,email,role,is_active,is_deleted')
-  if (!profile || !profile.is_active || profile.is_deleted) {
+  if (!profile || profile.is_deleted) {
     await del('refresh_tokens', `user_id=eq.${row.user_id}`)
     return { clearCookies: true, body: { error: 'User not found' }, status: 401 }
   }
 
-  const { id: userId, email, role } = profile
+  // Use the same accountActive(profile, hasPaid) predicate as session-mint paths.
+  if (!profile.is_active) {
+    const { hasPaid } = await hasActiveSubscription(row.user_id)
+    if (!hasPaid) {
+      await del('refresh_tokens', `user_id=eq.${row.user_id}`)
+      return { clearCookies: true, body: { error: 'User not found' }, status: 401 }
+    }
+  }
+
+  const { id: userId, role } = profile
+
+  // Repair auth↔profile email drift on each rotation so the minted JWT
+  // always carries the canonical email even if a prior PATCH partially failed.
+  let email = profile.email
+  const { data: authUserData } = await getAuthUser(userId)
+  const authEmail = authUserData?.user?.email ?? authUserData?.email ?? ''
+  if (authEmail) {
+    const reconciled = await reconcileProfileEmail({ userId, profileEmail: email, authEmail })
+    if (reconciled.error) console.error('[refresh] reconcile email error:', reconciled.error)
+    else email = reconciled.email || email
+  }
 
   return {
     body: { ok: true, role },

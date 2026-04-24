@@ -12,19 +12,36 @@ import {
   verifySignedChallenge,
 } from './passkeyShared.js'
 
+// Hard cap on CBOR input size to bound parsing cost on malformed input.
+const MAX_CBOR_BYTES = 8192
+// Hard cap on CBOR collection depth to prevent recursion bombs.
+const MAX_CBOR_DEPTH = 16
+
 function readLength(buffer, offset, additional) {
   if (additional < 24) return { value: additional, offset }
-  if (additional === 24) return { value: buffer.readUInt8(offset), offset: offset + 1 }
-  if (additional === 25) return { value: buffer.readUInt16BE(offset), offset: offset + 2 }
-  if (additional === 26) return { value: buffer.readUInt32BE(offset), offset: offset + 4 }
+  if (additional === 24) {
+    if (offset + 1 > buffer.length) throw new Error('Truncated CBOR length (1 byte)')
+    return { value: buffer.readUInt8(offset), offset: offset + 1 }
+  }
+  if (additional === 25) {
+    if (offset + 2 > buffer.length) throw new Error('Truncated CBOR length (2 bytes)')
+    return { value: buffer.readUInt16BE(offset), offset: offset + 2 }
+  }
+  if (additional === 26) {
+    if (offset + 4 > buffer.length) throw new Error('Truncated CBOR length (4 bytes)')
+    return { value: buffer.readUInt32BE(offset), offset: offset + 4 }
+  }
   if (additional === 27) {
+    if (offset + 8 > buffer.length) throw new Error('Truncated CBOR length (8 bytes)')
     const value = Number(buffer.readBigUInt64BE(offset))
+    if (value > MAX_CBOR_BYTES) throw new Error('CBOR length exceeds maximum')
     return { value, offset: offset + 8 }
   }
-  throw new Error('Unsupported CBOR length')
+  throw new Error('Unsupported CBOR length encoding')
 }
 
-function decodeCborValue(buffer, offset = 0) {
+function decodeCborValue(buffer, offset = 0, depth = 0) {
+  if (depth > MAX_CBOR_DEPTH) throw new Error('CBOR nesting depth exceeded')
   if (offset >= buffer.length) throw new Error('Unexpected end of CBOR')
 
   const initial = buffer[offset++]
@@ -38,12 +55,18 @@ function decodeCborValue(buffer, offset = 0) {
 
   if (major === 0) return { value: length, offset: cursor }
   if (major === 1) return { value: -1 - length, offset: cursor }
-  if (major === 2) return { value: buffer.subarray(cursor, cursor + length), offset: cursor + length }
-  if (major === 3) return { value: buffer.subarray(cursor, cursor + length).toString('utf8'), offset: cursor + length }
+  if (major === 2) {
+    if (cursor + length > buffer.length) throw new Error('CBOR byte string out of bounds')
+    return { value: buffer.subarray(cursor, cursor + length), offset: cursor + length }
+  }
+  if (major === 3) {
+    if (cursor + length > buffer.length) throw new Error('CBOR text string out of bounds')
+    return { value: buffer.subarray(cursor, cursor + length).toString('utf8'), offset: cursor + length }
+  }
   if (major === 4) {
     const items = []
     for (let i = 0; i < length; i += 1) {
-      const decoded = decodeCborValue(buffer, cursor)
+      const decoded = decodeCborValue(buffer, cursor, depth + 1)
       items.push(decoded.value)
       cursor = decoded.offset
     }
@@ -52,8 +75,8 @@ function decodeCborValue(buffer, offset = 0) {
   if (major === 5) {
     const items = new Map()
     for (let i = 0; i < length; i += 1) {
-      const key = decodeCborValue(buffer, cursor)
-      const val = decodeCborValue(buffer, key.offset)
+      const key = decodeCborValue(buffer, cursor, depth + 1)
+      const val = decodeCborValue(buffer, key.offset, depth + 1)
       items.set(key.value, val.value)
       cursor = val.offset
     }
@@ -75,7 +98,9 @@ function curveName(curve) {
 }
 
 function publicKeyFromCose(publicKeyCose) {
-  const decoded = decodeCborValue(Buffer.from(publicKeyCose, 'base64'))
+  const raw = Buffer.from(publicKeyCose, 'base64')
+  if (raw.length === 0 || raw.length > MAX_CBOR_BYTES) throw new Error('COSE key size out of range')
+  const decoded = decodeCborValue(raw)
   if (!(decoded.value instanceof Map)) throw new Error('Invalid COSE key')
 
   const keyType = decoded.value.get(1)
@@ -231,7 +256,11 @@ export async function verifyPasskeyAuthentication({ request, body }) {
   const rawClientDataJson = fromB64url(credential.response?.clientDataJSON ?? '')
   const authenticatorData = fromB64url(credential.response?.authenticatorData ?? '')
   const signature = fromB64url(credential.response?.signature ?? '')
-  if (!rawClientDataJson.length || authenticatorData.length < 37 || !signature.length) return jsonError('Invalid passkey')
+  // authenticatorData: 32-byte rpIdHash + 1-byte flags + 4-byte signCount = 37 bytes minimum.
+  // Cap lengths to reject oversized inputs before any parsing.
+  if (!rawClientDataJson.length || rawClientDataJson.length > 4096) return jsonError('Invalid passkey')
+  if (authenticatorData.length < 37 || authenticatorData.length > 4096) return jsonError('Invalid passkey')
+  if (!signature.length || signature.length > 512) return jsonError('Invalid passkey')
 
   let clientData
   try {

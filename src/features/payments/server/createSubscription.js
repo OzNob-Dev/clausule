@@ -1,6 +1,6 @@
 import { createUser, rpc } from '@api/_lib/supabase.js'
 import { fetchWithTimeout } from '@api/_lib/network.js'
-import { findProfileByEmail, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
+import { findProfileByEmail, getUserSsoProvider, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
 import {
   beginBackendOperation,
   completeBackendOperation,
@@ -41,8 +41,16 @@ async function stripe(path, body = null, method = 'POST', idempotencyKey = null)
 async function resolveUserId({ authedId, email, firstName, lastName }) {
   if (authedId) return authedId
 
-  const { profile } = await findProfileByEmail(email, 'id')
-  if (profile) return profile.id
+  const { profile } = await findProfileByEmail(email, 'id,totp_secret')
+  if (profile) {
+    // Unauthenticated subscribe path — refuse to mint a session for accounts that
+    // require SSO or TOTP, since email-OTP proof alone doesn't satisfy those policies.
+    const { provider, error: authErr } = await getUserSsoProvider(profile.id)
+    if (authErr) throw Object.assign(new Error('Failed to resolve user'), { status: 500 })
+    if (provider) throw Object.assign(new Error('Account requires SSO sign-in'), { status: 403, nextStep: 'sso' })
+    if (profile.totp_secret) throw Object.assign(new Error('Account requires authenticator sign-in'), { status: 403, nextStep: 'mfa' })
+    return profile.id
+  }
 
   const { data: created, error: createErr } = await createUser({
     email,

@@ -11,6 +11,22 @@ import { sendOtpCode } from '@features/auth/server/sendOtpCode.js'
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const email = (body.email ?? '').trim().toLowerCase()
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  const { allowed: ipAllowed, retryAfterMs: ipRetry, error: ipError } = await consumeDistributedRateLimit({
+    scope: 'auth_send_code_ip',
+    identifier: ip,
+    limit: 15,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (ipError) {
+    console.error('[send-code] IP rate limit error:', ipError)
+    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
+  }
+  if (!ipAllowed) {
+    return NextResponse.json({ error: 'Too many requests — please try again later', retryAfterMs: ipRetry }, { status: 429 })
+  }
+
   const { allowed, retryAfterMs, error } = await consumeDistributedRateLimit({
     scope: 'auth_send_code_email',
     identifier: email,

@@ -27,6 +27,23 @@ export async function POST(request) {
     return NextResponse.json({ error: 'email and 6-digit code required' }, { status: 400 })
   }
 
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  // Rate limit by IP to cap cross-account TOTP spraying.
+  const { allowed: ipAllowed, retryAfterMs: ipRetry, error: ipLimitError } = await consumeDistributedRateLimit({
+    scope: 'auth_verify_totp_ip',
+    identifier: ip,
+    limit: 20,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (ipLimitError) {
+    console.error('[totp/verify POST] IP rate limit error:', ipLimitError)
+    return NextResponse.json({ error: 'Failed to verify code' }, { status: 500 })
+  }
+  if (!ipAllowed) {
+    return NextResponse.json({ error: 'Too many attempts — please try again later', retryAfterMs: ipRetry }, { status: 429 })
+  }
+
   const { allowed, retryAfterMs, error: limitError } = await consumeDistributedRateLimit({
     scope: 'auth_verify_totp_email',
     identifier: email,

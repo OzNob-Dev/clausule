@@ -14,6 +14,7 @@ import { NextResponse }                        from 'next/server'
 import { verifyAccessToken, ACCESS_TOKEN_TTL_S,
          REFRESH_TOKEN_TTL_S }                 from './jwt.js'
 import { select } from './supabase.js'
+import { hasActiveSubscription } from '@features/auth/server/accountRepository.js'
 import { authTestBypassUser, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 const IS_PROD = process.env.NODE_ENV === 'production'
@@ -144,8 +145,21 @@ export async function requireActiveAuth(request) {
   }
 
   const profile = data?.[0]
-  if (!profile?.id || !profile.is_active || profile.is_deleted) {
+  if (!profile?.id || profile.is_deleted) {
     return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'User not found' }
+  }
+
+  // Mirror the accountActive(profile, hasPaid) predicate used at session-mint time:
+  // accept is_active=true OR a current paid subscription. The subscription query only
+  // fires for the rare is_active=false case to avoid overhead on every API call.
+  if (!profile.is_active) {
+    const { hasPaid, error: subError } = await hasActiveSubscription(auth.userId)
+    if (subError) {
+      return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'Auth lookup failed' }
+    }
+    if (!hasPaid) {
+      return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'User not found' }
+    }
   }
 
   return auth

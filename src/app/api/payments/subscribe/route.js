@@ -56,8 +56,9 @@ export async function POST(request) {
   } catch (err) {
     if (err.log) console.error(...err.log)
     console.error('[subscribe] error:', err)
-    const status = err.status === 409 ? 409 : err.status === 400 ? 400 : 500
-    const message = status === 409 ? 'Active subscription already exists' : status === 400 ? 'Invalid subscription request' : 'Failed to create subscription'
-    return NextResponse.json({ error: message }, { status })
+    if (err.status === 409) return NextResponse.json({ error: 'Active subscription already exists' }, { status: 409 })
+    if (err.status === 403) return NextResponse.json({ error: err.message, nextStep: err.nextStep ?? null }, { status: 403 })
+    if (err.status === 400) return NextResponse.json({ error: 'Invalid subscription request' }, { status: 400 })
+    return NextResponse.json({ error: 'Failed to create subscription' }, { status: 500 })
   }
 }

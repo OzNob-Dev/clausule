@@ -1,5 +1,5 @@
 import { homePathForRole } from '@shared/utils/routes'
-import { accountActive, findProfileByEmail, hasActiveSubscription } from './accountRepository.js'
+import { accountActive, findProfileByEmail, getAuthUserDetails, hasActiveSubscription } from './accountRepository.js'
 import { exchangeSsoCode } from './ssoProviders.js'
 import { consumeSsoAuthState } from './ssoState.js'
 
@@ -27,7 +27,7 @@ export async function resolveSsoCallback({ origin, provider, code, state, appleU
 
   let existingProfile
   try {
-    const { profile, error } = await findProfileByEmail(userInfo.email, 'id,role,first_name,last_name,is_active,is_deleted')
+    const { profile, error } = await findProfileByEmail(userInfo.email, 'id,role,first_name,last_name,is_active,is_deleted,totp_secret')
     if (error) throw error
     existingProfile = profile
   } catch (err) {
@@ -55,6 +55,29 @@ export async function resolveSsoCallback({ origin, provider, code, state, appleU
         firstName: userInfo.firstName || existingProfile.first_name || '',
         lastName: userInfo.lastName || existingProfile.last_name || '',
       },
+    }
+  }
+
+  // Enforce that the SSO provider matches the one linked to this account.
+  // Accounts with TOTP enabled cannot be accessed via SSO — the MFA policy applies.
+  if (existingProfile.totp_secret) {
+    return { type: 'error', error: 'mfa_required', log: [`[sso/${provider}] account has TOTP — SSO cannot bypass MFA`] }
+  }
+
+  let linkedProvider
+  try {
+    const details = await getAuthUserDetails(existingProfile.id)
+    if (details.error) throw details.error
+    linkedProvider = details.provider
+  } catch (err) {
+    return { type: 'error', error: 'account_error', log: [`[sso/${provider}] auth user lookup:`, err.message] }
+  }
+
+  if (linkedProvider !== provider) {
+    return {
+      type: 'error',
+      error: 'provider_mismatch',
+      log: [`[sso/${provider}] account linked to '${linkedProvider ?? 'email'}' — refusing session`],
     }
   }
 

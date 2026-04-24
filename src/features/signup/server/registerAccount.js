@@ -2,7 +2,7 @@ import crypto from 'node:crypto'
 import { BrevoClient } from '@getbrevo/brevo'
 import { createUser, rpc } from '@api/_lib/supabase.js'
 import { withTimeout } from '@api/_lib/network.js'
-import { findProfileByEmail } from '@features/auth/server/accountRepository.js'
+import { findProfileByEmail, getUserSsoProvider } from '@features/auth/server/accountRepository.js'
 import {
   beginBackendOperation,
   completeBackendOperation,
@@ -62,8 +62,16 @@ function isActiveSubscriptionConflict(dbError) {
 }
 
 async function resolveUserId({ email, firstName, lastName }) {
-  const { profile } = await findProfileByEmail(email)
-  if (profile) return { userId: profile.id }
+  const { profile } = await findProfileByEmail(email, 'id,totp_secret')
+  if (profile) {
+    // Refuse session for accounts that require SSO or TOTP — email-proof alone is
+    // insufficient to satisfy those auth policies.
+    const { provider, error: authErr } = await getUserSsoProvider(profile.id)
+    if (authErr) return { log: ['[register] auth user lookup failed:', authErr], ...error({ error: 'Failed to create user account' }, 500) }
+    if (provider) return error({ error: 'Account requires SSO sign-in', nextStep: 'sso' }, 403)
+    if (profile.totp_secret) return error({ error: 'Account requires authenticator sign-in', nextStep: 'mfa' }, 403)
+    return { userId: profile.id }
+  }
 
   const { data: created, error: createErr } = await createUser({
     email,
