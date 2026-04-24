@@ -49,7 +49,7 @@
 - Preserve user work
 - Make minimal safe edits
 - Do not change behavior without checking the relevant topic doc
-- If a task is likely to take longer than 3 minutes, pause and confirm with the user first with an estimated duration
+- If a task is likely to run for a long time, pause and confirm with the user first with an estimated duration
 - When a task is completed, run: `osascript -e 'display notification "Task complete" with title "Codex" sound name "Glass"'`
 
 ## Conflict Rules
