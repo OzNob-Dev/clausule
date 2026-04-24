@@ -8,6 +8,7 @@ import { useProfileForm } from '@features/account/hooks/useProfileForm'
 import { useProfileSave } from '@features/account/hooks/useProfileSave'
 import { useProfileVerification } from '@features/account/hooks/useProfileVerification'
 import { VerifyChangesModal } from '@features/account/components/VerifyChangesModal'
+import '@features/brag/styles/brag-shell.css'
 import {
   pageClass, mainClass, innerClass,
   headingClass, subheadingClass, dividerClass,
@@ -48,7 +49,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <div className={pageClass}>
+    <div className={cn(pageClass, 'be-page')}>
       <BragRail activePage="profile" />
       <BragIdentitySidebar
         avatarInitials={initials}
