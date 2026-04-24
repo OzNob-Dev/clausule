@@ -31,6 +31,7 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
           email: accountData.email,
           firstName: accountData.firstName,
           lastName: accountData.lastName,
+          verificationToken: accountData.emailVerificationToken,
           subscription: { amountCents: plan.amountCents, currency: plan.currency, interval: plan.interval },
         }, { method: 'POST', credentials: 'same-origin' }))
 

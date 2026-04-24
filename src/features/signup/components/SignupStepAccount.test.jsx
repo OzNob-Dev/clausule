@@ -1,7 +1,7 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SignupStepAccount from './SignupStepAccount'
 
 const initialData = {
@@ -9,16 +9,28 @@ const initialData = {
   lastName: '',
   email: '',
   agreed: false,
+  emailVerificationToken: '',
 }
 
 describe('SignupStepAccount integration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    window.sessionStorage.clear()
+    global.fetch = vi.fn(async (input) => {
+      if (String(input).includes('/api/auth/send-code')) {
+        return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } })
+      }
+      return new Response(JSON.stringify({ ok: true, verificationToken: 'signup-token' }), { status: 200, headers: { 'Content-Type': 'application/json' } })
+    })
+  })
+
   it('requires first name, valid email, and terms agreement before continuing', async () => {
     const user = userEvent.setup()
     const onNext = vi.fn()
 
     render(<SignupStepAccount initialData={initialData} onNext={onNext} />)
 
-    await user.click(screen.getByRole('button', { name: /continue to payment/i }))
+    await user.click(screen.getByRole('button', { name: /send verification code/i }))
 
     expect(onNext).not.toHaveBeenCalled()
     expect(screen.getByText(/please agree/i)).toBeInTheDocument()
@@ -34,13 +46,16 @@ describe('SignupStepAccount integration', () => {
     await user.type(screen.getByPlaceholderText('Ellis'), 'Lovelace')
     await user.type(screen.getByPlaceholderText('you@email.com'), 'ada@example.com')
     await user.click(screen.getByRole('checkbox'))
-    await user.click(screen.getByRole('button', { name: /continue to payment/i }))
+    await user.click(screen.getByRole('button', { name: /send verification code/i }))
+    await user.type(screen.getByPlaceholderText('123456'), '123456')
+    await user.click(screen.getByRole('button', { name: /verify email to continue/i }))
 
-    expect(onNext).toHaveBeenCalledWith({
+    await waitFor(() => expect(onNext).toHaveBeenCalledWith({
       firstName: 'Ada',
       lastName: 'Lovelace',
       email: 'ada@example.com',
-    })
+      emailVerificationToken: 'signup-token',
+    }))
   })
 
   it('renders prefilled SSO account details', () => {

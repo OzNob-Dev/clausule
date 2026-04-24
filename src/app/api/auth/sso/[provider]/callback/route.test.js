@@ -1,4 +1,3 @@
-import crypto from 'node:crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { rpc, select } from '@api/_lib/supabase.js'
 import { createPersistentSession } from '@api/_lib/session.js'
@@ -14,23 +13,8 @@ vi.mock('@api/_lib/session.js', () => ({
   appendSessionCookies: vi.fn((response) => response),
 }))
 
-function stateCookie() {
-  const body = Buffer.from(JSON.stringify({
-    state: 'state-1',
-    provider: 'google',
-    codeVerifier: 'verifier-1',
-  })).toString('base64url')
-  const sig = crypto
-    .createHmac('sha256', process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || 'clausule-dev-sso-state')
-    .update(body)
-    .digest('base64url')
-  return encodeURIComponent(`${body}.${sig}`)
-}
-
 function callbackRequest() {
-  return new Request('http://localhost/api/auth/sso/google/callback?code=code-1&state=state-1', {
-    headers: { cookie: `sso_state=${stateCookie()}` },
-  })
+  return new Request('http://localhost/api/auth/sso/google/callback?code=code-1&state=state-1')
 }
 
 function mockGoogleProfile() {
@@ -53,11 +37,19 @@ function mockGoogleProfile() {
 describe('Google SSO callback', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    process.env.JWT_SECRET = 'test-jwt-secret'
     process.env.GOOGLE_CLIENT_ID = 'google-client'
     process.env.GOOGLE_CLIENT_SECRET = 'google-secret'
     mockGoogleProfile()
     rpc.mockImplementation(async (fn) => {
+      if (fn === 'consume_sso_auth_state') {
+        return {
+          data: [{
+            code_verifier: 'verifier-1',
+            redirect_origin: 'http://localhost',
+          }],
+          error: null,
+        }
+      }
       if (fn === 'begin_backend_operation') {
         return {
           data: [{

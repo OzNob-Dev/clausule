@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import { createSsoAuthState } from './ssoState.js'
 
 const PROVIDERS = {
   google: {
@@ -19,17 +20,7 @@ const PROVIDERS = {
   },
 }
 
-function ssoStateSecret() {
-  return process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || 'clausule-dev-sso-state'
-}
-
-function signStatePayload(payload) {
-  const body = Buffer.from(JSON.stringify(payload)).toString('base64url')
-  const sig = crypto.createHmac('sha256', ssoStateSecret()).update(body).digest('base64url')
-  return `${body}.${sig}`
-}
-
-export function createSsoStart({ requestUrl, provider }) {
+export async function createSsoStart({ requestUrl, provider }) {
   const config = PROVIDERS[provider]
   const origin = new URL(requestUrl).origin
 
@@ -54,11 +45,16 @@ export function createSsoStart({ requestUrl, provider }) {
 
   if (config.responseMode) query.set('response_mode', config.responseMode)
 
-  const isSecure = requestUrl.startsWith('https')
-  const cookieVal = encodeURIComponent(signStatePayload({ state, codeVerifier, provider }))
+  const { error } = await createSsoAuthState({
+    state,
+    provider,
+    codeVerifier,
+    redirectOrigin: origin,
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+  })
+  if (error) return { redirect: `${origin}/?sso_error=account_error` }
 
   return {
     redirect: `${config.authUrl}?${query}`,
-    cookie: `sso_state=${cookieVal}; HttpOnly; SameSite=${isSecure ? 'None' : 'Lax'}; Path=/; Max-Age=300${isSecure ? '; Secure' : ''}`,
   }
 }

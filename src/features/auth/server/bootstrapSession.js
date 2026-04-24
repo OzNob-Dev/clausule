@@ -1,4 +1,5 @@
 import { findProfileById, getAuthUserDetails } from './accountRepository.js'
+import { reconcileProfileEmail } from './reconcileProfileEmail.js'
 
 /** @typedef {import('@shared/types/contracts').AuthBootstrap} AuthBootstrap */
 
@@ -16,14 +17,21 @@ export async function bootstrapSession({ userId, email, role, authMethod }) {
 
   const { user, provider, error: authUserError } = await getAuthUserDetails(userId)
   if (authUserError) console.error('[auth/bootstrap auth user GET]', authUserError)
+  const canonicalEmail = user?.email ?? email ?? ''
+  const reconciled = await reconcileProfileEmail({
+    userId,
+    profileEmail: profile?.email ?? '',
+    authEmail: canonicalEmail,
+  })
+  if (reconciled.error) console.error('[auth/bootstrap reconcile email]', reconciled.error)
 
   return {
     body: {
-      user: { id: userId, email, role },
+      user: { id: userId, email: canonicalEmail, role },
       profile: {
         firstName: profile?.first_name || authMetaName(user, 'first_name'),
         lastName: profile?.last_name || authMetaName(user, 'last_name'),
-        email: profile?.email ?? email ?? '',
+        email: reconciled.email || canonicalEmail,
         mobile: profile?.mobile ?? '',
         jobTitle: profile?.job_title ?? '',
         department: profile?.department ?? '',

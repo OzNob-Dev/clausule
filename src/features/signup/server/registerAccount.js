@@ -9,6 +9,7 @@ import {
   registerOperationKey,
   registerOperationType,
 } from '@features/auth/server/backendOperation.js'
+import { verifySignupVerificationToken } from '@features/auth/server/signupVerification.js'
 
 const PLAN_AMOUNT_CENTS = 500
 const PLAN_CURRENCY = 'AUD'
@@ -91,6 +92,8 @@ export async function registerAccount(body) {
 
   if (!email) return error({ error: 'email is required' }, 400)
   if (!firstName) return error({ error: 'firstName is required' }, 400)
+  const verified = verifySignupVerificationToken(body.verificationToken, email)
+  if (!verified.ok) return error({ error: verified.error }, 401)
   if (amountCents !== PLAN_AMOUNT_CENTS || currency !== PLAN_CURRENCY || interval !== PLAN_INTERVAL) {
     return error({ error: 'Invalid subscription plan' }, 400)
   }

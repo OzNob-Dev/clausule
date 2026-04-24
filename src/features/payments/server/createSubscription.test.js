@@ -12,6 +12,10 @@ vi.mock('@features/auth/server/accountRepository.js', () => ({
   hasActiveSubscription: vi.fn(async () => ({ hasPaid: false })),
 }))
 
+vi.mock('@features/auth/server/signupVerification.js', () => ({
+  verifySignupVerificationToken: vi.fn(() => ({ ok: true })),
+}))
+
 function stripeResponse(data, ok = true, status = 200) {
   return Promise.resolve({
     ok,
@@ -78,7 +82,7 @@ describe('createSubscription', () => {
       }))
 
     const result = await createSubscription({
-      body: { paymentMethodId: 'pm_1', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace' },
+      body: { paymentMethodId: 'pm_1', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace', verificationToken: 'token' },
       authedId: null,
     })
 
@@ -135,7 +139,7 @@ describe('createSubscription', () => {
       .mockImplementationOnce(() => stripeResponse({ id: 'sub_2', status: 'canceled' }))
 
     await expect(createSubscription({
-      body: { paymentMethodId: 'pm_2', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace' },
+      body: { paymentMethodId: 'pm_2', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace', verificationToken: 'token' },
       authedId: null,
     })).rejects.toMatchObject({ message: 'Active subscription already exists', status: 409 })
 
@@ -149,7 +153,7 @@ describe('createSubscription', () => {
     rpc.mockImplementationOnce(async () => completedOperation())
 
     const result = await createSubscription({
-      body: { paymentMethodId: 'pm_1', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace' },
+      body: { paymentMethodId: 'pm_1', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace', verificationToken: 'token' },
       authedId: null,
     })
 

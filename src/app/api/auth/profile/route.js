@@ -11,6 +11,7 @@ import { getAuthUser, select, update, updateAuthUser } from '@api/_lib/supabase.
 import { validateEmail }             from '@shared/utils/emailValidation'
 import { findProfileById }           from '@features/auth/server/accountRepository.js'
 import { verifyEmailOtpCode }        from '@features/auth/server/emailOtpVerification.js'
+import { reconcileProfileEmail } from '@features/auth/server/reconcileProfileEmail.js'
 
 function authMetaName(user, key) {
   return user?.user_metadata?.[key] ?? user?.raw_user_meta_data?.[key] ?? ''
@@ -33,11 +34,17 @@ export async function GET(request) {
   const row = rows?.[0]
   const { data: authUser } = await getAuthUser(userId)
   const user = authUser?.user ?? authUser
+  const reconciled = await reconcileProfileEmail({
+    userId,
+    profileEmail: row?.email ?? '',
+    authEmail: user?.email ?? '',
+  })
+  if (reconciled.error) console.error('[auth/profile GET] reconcile email error:', reconciled.error)
 
   return NextResponse.json({
     firstName: row?.first_name || authMetaName(user, 'first_name'),
     lastName:  row?.last_name || authMetaName(user, 'last_name'),
-    email:     row?.email      ?? '',
+    email:     reconciled.email || row?.email || user?.email || '',
     mobile:    row?.mobile     ?? '',
     jobTitle:  row?.job_title  ?? '',
     department: row?.department ?? '',

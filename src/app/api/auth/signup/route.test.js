@@ -47,6 +47,7 @@ describe('signup route', () => {
       email: 'Ada@Example.com',
       firstName: 'Ada',
       lastName: 'Lovelace',
+      verificationToken: undefined,
     })
   })
 

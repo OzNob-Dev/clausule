@@ -7,6 +7,7 @@ import {
   subscribeOperationKey,
   subscribeOperationType,
 } from '@features/auth/server/backendOperation.js'
+import { verifySignupVerificationToken } from '@features/auth/server/signupVerification.js'
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
 const STRIPE_API = 'https://api.stripe.com/v1'
@@ -66,6 +67,10 @@ export async function createSubscription({ body, authedId }) {
 
   if (!paymentMethodId || !email) return { body: { error: 'paymentMethodId and email are required' }, status: 400 }
   if (!firstName) return { body: { error: 'firstName is required' }, status: 400 }
+  if (!authedId) {
+    const verified = verifySignupVerificationToken(body.verificationToken, email)
+    if (!verified.ok) return { body: { error: verified.error }, status: 401 }
+  }
 
   const operationKey = subscribeOperationKey({ authedId, email, paymentMethodId })
   const operation = await beginBackendOperation({

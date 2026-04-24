@@ -1,62 +1,22 @@
-import crypto from 'node:crypto'
 import { homePathForRole } from '@shared/utils/routes'
 import { accountActive, findProfileByEmail, hasActiveSubscription } from './accountRepository.js'
 import { exchangeSsoCode } from './ssoProviders.js'
+import { consumeSsoAuthState } from './ssoState.js'
 
-function ssoStateSecret() {
-  return process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || 'clausule-dev-sso-state'
-}
-
-function verifySignedState(rawValue) {
-  const dotIdx = rawValue.lastIndexOf('.')
-  if (dotIdx === -1) return null
-  const body = rawValue.slice(0, dotIdx)
-  const sig = rawValue.slice(dotIdx + 1)
-  const expected = crypto.createHmac('sha256', ssoStateSecret()).update(body).digest('base64url')
-  if (sig.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
-    return null
-  }
-  try {
-    return JSON.parse(Buffer.from(body, 'base64url').toString('utf8'))
-  } catch {
-    return null
-  }
-}
-
-export function parseSsoState(cookieHeader) {
-  const rawCookie = (cookieHeader ?? '')
-    .split(';')
-    .map((cookie) => cookie.trim())
-    .find((cookie) => cookie.startsWith('sso_state='))
-
-  if (!rawCookie) return { error: 'state_mismatch' }
-
-  try {
-    const state = verifySignedState(decodeURIComponent(rawCookie.split('=').slice(1).join('=')))
-    return state ? { state } : { error: 'invalid_state' }
-  } catch {
-    return { error: 'invalid_state' }
-  }
-}
-
-export async function resolveSsoCallback({ origin, provider, code, state, cookieHeader, appleUser }) {
+export async function resolveSsoCallback({ origin, provider, code, state, appleUser }) {
   if (!code || !state) return { type: 'error', error: 'missing_params' }
 
-  const parsed = parseSsoState(cookieHeader)
-  if (parsed.error) return { type: 'error', error: parsed.error }
-
-  const stored = parsed.state
-  if (stored.state !== state || stored.provider !== provider) {
-    return { type: 'error', error: 'state_mismatch' }
-  }
+  const { row: stored, error: stateError } = await consumeSsoAuthState({ state, provider })
+  if (stateError) return { type: 'error', error: 'account_error', log: [`[sso/${provider}] state consume:`, stateError.message ?? stateError] }
+  if (!stored) return { type: 'error', error: 'state_mismatch' }
 
   let userInfo
   try {
     userInfo = await exchangeSsoCode({
       provider,
       code,
-      codeVerifier: stored.codeVerifier,
-      redirectUri: `${origin}/api/auth/sso/${provider}/callback`,
+      codeVerifier: stored.code_verifier,
+      redirectUri: `${stored.redirect_origin}/api/auth/sso/${provider}/callback`,
       appleUser,
     })
   } catch (err) {

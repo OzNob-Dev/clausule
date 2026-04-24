@@ -14,6 +14,7 @@
 - Treat auth, rate limits, and permission checks as boundary concerns, not business logic.
 - Prefer explicit failure responses over silent fallback behavior.
 - Keep server-only integrations isolated from client-facing modules.
+- For signup or recovery flows, verify ownership of the target email before committing durable account creation.
 
 ## Reliability
 

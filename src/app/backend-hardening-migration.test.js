@@ -11,6 +11,7 @@ const replayWindowPath = path.resolve(__dirname, '../../supabase/migrations/011_
 const distributedReliabilityPath = path.resolve(__dirname, '../../supabase/migrations/012_distributed_reliability.sql')
 const bragAtomicWritesPath = path.resolve(__dirname, '../../supabase/migrations/013_brag_entry_atomic_writes.sql')
 const authDeliveryHardeningPath = path.resolve(__dirname, '../../supabase/migrations/014_auth_delivery_and_order_hardening.sql')
+const ssoStateAndReconciliationPath = path.resolve(__dirname, '../../supabase/migrations/015_sso_state_and_email_reconciliation.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
@@ -18,6 +19,7 @@ const replayWindowSql = readFileSync(replayWindowPath, 'utf8')
 const distributedReliabilitySql = readFileSync(distributedReliabilityPath, 'utf8')
 const bragAtomicWritesSql = readFileSync(bragAtomicWritesPath, 'utf8')
 const authDeliveryHardeningSql = readFileSync(authDeliveryHardeningPath, 'utf8')
+const ssoStateAndReconciliationSql = readFileSync(ssoStateAndReconciliationPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -84,5 +86,12 @@ describe('backend hardening migration', () => {
     expect(authDeliveryHardeningSql).toContain('where used_at is null and delivered_at is not null')
     expect(authDeliveryHardeningSql).toContain('and otp.delivered_at is not null')
     expect(authDeliveryHardeningSql).toContain('create or replace function public.consume_email_otp_code')
+  })
+
+  it('stores SSO state server-side and schedules cleanup', () => {
+    expect(ssoStateAndReconciliationSql).toContain('create table if not exists sso_auth_states')
+    expect(ssoStateAndReconciliationSql).toContain('create or replace function public.create_sso_auth_state')
+    expect(ssoStateAndReconciliationSql).toContain('create or replace function public.consume_sso_auth_state')
+    expect(ssoStateAndReconciliationSql).toContain("cleanup_sso_auth_states_job")
   })
 })

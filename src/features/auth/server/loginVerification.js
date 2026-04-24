@@ -1,7 +1,8 @@
 import { verifyTotp } from '@api/_lib/totp.js'
 import { validateEmail } from '@shared/utils/emailValidation'
-import { findProfileByEmail } from './accountRepository.js'
+import { accountActive, findProfileByEmail, getUserSsoProvider, hasActiveSubscription } from './accountRepository.js'
 import { verifyEmailOtpCode } from './emailOtpVerification.js'
+import { signSignupVerificationToken } from './signupVerification.js'
 
 function invalidTotp() {
   return { body: { error: 'Invalid code' }, status: 401 }
@@ -12,15 +13,66 @@ export async function verifyEmailOtpLogin({ email, code }) {
   const verified = await verifyEmailOtpCode(email, code)
   if (!verified.ok) return { body: { error: verified.error }, status: verified.status }
 
-  const { profile, error: profileError } = await findProfileByEmail(email, 'id,role,is_active,is_deleted')
-  if (profileError || !profile) {
+  const { profile, error: profileError } = await findProfileByEmail(email, 'id,role,totp_secret,is_active,is_deleted')
+  if (profileError) {
     return {
       log: ['[verify-code] profile lookup failed:', profileError],
-      body: { error: 'User account not found' },
-      status: 404,
+      body: { error: 'Failed to verify code' },
+      status: 500,
     }
   }
-  if (!profile.is_active || profile.is_deleted) return { body: { error: 'User account not found' }, status: 404 }
+  if (!profile) {
+    return {
+      body: {
+        ok: true,
+        nextStep: 'signup',
+        verificationToken: signSignupVerificationToken(email),
+      },
+      status: 200,
+    }
+  }
+
+  const { hasPaid, error: paidError } = await hasActiveSubscription(profile.id)
+  if (paidError) {
+    return {
+      log: ['[verify-code] subscription lookup failed:', paidError],
+      body: { error: 'Failed to verify code' },
+      status: 500,
+    }
+  }
+
+  if (!accountActive(profile, hasPaid) || profile.is_deleted) {
+    return {
+      body: {
+        ok: true,
+        nextStep: 'signup',
+        verificationToken: signSignupVerificationToken(email),
+      },
+      status: 200,
+    }
+  }
+
+  const { provider, error: authError } = await getUserSsoProvider(profile.id)
+  if (authError) {
+    return {
+      log: ['[verify-code] auth user lookup failed:', authError],
+      body: { error: 'Failed to verify code' },
+      status: 500,
+    }
+  }
+
+  if (provider) {
+    return {
+      body: { ok: true, nextStep: 'sso' },
+      status: 200,
+    }
+  }
+  if (profile.totp_secret) {
+    return {
+      body: { ok: true, nextStep: 'mfa' },
+      status: 200,
+    }
+  }
 
   const { id: userId, role } = profile
   return {

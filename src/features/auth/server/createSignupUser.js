@@ -1,5 +1,6 @@
 import { createUser } from '@api/_lib/supabase.js'
 import { validateEmail } from '@shared/utils/emailValidation'
+import { verifySignupVerificationToken } from './signupVerification.js'
 
 export async function createSignupUser(body) {
   const firstName = (body.firstName ?? '').trim()
@@ -8,6 +9,8 @@ export async function createSignupUser(body) {
 
   if (!firstName) return { body: { error: 'First name is required' }, status: 400 }
   if (!validateEmail(email).valid) return { body: { error: 'Invalid email address' }, status: 400 }
+  const verified = verifySignupVerificationToken(body.verificationToken, email)
+  if (!verified.ok) return { body: { error: verified.error }, status: 401 }
 
   const { data, error } = await createUser({
     email,

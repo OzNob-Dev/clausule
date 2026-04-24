@@ -41,6 +41,7 @@
 - Check whether a change could expose profile, feedback, or entry content.
 - Keep secret material server-only and short-lived where possible.
 - Do not expose matched account existence or exact SSO provider identity to unauthenticated callers.
+- Require proof of email possession before creating durable signup accounts or other unauthenticated account state.
 
 ## Anti-Patterns
 

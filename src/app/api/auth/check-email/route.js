@@ -6,11 +6,10 @@
  * the user to the correct MFA step.
  *
  * Body:     { email: string }
- * Response: { nextStep: 'signup'|'otp'|'mfa'|'sso' }
+ * Response: { nextStep: 'continue' }
  */
 
 import { NextResponse }   from 'next/server'
-import { checkEmailAccount } from '@features/auth/server/checkEmail'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { validateEmail }  from '@shared/utils/emailValidation'
 
@@ -38,11 +37,5 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
 
-  const { result, error, log } = await checkEmailAccount(email)
-  if (error) {
-    console.error(`[check-email] ${log}:`, error)
-    return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
-  }
-
-  return NextResponse.json(result)
+  return NextResponse.json({ nextStep: 'continue' })
 }

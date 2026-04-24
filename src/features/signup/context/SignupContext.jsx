@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useCallback } from 'react'
 
 const SignupContext = createContext(null)
 
-const EMPTY_STEP1 = { firstName: '', lastName: '', email: '', agreed: false }
+const EMPTY_STEP1 = { firstName: '', lastName: '', email: '', agreed: false, emailVerificationToken: '' }
 const EMPTY_STEP2 = { cardName: '', cardNum: '', expiry: '', cvc: '' }
 
 export function SignupProvider({ children }) {

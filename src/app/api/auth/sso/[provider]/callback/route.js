@@ -78,7 +78,6 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
     code,
     state,
     appleUser,
-    cookieHeader: request.headers.get('cookie') ?? '',
   })
 
   if (result.log) console.error(...result.log)

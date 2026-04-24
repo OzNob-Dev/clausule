@@ -13,6 +13,7 @@
 - Preserve user state across transient failures when possible.
 - Keep auth or recovery codes unverifiable unless the associated delivery step completed successfully.
 - Treat third-party email sends like other network calls: bound them with timeouts and log only safe failure details.
+- Prefer one-time server-stored state over client-stored signed state for OAuth handshakes when replay resistance matters.
 
 ## Review Triggers
 

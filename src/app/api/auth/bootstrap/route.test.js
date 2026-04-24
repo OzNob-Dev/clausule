@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { requireActiveAuth } from '@api/_lib/auth.js'
-import { getAuthUser, select } from '@api/_lib/supabase.js'
+import { getAuthUser, select, update } from '@api/_lib/supabase.js'
 import { GET } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
@@ -11,6 +11,7 @@ vi.mock('@api/_lib/auth.js', () => ({
 vi.mock('@api/_lib/supabase.js', () => ({
   getAuthUser: vi.fn(),
   select: vi.fn(),
+  update: vi.fn(),
 }))
 
 function bootstrapRequest() {
@@ -39,6 +40,7 @@ describe('auth bootstrap route', () => {
         totp_secret: null,
       }],
     })
+    update.mockResolvedValue({ data: [{ id: 'user-1' }], error: null })
   })
 
   it('sets SSO state from Supabase Auth identities', async () => {

@@ -41,11 +41,8 @@ export function useSignInFlow() {
   const [touched, setTouched] = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
   const [sending, setSending] = useState(false)
-  const [emailStatus, setEmailStatus] = useState('idle')
   const [ssoError, setSsoError] = useState(null)
   const [verifyError, setVerifyError] = useState(null)
-
-  const lastCheckedRef = useRef('')
   const codeRefs = useRef([])
   const scheduleTimeout = useTrackedTimeout()
   const code = useSixDigitCode({ inputRefs: codeRefs, scheduleTimeout })
@@ -71,17 +68,34 @@ export function useSignInFlow() {
 
     try {
       const res = await fetch(endpoint, jsonRequest({ email, code: otp }, { method: 'POST' }))
-      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) {
+          code.setError()
+          setVerifyError('Incorrect code — try again')
+          return
+        }
+        if (data.nextStep === 'signup' && data.verificationToken) {
+          window.sessionStorage.setItem(`signup_verification:${email.trim().toLowerCase()}`, data.verificationToken)
+          code.setState('done')
+          scheduleTimeout(() => router.push(`/signup?email=${encodeURIComponent(email.trim().toLowerCase())}`), 200)
+          return
+        }
+        if (data.nextStep === 'sso') {
+          code.reset()
+          setStep('email')
+          setSsoError('Use your sign-in provider below to continue.')
+          return
+        }
+        if (data.nextStep === 'mfa') {
+          code.reset()
+          setStep('app')
+          return
+        }
+        code.setState('done')
+        const { role } = data
+        scheduleTimeout(() => router.replace(homePathForRole(role)), 400)
+      } catch {
         code.setError()
-        setVerifyError('Incorrect code — try again')
-        return
-      }
-
-      code.setState('done')
-      const { role } = await res.json()
-      scheduleTimeout(() => router.replace(homePathForRole(role)), 400)
-    } catch {
-      code.setError()
       setVerifyError('Something went wrong — try again')
     }
   }, [code, email, router, scheduleTimeout])
@@ -103,15 +117,12 @@ export function useSignInFlow() {
   const handleEmailChange = useCallback((event) => {
     setEmail(event.target.value)
     setSubmitAttempted(false)
-    if (emailStatus !== 'idle') setEmailStatus('idle')
-  }, [emailStatus])
+  }, [])
 
   const acceptSuggestion = useCallback(() => {
     setEmail(result.suggestion)
     setTouched(false)
     setSubmitAttempted(false)
-    setEmailStatus('idle')
-    lastCheckedRef.current = ''
   }, [result.suggestion])
 
   const submitEmail = useCallback(async (rawEmail) => {
@@ -121,45 +132,9 @@ export function useSignInFlow() {
     const validation = validateEmail(trimmed)
     if (!validation.valid && !validation.suggestion) return
     const resolved = validation.suggestion ?? trimmed
-
     setSubmitAttempted(true)
     setTouched(true)
-
-    let status = emailStatus
-    if (status === 'idle' || status === 'checking' || resolved !== lastCheckedRef.current) {
-      lastCheckedRef.current = resolved
-      setEmailStatus('checking')
-
-      try {
-        const res = await fetch('/api/auth/check-email', jsonRequest({ email: resolved }, { method: 'POST' }))
-        if (!res.ok) throw new Error('Email check failed')
-        const data = await res.json()
-
-        if (data.nextStep === 'signup') {
-          setEmailStatus('new')
-          router.push(`/signup?email=${encodeURIComponent(resolved)}`)
-          return
-        }
-
-        if (data.nextStep === 'sso') {
-          setEmailStatus('idle')
-          setSsoError('Use your sign-in provider below to continue.')
-          return
-        }
-
-        status = data.nextStep === 'mfa' ? 'mfa' : 'otp'
-        setEmailStatus(status)
-      } catch {
-        setEmailStatus('idle')
-        return
-      }
-    }
-
-    if (status === 'mfa') {
-      setEmail(resolved)
-      setStep('app')
-      return
-    }
+    setSsoError(null)
 
     setSending(true)
     try {
@@ -173,7 +148,7 @@ export function useSignInFlow() {
     } finally {
       setSending(false)
     }
-  }, [code, emailStatus, resetExpirySeconds, resetResendTimer, router])
+  }, [code, resetExpirySeconds, resetResendTimer])
 
   const handleSubmit = useCallback((event) => {
     event.preventDefault()
@@ -197,9 +172,9 @@ export function useSignInFlow() {
     }
   }, [code, email, resetExpirySeconds, resetResendTimer])
 
-  const isChecking = emailStatus === 'checking' || sending
-  const isNewAccount = emailStatus === 'new'
-  const btnLabel = isChecking ? (sending ? 'Sending…' : 'Checking…') : isNewAccount ? 'Create account →' : 'Login'
+  const isChecking = sending
+  const isNewAccount = false
+  const btnLabel = isChecking ? 'Sending…' : 'Login'
   const resolvedEmail = email
 
   return {
