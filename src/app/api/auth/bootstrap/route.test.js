@@ -20,6 +20,7 @@ function bootstrapRequest() {
 describe('auth bootstrap route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    delete process.env.NEXT_PUBLIC_AUTH_TEST_BYPASS
     requireAuth.mockReturnValue({
       userId: 'user-1',
       email: 'ada@example.com',
@@ -139,5 +140,35 @@ describe('auth bootstrap route', () => {
 
     expect(json.profile.firstName).toBe('awerwer')
     expect(json.profile.lastName).toBe('sadfasd')
+  })
+
+  it('returns a fake employee bootstrap payload when auth test bypass is enabled', async () => {
+    process.env.NEXT_PUBLIC_AUTH_TEST_BYPASS = 'employee'
+
+    const response = await GET(bootstrapRequest())
+    const json = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(json).toEqual({
+      user: {
+        id: 'auth-test-employee',
+        email: 'employee.test@clausule.app',
+        role: 'employee',
+      },
+      profile: {
+        firstName: 'Test',
+        lastName: 'Employee',
+        email: 'employee.test@clausule.app',
+        mobile: '',
+        jobTitle: 'QA',
+        department: 'Testing',
+      },
+      security: {
+        authenticatorAppConfigured: true,
+        authenticatedWithOtp: true,
+        ssoConfigured: false,
+      },
+    })
+    expect(requireAuth).not.toHaveBeenCalled()
   })
 })

@@ -7,6 +7,7 @@
 ## Known Environment Areas
 
 - Auth and sessions
+- Manual auth testing override: `NEXT_PUBLIC_AUTH_TEST_BYPASS=employee` in non-production only
 - Supabase
 - SSO providers
 - Email delivery

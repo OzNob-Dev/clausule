@@ -13,6 +13,7 @@
 import { NextResponse }                        from 'next/server'
 import { verifyAccessToken, ACCESS_TOKEN_TTL_S,
          REFRESH_TOKEN_TTL_S }                 from './jwt.js'
+import { authTestBypassUser, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 const IS_PROD = process.env.NODE_ENV === 'production'
 
@@ -97,6 +98,16 @@ export function clearAuthCookies() {
  * @returns {{ userId: string|null, email: string|null, role: string|null, authMethod: string|null, error: string|null }}
  */
 export function requireAuth(request) {
+  if (isAuthTestBypassEnabled()) {
+    return {
+      userId: authTestBypassUser.id,
+      email: authTestBypassUser.email,
+      role: authTestBypassUser.role,
+      authMethod: authTestBypassUser.authMethod,
+      error: null,
+    }
+  }
+
   const token = getAccessToken(request)
 
   if (!token) {

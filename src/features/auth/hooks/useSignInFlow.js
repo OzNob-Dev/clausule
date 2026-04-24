@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { sendCodeEmail } from '@features/auth/api-client/sendCodeEmail'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
-import { apiFetch, jsonRequest } from '@shared/utils/api'
+import { jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
@@ -13,8 +13,6 @@ import { ssoAuthPath } from '@shared/utils/sso'
 
 const OTP_TTL_SECONDS = 600
 const RESEND_COOLDOWN_SECONDS = 30
-const SESSION_COOKIE = 'clausule_session='
-
 const SSO_ERROR_LABELS = {
   not_configured: 'That sign-in method is not yet enabled.',
   state_mismatch: 'Sign-in session expired — please try again.',
@@ -24,10 +22,6 @@ const SSO_ERROR_LABELS = {
   no_email: 'Your account did not share an email address.',
   account_error: 'Account error — please try again or use email.',
   sso_denied: 'Sign-in was cancelled.',
-}
-
-function hasSessionCookie() {
-  return document.cookie.split('; ').some((cookie) => cookie.startsWith(SESSION_COOKIE))
 }
 
 function ssoErrorFromUrl() {
@@ -58,17 +52,6 @@ export function useSignInFlow() {
   const code = useSixDigitCode({ inputRefs: codeRefs, scheduleTimeout })
   const [expirySeconds, , resetExpirySeconds] = useCountdown(OTP_TTL_SECONDS, step === 'otp')
   const [resendTimer, , resetResendTimer] = useCountdown(RESEND_COOLDOWN_SECONDS, step === 'otp')
-
-  useEffect(() => {
-    if (!hasSessionCookie()) return
-    apiFetch('/api/auth/me')
-      .then(async (res) => {
-        if (!res.ok) return
-        const { user } = await res.json()
-        router.replace(homePathForRole(user.role))
-      })
-      .catch(() => {})
-  }, [router])
 
   useEffect(() => {
     setSsoError(ssoErrorFromUrl())

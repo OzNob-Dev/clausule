@@ -8,8 +8,13 @@
 import { NextResponse } from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
 import { bootstrapSession } from '@features/auth/server/bootstrapSession.js'
+import { authTestBypassBootstrap, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 export async function GET(request) {
+  if (isAuthTestBypassEnabled()) {
+    return NextResponse.json(authTestBypassBootstrap)
+  }
+
   const { userId, email, role, authMethod, error: authError } = requireAuth(request)
 
   if (authError === 'Token expired') {
