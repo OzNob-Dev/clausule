@@ -27,12 +27,9 @@ import { issueRecoverableSession }         from '@features/auth/server/recoverab
 export async function POST(request) {
   const rawToken = getRefreshToken(request)
   if (!rawToken) {
-    const result = await rotateRefreshSession(rawToken)
-    if (!result.session) {
-      const response = NextResponse.json(result.body, { status: result.status })
-      clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
-      return response
-    }
+    const response = NextResponse.json({ error: 'No refresh token' }, { status: 401 })
+    clearAuthCookies().forEach((c) => response.headers.append('Set-Cookie', c))
+    return response
   }
 
   const operationKey = `refresh:${hashRefreshToken(rawToken)}`

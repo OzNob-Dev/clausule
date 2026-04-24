@@ -286,7 +286,7 @@ export async function verifyPasskeyAuthentication({ request, body }) {
 
   const signCount = authenticatorData.readUInt32BE(33)
   const storedCount = Number(account.passkey.sign_count ?? 0)
-  if (storedCount > 0 && signCount <= storedCount) return jsonError('Invalid passkey', 401)
+  if ((signCount !== 0 || storedCount !== 0) && signCount <= storedCount) return jsonError('Invalid passkey', 401)
 
   try {
     const valid = verifyAssertionSignature({
