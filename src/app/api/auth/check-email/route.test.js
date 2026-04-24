@@ -34,7 +34,7 @@ describe('check-email route', () => {
     const response = await POST(request('Ada@Example.com'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, isActive: true, isDeleted: false, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true })
+    expect(data).toEqual({ exists: true, nextStep: 'sso', ssoProvider: 'google' })
     expect(select).toHaveBeenCalledWith('profiles', 'email=eq.ada%40example.com&select=id%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
     expect(select).toHaveBeenCalledWith('subscriptions', 'user_id=eq.user-1&status=in.%28active%2Ctrialing%29&select=id&limit=1')
     expect(getAuthUser).toHaveBeenCalledWith('user-1')
@@ -54,7 +54,7 @@ describe('check-email route', () => {
     const response = await POST(request('legacy@example.com', '127.0.0.8'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, isActive: true, isDeleted: false, hasMfa: false, hasSso: true, ssoProvider: 'google', hasPaid: true })
+    expect(data).toEqual({ exists: true, nextStep: 'sso', ssoProvider: 'google' })
   })
 
   it('returns MFA account details for non-SSO accounts', async () => {
@@ -71,10 +71,10 @@ describe('check-email route', () => {
     const response = await POST(request('otp@example.com', '127.0.0.2'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, isActive: true, isDeleted: false, hasMfa: true, hasSso: false, ssoProvider: null, hasPaid: true })
+    expect(data).toEqual({ exists: true, nextStep: 'mfa', ssoProvider: null })
   })
 
-  it('returns not found for unpaid accounts', async () => {
+  it('routes unpaid accounts to signup without exposing internal flags', async () => {
     select
       .mockResolvedValueOnce({ data: [{ id: 'user-3', totp_secret: null, is_active: false, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [] })
@@ -83,10 +83,10 @@ describe('check-email route', () => {
     const response = await POST(request('unpaid@example.com', '127.0.0.4'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, isActive: false, isDeleted: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: false })
+    expect(data).toEqual({ exists: true, nextStep: 'signup', ssoProvider: null })
   })
 
-  it('returns not found for paid accounts without MFA or SSO', async () => {
+  it('routes paid non-MFA email accounts to OTP', async () => {
     select
       .mockResolvedValueOnce({ data: [{ id: 'user-4', totp_secret: null, is_active: true, is_deleted: false }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-4' }] })
@@ -95,10 +95,10 @@ describe('check-email route', () => {
     const response = await POST(request('plain@example.com', '127.0.0.6'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, isActive: true, isDeleted: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: true })
+    expect(data).toEqual({ exists: true, nextStep: 'otp', ssoProvider: null })
   })
 
-  it('returns deleted status for deleted profiles', async () => {
+  it('routes deleted profiles to signup without exposing deletion state', async () => {
     select
       .mockResolvedValueOnce({ data: [{ id: 'user-5', totp_secret: 'SECRET', is_active: true, is_deleted: true }] })
       .mockResolvedValueOnce({ data: [{ id: 'sub-5' }] })
@@ -107,7 +107,7 @@ describe('check-email route', () => {
     const response = await POST(request('deleted@example.com', '127.0.0.7'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: true, isActive: true, isDeleted: true, hasMfa: true, hasSso: false, ssoProvider: null, hasPaid: true })
+    expect(data).toEqual({ exists: true, nextStep: 'signup', ssoProvider: null })
   })
 
   it('does not fetch auth user when no profile exists', async () => {
@@ -116,7 +116,7 @@ describe('check-email route', () => {
     const response = await POST(request('new@example.com', '127.0.0.3'))
     const data = await response.json()
 
-    expect(data).toEqual({ exists: false, isActive: false, isDeleted: false, hasMfa: false, hasSso: false, ssoProvider: null, hasPaid: false })
+    expect(data).toEqual({ exists: false, nextStep: 'signup', ssoProvider: null })
     expect(getAuthUser).not.toHaveBeenCalled()
   })
 

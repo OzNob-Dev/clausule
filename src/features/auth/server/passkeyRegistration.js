@@ -168,7 +168,7 @@ export async function verifyPasskeyRegistration({ request, userId, body }) {
   if (insertError) {
     return {
       log: ['[passkeys/register/verify] insert error:', insertError],
-      ...jsonError(`Failed to save passkey: ${insertError.message ?? JSON.stringify(insertError)}`, 500),
+      ...jsonError('Failed to save passkey', 500),
     }
   }
 

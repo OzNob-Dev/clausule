@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { rpc } from '@api/_lib/supabase.js'
 
 const REGISTER_OPERATION_TYPE = 'register'
@@ -5,6 +6,17 @@ const SUBSCRIBE_OPERATION_TYPE = 'subscribe'
 
 function normalizeEmail(email) {
   return String(email ?? '').trim().toLowerCase()
+}
+
+function authAttemptKeySecret() {
+  return process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || 'clausule-dev-auth-attempt-key'
+}
+
+function authAttemptDigest(email, code) {
+  return crypto
+    .createHmac('sha256', authAttemptKeySecret())
+    .update(`${normalizeEmail(email)}:${String(code ?? '').trim()}`)
+    .digest('hex')
 }
 
 function completedResult(row) {
@@ -40,6 +52,10 @@ export function registerOperationKey({ email }) {
 export function subscribeOperationKey({ authedId, email, paymentMethodId }) {
   const owner = authedId || normalizeEmail(email)
   return `subscribe:${owner}:individual:usd:500:month`
+}
+
+export function authAttemptOperationKey({ operationType, email, code }) {
+  return `${operationType}:${normalizeEmail(email)}:${authAttemptDigest(email, code)}`
 }
 
 export async function beginBackendOperation({ operationKey, operationType, email = null, userId = null }) {

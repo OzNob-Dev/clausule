@@ -14,6 +14,7 @@
 - Never expose server-only secrets to client code.
 - Keep session cookies and token handling explicit and bounded.
 - Preserve existing auth failure behavior unless the change is deliberate.
+- Keep unauthenticated account-discovery endpoints minimal; return only the next allowed auth step, not internal account state.
 
 ## High-Risk Areas
 

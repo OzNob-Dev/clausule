@@ -7,9 +7,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const hardeningPath = path.resolve(__dirname, '../../supabase/migrations/008_backend_hardening.sql')
 const retryPath = path.resolve(__dirname, '../../supabase/migrations/009_retry_safety_and_consistency.sql')
 const cleanupPath = path.resolve(__dirname, '../../supabase/migrations/010_backend_operation_cleanup.sql')
+const replayWindowPath = path.resolve(__dirname, '../../supabase/migrations/011_backend_operation_replay_window.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
+const replayWindowSql = readFileSync(replayWindowPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -44,5 +46,12 @@ describe('backend hardening migration', () => {
     expect(cleanupSql).toContain("interval '30 minutes'")
     expect(cleanupSql).toContain("interval '1 day'")
     expect(cleanupSql).toContain("operation_type in ('register', 'subscribe', 'login_otp', 'login_totp', 'refresh', 'sso')")
+  })
+
+  it('limits completed backend-operation replay windows to a short recovery window', () => {
+    expect(replayWindowSql).toContain("interval '10 minutes'")
+    expect(replayWindowSql).toContain("interval '6 hours'")
+    expect(replayWindowSql).toContain('create or replace function public.begin_backend_operation')
+    expect(replayWindowSql).toContain('create or replace function cleanup_backend_operations()')
   })
 })

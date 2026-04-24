@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { rpc, select } from '@api/_lib/supabase.js'
-import { beginBackendOperation, completeBackendOperation } from '@features/auth/server/backendOperation.js'
+import { authAttemptOperationKey, beginBackendOperation, completeBackendOperation } from '@features/auth/server/backendOperation.js'
 import { POST } from './route.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
@@ -15,6 +15,7 @@ vi.mock('@api/_lib/session.js', () => ({
 }))
 
 vi.mock('@features/auth/server/backendOperation.js', () => ({
+  authAttemptOperationKey: vi.fn(),
   beginBackendOperation: vi.fn(),
   completeBackendOperation: vi.fn(),
 }))
@@ -41,6 +42,7 @@ describe('verify-code route', () => {
       },
       replay: null,
     })
+    authAttemptOperationKey.mockImplementation(({ operationType, email }) => `${operationType}:${email}:hashed`)
     completeBackendOperation.mockResolvedValue({ data: [{ status: 'completed' }], error: null })
     rpc.mockImplementation(async (fn) => {
       return { data: null, error: null }
@@ -58,6 +60,14 @@ describe('verify-code route', () => {
       p_email: 'ada@example.com',
       p_code: '123456',
       p_now: expect.any(String),
+    }))
+    expect(authAttemptOperationKey).toHaveBeenCalledWith({
+      operationType: 'login_otp',
+      email: 'ada@example.com',
+      code: '123456',
+    })
+    expect(beginBackendOperation).toHaveBeenCalledWith(expect.objectContaining({
+      operationKey: 'login_otp:ada@example.com:hashed',
     }))
     expect(select).toHaveBeenCalledWith('profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Cis_active%2Cis_deleted&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({

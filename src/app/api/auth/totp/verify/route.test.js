@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { totpCode } from '@api/_lib/totp.js'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { rpc, select } from '@api/_lib/supabase.js'
+import { authAttemptOperationKey } from '@features/auth/server/backendOperation.js'
 import { POST } from './route.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
@@ -13,6 +14,14 @@ vi.mock('@api/_lib/session.js', () => ({
   createPersistentSession: vi.fn(async () => ({ accessToken: 'access-token', refreshToken: 'refresh-token' })),
   appendSessionCookies: vi.fn((response) => response),
 }))
+
+vi.mock('@features/auth/server/backendOperation.js', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    authAttemptOperationKey: vi.fn(),
+  }
+})
 
 const SECRET = 'JBSWY3DPEHPK3PXP'
 
@@ -29,6 +38,7 @@ describe('totp verify route', () => {
     vi.clearAllMocks()
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-04-19T10:00:00Z'))
+    authAttemptOperationKey.mockImplementation(({ operationType, email }) => `${operationType}:${email}:hashed`)
     rpc.mockImplementation(async (fn) => {
       if (fn === 'begin_backend_operation') {
         return {
@@ -66,6 +76,14 @@ describe('totp verify route', () => {
     const response = await POST(request())
 
     expect(response.status).toBe(200)
+    expect(authAttemptOperationKey).toHaveBeenCalledWith({
+      operationType: 'login_totp',
+      email: 'ada@example.com',
+      code: expect.any(String),
+    })
+    expect(rpc).toHaveBeenCalledWith('begin_backend_operation', expect.objectContaining({
+      p_operation_key: 'login_totp:ada@example.com:hashed',
+    }))
     expect(select).toHaveBeenCalledWith('profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',

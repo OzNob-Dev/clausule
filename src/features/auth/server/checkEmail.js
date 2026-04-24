@@ -8,12 +8,8 @@ import {
 
 const NOT_FOUND_RESULT = {
   exists: false,
-  isActive: false,
-  isDeleted: false,
-  hasMfa: false,
-  hasSso: false,
+  nextStep: 'signup',
   ssoProvider: null,
-  hasPaid: false,
 }
 
 export function ssoProvider(user) {
@@ -35,12 +31,14 @@ export async function checkEmailAccount(email) {
   return {
     result: {
       exists: true,
-      isActive: accountActive(profile, hasPaid),
-      isDeleted: Boolean(profile.is_deleted),
-      hasMfa: Boolean(profile.totp_secret),
-      hasSso: Boolean(provider),
+      nextStep: !accountActive(profile, hasPaid) || profile.is_deleted
+        ? 'signup'
+        : provider
+          ? 'sso'
+          : profile.totp_secret
+            ? 'mfa'
+            : 'otp',
       ssoProvider: provider,
-      hasPaid,
     },
   }
 }

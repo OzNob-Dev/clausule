@@ -23,6 +23,6 @@ export async function POST(request) {
     return NextResponse.json(result.body, { status: result.status })
   } catch (err) {
     console.error('[passkeys/register/verify] unhandled error:', err)
-    return NextResponse.json({ error: err?.message ?? 'Internal error' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to verify passkey' }, { status: 500 })
   }
 }

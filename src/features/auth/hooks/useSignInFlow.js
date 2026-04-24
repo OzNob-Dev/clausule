@@ -136,18 +136,18 @@ export function useSignInFlow() {
         if (!res.ok) throw new Error('Email check failed')
         const data = await res.json()
 
-        if (!data.exists || data.isDeleted || !data.isActive) {
+        if (data.nextStep === 'signup') {
           setEmailStatus('new')
           router.push(`/signup?email=${encodeURIComponent(resolved)}`)
           return
         }
 
-        if (data.hasSso && data.ssoProvider) {
+        if (data.nextStep === 'sso' && data.ssoProvider) {
           window.location.href = ssoAuthPath(data.ssoProvider)
           return
         }
 
-        status = data.hasMfa ? 'mfa' : 'otp'
+        status = data.nextStep === 'mfa' ? 'mfa' : 'otp'
         setEmailStatus(status)
       } catch {
         setEmailStatus('idle')

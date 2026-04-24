@@ -19,7 +19,7 @@
 
 import { NextResponse }                    from 'next/server'
 import { RateLimiter }                     from '@api/_lib/rate-limit.js'
-import { beginBackendOperation }          from '@features/auth/server/backendOperation.js'
+import { authAttemptOperationKey, beginBackendOperation } from '@features/auth/server/backendOperation.js'
 import { verifyEmailOtpLogin }             from '@features/auth/server/loginVerification.js'
 import { issueRecoverableSession }         from '@features/auth/server/recoverableSession.js'
 
@@ -44,7 +44,7 @@ export async function POST(request) {
     )
   }
 
-  const operationKey = `login:otp:${email}:${code}`
+  const operationKey = authAttemptOperationKey({ operationType: 'login_otp', email, code })
   const operation = await beginBackendOperation({
     operationKey,
     operationType: 'login_otp',
