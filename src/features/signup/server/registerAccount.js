@@ -2,6 +2,12 @@ import crypto from 'node:crypto'
 import { BrevoClient } from '@getbrevo/brevo'
 import { createUser, rpc } from '@api/_lib/supabase.js'
 import { findProfileByEmail } from '@features/auth/server/accountRepository.js'
+import {
+  beginBackendOperation,
+  completeBackendOperation,
+  registerOperationKey,
+  registerOperationType,
+} from '@features/auth/server/backendOperation.js'
 
 const PLAN_AMOUNT_CENTS = 500
 const PLAN_CURRENCY = 'AUD'
@@ -85,6 +91,17 @@ export async function registerAccount(body) {
     return error({ error: 'Invalid subscription plan' }, 400)
   }
 
+  const operationKey = registerOperationKey({ email })
+  const operation = await beginBackendOperation({
+    operationKey,
+    operationType: registerOperationType(),
+    email,
+  })
+  if (operation.error) {
+    return { log: ['[register] begin operation error:', operation.error], ...error({ error: 'Failed to create subscription' }, 500) }
+  }
+  if (operation.replay) return operation.replay
+
   const resolved = await resolveUserId({ email, firstName, lastName })
   if (!resolved.userId) return resolved
 
@@ -102,6 +119,7 @@ export async function registerAccount(body) {
     p_amount_cents: amountCents,
     p_current_period_start: now.toISOString(),
     p_current_period_end: currentPeriodEnd.toISOString(),
+    p_retry_key: operationKey,
     p_activate: true,
   })
   if (finalizeError) {
@@ -113,6 +131,22 @@ export async function registerAccount(body) {
 
   const row = Array.isArray(finalized) ? finalized[0] : finalized
   const role = row?.role ?? 'employee'
+  const result = {
+    body: { ok: true, role },
+    status: 200,
+    session: { userId, email, role },
+  }
+
+  const { error: completeError } = await completeBackendOperation({
+    operationKey,
+    operationType: registerOperationType(),
+    statusCode: result.status,
+    session: result.session,
+    body: result.body,
+  })
+  if (completeError) {
+    return { log: ['[register] complete operation error:', completeError], ...error({ error: 'Failed to create subscription' }, 500) }
+  }
 
   try {
     await sendInvoiceEmail({ email, firstName, amountCents, periodStart: now, periodEnd: currentPeriodEnd })
@@ -120,9 +154,5 @@ export async function registerAccount(body) {
     console.error('[register] invoice email error:', err?.message ?? err)
   }
 
-  return {
-    body: { ok: true, role },
-    status: 200,
-    session: { userId, email, role },
-  }
+  return result
 }

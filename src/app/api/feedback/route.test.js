@@ -85,7 +85,7 @@ describe('feedback route', () => {
       message: 'Please add faster entry shortcuts.',
       improvement: 'Let me press j/k to move.',
       contact_ok: true,
-    }))
+    }), { expectRows: 'single' })
   })
 
   it('requires a subject and message', async () => {
@@ -129,5 +129,19 @@ describe('feedback route', () => {
       replies: [expect.objectContaining({ body: 'We are on it.' })],
     }))
     expect(select).toHaveBeenCalledWith('app_feedback', expect.stringContaining('user_id=eq.user-1'))
+  })
+
+  it('keeps feedback successful when email delivery fails after the audit row is saved', async () => {
+    sendTransacEmail.mockRejectedValueOnce(new Error('brevo down'))
+
+    const response = await POST(request())
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data).toEqual({
+      ok: true,
+      feedback: expect.objectContaining({ id: 'feedback-1', replies: [] }),
+    })
+    expect(insert).toHaveBeenCalledTimes(1)
   })
 })

@@ -49,6 +49,6 @@ export async function POST(request) {
   } catch (err) {
     if (err.log) console.error(...err.log)
     console.error('[subscribe] Stripe error:', err.message)
-    return NextResponse.json({ error: err.message }, { status: err.status ?? 402 })
+    return NextResponse.json({ error: err.message }, { status: err.status ?? 500 })
   }
 }

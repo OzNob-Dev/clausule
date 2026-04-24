@@ -3,7 +3,7 @@ import { getAuthUser, select } from '@api/_lib/supabase.js'
 export const ACTIVE_SUBSCRIPTION_STATUS = 'in.(active,trialing)'
 
 export function profileByEmailQuery(email, selectFields = 'id,role') {
-  return new URLSearchParams({ email: `ilike.${email}`, select: selectFields, limit: '1' }).toString()
+  return new URLSearchParams({ email: `eq.${email.toLowerCase()}`, select: selectFields, limit: '1' }).toString()
 }
 
 export function profileByIdQuery(userId, selectFields = 'id,email,role') {

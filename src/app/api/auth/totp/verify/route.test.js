@@ -36,7 +36,7 @@ describe('totp verify route', () => {
     const response = await POST(request())
 
     expect(response.status).toBe(200)
-    expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Crole%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
+    expect(select).toHaveBeenCalledWith('profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',
       email: 'ada@example.com',

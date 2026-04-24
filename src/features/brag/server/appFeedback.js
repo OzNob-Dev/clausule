@@ -34,8 +34,25 @@ export async function sendAppFeedback({ body, user }) {
   if (subject.length > MAX_SUBJECT_LENGTH) return { body: { error: 'subject is too long' }, status: 400 }
   if (message.length > MAX_MESSAGE_LENGTH) return { body: { error: 'message is too long' }, status: 400 }
   if (improvement.length > MAX_IMPROVEMENT_LENGTH) return { body: { error: 'improvement is too long' }, status: 400 }
+
+  const { data: feedbackRows, error: insertError } = await insert('app_feedback', {
+    user_id: user.userId,
+    user_email: user.email ?? null,
+    category,
+    feeling,
+    subject,
+    message,
+    improvement: improvement || null,
+    contact_ok: contactOk,
+  }, { expectRows: 'single' })
+
+  if (insertError) {
+    return { log: ['[feedback] audit insert error:', insertError], body: { error: 'Failed to save feedback' }, status: 500 }
+  }
+
+  const feedback = { ...(feedbackRows?.[0] ?? {}), replies: [] }
   if (!process.env.BREVO_API_KEY) {
-    return { log: ['[feedback] BREVO_API_KEY not set'], body: { error: 'Feedback service not configured' }, status: 500 }
+    return { log: ['[feedback] BREVO_API_KEY not set'], body: { ok: true, feedback }, status: 200 }
   }
 
   try {
@@ -80,25 +97,8 @@ export async function sendAppFeedback({ body, user }) {
       })
     }
   } catch (err) {
-    return { log: ['[feedback] Brevo error:', err?.message ?? err], body: { error: 'Failed to send feedback' }, status: 502 }
+    return { log: ['[feedback] Brevo error:', err?.message ?? err], body: { ok: true, feedback }, status: 200 }
   }
-
-  const { data: feedbackRows, error: insertError } = await insert('app_feedback', {
-    user_id: user.userId,
-    user_email: user.email ?? null,
-    category,
-    feeling,
-    subject,
-    message,
-    improvement: improvement || null,
-    contact_ok: contactOk,
-  })
-
-  if (insertError) {
-    return { log: ['[feedback] audit insert error:', insertError], body: { error: 'Failed to save feedback' }, status: 500 }
-  }
-
-  const feedback = { ...(feedbackRows?.[0] ?? {}), replies: [] }
 
   return { body: { ok: true, feedback }, status: 200 }
 }

@@ -91,7 +91,7 @@ describe('Google SSO callback', () => {
     const location = new URL(response.headers.get('location'))
 
     expect(location.pathname).toBe('/brag')
-    expect(select).toHaveBeenNthCalledWith(1, 'profiles', 'email=ilike.ada%40example.com&select=id%2Crole%2Cfirst_name%2Clast_name%2Cis_active%2Cis_deleted&limit=1')
+    expect(select).toHaveBeenNthCalledWith(1, 'profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Cfirst_name%2Clast_name%2Cis_active%2Cis_deleted&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-2',
       email: 'ada@example.com',

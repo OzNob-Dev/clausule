@@ -38,7 +38,7 @@ describe('verify-code route', () => {
       p_code: '123456',
       p_now: expect.any(String),
     }))
-    expect(select).toHaveBeenCalledWith('profiles', 'email=ilike.ada%40example.com&select=id%2Crole%2Cis_active%2Cis_deleted&limit=1')
+    expect(select).toHaveBeenCalledWith('profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Cis_active%2Cis_deleted&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',
       email: 'ada@example.com',

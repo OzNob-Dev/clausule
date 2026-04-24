@@ -36,11 +36,48 @@ function registerRequest(body = {}) {
   })
 }
 
+function startedOperation() {
+  return {
+    data: [{
+      status: 'started',
+      status_code: 200,
+      user_id: null,
+      session_email: null,
+      session_role: null,
+      response_body: null,
+      stripe_customer_id: null,
+      stripe_subscription_id: null,
+    }],
+    error: null,
+  }
+}
+
+function completedOperation(userId = 'user-1') {
+  return {
+    data: [{
+      status: 'completed',
+      status_code: 200,
+      user_id: userId,
+      session_email: 'ada@example.com',
+      session_role: 'employee',
+      response_body: { ok: true, role: 'employee' },
+      stripe_customer_id: null,
+      stripe_subscription_id: null,
+    }],
+    error: null,
+  }
+}
+
 describe('register route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     process.env.BREVO_API_KEY = 'brevo-key'
-    rpc.mockResolvedValue({ data: [{ role: 'employee' }], error: null })
+    rpc.mockImplementation(async (fn) => {
+      if (fn === 'begin_backend_operation') return startedOperation()
+      if (fn === 'finalize_individual_subscription') return { data: [{ role: 'employee' }], error: null }
+      if (fn === 'complete_backend_operation') return completedOperation()
+      return { data: null, error: null }
+    })
   })
 
   it('uses an existing profile case-insensitively instead of creating a duplicate auth user', async () => {
@@ -50,6 +87,11 @@ describe('register route', () => {
 
     expect(response.status).toBe(200)
     expect(createUser).not.toHaveBeenCalled()
+    expect(rpc).toHaveBeenCalledWith('begin_backend_operation', expect.objectContaining({
+      p_operation_type: 'register',
+      p_operation_key: 'register:ada@example.com:individual:aud:500:month',
+      p_email: 'ada@example.com',
+    }))
     expect(rpc).toHaveBeenCalledWith('finalize_individual_subscription', expect.objectContaining({
       p_user_id: 'user-1',
       p_email: 'ada@example.com',
@@ -57,8 +99,15 @@ describe('register route', () => {
       p_last_name: 'Lovelace',
       p_status: 'active',
       p_amount_cents: 500,
+      p_retry_key: 'register:ada@example.com:individual:aud:500:month',
       p_activate: true,
     }))
+    expect(rpc).toHaveBeenCalledWith('complete_backend_operation', expect.objectContaining({
+      p_operation_type: 'register',
+      p_user_id: 'user-1',
+      p_session_email: 'ada@example.com',
+      p_response_body: { ok: true, role: 'employee' },
+    }), { expectRows: 'single' })
     expect(sendTransacEmail).toHaveBeenCalledWith(expect.objectContaining({
       subject: expect.stringContaining('Your Clausule invoice'),
       to: [{ email: 'ada@example.com' }],
@@ -97,7 +146,8 @@ describe('register route', () => {
 
   it('fails when the subscription transaction cannot be saved', async () => {
     select.mockResolvedValueOnce({ data: [{ id: 'user-5', role: 'employee' }] })
-    rpc.mockResolvedValueOnce({ data: null, error: { message: 'profile failed' } })
+    rpc.mockImplementationOnce(async () => startedOperation())
+      .mockImplementationOnce(async () => ({ data: null, error: { message: 'profile failed' } }))
 
     const response = await POST(registerRequest())
     const data = await response.json()
@@ -128,10 +178,11 @@ describe('register route', () => {
 
   it('returns conflict when an active subscription already exists', async () => {
     select.mockResolvedValueOnce({ data: [{ id: 'user-6', role: 'employee' }] })
-    rpc.mockResolvedValueOnce({
-      data: null,
-      error: { code: '23505', message: 'duplicate key value violates unique constraint "idx_subscriptions_active_user_unique"' },
-    })
+    rpc.mockImplementationOnce(async () => startedOperation())
+      .mockImplementationOnce(async () => ({
+        data: null,
+        error: { code: '23505', message: 'duplicate key value violates unique constraint "idx_subscriptions_active_user_unique"' },
+      }))
 
     const response = await POST(registerRequest())
     const data = await response.json()
@@ -139,5 +190,31 @@ describe('register route', () => {
     expect(response.status).toBe(409)
     expect(data).toEqual({ error: 'Active subscription already exists' })
     expect(createPersistentSession).not.toHaveBeenCalled()
+  })
+
+  it('replays a completed registration after session creation fails once', async () => {
+    select.mockResolvedValueOnce({ data: [{ id: 'user-8', role: 'employee' }] })
+    createPersistentSession
+      .mockRejectedValueOnce(new Error('session failed'))
+      .mockResolvedValueOnce({ accessToken: 'access-token', refreshToken: 'refresh-token' })
+    rpc
+      .mockImplementationOnce(async () => startedOperation())
+      .mockImplementationOnce(async () => ({ data: [{ role: 'employee' }], error: null }))
+      .mockImplementationOnce(async () => completedOperation('user-8'))
+      .mockImplementationOnce(async () => completedOperation('user-8'))
+
+    const first = await POST(registerRequest())
+    const firstBody = await first.json()
+    const second = await POST(registerRequest())
+
+    expect(first.status).toBe(500)
+    expect(firstBody).toEqual({ error: 'session failed' })
+    expect(second.status).toBe(200)
+    expect(createPersistentSession).toHaveBeenNthCalledWith(2, {
+      userId: 'user-8',
+      email: 'ada@example.com',
+      role: 'employee',
+    })
+    expect(select).toHaveBeenCalledTimes(1)
   })
 })

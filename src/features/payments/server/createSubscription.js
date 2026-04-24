@@ -1,5 +1,11 @@
 import { createUser, rpc } from '@api/_lib/supabase.js'
 import { findProfileByEmail, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
+import {
+  beginBackendOperation,
+  completeBackendOperation,
+  subscribeOperationKey,
+  subscribeOperationType,
+} from '@features/auth/server/backendOperation.js'
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
 const STRIPE_API = 'https://api.stripe.com/v1'
@@ -15,12 +21,13 @@ function isActiveSubscriptionConflict(dbError) {
   return dbError?.code === '23505' && message.includes('idx_subscriptions_active_user_unique')
 }
 
-async function stripe(path, body = null, method = 'POST') {
+async function stripe(path, body = null, method = 'POST', idempotencyKey = null) {
   const res = await fetch(`${STRIPE_API}${path}`, {
     method,
     headers: {
       Authorization: `Bearer ${STRIPE_KEY}`,
       'Content-Type': 'application/x-www-form-urlencoded',
+      ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
     },
     body: body ? body.toString() : undefined,
   })
@@ -59,18 +66,30 @@ export async function createSubscription({ body, authedId }) {
   if (!paymentMethodId || !email) return { body: { error: 'paymentMethodId and email are required' }, status: 400 }
   if (!firstName) return { body: { error: 'firstName is required' }, status: 400 }
 
+  const operationKey = subscribeOperationKey({ authedId, email, paymentMethodId })
+  const operation = await beginBackendOperation({
+    operationKey,
+    operationType: subscribeOperationType(),
+    email,
+    userId: authedId,
+  })
+  if (operation.error) throw Object.assign(new Error('Failed to save subscription'), { status: 500, log: ['[subscribe] begin operation error:', operation.error] })
+  if (operation.replay) return operation.replay
+
   const userId = await resolveUserId({ authedId, email, firstName, lastName })
 
   const { hasPaid } = await hasActiveSubscription(userId)
   if (hasPaid) return { body: { error: 'Active subscription already exists' }, status: 409 }
 
-  const customer = await stripe('/customers', new URLSearchParams({ email, name: fullName }))
+  const customer = await stripe('/customers', new URLSearchParams({ email, name: fullName }), 'POST', `${operationKey}:customer`)
 
-  await stripe(`/payment_methods/${paymentMethodId}/attach`, new URLSearchParams({ customer: customer.id }))
+  await stripe(`/payment_methods/${paymentMethodId}/attach`, new URLSearchParams({ customer: customer.id }), 'POST', `${operationKey}:attach`)
 
   await stripe(
     `/customers/${customer.id}`,
-    new URLSearchParams({ 'invoice_settings[default_payment_method]': paymentMethodId })
+    new URLSearchParams({ 'invoice_settings[default_payment_method]': paymentMethodId }),
+    'POST',
+    `${operationKey}:customer-default`
   )
 
   const subscription = await stripe('/subscriptions', new URLSearchParams({
@@ -81,7 +100,7 @@ export async function createSubscription({ body, authedId }) {
     'items[0][price_data][recurring][interval]': 'month',
     payment_behavior: 'default_incomplete',
     'expand[]': 'latest_invoice.payment_intent',
-  }))
+  }), 'POST', `${operationKey}:subscription`)
 
   const { data: finalized, error: finalizeError } = await rpc('finalize_individual_subscription', {
     p_user_id: userId,
@@ -94,6 +113,7 @@ export async function createSubscription({ body, authedId }) {
     p_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
     p_stripe_customer_id: customer.id,
     p_stripe_subscription_id: subscription.id,
+    p_retry_key: operationKey,
     p_activate: subscription.status === 'active' || subscription.status === 'trialing',
   })
   if (finalizeError) {
@@ -111,10 +131,24 @@ export async function createSubscription({ body, authedId }) {
   const row = Array.isArray(finalized) ? finalized[0] : finalized
   const role = row?.role ?? 'employee'
   const clientSecret = subscription.latest_invoice?.payment_intent?.client_secret ?? null
-
-  return {
+  const result = {
     body: { ok: true, subscriptionId: subscription.id, clientSecret, role },
     status: 200,
     session: { userId, email, role },
   }
+
+  const { error: completeError } = await completeBackendOperation({
+    operationKey,
+    operationType: subscribeOperationType(),
+    statusCode: result.status,
+    session: result.session,
+    body: result.body,
+    stripeCustomerId: customer.id,
+    stripeSubscriptionId: subscription.id,
+  })
+  if (completeError) {
+    throw Object.assign(new Error('Failed to save subscription'), { status: 500, log: ['[subscribe] complete operation error:', completeError] })
+  }
+
+  return result
 }

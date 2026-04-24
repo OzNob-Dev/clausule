@@ -20,6 +20,38 @@ function stripeResponse(data, ok = true, status = 200) {
   })
 }
 
+function startedOperation() {
+  return {
+    data: [{
+      status: 'started',
+      status_code: 200,
+      user_id: null,
+      session_email: null,
+      session_role: null,
+      response_body: null,
+      stripe_customer_id: null,
+      stripe_subscription_id: null,
+    }],
+    error: null,
+  }
+}
+
+function completedOperation() {
+  return {
+    data: [{
+      status: 'completed',
+      status_code: 200,
+      user_id: 'user-9',
+      session_email: 'ada@example.com',
+      session_role: 'employee',
+      response_body: { ok: true, subscriptionId: 'sub_1', clientSecret: 'secret_1', role: 'employee' },
+      stripe_customer_id: 'cus_1',
+      stripe_subscription_id: 'sub_1',
+    }],
+    error: null,
+  }
+}
+
 describe('createSubscription', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -29,7 +61,10 @@ describe('createSubscription', () => {
 
   it('uses the nested auth user id and finalizes the DB write transactionally', async () => {
     createUser.mockResolvedValueOnce({ data: { user: { id: 'user-9' } }, error: null })
-    rpc.mockResolvedValueOnce({ data: [{ role: 'employee' }], error: null })
+    rpc
+      .mockImplementationOnce(async () => startedOperation())
+      .mockImplementationOnce(async () => ({ data: [{ role: 'employee' }], error: null }))
+      .mockImplementationOnce(async () => completedOperation())
     global.fetch
       .mockImplementationOnce(() => stripeResponse({ id: 'cus_1' }))
       .mockImplementationOnce(() => stripeResponse({ id: 'pm_1' }))
@@ -48,6 +83,11 @@ describe('createSubscription', () => {
     })
 
     expect(result.status).toBe(200)
+    expect(rpc).toHaveBeenCalledWith('begin_backend_operation', expect.objectContaining({
+      p_operation_type: 'subscribe',
+      p_operation_key: 'subscribe:ada@example.com:pm_1:individual:usd:500:month',
+      p_email: 'ada@example.com',
+    }))
     expect(rpc).toHaveBeenCalledWith('finalize_individual_subscription', expect.objectContaining({
       p_user_id: 'user-9',
       p_email: 'ada@example.com',
@@ -55,17 +95,32 @@ describe('createSubscription', () => {
       p_last_name: 'Lovelace',
       p_stripe_customer_id: 'cus_1',
       p_stripe_subscription_id: 'sub_1',
+      p_retry_key: 'subscribe:ada@example.com:pm_1:individual:usd:500:month',
       p_activate: false,
     }))
+    expect(rpc).toHaveBeenCalledWith('complete_backend_operation', expect.objectContaining({
+      p_operation_type: 'subscribe',
+      p_user_id: 'user-9',
+      p_response_body: { ok: true, subscriptionId: 'sub_1', clientSecret: 'secret_1', role: 'employee' },
+      p_stripe_customer_id: 'cus_1',
+      p_stripe_subscription_id: 'sub_1',
+    }), { expectRows: 'single' })
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      1,
+      'https://api.stripe.com/v1/customers',
+      expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': 'subscribe:ada@example.com:pm_1:individual:usd:500:month:customer' }) })
+    )
     expect(result.body.clientSecret).toBe('secret_1')
   })
 
   it('cancels the Stripe subscription when the DB finalize step hits the active-subscription constraint', async () => {
     createUser.mockResolvedValueOnce({ data: { user: { id: 'user-10' } }, error: null })
-    rpc.mockResolvedValueOnce({
-      data: null,
-      error: { code: '23505', message: 'duplicate key value violates unique constraint "idx_subscriptions_active_user_unique"' },
-    })
+    rpc
+      .mockImplementationOnce(async () => startedOperation())
+      .mockImplementationOnce(async () => ({
+        data: null,
+        error: { code: '23505', message: 'duplicate key value violates unique constraint "idx_subscriptions_active_user_unique"' },
+      }))
     global.fetch
       .mockImplementationOnce(() => stripeResponse({ id: 'cus_2' }))
       .mockImplementationOnce(() => stripeResponse({ id: 'pm_2' }))
@@ -88,5 +143,22 @@ describe('createSubscription', () => {
       'https://api.stripe.com/v1/subscriptions/sub_2',
       expect.objectContaining({ method: 'DELETE' })
     )
+  })
+
+  it('reuses a completed subscribe operation without creating new Stripe objects', async () => {
+    rpc.mockImplementationOnce(async () => completedOperation())
+
+    const result = await createSubscription({
+      body: { paymentMethodId: 'pm_1', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace' },
+      authedId: null,
+    })
+
+    expect(result).toEqual({
+      body: { ok: true, subscriptionId: 'sub_1', clientSecret: 'secret_1', role: 'employee' },
+      status: 200,
+      session: { userId: 'user-9', email: 'ada@example.com', role: 'employee' },
+    })
+    expect(global.fetch).not.toHaveBeenCalled()
+    expect(createUser).not.toHaveBeenCalled()
   })
 })
