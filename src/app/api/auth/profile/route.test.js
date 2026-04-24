@@ -130,7 +130,7 @@ describe('auth profile route', () => {
       mobile: '+61 411 111 111',
       job_title: 'Principal engineer',
       department: 'Platform',
-    }))
+    }), { expectRows: 'single' })
     expect(response.status).toBe(200)
     expect(json.profile).toEqual({
       firstName: 'Ada',

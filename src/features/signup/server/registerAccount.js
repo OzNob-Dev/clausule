@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import { BrevoClient } from '@getbrevo/brevo'
-import { insert, upsert, createUser } from '@api/_lib/supabase.js'
+import { createUser, rpc } from '@api/_lib/supabase.js'
 import { findProfileByEmail } from '@features/auth/server/accountRepository.js'
 
 const PLAN_AMOUNT_CENTS = 500
@@ -45,6 +45,11 @@ function error(body, status) {
   return { body, status }
 }
 
+function isActiveSubscriptionConflict(dbError) {
+  const message = `${dbError?.message ?? ''} ${dbError?.details ?? ''}`.toLowerCase()
+  return dbError?.code === '23505' && message.includes('idx_subscriptions_active_user_unique')
+}
+
 async function resolveUserId({ email, firstName, lastName }) {
   const { profile } = await findProfileByEmail(email)
   if (profile) return { userId: profile.id }
@@ -84,39 +89,35 @@ export async function registerAccount(body) {
   if (!resolved.userId) return resolved
 
   const { userId } = resolved
-  const profilePayload = {
-    id: userId,
-    email,
-    first_name: firstName,
-    last_name: lastName || null,
-    is_deleted: false,
-  }
-
-  const { data: upserted, error: profileError } = await upsert('profiles', profilePayload)
-  if (profileError) return { log: ['[register] profile upsert error:', profileError], ...error({ error: 'Failed to save profile' }, 500) }
-
-  const role = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? 'employee'
   const now = new Date()
   const currentPeriodEnd = new Date(now)
   currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1)
 
-  const { error: subscriptionError } = await insert('subscriptions', {
-    user_id: userId,
-    status: 'active',
-    plan: 'individual',
-    amount_cents: amountCents,
-    current_period_start: now.toISOString(),
-    current_period_end: currentPeriodEnd.toISOString(),
+  const { data: finalized, error: finalizeError } = await rpc('finalize_individual_subscription', {
+    p_user_id: userId,
+    p_email: email,
+    p_first_name: firstName,
+    p_last_name: lastName || null,
+    p_status: 'active',
+    p_amount_cents: amountCents,
+    p_current_period_start: now.toISOString(),
+    p_current_period_end: currentPeriodEnd.toISOString(),
+    p_activate: true,
   })
-  if (subscriptionError) return { log: ['[register] subscription insert error:', subscriptionError], ...error({ error: 'Failed to create subscription' }, 500) }
+  if (finalizeError) {
+    if (isActiveSubscriptionConflict(finalizeError)) {
+      return error({ error: 'Active subscription already exists' }, 409)
+    }
+    return { log: ['[register] finalize subscription error:', finalizeError], ...error({ error: 'Failed to create subscription' }, 500) }
+  }
 
-  const { error: activationError } = await upsert('profiles', { ...profilePayload, is_active: true })
-  if (activationError) return { log: ['[register] profile activation error:', activationError], ...error({ error: 'Failed to activate profile' }, 500) }
+  const row = Array.isArray(finalized) ? finalized[0] : finalized
+  const role = row?.role ?? 'employee'
 
   try {
     await sendInvoiceEmail({ email, firstName, amountCents, periodStart: now, periodEnd: currentPeriodEnd })
   } catch (err) {
-    return { log: ['[register] invoice email error:', err?.message ?? err], ...error({ error: 'Failed to send invoice' }, 502) }
+    console.error('[register] invoice email error:', err?.message ?? err)
   }
 
   return {

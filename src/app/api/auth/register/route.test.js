@@ -1,15 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPersistentSession } from '@api/_lib/session.js'
-import { createUser, insert, select, upsert } from '@api/_lib/supabase.js'
+import { createUser, rpc, select } from '@api/_lib/supabase.js'
 import { POST } from './route.js'
 
 const sendTransacEmail = vi.fn()
 
 vi.mock('@api/_lib/supabase.js', () => ({
   createUser: vi.fn(),
-  insert: vi.fn(),
+  rpc: vi.fn(),
   select: vi.fn(),
-  upsert: vi.fn(),
 }))
 
 vi.mock('@api/_lib/session.js', () => ({
@@ -41,8 +40,7 @@ describe('register route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     process.env.BREVO_API_KEY = 'brevo-key'
-    upsert.mockResolvedValue({ data: [{ role: 'employee' }] })
-    insert.mockResolvedValue({ data: [{ id: 'sub-1' }] })
+    rpc.mockResolvedValue({ data: [{ role: 'employee' }], error: null })
   })
 
   it('uses an existing profile case-insensitively instead of creating a duplicate auth user', async () => {
@@ -52,23 +50,14 @@ describe('register route', () => {
 
     expect(response.status).toBe(200)
     expect(createUser).not.toHaveBeenCalled()
-    expect(upsert).toHaveBeenCalledWith('profiles', {
-      id: 'user-1',
-      email: 'ada@example.com',
-      first_name: 'Ada',
-      last_name: 'Lovelace',
-      is_deleted: false,
-    })
-    expect(insert).toHaveBeenCalledWith('subscriptions', expect.objectContaining({
-      user_id: 'user-1',
-      status: 'active',
-      plan: 'individual',
-      amount_cents: 500,
-    }))
-    expect(upsert).toHaveBeenCalledWith('profiles', expect.objectContaining({
-      id: 'user-1',
-      is_active: true,
-      is_deleted: false,
+    expect(rpc).toHaveBeenCalledWith('finalize_individual_subscription', expect.objectContaining({
+      p_user_id: 'user-1',
+      p_email: 'ada@example.com',
+      p_first_name: 'Ada',
+      p_last_name: 'Lovelace',
+      p_status: 'active',
+      p_amount_cents: 500,
+      p_activate: true,
     }))
     expect(sendTransacEmail).toHaveBeenCalledWith(expect.objectContaining({
       subject: expect.stringContaining('Your Clausule invoice'),
@@ -91,13 +80,7 @@ describe('register route', () => {
     const response = await POST(registerRequest())
 
     expect(response.status).toBe(200)
-    expect(upsert).toHaveBeenCalledWith('profiles', {
-      id: 'user-2',
-      email: 'ada@example.com',
-      first_name: 'Ada',
-      last_name: 'Lovelace',
-      is_deleted: false,
-    })
+    expect(rpc).toHaveBeenCalledWith('finalize_individual_subscription', expect.objectContaining({ p_user_id: 'user-2' }))
     expect(sendTransacEmail).toHaveBeenCalled()
   })
 
@@ -108,27 +91,19 @@ describe('register route', () => {
     const response = await POST(registerRequest())
 
     expect(response.status).toBe(200)
-    expect(upsert).toHaveBeenCalledWith('profiles', {
-      id: 'user-4',
-      email: 'ada@example.com',
-      first_name: 'Ada',
-      last_name: 'Lovelace',
-      is_deleted: false,
-    })
-    expect(insert).toHaveBeenCalledWith('subscriptions', expect.objectContaining({ user_id: 'user-4' }))
+    expect(rpc).toHaveBeenCalledWith('finalize_individual_subscription', expect.objectContaining({ p_user_id: 'user-4' }))
     expect(sendTransacEmail).toHaveBeenCalled()
   })
 
-  it('fails before subscription when the profile cannot be saved', async () => {
+  it('fails when the subscription transaction cannot be saved', async () => {
     select.mockResolvedValueOnce({ data: [{ id: 'user-5', role: 'employee' }] })
-    upsert.mockResolvedValueOnce({ data: null, error: { message: 'profile failed' } })
+    rpc.mockResolvedValueOnce({ data: null, error: { message: 'profile failed' } })
 
     const response = await POST(registerRequest())
     const data = await response.json()
 
     expect(response.status).toBe(500)
-    expect(data).toEqual({ error: 'Failed to save profile' })
-    expect(insert).not.toHaveBeenCalled()
+    expect(data).toEqual({ error: 'Failed to create subscription' })
     expect(sendTransacEmail).not.toHaveBeenCalled()
   })
 
@@ -138,18 +113,31 @@ describe('register route', () => {
 
     expect(response.status).toBe(400)
     expect(data).toEqual({ error: 'Invalid subscription plan' })
-    expect(insert).not.toHaveBeenCalled()
+    expect(rpc).not.toHaveBeenCalled()
   })
 
-  it('returns an error when the invoice email fails', async () => {
+  it('keeps registration successful when the invoice email fails', async () => {
     select.mockResolvedValueOnce({ data: [{ id: 'user-3', role: 'employee' }] })
     sendTransacEmail.mockRejectedValueOnce(new Error('email failed'))
 
     const response = await POST(registerRequest())
+
+    expect(response.status).toBe(200)
+    expect(createPersistentSession).toHaveBeenCalled()
+  })
+
+  it('returns conflict when an active subscription already exists', async () => {
+    select.mockResolvedValueOnce({ data: [{ id: 'user-6', role: 'employee' }] })
+    rpc.mockResolvedValueOnce({
+      data: null,
+      error: { code: '23505', message: 'duplicate key value violates unique constraint "idx_subscriptions_active_user_unique"' },
+    })
+
+    const response = await POST(registerRequest())
     const data = await response.json()
 
-    expect(response.status).toBe(502)
-    expect(data).toEqual({ error: 'Failed to send invoice' })
+    expect(response.status).toBe(409)
+    expect(data).toEqual({ error: 'Active subscription already exists' })
     expect(createPersistentSession).not.toHaveBeenCalled()
   })
 })

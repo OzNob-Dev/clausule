@@ -22,7 +22,25 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
  * @param {RequestInit} init - fetch options
  * @returns {Promise<{ data: any, error: any }>}
  */
-async function supaFetch(path, init = {}) {
+function mutationError(message, code) {
+  return { message, code }
+}
+
+function applyRowExpectation(payload, expectRows) {
+  if (!expectRows) return { data: payload, error: null }
+
+  const rows = Array.isArray(payload) ? payload : payload == null ? [] : [payload]
+  if (rows.length === 0) {
+    return { data: payload, error: mutationError('No rows affected', 'PGRST_NO_ROWS') }
+  }
+  if (expectRows === 'single' && rows.length !== 1) {
+    return { data: payload, error: mutationError(`Expected 1 row, received ${rows.length}`, 'PGRST_TOO_MANY_ROWS') }
+  }
+
+  return { data: payload, error: null }
+}
+
+async function supaFetch(path, init = {}, options = {}) {
   const url = `${SUPABASE_URL}${path}`
   const res = await fetch(url, {
     ...init,
@@ -43,7 +61,7 @@ async function supaFetch(path, init = {}) {
     return { data: null, error: payload ?? { message: `HTTP ${res.status}` } }
   }
 
-  return { data: payload, error: null }
+  return applyRowExpectation(payload, options.expectRows)
 }
 
 // ── Convenience helpers ──────────────────────────────────────────────────────
@@ -51,11 +69,11 @@ async function supaFetch(path, init = {}) {
 /**
  * Insert a row and return the created record.
  */
-export function insert(table, body) {
+export function insert(table, body, options = {}) {
   return supaFetch(`/rest/v1/${table}`, {
     method: 'POST',
     body: JSON.stringify(body),
-  })
+  }, options)
 }
 
 /**
@@ -69,18 +87,18 @@ export function select(table, query = '') {
 /**
  * Update rows matching query.
  */
-export function update(table, query, body) {
+export function update(table, query, body, options = {}) {
   return supaFetch(`/rest/v1/${table}?${query}`, {
     method: 'PATCH',
     body: JSON.stringify(body),
-  })
+  }, options)
 }
 
 /**
  * Delete rows matching query.
  */
-export function del(table, query) {
-  return supaFetch(`/rest/v1/${table}?${query}`, { method: 'DELETE' })
+export function del(table, query, options = {}) {
+  return supaFetch(`/rest/v1/${table}?${query}`, { method: 'DELETE' }, options)
 }
 
 /**
@@ -89,12 +107,24 @@ export function del(table, query) {
  * @param {object} body
  * @param {string} [onConflict] - comma-separated column(s) to match on (default: 'id')
  */
-export function upsert(table, body, onConflict = 'id') {
-  return supaFetch(`/rest/v1/${table}`, {
+export function upsert(table, body, onConflict = 'id', options = {}) {
+  if (typeof onConflict === 'object' && onConflict !== null) {
+    options = onConflict
+    onConflict = 'id'
+  }
+
+  return supaFetch(`/rest/v1/${table}?on_conflict=${encodeURIComponent(onConflict)}`, {
     method: 'POST',
     headers: { Prefer: `resolution=merge-duplicates,return=representation` },
     body: JSON.stringify(body),
-  })
+  }, options)
+}
+
+export function rpc(fn, body = {}, options = {}) {
+  return supaFetch(`/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  }, options)
 }
 
 // ── Supabase Auth Admin endpoints ────────────────────────────────────────────

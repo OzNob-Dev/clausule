@@ -1,10 +1,19 @@
-import { insert, upsert, createUser } from '@api/_lib/supabase.js'
+import { createUser, rpc } from '@api/_lib/supabase.js'
 import { findProfileByEmail, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
 const STRIPE_API = 'https://api.stripe.com/v1'
 const PLAN_AMOUNT_CENTS = 500
 const PLAN_CURRENCY = 'usd'
+
+function authUserId(created) {
+  return created?.id ?? created?.user?.id ?? null
+}
+
+function isActiveSubscriptionConflict(dbError) {
+  const message = `${dbError?.message ?? ''} ${dbError?.details ?? ''}`.toLowerCase()
+  return dbError?.code === '23505' && message.includes('idx_subscriptions_active_user_unique')
+}
 
 async function stripe(path, body = null, method = 'POST') {
   const res = await fetch(`${STRIPE_API}${path}`, {
@@ -31,7 +40,9 @@ async function resolveUserId({ authedId, email, firstName, lastName }) {
     user_metadata: { first_name: firstName, last_name: lastName || undefined },
   })
   if (createErr) throw Object.assign(new Error('Failed to create user account'), { status: 500, log: ['[subscribe] createUser error:', createErr] })
-  return created.id
+  const userId = authUserId(created)
+  if (!userId) throw Object.assign(new Error('Failed to create user account'), { status: 500, log: ['[subscribe] createUser returned no id:', created] })
+  return userId
 }
 
 export function paymentSystemConfigured() {
@@ -72,25 +83,33 @@ export async function createSubscription({ body, authedId }) {
     'expand[]': 'latest_invoice.payment_intent',
   }))
 
-  await insert('subscriptions', {
-    user_id: userId,
-    stripe_customer_id: customer.id,
-    stripe_subscription_id: subscription.id,
-    status: subscription.status,
-    plan: 'individual',
-    amount_cents: PLAN_AMOUNT_CENTS,
-    current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-    current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+  const { data: finalized, error: finalizeError } = await rpc('finalize_individual_subscription', {
+    p_user_id: userId,
+    p_email: email,
+    p_first_name: firstName,
+    p_last_name: lastName || null,
+    p_status: subscription.status,
+    p_amount_cents: PLAN_AMOUNT_CENTS,
+    p_current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+    p_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+    p_stripe_customer_id: customer.id,
+    p_stripe_subscription_id: subscription.id,
+    p_activate: subscription.status === 'active' || subscription.status === 'trialing',
   })
+  if (finalizeError) {
+    try {
+      await stripe(`/subscriptions/${subscription.id}`, null, 'DELETE')
+    } catch (cleanupError) {
+      console.error('[subscribe] rollback subscription error:', cleanupError.message)
+    }
+    if (isActiveSubscriptionConflict(finalizeError)) {
+      throw Object.assign(new Error('Active subscription already exists'), { status: 409 })
+    }
+    throw Object.assign(new Error('Failed to save subscription'), { status: 500, log: ['[subscribe] finalize subscription error:', finalizeError] })
+  }
 
-  const { data: upserted } = await upsert('profiles', {
-    id: userId,
-    email,
-    first_name: firstName,
-    last_name: lastName || null,
-  })
-
-  const role = (Array.isArray(upserted) ? upserted[0]?.role : upserted?.role) ?? 'employee'
+  const row = Array.isArray(finalized) ? finalized[0] : finalized
+  const role = row?.role ?? 'employee'
   const clientSecret = subscription.latest_invoice?.payment_intent?.client_secret ?? null
 
   return {

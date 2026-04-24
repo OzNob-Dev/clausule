@@ -30,7 +30,7 @@ describe('account route', () => {
       is_active: false,
       is_deleted: true,
       deleted_at: expect.any(String),
-    })
+    }, { expectRows: 'single' })
     expect(del).toHaveBeenCalledWith('refresh_tokens', 'user_id=eq.user-1')
     expect(clearAuthCookies).toHaveBeenCalled()
     expect(response.headers.get('set-cookie')).toContain('clausule_at=; Max-Age=0')

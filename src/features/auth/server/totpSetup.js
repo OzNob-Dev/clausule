@@ -23,7 +23,7 @@ export async function saveTotpSetup({ userId, body }) {
 
   if (!verifyTotp(secret, code)) return { body: { error: 'Invalid TOTP code' }, status: 401 }
 
-  const { error } = await update('profiles', `id=eq.${userId}`, { totp_secret: secret })
+  const { error } = await update('profiles', `id=eq.${userId}`, { totp_secret: secret }, { expectRows: 'single' })
   if (error) {
     return {
       log: ['[totp/setup POST] update error:', error],

@@ -21,7 +21,7 @@ export async function DELETE(request) {
     is_active: false,
     is_deleted: true,
     deleted_at: deletedAt,
-  })
+  }, { expectRows: 'single' })
 
   if (deleteError) {
     console.error('[account DELETE] profile soft-delete error:', deleteError)

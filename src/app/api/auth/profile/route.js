@@ -95,7 +95,7 @@ export async function PATCH(request) {
     mobile: mobile || null,
     job_title: jobTitle || null,
     department: department || null,
-  })
+  }, { expectRows: 'single' })
 
   if (updateError) {
     console.error('[auth/profile PATCH] update error:', updateError)

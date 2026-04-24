@@ -10,7 +10,7 @@ export async function createPersistentSession({ userId, email, role, authMethod 
     user_id: userId,
     token_hash: refreshHash,
     expires_at: expiresAt,
-  })
+  }, { expectRows: 'single' })
 
   if (error) throw new Error('Failed to create session')
   return { accessToken, refreshToken }
