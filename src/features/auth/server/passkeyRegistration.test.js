@@ -1,15 +1,20 @@
 import crypto from 'node:crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { insert, select } from '@api/_lib/supabase.js'
+import { consumePasskeyChallenge, storePasskeyChallenge } from './passkeyChallenge.js'
 import {
   createPasskeyRegistrationOptions,
-  pendingChallenges,
   verifyPasskeyRegistration,
 } from './passkeyRegistration.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
   insert: vi.fn(),
   select: vi.fn(),
+}))
+
+vi.mock('./passkeyChallenge.js', () => ({
+  storePasskeyChallenge: vi.fn(),
+  consumePasskeyChallenge: vi.fn(),
 }))
 
 function request(host = 'app.example.com') {
@@ -21,10 +26,11 @@ function request(host = 'app.example.com') {
 describe('passkeyRegistration service', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    pendingChallenges.clear()
     process.env.WEBAUTHN_CHALLENGE_SECRET = 'test-secret'
     delete process.env.NEXT_PUBLIC_RP_ID
     delete process.env.NEXT_PUBLIC_ORIGIN
+    storePasskeyChallenge.mockResolvedValue({ data: [{ user_id: 'user-1' }], error: null })
+    consumePasskeyChallenge.mockResolvedValue({ row: { challenge: 'stored', expires_at: new Date(Date.now() + 60_000).toISOString() }, error: null })
   })
 
   it('creates registration options and stores a signed challenge', async () => {
@@ -39,10 +45,11 @@ describe('passkeyRegistration service', () => {
     expect(result.body.options.user.name).toBe('ada@example.com')
     expect(result.body.options.user.displayName).toBe('Ada Lovelace')
     expect(result.body._signedChallenge).toContain('.')
-    expect(pendingChallenges.get('user-1')).toEqual(expect.objectContaining({
+    expect(storePasskeyChallenge).toHaveBeenCalledWith({
+      userId: 'user-1',
       challenge: result.body._signedChallenge,
-      expiresAt: expect.any(Number),
-    }))
+      expiresAt: expect.any(String),
+    })
   })
 
   it('rejects verification without a credential or signed challenge', async () => {
@@ -66,6 +73,10 @@ describe('passkeyRegistration service', () => {
     const signedChallenge = options.body._signedChallenge
     const challenge = options.body.options.challenge
     insert.mockResolvedValueOnce({ data: null, error: { message: 'duplicate internal detail' } })
+    consumePasskeyChallenge.mockResolvedValueOnce({
+      row: { challenge: signedChallenge, expires_at: new Date(Date.now() + 60_000).toISOString() },
+      error: null,
+    })
 
     const result = await verifyPasskeyRegistration({
       request: request(),
@@ -94,5 +105,17 @@ describe('passkeyRegistration service', () => {
 
     expect(result.status).toBe(500)
     expect(result.body).toEqual({ error: 'Failed to save passkey' })
+  })
+
+  it('returns a safe server error when challenge persistence fails', async () => {
+    select.mockResolvedValueOnce({
+      data: [{ email: 'ada@example.com', first_name: 'Ada', last_name: 'Lovelace' }],
+    })
+    storePasskeyChallenge.mockResolvedValueOnce({ data: null, error: { message: 'db down' } })
+
+    const result = await createPasskeyRegistrationOptions({ request: request(), userId: 'user-1' })
+
+    expect(result.status).toBe(500)
+    expect(result.body).toEqual({ error: 'Failed to create passkey challenge' })
   })
 })

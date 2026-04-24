@@ -10,16 +10,22 @@
  */
 
 import { NextResponse }   from 'next/server'
-import { RateLimiter }    from '@api/_lib/rate-limit.js'
 import { checkEmailAccount } from '@features/auth/server/checkEmail'
+import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { validateEmail }  from '@shared/utils/emailValidation'
-
-// 20 checks per minute per IP — enough for normal use, tight for enumeration.
-const limiter = new RateLimiter({ limit: 20, windowMs: 60 * 1000 })
 
 export async function POST(request) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-  const { allowed } = limiter.check(ip)
+  const { allowed, error: limitError } = await consumeDistributedRateLimit({
+    scope: 'auth_check_email_ip',
+    identifier: ip,
+    limit: 20,
+    windowMs: 60 * 1000,
+  })
+  if (limitError) {
+    console.error('[check-email] rate limit error:', limitError)
+    return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
+  }
   if (!allowed) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }

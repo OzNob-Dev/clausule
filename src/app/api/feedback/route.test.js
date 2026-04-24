@@ -9,6 +9,10 @@ vi.mock('@api/_lib/auth.js', () => ({
   unauthorized: vi.fn(() => Response.json({ error: 'Unauthenticated' }, { status: 401 })),
 }))
 
+vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+  consumeDistributedRateLimit: vi.fn(async () => ({ allowed: true, retryAfterMs: 0, error: null })),
+}))
+
 vi.mock('@api/_lib/supabase.js', () => ({
   insert: vi.fn(),
   select: vi.fn(),

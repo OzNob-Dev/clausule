@@ -3,6 +3,7 @@
 - Design for partial failure, retries, and idempotency.
 - Use timeouts and abort paths for network calls.
 - Keep critical mutations safe to repeat or safely reject duplicates.
+- Prefer durable shared stores over process memory for auth throttles, replay ledgers, and challenge state.
 
 ## Rules
 

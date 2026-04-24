@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
-import { RateLimiter } from '@api/_lib/rate-limit.js'
+import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { listAppFeedback, sendAppFeedback } from '@features/brag/server/appFeedback.js'
-
-const postLimiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
 
 export async function GET(request) {
   const auth = requireAuth(request)
@@ -17,7 +15,16 @@ export async function GET(request) {
 export async function POST(request) {
   const auth = requireAuth(request)
   if (auth.error) return unauthorized()
-  const { allowed, retryAfterMs } = postLimiter.check(auth.userId)
+  const { allowed, retryAfterMs, error } = await consumeDistributedRateLimit({
+    scope: 'feedback_post_user',
+    identifier: auth.userId,
+    limit: 5,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (error) {
+    console.error('[feedback] rate limit error:', error)
+    return NextResponse.json({ error: 'Failed to save feedback' }, { status: 500 })
+  }
 
   if (!allowed) {
     return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429 })

@@ -1,11 +1,10 @@
 import crypto from 'node:crypto'
 import { insert } from '@api/_lib/supabase.js'
 import { findProfileById } from './accountRepository.js'
+import { consumePasskeyChallenge, storePasskeyChallenge } from './passkeyChallenge.js'
 
 const RP_NAME = process.env.NEXT_PUBLIC_RP_NAME ?? 'Clausule'
 const CHALLENGE_TTL_MS = 5 * 60 * 1000
-
-export const pendingChallenges = new Map()
 
 export function getRpId(request) {
   if (process.env.NEXT_PUBLIC_RP_ID) return process.env.NEXT_PUBLIC_RP_ID
@@ -48,12 +47,6 @@ function jsonError(error, status = 400) {
   return { body: { error }, status }
 }
 
-function pruneExpiredChallenges() {
-  for (const [key, entry] of pendingChallenges) {
-    if (Date.now() > entry.expiresAt) pendingChallenges.delete(key)
-  }
-}
-
 export async function createPasskeyRegistrationOptions({ request, userId }) {
   const rpId = getRpId(request)
   const { profile } = await findProfileById(userId, 'email,first_name,last_name')
@@ -62,12 +55,19 @@ export async function createPasskeyRegistrationOptions({ request, userId }) {
 
   const challengeBytes = crypto.randomBytes(32)
   const signedChallenge = signChallenge(challengeBytes)
+  const expiresAt = new Date(Date.now() + CHALLENGE_TTL_MS).toISOString()
 
-  pendingChallenges.set(userId, {
+  const { error: challengeError } = await storePasskeyChallenge({
+    userId,
     challenge: signedChallenge,
-    expiresAt: Date.now() + CHALLENGE_TTL_MS,
+    expiresAt,
   })
-  pruneExpiredChallenges()
+  if (challengeError) {
+    return {
+      log: ['[passkeys/register/options] challenge store error:', challengeError],
+      ...jsonError('Failed to create passkey challenge', 500),
+    }
+  }
 
   const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.email
 
@@ -106,20 +106,19 @@ export async function verifyPasskeyRegistration({ request, userId, body }) {
 
   if (!credential || !_signedChallenge) return jsonError('credential and _signedChallenge required')
 
-  const pending = pendingChallenges.get(userId)
-  if (!pending || Date.now() > pending.expiresAt) return jsonError('Challenge expired — restart registration')
-
-  if (
-    pending.challenge.length !== _signedChallenge.length ||
-    !crypto.timingSafeEqual(Buffer.from(pending.challenge), Buffer.from(_signedChallenge))
-  ) {
-    return jsonError('Challenge mismatch')
-  }
-
   const expectedChallenge = verifySignedChallenge(_signedChallenge)
   if (!expectedChallenge) return jsonError('Invalid challenge signature')
-
-  pendingChallenges.delete(userId)
+  const { row: pending, error: challengeError } = await consumePasskeyChallenge({
+    userId,
+    challenge: _signedChallenge,
+  })
+  if (challengeError) {
+    return {
+      log: ['[passkeys/register/verify] challenge consume error:', challengeError],
+      ...jsonError('Failed to verify passkey', 500),
+    }
+  }
+  if (!pending) return jsonError('Challenge expired — restart registration')
 
   let clientData
   try {

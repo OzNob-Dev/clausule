@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
 import { verifyPasskeyRegistration } from '@features/auth/server/passkeyRegistration.js'
 
-export async function POST(request) {
+  export async function POST(request) {
   try {
     const { userId, error: authError } = await requireAuth(request)
     if (authError) return unauthorized()

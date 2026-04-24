@@ -8,10 +8,12 @@ const hardeningPath = path.resolve(__dirname, '../../supabase/migrations/008_bac
 const retryPath = path.resolve(__dirname, '../../supabase/migrations/009_retry_safety_and_consistency.sql')
 const cleanupPath = path.resolve(__dirname, '../../supabase/migrations/010_backend_operation_cleanup.sql')
 const replayWindowPath = path.resolve(__dirname, '../../supabase/migrations/011_backend_operation_replay_window.sql')
+const distributedReliabilityPath = path.resolve(__dirname, '../../supabase/migrations/012_distributed_reliability.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
 const replayWindowSql = readFileSync(replayWindowPath, 'utf8')
+const distributedReliabilitySql = readFileSync(distributedReliabilityPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -53,5 +55,16 @@ describe('backend hardening migration', () => {
     expect(replayWindowSql).toContain("interval '6 hours'")
     expect(replayWindowSql).toContain('create or replace function public.begin_backend_operation')
     expect(replayWindowSql).toContain('create or replace function cleanup_backend_operations()')
+  })
+
+  it('adds distributed throttling, passkey challenge persistence, and cleanup scheduling', () => {
+    expect(distributedReliabilitySql).toContain('create table if not exists auth_rate_limits')
+    expect(distributedReliabilitySql).toContain('create table if not exists passkey_challenges')
+    expect(distributedReliabilitySql).toContain('create or replace function public.consume_rate_limit')
+    expect(distributedReliabilitySql).toContain('create or replace function public.store_passkey_challenge')
+    expect(distributedReliabilitySql).toContain('create or replace function public.consume_passkey_challenge')
+    expect(distributedReliabilitySql).toContain('create extension if not exists pg_cron;')
+    expect(distributedReliabilitySql).toContain("cleanup_passkey_challenges_job")
+    expect(distributedReliabilitySql).toContain("cleanup_auth_rate_limits_job")
   })
 })

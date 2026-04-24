@@ -5,15 +5,22 @@
  */
 
 import { NextResponse } from 'next/server'
-import { RateLimiter } from '@api/_lib/rate-limit.js'
+import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { sendOtpCode } from '@features/auth/server/sendOtpCode.js'
-
-const limiter = new RateLimiter({ limit: 3, windowMs: 10 * 60 * 1000 })
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const email = (body.email ?? '').trim().toLowerCase()
-  const { allowed, retryAfterMs } = limiter.check(email)
+  const { allowed, retryAfterMs, error } = await consumeDistributedRateLimit({
+    scope: 'auth_send_code_email',
+    identifier: email,
+    limit: 3,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (error) {
+    console.error('[send-code] rate limit error:', error)
+    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
+  }
 
   if (!allowed) {
     return NextResponse.json(

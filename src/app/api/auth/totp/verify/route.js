@@ -12,14 +12,11 @@
  */
 
 import { NextResponse }                 from 'next/server'
-import { RateLimiter }                  from '@api/_lib/rate-limit.js'
 import { authAttemptOperationKey, beginBackendOperation } from '@features/auth/server/backendOperation.js'
+import { consumeDistributedRateLimit }  from '@features/auth/server/distributedRateLimit.js'
 import { verifyTotpLogin }              from '@features/auth/server/loginVerification.js'
 import { issueRecoverableSession }      from '@features/auth/server/recoverableSession.js'
 import { validateEmail }                from '@shared/utils/emailValidation'
-
-// 5 attempts per 10 minutes per email — matches verify-code policy.
-const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
 
 export async function POST(request) {
   const body  = await request.json().catch(() => ({}))
@@ -30,7 +27,16 @@ export async function POST(request) {
     return NextResponse.json({ error: 'email and 6-digit code required' }, { status: 400 })
   }
 
-  const { allowed, retryAfterMs } = limiter.check(email)
+  const { allowed, retryAfterMs, error: limitError } = await consumeDistributedRateLimit({
+    scope: 'auth_verify_totp_email',
+    identifier: email,
+    limit: 5,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (limitError) {
+    console.error('[totp/verify POST] rate limit error:', limitError)
+    return NextResponse.json({ error: 'Failed to verify code' }, { status: 500 })
+  }
   if (!allowed) {
     return NextResponse.json(
       { error: 'Too many attempts — please try again later', retryAfterMs },

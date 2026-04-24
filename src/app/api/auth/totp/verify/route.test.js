@@ -5,6 +5,10 @@ import { rpc, select } from '@api/_lib/supabase.js'
 import { authAttemptOperationKey } from '@features/auth/server/backendOperation.js'
 import { POST } from './route.js'
 
+vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+  consumeDistributedRateLimit: vi.fn(async () => ({ allowed: true, retryAfterMs: 0, error: null })),
+}))
+
 vi.mock('@api/_lib/supabase.js', () => ({
   rpc: vi.fn(),
   select: vi.fn(),

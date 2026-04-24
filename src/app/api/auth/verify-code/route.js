@@ -18,13 +18,10 @@
  */
 
 import { NextResponse }                    from 'next/server'
-import { RateLimiter }                     from '@api/_lib/rate-limit.js'
 import { authAttemptOperationKey, beginBackendOperation } from '@features/auth/server/backendOperation.js'
+import { consumeDistributedRateLimit }     from '@features/auth/server/distributedRateLimit.js'
 import { verifyEmailOtpLogin }             from '@features/auth/server/loginVerification.js'
 import { issueRecoverableSession }         from '@features/auth/server/recoverableSession.js'
-
-// 5 attempts per 10 minutes per email.
-const limiter = new RateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 })
 
 export async function POST(request) {
   const body  = await request.json().catch(() => ({}))
@@ -36,7 +33,16 @@ export async function POST(request) {
   }
 
   // Rate limit by email.
-  const { allowed, retryAfterMs } = limiter.check(email)
+  const { allowed, retryAfterMs, error: limitError } = await consumeDistributedRateLimit({
+    scope: 'auth_verify_code_email',
+    identifier: email,
+    limit: 5,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (limitError) {
+    console.error('[verify-code] rate limit error:', limitError)
+    return NextResponse.json({ error: 'Failed to verify code' }, { status: 500 })
+  }
   if (!allowed) {
     return NextResponse.json(
       { error: 'Too many attempts — please request a new code', retryAfterMs },

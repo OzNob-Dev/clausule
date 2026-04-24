@@ -6,6 +6,10 @@ vi.mock('@api/_lib/auth.js', () => ({
   unauthorized: vi.fn(() => Response.json({ error: 'Unauthenticated' }, { status: 401 })),
 }))
 
+vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+  consumeDistributedRateLimit: vi.fn(async () => ({ allowed: true, retryAfterMs: 0, error: null })),
+}))
+
 function request(body = {}) {
   return new Request('http://localhost/api/ai/draft-summary', {
     method: 'POST',

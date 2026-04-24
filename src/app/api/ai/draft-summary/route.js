@@ -10,9 +10,7 @@
 
 import { NextResponse }              from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
-import { RateLimiter }               from '@api/_lib/rate-limit.js'
-
-const limiter = new RateLimiter({ limit: 10, windowMs: 10 * 60 * 1000 })
+import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 const MAX_EMPLOYEE_NAME_LENGTH = 120
 const MAX_ENTRIES = 30
 const MAX_FIELD_LENGTH = 1000
@@ -33,7 +31,16 @@ function validateEntries(entries) {
 export async function POST(request) {
   const { userId, error: authError } = await requireAuth(request)
   if (authError) return unauthorized()
-  const { allowed, retryAfterMs } = limiter.check(userId)
+  const { allowed, retryAfterMs, error: limitError } = await consumeDistributedRateLimit({
+    scope: 'ai_draft_summary_user',
+    identifier: userId,
+    limit: 10,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (limitError) {
+    console.error('[draft-summary] rate limit error:', limitError)
+    return NextResponse.json({ error: 'AI request failed' }, { status: 500 })
+  }
 
   if (!allowed) {
     return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429 })
