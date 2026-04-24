@@ -11,6 +11,7 @@
 - Use lists of maximum 5 items only when they improve clarity.
 - Avoid repeating the user’s request.
 - Prefer concrete outputs over commentary.
+- Prefer plain, casual wording over buzzwords or overly polished phrasing.
 
 ## Code Output
 

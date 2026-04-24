@@ -9,7 +9,10 @@
 - Match the seriousness of the action.
 - Explain what happens next when the user needs it.
 - Keep empty states, errors, and confirmations useful.
+- Write clear comms that are easy to scan and hard to misread.
 - Avoid jargon unless the audience already uses it.
+- Prefer casual, natural wording over polished corporate language.
+- Avoid buzzwords, hype, and consultant-style phrasing.
 
 ## Empty States
 
@@ -23,11 +26,13 @@
 - Confident
 - Human
 - Direct
+- Casual
 - Not cute at the expense of clarity
 
 ## Review Checks
 
 - Can a new user act without guesswork?
+- Is the message clear on a quick read?
 - Does the copy reduce anxiety?
 - Is the action and consequence obvious?
 - Does the voice fit the product and the screen?
