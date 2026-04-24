@@ -20,6 +20,7 @@
 - Make mutations idempotent where practical.
 - Use clear retry guidance for throttled or transient failures.
 - Abort long-running requests when the client disconnects.
+- Put multi-step consistency-critical writes behind DB functions or other atomic boundaries instead of acknowledging partial success.
 
 ## Patterns
 

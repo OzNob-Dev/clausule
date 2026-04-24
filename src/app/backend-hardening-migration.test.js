@@ -9,11 +9,13 @@ const retryPath = path.resolve(__dirname, '../../supabase/migrations/009_retry_s
 const cleanupPath = path.resolve(__dirname, '../../supabase/migrations/010_backend_operation_cleanup.sql')
 const replayWindowPath = path.resolve(__dirname, '../../supabase/migrations/011_backend_operation_replay_window.sql')
 const distributedReliabilityPath = path.resolve(__dirname, '../../supabase/migrations/012_distributed_reliability.sql')
+const bragAtomicWritesPath = path.resolve(__dirname, '../../supabase/migrations/013_brag_entry_atomic_writes.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
 const replayWindowSql = readFileSync(replayWindowPath, 'utf8')
 const distributedReliabilitySql = readFileSync(distributedReliabilityPath, 'utf8')
+const bragAtomicWritesSql = readFileSync(bragAtomicWritesPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -66,5 +68,12 @@ describe('backend hardening migration', () => {
     expect(distributedReliabilitySql).toContain('create extension if not exists pg_cron;')
     expect(distributedReliabilitySql).toContain("cleanup_passkey_challenges_job")
     expect(distributedReliabilitySql).toContain("cleanup_auth_rate_limits_job")
+  })
+
+  it('adds atomic brag entry write functions', () => {
+    expect(bragAtomicWritesSql).toContain('create or replace function public.create_brag_entry_with_evidence')
+    expect(bragAtomicWritesSql).toContain('create or replace function public.update_brag_entry_with_evidence')
+    expect(bragAtomicWritesSql).toContain('grant execute on function public.create_brag_entry_with_evidence')
+    expect(bragAtomicWritesSql).toContain('grant execute on function public.update_brag_entry_with_evidence')
   })
 })

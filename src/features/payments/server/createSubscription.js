@@ -1,4 +1,5 @@
 import { createUser, rpc } from '@api/_lib/supabase.js'
+import { fetchWithTimeout } from '@api/_lib/network.js'
 import { findProfileByEmail, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
 import {
   beginBackendOperation,
@@ -22,7 +23,7 @@ function isActiveSubscriptionConflict(dbError) {
 }
 
 async function stripe(path, body = null, method = 'POST', idempotencyKey = null) {
-  const res = await fetch(`${STRIPE_API}${path}`, {
+  const res = await fetchWithTimeout(`${STRIPE_API}${path}`, {
     method,
     headers: {
       Authorization: `Bearer ${STRIPE_KEY}`,
@@ -30,7 +31,7 @@ async function stripe(path, body = null, method = 'POST', idempotencyKey = null)
       ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
     },
     body: body ? body.toString() : undefined,
-  })
+  }, { timeoutMs: 10_000, timeoutLabel: `Stripe ${method} ${path}` })
   const data = await res.json()
   if (!res.ok) throw new Error(data.error?.message ?? `Stripe HTTP ${res.status}`)
   return data

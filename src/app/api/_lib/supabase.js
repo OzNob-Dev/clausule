@@ -168,3 +168,10 @@ export function getAuthUser(userId) {
 export function deleteUser(userId) {
   return supaFetch(`/auth/v1/admin/users/${userId}`, { method: 'DELETE' })
 }
+
+export function updateAuthUser(userId, body) {
+  return supaFetch(`/auth/v1/admin/users/${userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
+}

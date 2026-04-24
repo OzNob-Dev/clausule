@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import { fetchWithTimeout } from '@api/_lib/network.js'
 
 export async function exchangeSsoCode({ provider, code, codeVerifier, redirectUri, appleUser }) {
   switch (provider) {
@@ -10,7 +11,7 @@ export async function exchangeSsoCode({ provider, code, codeVerifier, redirectUr
 }
 
 async function googleExchange({ code, codeVerifier, redirectUri }) {
-  const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+  const tokenRes = await fetchWithTimeout('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
@@ -21,14 +22,14 @@ async function googleExchange({ code, codeVerifier, redirectUri }) {
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
       code_verifier: codeVerifier,
     }),
-  })
+  }, { timeoutMs: 10_000, timeoutLabel: 'Google token exchange' })
 
   if (!tokenRes.ok) throw new Error(`Google token: ${tokenRes.status} ${await tokenRes.text()}`)
 
   const { access_token } = await tokenRes.json()
-  const infoRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+  const infoRes = await fetchWithTimeout('https://www.googleapis.com/oauth2/v2/userinfo', {
     headers: { Authorization: `Bearer ${access_token}` },
-  })
+  }, { timeoutMs: 10_000, timeoutLabel: 'Google user info' })
 
   if (!infoRes.ok) throw new Error(`Google userinfo: ${infoRes.status}`)
 
@@ -43,7 +44,7 @@ async function googleExchange({ code, codeVerifier, redirectUri }) {
 }
 
 async function microsoftExchange({ code, codeVerifier, redirectUri }) {
-  const tokenRes = await fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+  const tokenRes = await fetchWithTimeout('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
@@ -55,14 +56,15 @@ async function microsoftExchange({ code, codeVerifier, redirectUri }) {
       code_verifier: codeVerifier,
       scope: 'openid email profile User.Read',
     }),
-  })
+  }, { timeoutMs: 10_000, timeoutLabel: 'Microsoft token exchange' })
 
   if (!tokenRes.ok) throw new Error(`Microsoft token: ${tokenRes.status} ${await tokenRes.text()}`)
 
   const { access_token } = await tokenRes.json()
-  const infoRes = await fetch(
+  const infoRes = await fetchWithTimeout(
     'https://graph.microsoft.com/v1.0/me?$select=id,mail,userPrincipalName,givenName,surname',
-    { headers: { Authorization: `Bearer ${access_token}` } }
+    { headers: { Authorization: `Bearer ${access_token}` } },
+    { timeoutMs: 10_000, timeoutLabel: 'Microsoft user info' }
   )
 
   if (!infoRes.ok) throw new Error(`Microsoft Graph: ${infoRes.status}`)
@@ -116,7 +118,7 @@ function decodeJwtPayload(token) {
 }
 
 async function appleExchange({ code, codeVerifier, redirectUri, appleUser }) {
-  const tokenRes = await fetch('https://appleid.apple.com/auth/token', {
+  const tokenRes = await fetchWithTimeout('https://appleid.apple.com/auth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
@@ -127,7 +129,7 @@ async function appleExchange({ code, codeVerifier, redirectUri, appleUser }) {
       client_secret: buildAppleClientSecret(),
       code_verifier: codeVerifier,
     }),
-  })
+  }, { timeoutMs: 10_000, timeoutLabel: 'Apple token exchange' })
 
   if (!tokenRes.ok) throw new Error(`Apple token: ${tokenRes.status} ${await tokenRes.text()}`)
 

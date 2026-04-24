@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { requireAuth } from '@api/_lib/auth.js'
-import { getAuthUser, select, update } from '@api/_lib/supabase.js'
+import { getAuthUser, select, update, updateAuthUser } from '@api/_lib/supabase.js'
 import { findProfileById } from '@features/auth/server/accountRepository.js'
 import { verifyEmailOtpCode } from '@features/auth/server/emailOtpVerification.js'
 import { GET, PATCH } from './route.js'
@@ -14,6 +14,7 @@ vi.mock('@api/_lib/supabase.js', () => ({
   getAuthUser: vi.fn(),
   select: vi.fn(),
   update: vi.fn(),
+  updateAuthUser: vi.fn(),
 }))
 
 vi.mock('@features/auth/server/accountRepository.js', () => ({
@@ -53,6 +54,7 @@ describe('auth profile route', () => {
       error: null,
     })
     verifyEmailOtpCode.mockResolvedValue({ ok: true })
+    updateAuthUser.mockResolvedValue({ data: { id: 'user-1' }, error: null })
     update.mockResolvedValue({
       data: [{
         first_name: 'Ada',
@@ -123,6 +125,7 @@ describe('auth profile route', () => {
     const json = await response.json()
 
     expect(verifyEmailOtpCode).toHaveBeenCalledWith('ada@new.example.com', '123456')
+    expect(updateAuthUser).toHaveBeenCalledWith('user-1', { email: 'ada@new.example.com' })
     expect(update).toHaveBeenCalledWith('profiles', 'id=eq.user-1', expect.objectContaining({
       first_name: 'Ada',
       last_name: 'Byron',
@@ -160,6 +163,32 @@ describe('auth profile route', () => {
 
     expect(response.status).toBe(400)
     expect(json.error).toMatch(/mobile confirmation required/i)
+    expect(updateAuthUser).not.toHaveBeenCalled()
     expect(update).not.toHaveBeenCalled()
+  })
+
+  it('rolls back the auth email update when the profile row save fails', async () => {
+    update.mockResolvedValueOnce({ data: null, error: { message: 'write failed' } })
+
+    const response = await PATCH(new Request('http://localhost/api/auth/profile', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        firstName: 'Ada',
+        lastName: 'Byron',
+        email: 'ada@new.example.com',
+        mobile: '+61 411 111 111',
+        jobTitle: 'Principal engineer',
+        department: 'Platform',
+        emailVerificationCode: '123456',
+        mobileConfirmed: true,
+        mobileConfirmation: '+61 411 111 111',
+      }),
+    }))
+    const json = await response.json()
+
+    expect(response.status).toBe(500)
+    expect(json).toEqual({ error: 'Failed to save profile' })
+    expect(updateAuthUser).toHaveBeenNthCalledWith(1, 'user-1', { email: 'ada@new.example.com' })
+    expect(updateAuthUser).toHaveBeenNthCalledWith(2, 'user-1', { email: 'ada@example.com' })
   })
 })

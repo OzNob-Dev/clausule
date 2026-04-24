@@ -10,6 +10,7 @@
 
 import { NextResponse }              from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
+import { fetchWithTimeout } from '@api/_lib/network.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 const MAX_EMPLOYEE_NAME_LENGTH = 120
 const MAX_ENTRIES = 30
@@ -62,7 +63,7 @@ export async function POST(request) {
     .map((e) => `- [${e.cat || 'note'}] ${e.title}: ${e.body}`)
     .join('\n')
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'x-api-key':         process.env.ANTHROPIC_API_KEY,
@@ -79,7 +80,7 @@ export async function POST(request) {
         },
       ],
     }),
-  })
+  }, { timeoutMs: 10_000, timeoutLabel: 'Anthropic summary draft' })
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))

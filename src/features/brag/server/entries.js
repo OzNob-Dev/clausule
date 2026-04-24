@@ -1,4 +1,4 @@
-import { del, insert, select, update } from '@api/_lib/supabase.js'
+import { del, rpc, select } from '@api/_lib/supabase.js'
 
 /** @typedef {import('@shared/types/contracts').BragEntry} BragEntry */
 
@@ -52,25 +52,19 @@ export async function createEntry({ userId, body }) {
 
   const evidenceTypes = validEvidenceTypes(body.evidence_types)
   const { strength, hint } = deriveStrength(evidenceTypes.length)
-  const { data: rows, error } = await insert('brag_entries', {
-    user_id: userId,
-    title,
-    body: entryBody || null,
-    entry_date: entryDate,
-    strength,
-    strength_hint: hint,
-    visible_to_manager: visible,
-  })
+  const { data: rows, error } = await rpc('create_brag_entry_with_evidence', {
+    p_user_id: userId,
+    p_title: title,
+    p_body: entryBody || null,
+    p_entry_date: entryDate,
+    p_strength: strength,
+    p_strength_hint: hint,
+    p_visible_to_manager: visible,
+    p_evidence_types: evidenceTypes,
+  }, { expectRows: 'single' })
 
   if (error || !rows?.length) return { log: ['[brag/entries POST] entry insert error:', error], body: { error: 'Failed to create entry' }, status: 500 }
-
-  const entry = rows[0]
-  if (evidenceTypes.length) {
-    const { error: evidenceError } = await insert('brag_entry_evidence', evidenceTypes.map((type) => ({ entry_id: entry.id, type })))
-    if (evidenceError) return { log: ['[brag/entries POST] evidence insert error:', evidenceError], body: { ok: true, entry }, status: 201 }
-  }
-
-  return { body: { ok: true, entry }, status: 201 }
+  return { body: { ok: true, entry: rows[0] }, status: 201 }
 }
 
 async function getOwnedEntry(entryId, userId) {
@@ -104,16 +98,22 @@ export async function updateEntry({ userId, entryId, body }) {
     const { strength, hint } = deriveStrength(evidenceTypes.length)
     patch.strength = strength
     patch.strength_hint = hint
-
-    await del('brag_entry_evidence', `entry_id=eq.${entryId}`)
-    if (evidenceTypes.length) {
-      await insert('brag_entry_evidence', evidenceTypes.map((type) => ({ entry_id: entryId, type })))
-    }
   }
 
   if (body.title !== undefined && !patch.title) return { body: { error: 'title cannot be empty' }, status: 400 }
 
-  const { data, error } = await update('brag_entries', `id=eq.${entryId}&user_id=eq.${userId}`, patch)
+  const { data, error } = await rpc('update_brag_entry_with_evidence', {
+    p_entry_id: entryId,
+    p_user_id: userId,
+    p_title: patch.title ?? null,
+    p_body: body.body !== undefined ? patch.body : null,
+    p_entry_date: patch.entry_date ?? null,
+    p_strength: patch.strength ?? null,
+    p_strength_hint: patch.strength_hint ?? null,
+    p_visible_to_manager: patch.visible_to_manager ?? null,
+    p_replace_evidence: Array.isArray(body.evidence_types),
+    p_evidence_types: Array.isArray(body.evidence_types) ? validEvidenceTypes(body.evidence_types) : [],
+  }, { expectRows: 'single' })
   if (error) return { log: ['[brag/entries/[id] PUT]', error], body: { error: 'Failed to update entry' }, status: 500 }
   return { body: { ok: true, entry: data?.[0] ?? null }, status: 200 }
 }

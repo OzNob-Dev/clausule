@@ -7,7 +7,7 @@
 
 import { NextResponse }              from 'next/server'
 import { requireAuth, unauthorized } from '@api/_lib/auth.js'
-import { getAuthUser, select, update } from '@api/_lib/supabase.js'
+import { getAuthUser, select, update, updateAuthUser } from '@api/_lib/supabase.js'
 import { validateEmail }             from '@shared/utils/emailValidation'
 import { findProfileById }           from '@features/auth/server/accountRepository.js'
 import { verifyEmailOtpCode }        from '@features/auth/server/emailOtpVerification.js'
@@ -88,6 +88,16 @@ export async function PATCH(request) {
     return NextResponse.json({ error: 'Mobile confirmation required' }, { status: 400 })
   }
 
+  let authEmailUpdated = false
+  if (emailChanged) {
+    const { error: authUpdateError } = await updateAuthUser(userId, { email })
+    if (authUpdateError) {
+      console.error('[auth/profile PATCH] auth user update error:', authUpdateError)
+      return NextResponse.json({ error: 'Failed to save profile' }, { status: 500 })
+    }
+    authEmailUpdated = true
+  }
+
   const { data: rows, error: updateError } = await update('profiles', `id=eq.${userId}`, {
     first_name: firstName,
     last_name: lastName || null,
@@ -98,6 +108,10 @@ export async function PATCH(request) {
   }, { expectRows: 'single' })
 
   if (updateError) {
+    if (authEmailUpdated) {
+      const { error: rollbackError } = await updateAuthUser(userId, { email: profile.email })
+      if (rollbackError) console.error('[auth/profile PATCH] auth user rollback error:', rollbackError)
+    }
     console.error('[auth/profile PATCH] update error:', updateError)
     return NextResponse.json({ error: 'Failed to save profile' }, { status: 500 })
   }
