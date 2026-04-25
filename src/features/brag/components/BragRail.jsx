@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useShallow } from 'zustand/shallow'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { ROUTES } from '@shared/utils/routes'
@@ -15,9 +16,11 @@ const navItems = [
 
 export default function BragRail({ activePage }) {
   const { logout } = useAuth()
-  const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
-  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
-  const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
+  const { authenticatorAppConfigured, ssoConfigured, hasSecuritySnapshot } = useProfileStore(useShallow((state) => ({
+    authenticatorAppConfigured: state.security.authenticatorAppConfigured,
+    ssoConfigured: state.security.ssoConfigured,
+    hasSecuritySnapshot: state.hasSecuritySnapshot,
+  })))
   const mfaSetupRequired = hasSecuritySnapshot && !authenticatorAppConfigured && !ssoConfigured
 
   return (

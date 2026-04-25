@@ -4,6 +4,8 @@ export const ROUTES = {
   bragSettings: '/brag/settings',
   profile: '/profile',
   dashboard: '/dashboard',
+  privacy: '/privacy',
+  terms: '/terms',
 }
 
 export function homePathForRole(role) {

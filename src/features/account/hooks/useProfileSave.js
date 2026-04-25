@@ -1,6 +1,6 @@
 // @ts-check
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
@@ -8,6 +8,7 @@ import { apiFetch, apiJson, jsonRequest } from '@shared/utils/api'
 
 export function useProfileSave({ current, emailChanged, commitBaseline }) {
   const router         = useRouter()
+  const queryClient    = useQueryClient()
   const { updateUser } = useAuth()
   const setProfile     = useProfileStore((s) => s.setProfile)
   const [error,   setError]   = useState('')
@@ -29,16 +30,21 @@ export function useProfileSave({ current, emailChanged, commitBaseline }) {
     setSuccess('')
     try {
       const data = await patchProfileMutation.mutateAsync({ emailVerificationCode, mobileConfirmed, mobileConfirmation })
-      setProfile(data.profile)
-      updateUser({ email: data.user?.email ?? current.email })
-      commitBaseline(current)
+      const nextProfile = data.profile ?? current
+      setProfile(nextProfile)
+      queryClient.setQueryData(['profile'], nextProfile)
+      updateUser({ email: data.user?.email ?? nextProfile.email ?? current.email })
+      commitBaseline(nextProfile)
       setSuccess('Profile saved')
       if (emailChanged) {
         await apiFetch('/api/auth/refresh', { method: 'POST' }, { retryOnUnauthorized: false })
       }
+      await queryClient.invalidateQueries({ queryKey: ['profile'] })
       router.refresh()
+      return nextProfile
     } catch (err) {
       setError(err instanceof Error && err.message ? err.message : 'Failed to save profile')
+      return null
     }
   }
 

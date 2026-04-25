@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import FeedbackComposer from '@features/brag/components/FeedbackComposer'
-import { apiFetch, readJson } from '@shared/utils/api'
+import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 
 function formatDate(value) {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' }).format(new Date(value))
@@ -18,19 +18,11 @@ export default function FeedbackCenter({ userEmail, onClose }) {
   const [activeTab, setActiveTab] = useState('compose')
   const tabOrder = ['compose', 'centre']
   const queryClient = useQueryClient()
-  const feedbackQuery = useQuery({
-    queryKey: ['feedback', 'threads'],
-    queryFn: async () => {
-      const response = await apiFetch('/api/feedback')
-      if (!response.ok) return []
-      const data = await readJson(response, { feedback: [] })
-      return data.feedback ?? []
-    },
-    retry: false,
-  })
+  const feedbackQuery = useFeedbackThreadsQuery({ enabled: activeTab === 'centre' })
 
   const threads = feedbackQuery.data ?? []
   const loading = feedbackQuery.isPending
+  const loadError = feedbackQuery.error instanceof Error ? feedbackQuery.error.message : ''
 
   const addThread = (thread) => {
     if (thread) queryClient.setQueryData(['feedback', 'threads'], (current = []) => [thread, ...current])
@@ -119,6 +111,8 @@ export default function FeedbackCenter({ userEmail, onClose }) {
 
         {loading ? (
           <p className="be-feedback-thread-empty" role="status">Gathering the paper trail...</p>
+        ) : loadError ? (
+          <p className="be-feedback-thread-empty" role="alert">{loadError}</p>
         ) : threads.length ? (
           <div className="be-feedback-thread-list">
             {threads.map((thread) => (

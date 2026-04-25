@@ -73,10 +73,6 @@ function newestEntryFirst(a, b) {
   return new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
 }
 
-export function mapEntryToCard(entry) {
-  return cardFromEntry(entry)
-}
-
 export default function BragEmployee({ initialEntries = [], initialEntriesError = '' }) {
   useTheme()
   const profile = useProfileStore((state) => state.profile)
@@ -193,7 +189,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
           {/* Brag doc tab */}
           <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
             {!composerOpen && entries.length > 0 ? (
-              <div className="be-action-row" aria-label="Brag actions">
+              <div className="be-action-row" role="group" aria-label="Brag actions">
                 <button type="button" onClick={() => startPanelTransition(() => setComposerOpen(true))} className="be-add-trigger be-add-trigger--top">
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                     <line x1="8" y1="3" x2="8" y2="13"/>

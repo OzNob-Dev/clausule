@@ -50,6 +50,7 @@
   width: 28px;
   height: 28px;
   background: #D05A34;
+  color: #FBF7F2;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -202,6 +203,7 @@
   width: 28px;
   height: 28px;
   background: var(--su-tx1);
+  color: #F5F0EA;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -237,6 +239,9 @@
   display: flex;
   align-items: center;
   width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .su-progress-inner--wide { max-width: 900px; }

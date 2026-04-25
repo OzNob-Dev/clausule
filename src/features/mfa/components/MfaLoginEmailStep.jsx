@@ -6,6 +6,7 @@ export default function MfaLoginEmailStep({
   otp,
   otpRefs,
   otpState,
+  errorMessage,
   expirySeconds,
   resendTimer,
   onChange,
@@ -114,8 +115,8 @@ export default function MfaLoginEmailStep({
             ariaLabel="Enter code"
           />
 
-          {otpState === 'error' && (
-            <p className="mfa-error" role="alert">Incorrect code — try again</p>
+          {(otpState === 'error' || errorMessage) && (
+            <p className="mfa-error" role="alert">{errorMessage || 'Incorrect code — try again'}</p>
           )}
 
           <button

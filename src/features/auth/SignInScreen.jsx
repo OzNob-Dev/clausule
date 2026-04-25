@@ -22,11 +22,12 @@ export default function SignIn() {
         otp={flow.code.digits}
         otpRefs={flow.codeRefs}
         otpState={flow.code.state}
+        errorMessage={flow.verifyError}
         onBack={flow.resetCodeStep}
         onChange={flow.code.handleChange}
         onKeyDown={flow.code.handleKeyDown}
         onPaste={flow.code.handlePaste}
-        onVerify={() => flow.verifyApp(flow.code.digits)}
+        onVerify={flow.submitApp}
         onUseRecovery={null}
       />
     )
@@ -39,13 +40,14 @@ export default function SignIn() {
         otp={flow.code.digits}
         otpRefs={flow.codeRefs}
         otpState={flow.code.state}
+        errorMessage={flow.verifyError}
         expirySeconds={flow.expirySeconds}
         resendTimer={flow.resendTimer}
         onBack={flow.resetCodeStep}
         onChange={flow.code.handleChange}
         onKeyDown={flow.code.handleKeyDown}
         onPaste={flow.code.handlePaste}
-        onVerify={() => flow.verifyOtp(flow.code.digits)}
+        onVerify={flow.submitOtp}
         onResend={flow.handleResend}
       />
     )
@@ -63,17 +65,17 @@ export default function SignIn() {
               result={flow.result}
               showFeedback={flow.showFeedback}
               isChecking={flow.isChecking}
-              isNewAccount={flow.isNewAccount}
               btnLabel={flow.btnLabel}
               ssoError={flow.ssoError}
+              submitError={flow.submitError}
               onAcceptSuggestion={flow.acceptSuggestion}
-              onBlur={() => flow.setTouched(true)}
+              onBlur={flow.handleEmailBlur}
               onChange={flow.handleEmailChange}
               onPaste={flow.handlePaste}
               onSubmit={flow.handleSubmit}
             />
             <SsoButtons config={ssoConfigFromEnv} />
-            {!flow.isNewAccount && <SignUpPrompt />}
+            <SignUpPrompt />
           </div>
         </div>
       </div>

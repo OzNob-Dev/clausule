@@ -27,10 +27,13 @@
 - When a UI change replaces `div` grids with semantic tables, assert `table`, `columnheader`, and `rowheader` roles so the semantics cannot silently regress back to presentational markup.
 - If a React Query screen mirrors query results into a store, add at least one regression test proving the screen reacts to query `data` changes without relying on stale query callbacks.
 - Components that call `useQuery` / `useMutation` must render in tests under a `QueryClientProvider`. Reuse `src/shared/test/renderWithQueryClient.jsx` instead of open-coding ad hoc query clients in each test file.
+- Keep the query wrapper stable across `rerender()`. If a helper mounts `QueryClientProvider`, `rerender` must preserve that wrapper so hook regressions show up as component failures, not broken test setup.
 - When replacing `contentEditable` with native form controls, add a regression that asserts the accessible textbox fields exist and that no editable `contenteditable="true"` nodes remain.
 - When removing fake persistence or gating an unfinished feature, add a regression that asserts the misleading control is gone and the honest replacement copy is present.
 - If checkout or uploads are intentionally unavailable, add tests that assert card fields or file-picking controls are absent so placeholder UI does not quietly creep back in.
 - When a screen delegates resend, cancel, or continue handlers through a flow hook, add one wiring test at the screen boundary so prop plumbing cannot silently drift.
+- Auth and signup tests must assert visible failure states for send-code, resend-code, and verify-code errors. Silent network failures are a release blocker even when the happy path passes.
+- Lazy React Query surfaces need one regression that proves hidden tabs do not fetch until opened, plus one failure-state assertion after the query is enabled.
 - For timers that drive transient UI states (`saved`, copied, resend cooldowns), add one regression that rerenders or changes the owning key/props mid-flight. Cleanup bugs often only show up after the component context changes.
 
 ## Watch Fors

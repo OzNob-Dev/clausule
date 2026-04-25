@@ -53,6 +53,7 @@ export default function MfaSecuritySection({
             <span className="bss-mfa-status bss-mfa-status--on" aria-label="Authenticator app is active">Active</span>
           ) : hasSecuritySnapshot && (
             <button
+              type="button"
               className="bss-mfa-reconfig-btn"
               onClick={onToggleTotp}
               aria-expanded={totpExpanded}

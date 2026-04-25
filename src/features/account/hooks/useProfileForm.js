@@ -83,6 +83,9 @@ export function useProfileForm(profile) {
     form, setForm,
     ...derived,
     resetForm:      () => setForm(baseline),
-    commitBaseline: (next) => setBaseline(next),
+    commitBaseline: (next) => {
+      setForm(next)
+      setBaseline(next)
+    },
   }
 }

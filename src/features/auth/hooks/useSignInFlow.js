@@ -13,7 +13,7 @@ import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { homePathForRole } from '@shared/utils/routes'
 
 /** @typedef {'email' | 'otp' | 'app'} SignInStep */
-/** @typedef {{ step: SignInStep, email: string, touched: boolean, submitAttempted: boolean, ssoError: string | null, verifyError: string | null }} SignInState */
+/** @typedef {{ step: SignInStep, email: string, touched: boolean, submitAttempted: boolean, ssoError: string | null, submitError: string | null, verifyError: string | null }} SignInState */
 
 const OTP_TTL_SECONDS = 600
 const RESEND_COOLDOWN_SECONDS = 30
@@ -35,6 +35,7 @@ const INITIAL_STATE = {
   touched: false,
   submitAttempted: false,
   ssoError: null,
+  submitError: null,
   verifyError: null,
 }
 
@@ -48,6 +49,7 @@ function reducer(state, action) {
         ...state,
         email: action.value,
         submitAttempted: false,
+        submitError: null,
         verifyError: null,
       }
     case 'accept_suggestion':
@@ -56,6 +58,7 @@ function reducer(state, action) {
         email: action.value,
         touched: false,
         submitAttempted: false,
+        submitError: null,
         verifyError: null,
       }
     case 'set_touched':
@@ -68,6 +71,7 @@ function reducer(state, action) {
         touched: true,
         submitAttempted: true,
         ssoError: null,
+        submitError: null,
         verifyError: null,
       }
     case 'begin_submit':
@@ -76,15 +80,19 @@ function reducer(state, action) {
         touched: true,
         submitAttempted: true,
         ssoError: null,
+        submitError: null,
       }
+    case 'show_submit_error':
+      return { ...state, submitError: action.value }
     case 'reset_code_step':
-      return { ...state, step: 'email', verifyError: null }
+      return { ...state, step: 'email', submitError: null, verifyError: null }
     case 'show_verify_error':
       return { ...state, verifyError: action.value }
     case 'show_sso_message':
       return {
         ...state,
         step: 'email',
+        submitError: null,
         verifyError: null,
         ssoError: 'Use your sign-in provider below to continue.',
       }
@@ -133,8 +141,12 @@ export function useSignInFlow() {
     dispatch({ type: 'hydrate_sso_error', value: ssoErrorFromUrl() })
   }, [])
 
+  const handleEmailBlur = useCallback(() => {
+    dispatch({ type: 'set_touched', value: true })
+  }, [])
+
   const resetCodeStep = useCallback(() => {
-    code.setState('idle')
+    code.reset()
     dispatch({ type: 'reset_code_step' })
   }, [code])
 
@@ -176,6 +188,8 @@ export function useSignInFlow() {
 
   const verifyOtp = useCallback((digits) => verifySignInCode('/api/auth/verify-code', digits), [verifySignInCode])
   const verifyApp = useCallback((digits) => verifySignInCode('/api/auth/totp/verify', digits), [verifySignInCode])
+  const submitOtp = useCallback(() => verifyOtp(code.digits), [code.digits, verifyOtp])
+  const submitApp = useCallback(() => verifyApp(code.digits), [code.digits, verifyApp])
 
   useEffect(() => {
     if (state.step !== 'otp' && state.step !== 'app') return
@@ -210,7 +224,12 @@ export function useSignInFlow() {
       resetResendTimer()
       code.setState('idle')
       dispatch({ type: 'enter_otp', email: resolved })
-    } catch {}
+    } catch (error) {
+      dispatch({
+        type: 'show_submit_error',
+        value: error instanceof Error && error.message ? error.message : 'Could not send a sign-in code. Try again.',
+      })
+    }
   }, [code, resetExpirySeconds, resetResendTimer, sendCodeMutation])
 
   const handleSubmit = useCallback((event) => {
@@ -220,7 +239,7 @@ export function useSignInFlow() {
 
   const handlePaste = useCallback((event) => {
     const pasted = event.clipboardData?.getData('text') ?? ''
-    if (pasted.trim()) setTimeout(() => submitEmail(pasted), 0)
+    if (pasted.trim()) queueMicrotask(() => { void submitEmail(pasted) })
   }, [submitEmail])
 
   const handleResend = useCallback(async () => {
@@ -230,7 +249,12 @@ export function useSignInFlow() {
       resetResendTimer()
       code.reset()
       dispatch({ type: 'clear_verify_error' })
-    } catch {}
+    } catch (error) {
+      dispatch({
+        type: 'show_verify_error',
+        value: error instanceof Error && error.message ? error.message : 'Could not resend the sign-in code. Try again.',
+      })
+    }
   }, [code, resetExpirySeconds, resetResendTimer, sendCodeMutation, state.email])
 
   return {
@@ -240,22 +264,24 @@ export function useSignInFlow() {
     email: state.email,
     expirySeconds,
     handleEmailChange,
+    handleEmailBlur,
     handlePaste,
     handleResend,
     handleSubmit,
     isChecking: sendCodeMutation.isPending,
-    isNewAccount: false,
     resetCodeStep,
     resendTimer,
     result,
     showFeedback,
     ssoError: state.ssoError,
+    submitApp,
+    submitError: state.submitError,
+    submitOtp,
     step: state.step,
     touched: state.touched,
     verifyApp,
     verifyError: state.verifyError,
     verifyOtp,
     acceptSuggestion,
-    setTouched: (value) => dispatch({ type: 'set_touched', value }),
   }
 }

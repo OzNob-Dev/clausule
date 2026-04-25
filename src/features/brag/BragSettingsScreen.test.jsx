@@ -1,8 +1,8 @@
 import React from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
 vi.mock('@features/brag/components/BragRail', () => ({
   default: () => <nav aria-label="Brag navigation" />,
@@ -12,24 +12,13 @@ vi.mock('@features/brag/components/TotpSetupPanel', () => ({
   default: () => <div id="totp-setup">TOTP setup</div>,
 }))
 
-vi.mock('@features/brag/components/DeleteAccountModal', () => ({
-  default: () => null,
+vi.mock('@features/account/components/DeleteAccountDialog', () => ({
+  DeleteAccountDialog: () => null,
 }))
 
 vi.mock('@shared/utils/api', () => ({
   apiFetch: vi.fn(),
 }))
-
-function renderWithQueryClient(ui) {
-  const client = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  })
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
-}
 
 describe('BragSettings integration', () => {
   beforeEach(() => {

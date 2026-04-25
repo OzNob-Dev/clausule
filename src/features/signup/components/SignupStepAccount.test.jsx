@@ -104,4 +104,22 @@ describe('SignupStepAccount integration', () => {
 
     expect(email).toHaveValue('newperson@example.com')
   })
+
+  it('keeps in-progress edits when the parent rerenders with an equivalent initial object', async () => {
+    const user = userEvent.setup()
+    const { rerender } = renderWithQueryClient(<SignupStepAccount initialData={{ ...initialData }} onNext={vi.fn()} />)
+
+    await user.type(screen.getByPlaceholderText('Jordan'), 'Ada')
+
+    rerender(<SignupStepAccount initialData={{ ...initialData }} onNext={vi.fn()} />)
+
+    expect(screen.getByPlaceholderText('Jordan')).toHaveValue('Ada')
+  })
+
+  it('renders real terms and privacy links instead of placeholder anchors', () => {
+    renderWithQueryClient(<SignupStepAccount initialData={initialData} onNext={vi.fn()} />)
+
+    expect(screen.getByRole('link', { name: /terms of service/i })).toHaveAttribute('href', '/terms')
+    expect(screen.getByRole('link', { name: /privacy policy/i })).toHaveAttribute('href', '/privacy')
+  })
 })

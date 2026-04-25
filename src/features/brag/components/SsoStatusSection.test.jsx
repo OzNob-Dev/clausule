@@ -1,7 +1,8 @@
 import React from 'react'
 import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import SsoStatusSection, { getActiveSsoProviders } from './SsoStatusSection'
+import SsoStatusSection from './SsoStatusSection'
+import { getActiveSsoProviders } from '@shared/utils/sso'
 
 describe('SsoStatusSection unit', () => {
   it('returns only enabled SSO providers in display order', () => {

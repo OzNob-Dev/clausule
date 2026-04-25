@@ -62,21 +62,16 @@
   font-weight: 800;
 }
 
-.be-cv-autosave {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  color: #5D8A76;
-  opacity: 0;
-  transition: opacity 0.2s;
+.be-cv-local-note {
+  margin: -8px 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(60, 45, 35, 0.12);
+  border-radius: 8px;
+  background: rgba(60, 45, 35, 0.04);
+  color: #5B4E42;
+  font-size: 12px;
+  font-weight: 700;
 }
-
-.be-cv-autosave--show { opacity: 1; }
-.be-cv-autosave svg { width: 12px; height: 12px; }
 
 .be-cv-name,
 .be-cv-tagline,

@@ -6,6 +6,7 @@ export default function MfaLoginAppStep({
   otp,
   otpRefs,
   otpState,
+  errorMessage,
   onBack,
   onChange,
   onKeyDown,
@@ -89,8 +90,8 @@ export default function MfaLoginAppStep({
             onPaste={onPaste}
           />
 
-          {otpState === 'error' && (
-            <p className="mfa-error" role="alert">Incorrect code — try again</p>
+          {(otpState === 'error' || errorMessage) && (
+            <p className="mfa-error" role="alert">{errorMessage || 'Incorrect code — try again'}</p>
           )}
 
           <button

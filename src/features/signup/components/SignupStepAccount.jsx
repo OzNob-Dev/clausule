@@ -1,22 +1,24 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useReducer } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { apiJson, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { getActiveSsoProviders, ssoConfigFromEnv } from '@shared/utils/sso'
 import { SsoProviderButton } from '@features/auth/components/SsoProviderButton'
+import { ROUTES } from '@shared/utils/routes'
 import { CtaBtn } from './SignupButtons'
 import { FieldInput, FieldLabel } from './SignupFormField'
 import { ArrowIcon } from './SignupIcons'
 
 function createState(initialData) {
   return {
-    firstName: initialData.firstName,
-    lastName: initialData.lastName,
-    email: initialData.email,
+    firstName: initialData.firstName ?? '',
+    lastName: initialData.lastName ?? '',
+    email: initialData.email ?? '',
     emailDirty: false,
-    agreed: initialData.agreed,
+    agreed: Boolean(initialData.agreed),
     emailVerificationToken: initialData.emailVerificationToken ?? '',
     verificationCode: '',
     awaitingVerification: false,
@@ -28,8 +30,6 @@ function createState(initialData) {
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'hydrate':
-      return createState(action.value)
     case 'set_first_name':
       return { ...state, firstName: action.value, nameError: false }
     case 'set_last_name':
@@ -45,7 +45,15 @@ function reducer(state, action) {
         verificationError: '',
       }
     case 'accept_suggestion':
-      return { ...state, email: action.value, emailDirty: false }
+      return {
+        ...state,
+        email: action.value,
+        emailDirty: false,
+        emailVerificationToken: '',
+        verificationCode: '',
+        awaitingVerification: false,
+        verificationError: '',
+      }
     case 'set_email_dirty':
       return { ...state, emailDirty: action.value }
     case 'set_agreed':
@@ -81,10 +89,6 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
   const [state, dispatch] = useReducer(reducer, initialData, createState)
   const activeSsoProviders = hideSso ? [] : getActiveSsoProviders(ssoConfigFromEnv)
   const hasSso = activeSsoProviders.length > 0
-
-  useEffect(() => {
-    dispatch({ type: 'hydrate', value: initialData })
-  }, [initialData])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -186,8 +190,13 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
     }
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    void handleContinue()
+  }
+
   return (
-    <div>
+    <form onSubmit={handleSubmit} noValidate>
       <div className="su-step-heading">Create your account</div>
       <div className="su-step-sub">
         {hasSso ? 'Continue with your existing account — no new password needed.' : 'Your brag doc, your file. Takes about 2 minutes.'}
@@ -243,7 +252,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
           readOnly={emailLocked}
           className={emailLocked ? 'su-input--locked' : ''}
           error={showEmailFeedback && !!emailResult.error}
-          aria-invalid={showEmailFeedback && !emailResult.valid}
+          aria-invalid={showEmailFeedback && !emailResult.valid && !emailResult.suggestion}
           aria-describedby="su-email-hint"
         />
         <div id="su-email-hint">
@@ -275,6 +284,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             placeholder="123456"
             maxLength={6}
             value={state.verificationCode}
+            aria-describedby="su-email-verification-hint"
             onChange={(event) => {
               dispatch({ type: 'set_verification_code', value: event.target.value.replace(/\D/g, '').slice(0, 6) })
             }}
@@ -288,6 +298,11 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
           </div>
         </div>
       )}
+      {!isVerified && !state.awaitingVerification && state.verificationError && (
+        <div className="su-field-hint su-field-hint--error" role="alert">
+          {state.verificationError}
+        </div>
+      )}
 
       <div className="su-terms">
         <label className="su-terms-label">
@@ -298,14 +313,16 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
               dispatch({ type: 'set_agreed', value: event.target.checked })
             }}
           />
-          I agree to Clausule's <a href="#">Terms of Service</a>{' '}and <a href="#">Privacy Policy</a>
+          <span>
+            I agree to Clausule&apos;s <Link href={ROUTES.terms}>Terms of Service</Link>{' '}and <Link href={ROUTES.privacy}>Privacy Policy</Link>
+          </span>
         </label>
         {state.agreedError && <div className="su-terms-error">Please agree to continue.</div>}
       </div>
 
-      <CtaBtn onClick={handleContinue} disabled={sendingCode || verifyingCode}>
+      <CtaBtn type="submit" disabled={sendingCode || verifyingCode}>
         {sendingCode ? 'Sending code…' : verifyingCode ? 'Verifying…' : isVerified ? <>Continue to payment <ArrowIcon /></> : state.awaitingVerification ? 'Verify email to continue' : 'Send verification code'}
       </CtaBtn>
-    </div>
+    </form>
   )
 }

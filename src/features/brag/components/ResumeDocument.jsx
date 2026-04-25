@@ -16,22 +16,9 @@ function EditableField({ ariaLabel, className, disabled, field, multiline = fals
   )
 }
 
-function AutosaveBadge({ visible }) {
-  return (
-    <div className={`be-cv-autosave${visible ? ' be-cv-autosave--show' : ''}`} aria-live="polite" aria-atomic="true">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-        <polyline points="3 8 6 11 13 4"/>
-      </svg>
-      Autosaved
-    </div>
-  )
-}
-
-export default function ResumeDocument({ cvData, autosaved, disabled = false, onBulletChange, onFieldChange }) {
+export default function ResumeDocument({ cvData, disabled = false, onBulletChange, onFieldChange }) {
   return (
     <div className={`be-cv-card${disabled ? ' be-cv-card--disabled' : ''}`} aria-disabled={disabled || undefined}>
-      <AutosaveBadge visible={autosaved} />
-
       <EditableField disabled={disabled} field="name" className="be-cv-name" ariaLabel="Full name" onChange={onFieldChange} value={cvData.name} />
       <EditableField disabled={disabled} field="tagline" className="be-cv-tagline" ariaLabel="Professional tagline" multiline onChange={onFieldChange} value={cvData.tagline} />
       <EditableField disabled={disabled} field="contact" className="be-cv-contact" ariaLabel="Contact info" onChange={onFieldChange} value={cvData.contact} />

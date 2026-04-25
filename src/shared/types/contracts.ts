@@ -48,7 +48,7 @@ export interface BragEntry {
 export interface SavedBragEntry {
   entry: BragEntry
   evidenceTypes: string[]
-  files: Array<{ id: string, name: string, size: number, type: string }>
+  files?: Array<{ id: string, name: string, size: number, type: string }>
 }
 
 export interface FeedbackReply {

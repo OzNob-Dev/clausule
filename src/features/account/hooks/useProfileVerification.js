@@ -38,6 +38,7 @@ export function useProfileVerification({ current, emailChanged, mobileChanged, p
   })
 
   const sendEmailCode = useCallback(async () => {
+    setError('')
     dispatch({ type: 'set_email_code_state', value: 'sending' })
     try {
       await sendCodeMutation.mutateAsync(current.email)
@@ -62,7 +63,7 @@ export function useProfileVerification({ current, emailChanged, mobileChanged, p
     if (emailChanged && state.emailCodeState === 'idle') void sendEmailCode()
   }, [emailChanged, sendEmailCode, setError, state.emailCodeState])
 
-  const submitConfirm = () => {
+  const submitConfirm = async () => {
     if (emailChanged && state.emailCode.trim().length !== 6) {
       setError('Enter the 6-digit code we sent to the new email.')
       return
@@ -71,11 +72,12 @@ export function useProfileVerification({ current, emailChanged, mobileChanged, p
       setError('Confirm the new mobile number before saving.')
       return
     }
-    void patchProfile({
+    const savedProfile = await patchProfile({
       emailVerificationCode: emailChanged ? state.emailCode.trim() : '',
       mobileConfirmed:       !mobileChanged || mobileReady,
       mobileConfirmation:    state.mobileCheck.trim(),
     })
+    if (savedProfile) dispatch({ type: 'reset' })
   }
 
   return {

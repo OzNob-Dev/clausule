@@ -1,13 +1,23 @@
-export default function SignInBrandPanel() {
+import Link from 'next/link'
+
+export function BrandBugIcon({ size = 15 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+      <path d="M3 5h12M3 9h8M3 13h5" />
+    </svg>
+  )
+}
+
+export default function SignInBrandPanel({ brandHref = null }) {
+  const BrandName = brandHref ? Link : 'span'
+
   return (
     <div className="su-shell-left">
       <div className="su-shell-logo">
         <div className="su-shell-bug">
-          <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" style={{ width: 15, height: 15 }}>
-            <path d="M3 5h12M3 9h8M3 13h5" />
-          </svg>
+          <BrandBugIcon />
         </div>
-        <span className="su-shell-brand">clausule</span>
+        <BrandName href={brandHref ?? undefined} className="su-shell-brand">clausule</BrandName>
       </div>
       <div className="su-shell-body">
         <h1 className="su-shell-headline">Thoughtful records.<br />Better conversations.</h1>

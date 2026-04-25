@@ -1,7 +1,13 @@
 'use client'
+// @ts-check
 
 import { create } from 'zustand'
 
+/** @typedef {import('@shared/types/contracts').AuthUser} AuthUser */
+/** @typedef {import('@shared/types/contracts').Profile} Profile */
+/** @typedef {import('@shared/types/contracts').SecuritySnapshot} SecuritySnapshot */
+
+/** @type {Profile} */
 const EMPTY_PROFILE = {
   firstName: '',
   lastName: '',
@@ -11,6 +17,7 @@ const EMPTY_PROFILE = {
   department: '',
 }
 
+/** @type {SecuritySnapshot} */
 const EMPTY_SECURITY = {
   authenticatorAppConfigured: false,
   authenticatedWithOtp: false,
@@ -21,6 +28,21 @@ const EMPTY_META = {
   hasSecuritySnapshot: false,
 }
 
+/**
+ * @typedef {{
+ *   user: AuthUser | null,
+ *   profile: Profile,
+ *   security: SecuritySnapshot,
+ *   hasSecuritySnapshot: boolean,
+ *   setUser: (user: AuthUser | null) => void,
+ *   updateUser: (patch: Partial<AuthUser>) => void,
+ *   setProfile: (nextProfile: Partial<Profile>) => void,
+ *   setSecurity: (nextSecurity: Partial<SecuritySnapshot>) => void,
+ *   clearProfile: () => void,
+ * }} ProfileStoreState
+ */
+
+/** @type {import('zustand').UseBoundStore<import('zustand').StoreApi<ProfileStoreState>>} */
 export const useProfileStore = create((set) => ({
   user: null,
   profile: EMPTY_PROFILE,

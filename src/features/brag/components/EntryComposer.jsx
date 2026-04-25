@@ -57,7 +57,9 @@ export default function EntryComposer({ onSave, onClose }) {
           void handleSave()
         }}
       >
+        <label className="be-comp-ev-label" htmlFor="be-entry-title">Entry title</label>
         <input
+          id="be-entry-title"
           type="text"
           className="be-comp-title"
           placeholder="What did you achieve?"
@@ -65,7 +67,9 @@ export default function EntryComposer({ onSave, onClose }) {
           onChange={(e) => setTitle(e.target.value)}
           autoFocus
         />
+        <label className="be-comp-ev-label" htmlFor="be-entry-body">Impact and evidence</label>
         <textarea
+          id="be-entry-body"
           className="be-comp-body"
           rows={4}
           placeholder="Describe what you did, what the impact was, and how you know it worked."

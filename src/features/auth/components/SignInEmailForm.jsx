@@ -5,9 +5,9 @@ export default function SignInEmailForm({
   result,
   showFeedback,
   isChecking,
-  isNewAccount,
   btnLabel,
   ssoError,
+  submitError,
   onAcceptSuggestion,
   onBlur,
   onChange,
@@ -22,6 +22,11 @@ export default function SignInEmailForm({
       {ssoError && (
         <p className="su-field-hint su-field-hint--error" role="alert">
           {ssoError}
+        </p>
+      )}
+      {submitError && (
+        <p className="su-field-hint su-field-hint--error" role="alert">
+          {submitError}
         </p>
       )}
 
@@ -61,11 +66,6 @@ export default function SignInEmailForm({
                   {result.suggestion}
                 </button>
                 ?
-              </p>
-            )}
-            {!result.error && !result.suggestion && isNewAccount && (
-              <p className="su-field-hint">
-                No account found — we'll get you set up.
               </p>
             )}
           </div>

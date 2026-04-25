@@ -34,6 +34,7 @@ describe('ResumeTab', () => {
     expect(screen.getByRole('textbox', { name: /full name/i })).toHaveValue('Ada Lovelace')
     expect(screen.getByRole('textbox', { name: /accomplishment 1/i })).toHaveValue('Shipped auth migration — Reduced deploy risk.')
     expect(screen.getByRole('textbox', { name: /professional tagline/i })).toBeInTheDocument()
+    expect(screen.getByText(/resume edits stay only in this browser tab for now/i)).toBeInTheDocument()
     expect(document.querySelector('[contenteditable=\"true\"]')).toBeNull()
   })
 })

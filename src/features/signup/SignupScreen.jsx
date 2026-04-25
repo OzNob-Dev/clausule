@@ -1,10 +1,10 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { SignupProvider, useSignup } from '@features/signup/context/SignupContext'
-import { useProfileStore } from '@features/auth/store/useProfileStore'
+import SignInBrandPanel, { BrandBugIcon } from '@features/auth/components/SignInBrandPanel'
 import SignupAside from '@features/signup/components/SignupAside'
 import SignupProgress from '@features/signup/components/SignupProgress'
 import SignupStepAccount from '@features/signup/components/SignupStepAccount'
@@ -20,19 +20,18 @@ import '@features/signup/styles/signup-aside.css'
 function SignUpInner() {
   const searchParams = useSearchParams()
   const { step, setStep, step1Data, setStep1Data, completeSignup } = useSignup()
-  const setProfile = useProfileStore((state) => state.setProfile)
 
-  const emailPrefill     = decodeURIComponent(searchParams.get('email')     ?? '')
-  const firstNamePrefill = decodeURIComponent(searchParams.get('firstName') ?? '')
-  const lastNamePrefill  = decodeURIComponent(searchParams.get('lastName')  ?? '')
+  const emailPrefill = searchParams.get('email') ?? ''
+  const firstNamePrefill = searchParams.get('firstName') ?? ''
+  const lastNamePrefill = searchParams.get('lastName') ?? ''
   const redirectedFromSignIn = Boolean(emailPrefill)
 
-  const step1Initial = {
+  const step1Initial = useMemo(() => ({
     ...step1Data,
-    ...(emailPrefill     && { email:     emailPrefill }),
+    ...(emailPrefill && { email: emailPrefill }),
     ...(firstNamePrefill && { firstName: firstNamePrefill }),
-    ...(lastNamePrefill  && { lastName:  lastNamePrefill }),
-  }
+    ...(lastNamePrefill && { lastName: lastNamePrefill }),
+  }), [emailPrefill, firstNamePrefill, lastNamePrefill, step1Data])
 
   const goStep = (n) => {
     setStep(n)
@@ -41,11 +40,6 @@ function SignUpInner() {
 
   const handleStep1 = (data) => {
     setStep1Data(data)
-    setProfile({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-    })
     goStep(2)
   }
 
@@ -53,24 +47,8 @@ function SignUpInner() {
     return (
       <div className="su-shell-wrap">
         <div className="su-shell">
-          {/* Left dark brand panel */}
-          <div className="su-shell-left">
-            <div className="su-shell-logo">
-              <div className="su-shell-bug">
-                <svg viewBox="0 0 18 18" fill="none" stroke="#FBF7F2" strokeWidth="2.2" strokeLinecap="round" style={{ width: 15, height: 15 }}>
-                  <path d="M3 5h12M3 9h8M3 13h5" />
-                </svg>
-              </div>
-              <Link href="/" className="su-shell-brand">clausule</Link>
-            </div>
-            <div className="su-shell-body">
-              <h1 className="su-shell-headline">Thoughtful records.<br />Better conversations.</h1>
-              <p className="su-shell-subtext">The file note tool built for managers who care about their people — and a brag doc for the people themselves.</p>
-            </div>
-            <div className="su-shell-footer">Built for teams who care</div>
-          </div>
+          <SignInBrandPanel brandHref="/" />
 
-          {/* Right light panel — su-page scopes the --su-* design tokens */}
           <div className="su-shell-right su-page">
             <div className="su-step1-layout">
               <div className="su-step1-form">
@@ -99,13 +77,10 @@ function SignUpInner() {
     <div className="su-page">
       <div className="su-bg-lines" aria-hidden="true" />
 
-      {/* Topbar */}
       <div className="su-topbar">
         <div className="su-topbar-brand">
           <div className="su-logo-bug">
-            <svg viewBox="0 0 18 18" fill="none" stroke="#F5F0EA" strokeWidth="2.2" strokeLinecap="round" style={{ width: 14, height: 14 }}>
-              <path d="M3 5h12M3 9h8M3 13h5" />
-            </svg>
+            <BrandBugIcon size={14} />
           </div>
           <span className="su-brand-name">clausule</span>
         </div>
@@ -115,10 +90,8 @@ function SignUpInner() {
         </Link>
       </div>
 
-      {/* Progress */}
       {step < 3 && <SignupProgress step={step} />}
 
-      {/* Main */}
       <div className="su-main">
         <div className="su-narrow">
           {step === 2 && (

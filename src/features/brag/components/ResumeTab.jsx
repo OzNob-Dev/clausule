@@ -83,18 +83,13 @@ export default function ResumeTab({ disabled = false, entries = [] }) {
   const [cvVisible, setCvVisible] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [cvData, setCvData] = useState(() => buildInitialCv(profile, entries))
-  const [cvAutosaved, setCvAutosaved] = useState(false)
   const [cvCopied, setCvCopied] = useState(false)
 
   const generateTimerRef = useRef(null)
-  const autosaveTimerRef = useRef(null)
-  const autosaveHideTimerRef = useRef(null)
   const copyTimerRef = useRef(null)
 
   useEffect(() => () => {
     if (generateTimerRef.current) clearTimeout(generateTimerRef.current)
-    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
-    if (autosaveHideTimerRef.current) clearTimeout(autosaveHideTimerRef.current)
     if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
   }, [])
 
@@ -103,30 +98,18 @@ export default function ResumeTab({ disabled = false, entries = [] }) {
     setCvData(buildInitialCv(profile, entries))
   }, [cvVisible, entries, profile])
 
-  const scheduleAutosave = useCallback(() => {
-    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
-    if (autosaveHideTimerRef.current) clearTimeout(autosaveHideTimerRef.current)
-
-    autosaveTimerRef.current = setTimeout(() => {
-      setCvAutosaved(true)
-      autosaveHideTimerRef.current = setTimeout(() => setCvAutosaved(false), 2200)
-    }, 1200)
-  }, [])
-
   const handleFieldChange = useCallback((field) => (event) => {
     const nextValue = event.target.value
     setCvData((prev) => (prev[field] === nextValue ? prev : { ...prev, [field]: nextValue }))
-    scheduleAutosave()
-  }, [scheduleAutosave])
+  }, [])
 
   const handleBulletChange = useCallback((index) => (event) => {
     const nextValue = event.target.value
     setCvData((prev) => ({
       ...prev,
-      bullets: prev.bullets.map((bullet, bulletIndex) => (bulletIndex === index ? nextValue : bullet)),
-    }))
-    scheduleAutosave()
-  }, [scheduleAutosave])
+        bullets: prev.bullets.map((bullet, bulletIndex) => (bulletIndex === index ? nextValue : bullet)),
+      }))
+  }, [])
 
   const generateCV = () => {
     if (disabled) return
@@ -189,13 +172,15 @@ export default function ResumeTab({ disabled = false, entries = [] }) {
       {disabled && (
         <>
           <p className="be-cv-disabled-note">Add a brag entry to unlock resume generation.</p>
-          <ResumeDocument cvData={cvData} autosaved={false} disabled onBulletChange={handleBulletChange} onFieldChange={handleFieldChange} />
+          <p className="be-cv-local-note">Resume edits stay only in this browser tab for now.</p>
+          <ResumeDocument cvData={cvData} disabled onBulletChange={handleBulletChange} onFieldChange={handleFieldChange} />
         </>
       )}
 
       {!disabled && cvVisible && (
         <>
-          <ResumeDocument cvData={cvData} autosaved={cvAutosaved} onBulletChange={handleBulletChange} onFieldChange={handleFieldChange} />
+          <p className="be-cv-local-note">Resume edits stay only in this browser tab for now.</p>
+          <ResumeDocument cvData={cvData} onBulletChange={handleBulletChange} onFieldChange={handleFieldChange} />
           <ResumeActions copied={cvCopied} onCopy={copyCV} onDownload={downloadCV} />
         </>
       )}

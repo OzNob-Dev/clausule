@@ -10,5 +10,12 @@ export function renderWithQueryClient(ui) {
     },
   })
 
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+  function Wrapper({ children }) {
+    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  }
+
+  return {
+    client,
+    ...render(ui, { wrapper: Wrapper }),
+  }
 }

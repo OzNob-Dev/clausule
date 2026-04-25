@@ -41,7 +41,7 @@ describe('Signup component integration', () => {
     push.mockClear()
 
     render(<SignupStepDone email="ada@example.com" />)
-    await user.click(screen.getByRole('button', { name: /setup multi-factor authentication/i }))
+    await user.click(screen.getByRole('button', { name: /set up multi-factor authentication/i }))
 
     expect(screen.getByText(/ada@example.com/i)).toBeInTheDocument()
     expect(push).toHaveBeenCalledWith('/brag/settings')

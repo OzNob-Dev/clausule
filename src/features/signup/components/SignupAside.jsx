@@ -21,14 +21,14 @@ function IncludesCard() {
   return (
     <div className="su-aside-card">
       <div className="su-aside-label">What's included</div>
-      <div className="su-aside-feature-list">
+      <ul className="su-aside-feature-list">
         {INCLUDES.map((feature) => (
-          <div key={feature} className="su-aside-feature">
+          <li key={feature} className="su-aside-feature">
             <div className="su-aside-dot" />
             {feature}
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   )
 }

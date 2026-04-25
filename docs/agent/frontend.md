@@ -28,7 +28,10 @@
 - Do not create pass-through wrapper components that only re-export another component unchanged (`function Foo(props) { return <Bar {...props} /> }`). Delete the wrapper and import the real component directly at each call site. Update test `vi.mock` paths to match.
 - Use links or anchors for navigation and buttons for actions.
 - Prefer native form submission over click-only save handlers when the UI is collecting user input.
+- `useSearchParams().get()` already returns a decoded string. Do not wrap it in `decodeURIComponent()` again in client screens; malformed `%` input will throw and break the route.
+- Reducer-backed form state should initialize from props once and only resync on explicit reset events. Do not rehydrate in-progress user edits from a freshly created `initialData` object on every parent rerender.
 - If a screen is not wired to durable backend state yet, render an explicit unavailable/coming-soon state. Do not ship local-only controls, fixture-backed tables, timer-driven fake search, or save buttons that imply persistence when nothing is stored.
+- Local-only drafts must say they are local-only. Never label timer-driven UI as "autosaved" unless the data is actually persisted and recoverable after refresh or route changes.
 - Unsupported uploads, reminders, or other follow-on capabilities must be hidden or replaced with truthful copy. Do not keep optimistic local-only file metadata or preference state if the backend contract does not exist yet.
 - Do not use inline `style={{ backgroundColor: x, color: y }}` objects for dynamic per-item values (avatar colors, status badges, kanban card accents). Use a single CSS custom property instead: `style={{ '--av-bg': bg, '--av-col': col }}` and reference `var(--av-bg)` in the stylesheet. This avoids new object references every render and keeps Tailwind purging intact.
 - `<button>` elements inside or near forms **must** have an explicit `type="button"` or `type="submit"`. The HTML default is `type="submit"`, which causes unintended form submissions. The shared `Button` component defaults to `type="button"`; pass `type="submit"` explicitly where needed.
@@ -55,6 +58,7 @@
 - Shared account-security flows (delete account, TOTP setup, MFA recovery) must not be duplicated per screen. Keep the network/mutation logic in one shared hook and reuse a single dialog/panel component so copy, retries, and auth guarantees stay in sync.
 - If a mutation only needs to append or replace already-fetched local server state (for example, prepending a newly created feedback thread), update the cache with `queryClient.setQueryData` instead of duplicating the server state in local component `useState`.
 - `apiFetch` handles 401 → token refresh internally. React Query's global `retry: 1` is on top of that; prefer `{ retry: false }` per-query for auth endpoints that should fail fast.
+- Server-state tabs and drawers should gate their queries with `enabled` so hidden panels do not eagerly fetch in the background before the user opens them.
 - When fetching inside `useEffect`, always use `AbortController` — pass `signal` to `fetch`, and call `controller.abort()` in the cleanup function. Do **not** use an `alive` boolean flag: it prevents state updates but does not cancel the in-flight request, and `finally` still fires after unmount. Skip all state updates when `error.name === 'AbortError'` — do not call `setLoading` either.
 
 ```js

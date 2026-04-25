@@ -62,4 +62,34 @@ describe('FeedbackCenter', () => {
     expect(centreTab).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('tabpanel', { name: /feedback centre/i })).toBeVisible()
   })
+
+  it('waits to fetch threads until the feedback-centre tab is opened', async () => {
+    const user = userEvent.setup()
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ feedback: [] }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    }))
+
+    renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
+
+    expect(fetchMock).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('tab', { name: /feedback centre/i }))
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1))
+  })
+
+  it('shows a real error when feedback threads fail to load', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ error: 'Backend unavailable' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    }))
+
+    renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
+
+    await user.click(screen.getByRole('tab', { name: /feedback centre/i }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/backend unavailable/i)
+  })
 })

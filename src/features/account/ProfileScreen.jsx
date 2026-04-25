@@ -1,5 +1,6 @@
 'use client'
 
+import { useShallow } from 'zustand/shallow'
 import BragRail from '@features/brag/components/BragRail'
 import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
@@ -13,8 +14,10 @@ import '@features/brag/styles/brag-settings-core.css'
 import '@features/account/styles/profile.css'
 
 export default function ProfileScreen() {
-  const profile  = useProfileStore((s) => s.profile)
-  const security = useProfileStore((s) => s.security)
+  const { profile, security } = useProfileStore(useShallow((state) => ({
+    profile: state.profile,
+    security: state.security,
+  })))
 
   const {
     form, setForm, current, initial,

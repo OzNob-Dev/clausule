@@ -10,7 +10,7 @@ export default function BragSettingsDangerZone({ onDelete }) {
               Permanently removes your account and all brag doc entries, files, and records. This cannot be undone.
             </div>
           </div>
-          <button className="bss-btn-delete" onClick={onDelete}>
+          <button type="button" className="bss-btn-delete" onClick={onDelete}>
             Delete account
           </button>
         </div>

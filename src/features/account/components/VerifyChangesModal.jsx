@@ -21,6 +21,8 @@ export function VerifyChangesModal({ open, onClose, onSubmit }) {
     mobileCheck, setMobileCheck,
     mobileAck, setMobileAck,
   } = verification
+  const emailCodeHintId = 'profile-email-verification-hint'
+  const mobileCheckHintId = 'profile-mobile-confirmation-hint'
 
   return (
     <Modal
@@ -33,7 +35,7 @@ export function VerifyChangesModal({ open, onClose, onSubmit }) {
             Cancel
           </button>
           <button type="button" className="profile-btn profile-btn--primary" onClick={onSubmit} disabled={saving || !finalReady}>
-            Finalise
+            Save changes
           </button>
         </>
       }
@@ -59,13 +61,16 @@ export function VerifyChangesModal({ open, onClose, onSubmit }) {
         {emailChanged && (
           <div className="profile-verify">
             <div className="profile-verify-title">Email verification</div>
-            <div className="profile-modal-copy">
+            <p className="profile-modal-copy" id={emailCodeHintId}>
               A code was sent to {current.email}. Enter it here to confirm the new sign-in email.
-            </div>
+            </p>
+            <label className="profile-label" htmlFor="profile-email-verification-code">Verification code</label>
             <input
+              id="profile-email-verification-code"
               className="profile-input"
               inputMode="numeric"
               value={emailCode}
+              aria-describedby={emailCodeHintId}
               onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="6-digit code"
             />
@@ -89,12 +94,16 @@ export function VerifyChangesModal({ open, onClose, onSubmit }) {
               <input type="checkbox" checked={mobileAck} onChange={(e) => setMobileAck(e.target.checked)} />
               I understand and want to continue
             </label>
+            <label className="profile-label" htmlFor="profile-mobile-confirmation">Re-enter the new mobile number</label>
             <input
+              id="profile-mobile-confirmation"
               className="profile-input"
               value={mobileCheck}
+              aria-describedby={mobileCheckHintId}
               onChange={(e) => setMobileCheck(e.target.value)}
               placeholder="Re-enter the new mobile number"
             />
+            <p className="profile-help" id={mobileCheckHintId}>Type the new mobile number exactly as it should be saved.</p>
           </div>
         )}
       </div>
