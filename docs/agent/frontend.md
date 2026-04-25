@@ -13,6 +13,7 @@
 - Treat custom dialogs as full focus-management work: initial focus, focus trap, `Escape`, inert background, and focus return are required.
 - Treat tabs, switches, OTP inputs, and dropzones as composite widgets that must match APG keyboard behavior, not just visual state.
 - Avoid `contentEditable` for form-like editing unless there is no practical alternative and the screen-reader and keyboard story is explicitly tested.
+- `AppShell` includes a skip-nav link (`href="#main-content"`) and the `<main>` has `id="main-content"`. Preserve both when editing layout.
 
 ## UI Rules
 
@@ -35,12 +36,29 @@
 - Keep `apiFetch` / `jsonRequest` from `src/shared/utils/api.js` as the transport layer.
 - Do not use raw `fetch()` inside components or hooks for GET requests that benefit from caching.
 - Mutations (POST/PATCH/DELETE) may use `apiFetch` directly or via React Query `useMutation`.
+- `apiFetch` handles 401 → token refresh internally. React Query's global `retry: 1` is on top of that; prefer `{ retry: false }` per-query for auth endpoints that should fail fast.
 
 ## State Management
 
 - User identity lives in `useProfileStore` (Zustand) — the single source of truth.
 - `AuthContext` owns only router-dependent side effects (logout redirect). Do not add new state there.
 - `useProfileStore` exposes: `user`, `profile`, `security`, `setUser`, `setProfile`, `setSecurity`, `updateUser`, `clearProfile`.
+- Multi-step flows (sign-in, MFA setup) use parallel `step` string + boolean flags. Prefer a discriminated union `type Step = 'email' | 'otp' | 'totp' | ...` when adding new steps so the compiler can narrow state.
+
+## Error Boundaries
+
+- `src/app/error.jsx` — recoverable error boundary for all non-root segments.
+- `src/app/(protected)/error.jsx` — protected-route error boundary; preserves the session.
+- `src/app/global-error.jsx` — root-layout fallback (must include `<html>` and `<body>`).
+- Add an `error.jsx` alongside any route segment that does async data loading and could throw.
+- Do not remove these files. If a route needs custom error UI, co-locate a segment-level `error.jsx` rather than patching the shared ones.
+
+## Performance
+
+- Wrap non-urgent state updates (tab switches, step transitions, filter changes) in `startTransition` so input stays responsive on slow devices.
+- For heavy route-level components (KanbanBoard, ResumeTab, TotpSetupPanel), use `next/dynamic` with `ssr: false` to defer their bundle.
+- Memoize list-item callbacks with `useCallback` before passing to `React.memo`-wrapped children in high-density lists (KanbanBoard columns, entry lists).
+- `key={index}` is acceptable only for stable, non-reorderable lists (OTP digit rows). Use a data-model ID as key for any editable or sortable list.
 
 ## Examples In This Repo
 

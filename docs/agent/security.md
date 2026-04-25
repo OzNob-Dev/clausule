@@ -59,3 +59,9 @@
 - Letting signup, checkout, or subscription finalization reactivate soft-deleted accounts without an explicit recovery flow
 - Accepting client-supplied WebAuthn registration material without attestation validation
 - Trusting decoded third-party JWT payloads without cryptographic verification
+
+## Auth Test Bypass
+
+- `src/shared/utils/authTestBypass.js` is intentionally included in the build.
+- `isAuthTestBypassEnabled()` gates on **both** `NODE_ENV !== 'production'` **and** `NEXT_PUBLIC_AUTH_TEST_BYPASS === 'employee'`. Neither condition alone enables bypass.
+- Do not weaken either guard. Never set `NEXT_PUBLIC_AUTH_TEST_BYPASS` in production environment config.
