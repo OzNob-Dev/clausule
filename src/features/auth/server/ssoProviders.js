@@ -1,6 +1,18 @@
 import crypto from 'node:crypto'
 import { fetchWithTimeout } from '@api/_lib/network.js'
 
+const APPLE_KEYS_URL = 'https://appleid.apple.com/auth/keys'
+const APPLE_KEYS_TTL_MS = 60 * 60 * 1000
+
+let appleKeysCache = {
+  expiresAt: 0,
+  keys: null,
+}
+
+export function resetAppleKeysCacheForTest() {
+  appleKeysCache = { expiresAt: 0, keys: null }
+}
+
 export async function exchangeSsoCode({ provider, code, codeVerifier, redirectUri, appleUser }) {
   switch (provider) {
     case 'google': return googleExchange({ code, codeVerifier, redirectUri })
@@ -107,14 +119,76 @@ function buildAppleClientSecret() {
   return `${data}.${sig}`
 }
 
-function decodeJwtPayload(token) {
+function parseJwt(token) {
+  const parts = String(token ?? '').split('.')
+  if (parts.length !== 3) throw new Error('Invalid Apple identity token')
+
+  const [headerPart, payloadPart, signaturePart] = parts
+  let header
+  let payload
   try {
-    const parts = (token ?? '').split('.')
-    if (parts.length < 2) return null
-    return JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'))
+    header = JSON.parse(Buffer.from(headerPart, 'base64url').toString('utf8'))
+    payload = JSON.parse(Buffer.from(payloadPart, 'base64url').toString('utf8'))
   } catch {
-    return null
+    throw new Error('Invalid Apple identity token')
   }
+
+  return {
+    header,
+    payload,
+    signature: Buffer.from(signaturePart, 'base64url'),
+    signingInput: Buffer.from(`${headerPart}.${payloadPart}`),
+  }
+}
+
+async function appleSigningKeys() {
+  if (appleKeysCache.keys && appleKeysCache.expiresAt > Date.now()) return appleKeysCache.keys
+
+  const response = await fetchWithTimeout(APPLE_KEYS_URL, {}, {
+    timeoutMs: 10_000,
+    timeoutLabel: 'Apple signing keys',
+  })
+  if (!response.ok) throw new Error(`Apple keys: ${response.status}`)
+
+  const payload = await response.json()
+  if (!Array.isArray(payload?.keys) || payload.keys.length === 0) {
+    throw new Error('Apple keys response invalid')
+  }
+
+  appleKeysCache = {
+    expiresAt: Date.now() + APPLE_KEYS_TTL_MS,
+    keys: payload.keys,
+  }
+  return appleKeysCache.keys
+}
+
+async function verifyAppleIdentityToken(idToken) {
+  const parsed = parseJwt(idToken)
+  if (parsed.header.alg !== 'ES256' || !parsed.header.kid) {
+    throw new Error('Apple identity token header invalid')
+  }
+
+  const keys = await appleSigningKeys()
+  const jwk = keys.find((key) => key.kid === parsed.header.kid && key.kty === 'EC')
+  if (!jwk) throw new Error('Apple signing key not found')
+
+  const valid = crypto.verify(
+    'sha256',
+    parsed.signingInput,
+    { key: crypto.createPublicKey({ key: jwk, format: 'jwk' }), dsaEncoding: 'ieee-p1363' },
+    parsed.signature
+  )
+  if (!valid) throw new Error('Apple identity token signature invalid')
+
+  const now = Math.floor(Date.now() / 1000)
+  const clientId = process.env.APPLE_CLIENT_ID
+  const emailVerified = parsed.payload.email_verified === true || parsed.payload.email_verified === 'true'
+  if (parsed.payload.iss !== 'https://appleid.apple.com') throw new Error('Apple identity token issuer invalid')
+  if (parsed.payload.aud !== clientId) throw new Error('Apple identity token audience invalid')
+  if (!parsed.payload.sub || parsed.payload.exp <= now) throw new Error('Apple identity token expired')
+  if (!parsed.payload.email || !emailVerified) throw new Error('Apple identity token email invalid')
+
+  return parsed.payload
 }
 
 async function appleExchange({ code, codeVerifier, redirectUri, appleUser }) {
@@ -134,7 +208,7 @@ async function appleExchange({ code, codeVerifier, redirectUri, appleUser }) {
   if (!tokenRes.ok) throw new Error(`Apple token: ${tokenRes.status} ${await tokenRes.text()}`)
 
   const tokens = await tokenRes.json()
-  const idClaims = decodeJwtPayload(tokens.id_token)
+  const idClaims = await verifyAppleIdentityToken(tokens.id_token)
 
   return {
     email: idClaims?.email?.toLowerCase(),

@@ -34,13 +34,14 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Payment system not configured' }, { status: 500 })
   }
 
-  const { userId: authedId, error: authError } = await requireActiveAuth(request)
+  const { userId: authedId, email: authedEmail, error: authError } = await requireActiveAuth(request)
   const body = await request.json().catch(() => ({}))
 
   try {
     const result = await createSubscription({
       body,
       authedId: authError ? null : authedId,
+      authEmail: authError ? null : authedEmail,
     })
     if (!result.session) return NextResponse.json(result.body, { status: result.status })
     return issueRecoverableSession({

@@ -13,6 +13,7 @@ const bragAtomicWritesPath = path.resolve(__dirname, '../../supabase/migrations/
 const authDeliveryHardeningPath = path.resolve(__dirname, '../../supabase/migrations/014_auth_delivery_and_order_hardening.sql')
 const ssoStateAndReconciliationPath = path.resolve(__dirname, '../../supabase/migrations/015_sso_state_and_email_reconciliation.sql')
 const passkeyAuthenticationPath = path.resolve(__dirname, '../../supabase/migrations/016_passkey_authentication.sql')
+const functionHardeningPath = path.resolve(__dirname, '../../supabase/migrations/020_function_privilege_and_search_path_hardening.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
@@ -22,6 +23,7 @@ const bragAtomicWritesSql = readFileSync(bragAtomicWritesPath, 'utf8')
 const authDeliveryHardeningSql = readFileSync(authDeliveryHardeningPath, 'utf8')
 const ssoStateAndReconciliationSql = readFileSync(ssoStateAndReconciliationPath, 'utf8')
 const passkeyAuthenticationSql = readFileSync(passkeyAuthenticationPath, 'utf8')
+const functionHardeningSql = readFileSync(functionHardeningPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -103,5 +105,14 @@ describe('backend hardening migration', () => {
     expect(passkeyAuthenticationSql).toContain('create or replace function public.consume_passkey_auth_challenge')
     expect(passkeyAuthenticationSql).toContain("cleanup_passkey_auth_challenges_job")
     expect(passkeyAuthenticationSql).toContain("operation_type in ('register', 'subscribe', 'login_otp', 'login_totp', 'login_passkey', 'refresh', 'sso')")
+  })
+
+  it('locks down default function privileges and pins definer function search paths', () => {
+    expect(functionHardeningSql).toContain('revoke create on schema public from public;')
+    expect(functionHardeningSql).toContain('revoke execute on all functions in schema public from public;')
+    expect(functionHardeningSql).toContain('alter default privileges in schema public revoke execute on functions from anon, authenticated;')
+    expect(functionHardeningSql).toContain('alter function public.consume_email_otp_code(text, text, timestamptz) set search_path = public, extensions, pg_temp;')
+    expect(functionHardeningSql).toContain('alter function public.consume_sso_auth_state(text, text, timestamptz) set search_path = public, pg_temp;')
+    expect(functionHardeningSql).toContain('alter function public.consume_passkey_auth_challenge(text, timestamptz) set search_path = public, pg_temp;')
   })
 })

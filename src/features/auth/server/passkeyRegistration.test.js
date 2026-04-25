@@ -23,6 +23,61 @@ function request(host = 'app.example.com') {
   })
 }
 
+function cborHead(major, value) {
+  if (value < 24) return Buffer.from([(major << 5) | value])
+  if (value < 256) return Buffer.from([(major << 5) | 24, value])
+  if (value < 65536) {
+    const out = Buffer.alloc(3)
+    out[0] = (major << 5) | 25
+    out.writeUInt16BE(value, 1)
+    return out
+  }
+  const out = Buffer.alloc(5)
+  out[0] = (major << 5) | 26
+  out.writeUInt32BE(value, 1)
+  return out
+}
+
+function cborText(value) {
+  const text = Buffer.from(value, 'utf8')
+  return Buffer.concat([cborHead(3, text.length), text])
+}
+
+function cborBytes(value) {
+  return Buffer.concat([cborHead(2, value.length), value])
+}
+
+function cborMap(entries) {
+  return Buffer.concat([
+    cborHead(5, entries.length),
+    ...entries.flatMap(([key, value]) => [
+      typeof key === 'string' ? cborText(key) : Buffer.from(key),
+      value,
+    ]),
+  ])
+}
+
+function attestationObject({ rpId, credentialId = 'abcd', coseKey = 'key', fmt = 'none' }) {
+  const authData = Buffer.concat([
+    crypto.createHash('sha256').update(rpId).digest(),
+    Buffer.from([0x45]),
+    Buffer.alloc(20),
+    Buffer.from([0x00, credentialId.length]),
+    Buffer.from(credentialId),
+    Buffer.from(coseKey),
+  ])
+
+  return cborMap([
+    ['fmt', cborText(fmt)],
+    ['attStmt', cborMap([])],
+    ['authData', cborBytes(authData)],
+  ]).toString('base64url')
+}
+
+function webauthnCredentialId(value = 'abcd') {
+  return Buffer.from(value).toString('base64url')
+}
+
 describe('passkeyRegistration service', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -84,20 +139,15 @@ describe('passkeyRegistration service', () => {
       body: {
         _signedChallenge: signedChallenge,
         credential: {
+          id: webauthnCredentialId(),
+          rawId: webauthnCredentialId(),
           response: {
             clientDataJSON: Buffer.from(JSON.stringify({
               type: 'webauthn.create',
               challenge,
               origin: 'https://app.example.com',
             })).toString('base64url'),
-            authenticatorData: Buffer.concat([
-              crypto.createHash('sha256').update('app.example.com').digest(),
-              Buffer.from([0x45]),
-              Buffer.alloc(20),
-              Buffer.from([0x00, 0x04]),
-              Buffer.from('abcd'),
-              Buffer.from('key'),
-            ]).toString('base64url'),
+            attestationObject: attestationObject({ rpId: 'app.example.com' }),
           },
         },
       },
@@ -105,6 +155,44 @@ describe('passkeyRegistration service', () => {
 
     expect(result.status).toBe(500)
     expect(result.body).toEqual({ error: 'Failed to save passkey' })
+  })
+
+  it('rejects an unsupported attestation format', async () => {
+    select.mockResolvedValueOnce({
+      data: [{ email: 'ada@example.com', first_name: 'Ada', last_name: 'Lovelace' }],
+    })
+    const options = await createPasskeyRegistrationOptions({ request: request(), userId: 'user-1' })
+    const signedChallenge = options.body._signedChallenge
+    const challenge = options.body.options.challenge
+    consumePasskeyChallenge.mockResolvedValueOnce({
+      row: { challenge: signedChallenge, expires_at: new Date(Date.now() + 60_000).toISOString() },
+      error: null,
+    })
+
+    const result = await verifyPasskeyRegistration({
+      request: request(),
+      userId: 'user-1',
+      body: {
+        _signedChallenge: signedChallenge,
+        credential: {
+          id: webauthnCredentialId(),
+          rawId: webauthnCredentialId(),
+          response: {
+            clientDataJSON: Buffer.from(JSON.stringify({
+              type: 'webauthn.create',
+              challenge,
+              origin: 'https://app.example.com',
+            })).toString('base64url'),
+            attestationObject: attestationObject({ rpId: 'app.example.com', fmt: 'packed' }),
+          },
+        },
+      },
+    })
+
+    expect(result).toEqual({
+      body: { error: 'Unsupported attestation format' },
+      status: 400,
+    })
   })
 
   it('returns a safe server error when challenge persistence fails', async () => {

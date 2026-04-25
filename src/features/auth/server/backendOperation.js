@@ -53,7 +53,7 @@ export function registerOperationKey({ email }) {
 
 export function subscribeOperationKey({ authedId, email, paymentMethodId }) {
   const owner = authedId || normalizeEmail(email)
-  return `subscribe:${owner}:individual:usd:500:month`
+  return `subscribe:${owner}:individual:aud:500:month`
 }
 
 export function authAttemptOperationKey({ operationType, email, code }) {

@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { del, rpc, update } from '@api/_lib/supabase.js'
+import { del, getAuthUser, rpc, update } from '@api/_lib/supabase.js'
 import { rotateRefreshSession, revokeRefreshSession } from './refreshSession.js'
 import { hashRefreshToken } from '@api/_lib/jwt.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
   del: vi.fn(),
+  getAuthUser: vi.fn(),
   rpc: vi.fn(),
   update: vi.fn(),
 }))
@@ -18,6 +19,7 @@ vi.mock('./accountRepository.js', () => ({
 describe('refreshSession', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    getAuthUser.mockResolvedValue({ data: { user: { email: 'ada@example.com' } }, error: null })
   })
 
   it('returns a session only after the refresh token is atomically consumed', async () => {

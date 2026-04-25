@@ -16,6 +16,8 @@
 - Preserve existing auth failure behavior unless the change is deliberate.
 - Keep unauthenticated account-discovery surfaces minimal and generic.
 - Keep one-time auth challenges server-stored or otherwise one-time consumable.
+- Verify upstream identity tokens and assertions cryptographically; decoding a JWT or WebAuthn payload is never sufficient proof.
+- Treat WebAuthn registration as a verified ceremony: require and validate `attestationObject` or equivalent registration proof before persisting a credential.
 
 ## High-Risk Areas
 
@@ -40,6 +42,8 @@
 - Keep secret material server-only and short-lived where possible.
 - Require proof of identity before creating durable unauthenticated account state.
 - Verify RP/origin binding, user verification, signature validity, and replay counters before issuing a passkey session.
+- Verify passkey registration proof before storing the public key or credential ID.
+- Verify Apple or other IdP identity tokens for signature, issuer, audience, expiry, and required claims before trusting email or subject identifiers.
 - Ensure one auth method cannot silently bypass another required method.
 - Keep canonical account-state rules consistent across login, refresh, bootstrap, and protected endpoints.
 
@@ -50,3 +54,5 @@
 - Expanding cookie scope without reason
 - Returning internal auth state to the browser
 - Letting signup, checkout, or recovery flows mint sessions for existing accounts without checking allowed auth methods
+- Accepting client-supplied WebAuthn registration material without attestation validation
+- Trusting decoded third-party JWT payloads without cryptographic verification

@@ -58,20 +58,23 @@ function error(body, status) {
 
 function isActiveSubscriptionConflict(dbError) {
   const message = `${dbError?.message ?? ''} ${dbError?.details ?? ''}`.toLowerCase()
-  return dbError?.code === '23505' && message.includes('idx_subscriptions_active_user_unique')
+  return dbError?.code === '23505' && (
+    message.includes('idx_subscriptions_user_id_unique')
+    || message.includes('idx_subscriptions_active_user_unique')
+  )
+}
+
+async function reuseExistingProfile(profile) {
+  const { provider, error: authErr } = await getUserSsoProvider(profile.id)
+  if (authErr) return { log: ['[register] auth user lookup failed:', authErr], ...error({ error: 'Failed to create user account' }, 500) }
+  if (provider) return error({ error: 'Account requires SSO sign-in', nextStep: 'sso' }, 403)
+  if (profile.totp_secret) return error({ error: 'Account requires authenticator sign-in', nextStep: 'mfa' }, 403)
+  return { userId: profile.id }
 }
 
 async function resolveUserId({ email, firstName, lastName }) {
   const { profile } = await findProfileByEmail(email, 'id,totp_secret')
-  if (profile) {
-    // Refuse session for accounts that require SSO or TOTP — email-proof alone is
-    // insufficient to satisfy those auth policies.
-    const { provider, error: authErr } = await getUserSsoProvider(profile.id)
-    if (authErr) return { log: ['[register] auth user lookup failed:', authErr], ...error({ error: 'Failed to create user account' }, 500) }
-    if (provider) return error({ error: 'Account requires SSO sign-in', nextStep: 'sso' }, 403)
-    if (profile.totp_secret) return error({ error: 'Account requires authenticator sign-in', nextStep: 'mfa' }, 403)
-    return { userId: profile.id }
-  }
+  if (profile) return reuseExistingProfile(profile)
 
   const { data: created, error: createErr } = await createUser({
     email,
@@ -83,8 +86,8 @@ async function resolveUserId({ email, firstName, lastName }) {
     return userId ? { userId } : { log: ['[register] createUser returned no id:', created], ...error({ error: 'Failed to create user account' }, 500) }
   }
 
-  const { profile: retryProfile } = await findProfileByEmail(email)
-  if (retryProfile) return { userId: retryProfile.id }
+  const { profile: retryProfile } = await findProfileByEmail(email, 'id,totp_secret')
+  if (retryProfile) return reuseExistingProfile(retryProfile)
 
   return { log: ['[register] createUser error:', createErr], ...error({ error: 'Failed to create user account' }, 500) }
 }

@@ -12,6 +12,8 @@
 - Session issuance paths that are not replay-safe after a partial failure.
 - Existing-account reuse in signup or checkout flows without verifying allowed auth state.
 - Server helpers that drift into client concerns or UI shaping.
+- Login or refresh paths that re-implement account-active logic instead of reusing the canonical predicate.
+- Dynamic route params interpolated directly into PostgREST filter strings without validation or encoded query builders.
 
 ## Preferred Techniques
 
@@ -20,6 +22,8 @@
 - Keep a single canonical account-state check and reuse it everywhere.
 - Make write flows idempotent or explicitly conflict-safe.
 - Isolate privileged database access behind a small server-only layer.
+- Verify third-party identity tokens server-side before trusting any decoded claims.
+- Build Supabase/PostgREST queries with `URLSearchParams` or equivalent encoding helpers instead of raw string concatenation.
 
 ## Review Triggers
 
@@ -27,3 +31,4 @@
 - Any write path with retries, side effects, or background cleanup.
 - Any new external dependency or long-running network call.
 - Any route that changes authorization scope, response shape, or durable state.
+- Any SSO callback or token-exchange change that starts trusting new claims from an upstream identity provider.

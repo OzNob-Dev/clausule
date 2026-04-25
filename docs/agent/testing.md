@@ -27,6 +27,8 @@
 - Migration tests that only assert SQL text shape instead of runtime semantics.
 - Missing coverage for partial failures, replay attempts, duplicate submissions, and cleanup behavior.
 - Missing coverage for conflicting auth methods or inconsistent account-state checks.
+- Stale auth tests that mock `select`/`rpc` paths but forget admin-auth lookups such as `getAuthUser`.
+- Route tests that accidentally hit live Supabase helpers because new rate-limit or auth dependencies were added without mocks.
 
 ## Preferred Techniques
 
@@ -34,3 +36,5 @@
 - Add regression tests for one-time challenge consumption and duplicate-submit rejection.
 - Cover durable-before-side-effect ordering and conflict-safe retries.
 - Treat malformed WebAuthn, token, and callback payloads as required security tests.
+- For auth/SSO tests, mock both DB reads and upstream identity/admin lookups so the test stays deterministic as account-state logic evolves.
+- Add explicit regressions for canonical account-state parity across OTP, TOTP, passkey, refresh, and bootstrap flows.

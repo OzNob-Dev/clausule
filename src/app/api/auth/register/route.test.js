@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPersistentSession } from '@api/_lib/session.js'
-import { createUser, rpc, select } from '@api/_lib/supabase.js'
+import { createUser, getAuthUser, rpc, select } from '@api/_lib/supabase.js'
 import { POST } from './route.js'
 
 const sendTransacEmail = vi.fn()
 
 vi.mock('@api/_lib/supabase.js', () => ({
   createUser: vi.fn(),
+  getAuthUser: vi.fn(),
   rpc: vi.fn(),
   select: vi.fn(),
 }))
@@ -77,6 +78,10 @@ describe('register route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     process.env.BREVO_API_KEY = 'brevo-key'
+    getAuthUser.mockResolvedValue({
+      data: { user: { email: 'ada@example.com', app_metadata: { provider: 'email' }, identities: [{ provider: 'email' }] } },
+      error: null,
+    })
     rpc.mockImplementation(async (fn) => {
       if (fn === 'begin_backend_operation') return startedOperation()
       if (fn === 'finalize_individual_subscription') return { data: [{ role: 'employee' }], error: null }
@@ -186,7 +191,7 @@ describe('register route', () => {
     rpc.mockImplementationOnce(async () => startedOperation())
       .mockImplementationOnce(async () => ({
         data: null,
-        error: { code: '23505', message: 'duplicate key value violates unique constraint "idx_subscriptions_active_user_unique"' },
+        error: { code: '23505', message: 'duplicate key value violates unique constraint "idx_subscriptions_user_id_unique"' },
       }))
 
     const response = await POST(registerRequest())
@@ -194,6 +199,24 @@ describe('register route', () => {
 
     expect(response.status).toBe(409)
     expect(data).toEqual({ error: 'Active subscription already exists' })
+    expect(createPersistentSession).not.toHaveBeenCalled()
+  })
+
+  it('re-checks auth policy if a duplicate-user race reveals an existing SSO account', async () => {
+    select
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce({ data: [{ id: 'user-sso', totp_secret: null }] })
+    createUser.mockResolvedValueOnce({ data: null, error: { message: 'User already registered' } })
+    getAuthUser.mockResolvedValueOnce({
+      data: { user: { email: 'ada@example.com', app_metadata: { provider: 'google' }, identities: [{ provider: 'google' }] } },
+      error: null,
+    })
+
+    const response = await POST(registerRequest())
+    const data = await response.json()
+
+    expect(response.status).toBe(403)
+    expect(data).toEqual({ error: 'Account requires SSO sign-in', nextStep: 'sso' })
     expect(createPersistentSession).not.toHaveBeenCalled()
   })
 

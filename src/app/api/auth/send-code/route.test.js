@@ -48,7 +48,7 @@ describe('send-code route', () => {
     const data = await response.json()
 
     expect(response.status).toBe(429)
-    expect(data).toEqual({ error: 'Too many requests — please wait before requesting another code', retryAfterMs: 30_000 })
+    expect(data).toEqual({ error: 'Too many requests — please try again later', retryAfterMs: 30_000 })
     expect(sendOtpCode).not.toHaveBeenCalled()
   })
 })

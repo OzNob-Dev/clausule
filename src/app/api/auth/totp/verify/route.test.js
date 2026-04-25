@@ -75,7 +75,9 @@ describe('totp verify route', () => {
   })
 
   it('loads the profile case-insensitively and accepts a valid TOTP', async () => {
-    select.mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', totp_secret: SECRET, is_active: true, is_deleted: false }] })
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', totp_secret: SECRET, is_active: true, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [] })
 
     const response = await POST(request())
 
@@ -88,7 +90,8 @@ describe('totp verify route', () => {
     expect(rpc).toHaveBeenCalledWith('begin_backend_operation', expect.objectContaining({
       p_operation_key: 'login_totp:ada@example.com:hashed',
     }))
-    expect(select).toHaveBeenCalledWith('profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
+    expect(select).toHaveBeenNthCalledWith(1, 'profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Ctotp_secret%2Cis_active%2Cis_deleted&limit=1')
+    expect(select).toHaveBeenNthCalledWith(2, 'subscriptions', 'user_id=eq.user-1&status=in.%28active%2Ctrialing%29&select=id&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',
       email: 'ada@example.com',
@@ -98,7 +101,9 @@ describe('totp verify route', () => {
   })
 
   it('replays a completed TOTP login after session creation fails once', async () => {
-    select.mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', totp_secret: SECRET, is_active: true, is_deleted: false }] })
+    select
+      .mockResolvedValueOnce({ data: [{ id: 'user-1', role: 'employee', totp_secret: SECRET, is_active: true, is_deleted: false }] })
+      .mockResolvedValueOnce({ data: [] })
     createPersistentSession
       .mockRejectedValueOnce(new Error('session failed'))
       .mockResolvedValueOnce({ accessToken: 'access-token', refreshToken: 'refresh-token' })
@@ -123,6 +128,6 @@ describe('totp verify route', () => {
     expect(first.status).toBe(500)
     expect(firstBody).toEqual({ error: 'Failed to create session' })
     expect(second.status).toBe(200)
-    expect(select).toHaveBeenCalledTimes(1)
+    expect(select).toHaveBeenCalledTimes(2)
   })
 })

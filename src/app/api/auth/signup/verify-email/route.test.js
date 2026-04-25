@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { verifyEmailOtpCode } from '@features/auth/server/emailOtpVerification.js'
 import { POST } from './route.js'
+
+vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+  consumeDistributedRateLimit: vi.fn(),
+}))
 
 vi.mock('@features/auth/server/emailOtpVerification.js', () => ({
   verifyEmailOtpCode: vi.fn(),
@@ -21,6 +26,8 @@ function request(body = {}) {
 describe('signup verify-email route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    process.env.JWT_SECRET = 'test-secret'
+    consumeDistributedRateLimit.mockResolvedValue({ allowed: true, retryAfterMs: 0, error: null })
     verifyEmailOtpCode.mockResolvedValue({ ok: true })
   })
 

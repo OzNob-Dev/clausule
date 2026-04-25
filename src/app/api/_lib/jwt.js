@@ -13,7 +13,7 @@
  *   sub   {string}  user UUID
  *   email {string}  user email
  *   role  {string}  'employee' | 'manager'
- *   amr   {string}  auth method: 'otp' | 'totp' | 'sso' | 'unknown'
+ *   amr   {string}  auth method: 'otp' | 'totp' | 'sso' | 'passkey' | 'unknown'
  *   jti   {string}  unique token ID (for future revocation)
  *   iat   {number}  issued-at (Unix seconds)
  *   exp   {number}  expiry    (Unix seconds)

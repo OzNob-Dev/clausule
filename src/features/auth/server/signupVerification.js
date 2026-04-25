@@ -3,7 +3,9 @@ import crypto from 'node:crypto'
 const SIGNUP_VERIFICATION_TTL_S = 15 * 60
 
 function secret() {
-  return process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || 'clausule-dev-signup-verification'
+  const signingSecret = process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!signingSecret) throw new Error('JWT_SECRET or SUPABASE_SERVICE_ROLE_KEY must be set')
+  return signingSecret
 }
 
 function base64urlJson(value) {

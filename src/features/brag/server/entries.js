@@ -70,14 +70,23 @@ export async function createEntry({ userId, body }) {
 }
 
 async function getOwnedEntry(entryId, userId) {
-  const { data } = await select('brag_entries', `id=eq.${entryId}&user_id=eq.${userId}&limit=1`)
+  const { data } = await select('brag_entries', new URLSearchParams({
+    id: `eq.${entryId}`,
+    user_id: `eq.${userId}`,
+    limit: '1',
+  }).toString())
   return data?.[0] ?? null
 }
 
 export async function getEntry({ userId, entryId }) {
   const { data, error } = await select(
     'brag_entries',
-    `id=eq.${entryId}&user_id=eq.${userId}&select=${entrySelect()}&limit=1`
+    new URLSearchParams({
+      id: `eq.${entryId}`,
+      user_id: `eq.${userId}`,
+      select: entrySelect(),
+      limit: '1',
+    }).toString()
   )
 
   if (error) return { log: ['[brag/entries/[id] GET]', error], body: { error: 'Failed to fetch entry' }, status: 500 }
@@ -129,7 +138,10 @@ export async function deleteEntry({ userId, entryId }) {
   const existing = await getOwnedEntry(entryId, userId)
   if (!existing) return { body: { error: 'Not found' }, status: 404 }
 
-  const { error } = await del('brag_entries', `id=eq.${entryId}&user_id=eq.${userId}`)
+  const { error } = await del('brag_entries', new URLSearchParams({
+    id: `eq.${entryId}`,
+    user_id: `eq.${userId}`,
+  }).toString())
   if (error) return { log: ['[brag/entries/[id] DELETE]', error], body: { error: 'Failed to delete entry' }, status: 500 }
   return { status: 204 }
 }

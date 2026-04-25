@@ -1,6 +1,6 @@
 import { createUser, rpc } from '@api/_lib/supabase.js'
 import { fetchWithTimeout } from '@api/_lib/network.js'
-import { findProfileByEmail, getUserSsoProvider, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
+import { findProfileByEmail, findProfileById, getUserSsoProvider, hasActiveSubscription } from '@features/auth/server/accountRepository.js'
 import {
   beginBackendOperation,
   completeBackendOperation,
@@ -12,7 +12,7 @@ import { verifySignupVerificationToken } from '@features/auth/server/signupVerif
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
 const STRIPE_API = 'https://api.stripe.com/v1'
 const PLAN_AMOUNT_CENTS = 500
-const PLAN_CURRENCY = 'usd'
+const PLAN_CURRENCY = 'aud'
 
 function authUserId(created) {
   return created?.id ?? created?.user?.id ?? null
@@ -20,7 +20,10 @@ function authUserId(created) {
 
 function isActiveSubscriptionConflict(dbError) {
   const message = `${dbError?.message ?? ''} ${dbError?.details ?? ''}`.toLowerCase()
-  return dbError?.code === '23505' && message.includes('idx_subscriptions_active_user_unique')
+  return dbError?.code === '23505' && (
+    message.includes('idx_subscriptions_user_id_unique')
+    || message.includes('idx_subscriptions_active_user_unique')
+  )
 }
 
 async function stripe(path, body = null, method = 'POST', idempotencyKey = null) {
@@ -38,8 +41,19 @@ async function stripe(path, body = null, method = 'POST', idempotencyKey = null)
   return data
 }
 
-async function resolveUserId({ authedId, email, firstName, lastName }) {
-  if (authedId) return authedId
+async function resolveUserIdentity({ authedId, authEmail, email, firstName, lastName }) {
+  if (authedId) {
+    const { profile, error } = await findProfileById(authedId, 'id,email,first_name,last_name')
+    if (error) throw Object.assign(new Error('Failed to resolve user'), { status: 500, log: ['[subscribe] profile lookup error:', error] })
+    if (!profile) throw Object.assign(new Error('Failed to resolve user'), { status: 500, log: ['[subscribe] profile not found for authenticated user:', authedId] })
+
+    return {
+      userId: profile.id,
+      email: (authEmail ?? profile.email ?? email).trim().toLowerCase(),
+      firstName: String(profile.first_name ?? '').trim() || firstName,
+      lastName: String(profile.last_name ?? '').trim() || lastName,
+    }
+  }
 
   const { profile } = await findProfileByEmail(email, 'id,totp_secret')
   if (profile) {
@@ -49,7 +63,7 @@ async function resolveUserId({ authedId, email, firstName, lastName }) {
     if (authErr) throw Object.assign(new Error('Failed to resolve user'), { status: 500 })
     if (provider) throw Object.assign(new Error('Account requires SSO sign-in'), { status: 403, nextStep: 'sso' })
     if (profile.totp_secret) throw Object.assign(new Error('Account requires authenticator sign-in'), { status: 403, nextStep: 'mfa' })
-    return profile.id
+    return { userId: profile.id, email, firstName, lastName }
   }
 
   const { data: created, error: createErr } = await createUser({
@@ -59,22 +73,21 @@ async function resolveUserId({ authedId, email, firstName, lastName }) {
   if (createErr) throw Object.assign(new Error('Failed to create user account'), { status: 500, log: ['[subscribe] createUser error:', createErr] })
   const userId = authUserId(created)
   if (!userId) throw Object.assign(new Error('Failed to create user account'), { status: 500, log: ['[subscribe] createUser returned no id:', created] })
-  return userId
+  return { userId, email, firstName, lastName }
 }
 
 export function paymentSystemConfigured() {
   return Boolean(STRIPE_KEY)
 }
 
-export async function createSubscription({ body, authedId }) {
+export async function createSubscription({ body, authedId, authEmail = null }) {
   const paymentMethodId = (body.paymentMethodId ?? '').trim()
   const email = (body.email ?? '').trim().toLowerCase()
   const firstName = (body.firstName ?? '').trim()
   const lastName = (body.lastName ?? '').trim()
-  const fullName = [firstName, lastName].filter(Boolean).join(' ')
 
   if (!paymentMethodId || !email) return { body: { error: 'paymentMethodId and email are required' }, status: 400 }
-  if (!firstName) return { body: { error: 'firstName is required' }, status: 400 }
+  if (!authedId && !firstName) return { body: { error: 'firstName is required' }, status: 400 }
   if (!authedId) {
     const verified = verifySignupVerificationToken(body.verificationToken, email)
     if (!verified.ok) return { body: { error: verified.error }, status: 401 }
@@ -84,18 +97,23 @@ export async function createSubscription({ body, authedId }) {
   const operation = await beginBackendOperation({
     operationKey,
     operationType: subscribeOperationType(),
-    email,
+    email: authEmail || email,
     userId: authedId,
   })
   if (operation.error) throw Object.assign(new Error('Failed to save subscription'), { status: 500, log: ['[subscribe] begin operation error:', operation.error] })
   if (operation.replay) return operation.replay
 
-  const userId = await resolveUserId({ authedId, email, firstName, lastName })
+  const identity = await resolveUserIdentity({ authedId, authEmail, email, firstName, lastName })
+  const userId = identity.userId
+  const canonicalEmail = identity.email
+  const canonicalFirstName = identity.firstName
+  const canonicalLastName = identity.lastName
+  const fullName = [canonicalFirstName, canonicalLastName].filter(Boolean).join(' ')
 
   const { hasPaid } = await hasActiveSubscription(userId)
   if (hasPaid) return { body: { error: 'Active subscription already exists' }, status: 409 }
 
-  const customer = await stripe('/customers', new URLSearchParams({ email, name: fullName }), 'POST', `${operationKey}:customer`)
+  const customer = await stripe('/customers', new URLSearchParams({ email: canonicalEmail, name: fullName }), 'POST', `${operationKey}:customer`)
 
   await stripe(`/payment_methods/${paymentMethodId}/attach`, new URLSearchParams({ customer: customer.id }), 'POST', `${operationKey}:attach`)
 
@@ -118,9 +136,9 @@ export async function createSubscription({ body, authedId }) {
 
   const { data: finalized, error: finalizeError } = await rpc('finalize_individual_subscription', {
     p_user_id: userId,
-    p_email: email,
-    p_first_name: firstName,
-    p_last_name: lastName || null,
+    p_email: canonicalEmail,
+    p_first_name: canonicalFirstName,
+    p_last_name: canonicalLastName || null,
     p_status: subscription.status,
     p_amount_cents: PLAN_AMOUNT_CENTS,
     p_current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
@@ -148,7 +166,7 @@ export async function createSubscription({ body, authedId }) {
   const result = {
     body: { ok: true, subscriptionId: subscription.id, clientSecret, role },
     status: 200,
-    session: { userId, email, role },
+    session: { userId, email: canonicalEmail, role },
   }
 
   const { error: completeError } = await completeBackendOperation({

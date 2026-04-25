@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { rpc, select } from '@api/_lib/supabase.js'
+import { getAuthUser, rpc, select } from '@api/_lib/supabase.js'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { GET } from './route.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
+  getAuthUser: vi.fn(),
   rpc: vi.fn(),
   select: vi.fn(),
 }))
@@ -39,6 +40,10 @@ describe('Google SSO callback', () => {
     vi.clearAllMocks()
     process.env.GOOGLE_CLIENT_ID = 'google-client'
     process.env.GOOGLE_CLIENT_SECRET = 'google-secret'
+    getAuthUser.mockResolvedValue({
+      data: { user: { email: 'ada@example.com', app_metadata: { provider: 'google' }, identities: [{ provider: 'google' }] } },
+      error: null,
+    })
     mockGoogleProfile()
     rpc.mockImplementation(async (fn) => {
       if (fn === 'consume_sso_auth_state') {
@@ -122,7 +127,7 @@ describe('Google SSO callback', () => {
     const location = new URL(response.headers.get('location'))
 
     expect(location.pathname).toBe('/brag')
-    expect(select).toHaveBeenNthCalledWith(1, 'profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Cfirst_name%2Clast_name%2Cis_active%2Cis_deleted&limit=1')
+    expect(select).toHaveBeenNthCalledWith(1, 'profiles', 'email=eq.ada%40example.com&select=id%2Crole%2Cfirst_name%2Clast_name%2Cis_active%2Cis_deleted%2Ctotp_secret&limit=1')
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-2',
       email: 'ada@example.com',

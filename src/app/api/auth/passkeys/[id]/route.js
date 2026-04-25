@@ -18,11 +18,16 @@ export async function DELETE(request, { params }) {
   if (authError) return authErrorResponse(authError)
 
   const deviceId = params.id
+  const ownedDeviceQuery = new URLSearchParams({
+    id: `eq.${deviceId}`,
+    user_id: `eq.${userId}`,
+    limit: '1',
+  }).toString()
 
   // Confirm the device exists and belongs to this user.
   const { data: rows } = await select(
     'passkeys',
-    `id=eq.${deviceId}&user_id=eq.${userId}&limit=1`
+    ownedDeviceQuery
   )
 
   if (!rows?.length) {
@@ -32,7 +37,7 @@ export async function DELETE(request, { params }) {
   // Count remaining devices.
   const { data: allDevices } = await select(
     'passkeys',
-    `user_id=eq.${userId}&select=id`
+    new URLSearchParams({ user_id: `eq.${userId}`, select: 'id' }).toString()
   )
 
   if ((allDevices?.length ?? 0) <= 1) {
@@ -42,7 +47,10 @@ export async function DELETE(request, { params }) {
     )
   }
 
-  const { error } = await del('passkeys', `id=eq.${deviceId}&user_id=eq.${userId}`)
+  const { error } = await del('passkeys', new URLSearchParams({
+    id: `eq.${deviceId}`,
+    user_id: `eq.${userId}`,
+  }).toString())
 
   if (error) {
     console.error('[passkeys/[id] DELETE]', error)
