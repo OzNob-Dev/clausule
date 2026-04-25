@@ -91,7 +91,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
   const [, startPanelTransition] = useTransition()
   const tabOrder = ['brag', 'cv']
   const [tab, setTab]                   = useState('brag')
-  const [entries, setEntries]           = useState(() => [...initialEntries].sort(newestEntryFirst).map(cardFromEntry))
+  const [entries, setEntries]           = useState(() => [...(initialEntries ?? [])].sort(newestEntryFirst).map(cardFromEntry))
   const [entriesLoading] = useState(false)
   const [entriesError] = useState(initialEntriesError)
   const [composerOpen, setComposerOpen] = useState(false)

@@ -99,6 +99,24 @@ useEffect(() => {
 - Manager screens: `src/features/manager/*`
 - Auth and MFA: `src/features/auth/*` and `src/features/mfa/*`
 
+## Animation and Motion
+
+- Looping animations must use the `motion-safe:` Tailwind variant: `motion-safe:animate-[...]`. Never apply infinite animations unconditionally — users with `prefers-reduced-motion: reduce` must not see them.
+- `ThinkingDots` is a decorative spinner (`aria-hidden="true"`). It must always be rendered alongside a visible sibling text node (e.g. `<span>Generating…</span>`). Never use it as the sole indication of loading state.
+
+## Entry State in BragEmployeeScreen
+
+- Brag entries live in local component state (seeded from `initialEntries` server prop), not in a React Query cache. This is intentional: new entries must be prepended optimistically and immediately without a round-trip refetch.
+- Two distinct mapping functions exist and must stay separate:
+  - `cardFromEntry` — maps a server-fetched entry (list shape) to a card view model.
+  - `cardFromSavedEntry` — maps a mutation response (create shape) to a card view model. The create response includes `entry`, `evidenceTypes`, and `files` as separate fields.
+- Do not merge these functions. Their input shapes differ by design.
+- Always guard the mutation response: `if (!entry) { setError(...); return }` before calling `onSave`. The API contract may evolve; a missing `entry` field must not crash the UI.
+
+## Server-Prop Seeding
+
+- Server components pass initial data to client screens as props (e.g. `initialEntries`, `initialEntriesError`). The server page always guards with `?? []` before passing, but the client component must also use `?? []` at the array boundary: `[...(initialEntries ?? [])]`. Default parameters (`= []`) only handle `undefined`, not `null`.
+
 ## Must Do
 
 - Keep `src/app/*/page.jsx` thin and route-specific.

@@ -189,6 +189,8 @@
   flex-shrink: 0;
   background: var(--acc);
 }
+.be-ev-pill--gold  .be-ev-pill-dot { background: #C9A84C; }
+.be-ev-pill--empty .be-ev-pill-dot { background: #C4C0BA; }
 
 .be-add-trigger {
   display: flex;

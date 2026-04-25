@@ -29,15 +29,7 @@ export default function EntryCard({ entry }) {
           <div className="be-ev-pills" role="list" aria-label="Evidence">
             {entry.pills.map((pill, i) => (
               <span key={i} role="listitem" className={`be-ev-pill be-ev-pill--${pill.type}`}>
-                <span
-                  className="be-ev-pill-dot"
-                  style={
-                    pill.type === 'gold'  ? { background: '#C9A84C' } :
-                    pill.type === 'empty' ? { background: '#C4C0BA' } :
-                    undefined
-                  }
-                  aria-hidden="true"
-                />
+                <span className="be-ev-pill-dot" aria-hidden="true" />
                 {pill.label}
               </span>
             ))}

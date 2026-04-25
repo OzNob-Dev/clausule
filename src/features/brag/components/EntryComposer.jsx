@@ -56,6 +56,10 @@ export default function EntryComposer({ onSave, onClose }) {
 
     try {
       const { entry } = await saveEntryMutation.mutateAsync()
+      if (!entry) {
+        setError('Could not save this entry. Please try again.')
+        return
+      }
       onSave({ entry, evidenceTypes: [...evTypes], files })
     } catch {
       setError('Could not save this entry. Please try again.')
