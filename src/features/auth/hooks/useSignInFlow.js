@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { sendCodeEmail } from '@features/auth/api-client/sendCodeEmail'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
@@ -23,6 +24,73 @@ const SSO_ERROR_LABELS = {
   sso_denied: 'Sign-in was cancelled.',
 }
 
+const INITIAL_STATE = {
+  step: 'email',
+  email: '',
+  touched: false,
+  submitAttempted: false,
+  ssoError: null,
+  verifyError: null,
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'hydrate_sso_error':
+      return { ...state, ssoError: action.value }
+    case 'set_email':
+      return {
+        ...state,
+        email: action.value,
+        submitAttempted: false,
+        verifyError: null,
+      }
+    case 'accept_suggestion':
+      return {
+        ...state,
+        email: action.value,
+        touched: false,
+        submitAttempted: false,
+        verifyError: null,
+      }
+    case 'set_touched':
+      return { ...state, touched: action.value }
+    case 'enter_otp':
+      return {
+        ...state,
+        step: 'otp',
+        email: action.email,
+        touched: true,
+        submitAttempted: true,
+        ssoError: null,
+        verifyError: null,
+      }
+    case 'begin_submit':
+      return {
+        ...state,
+        touched: true,
+        submitAttempted: true,
+        ssoError: null,
+      }
+    case 'reset_code_step':
+      return { ...state, step: 'email', verifyError: null }
+    case 'show_verify_error':
+      return { ...state, verifyError: action.value }
+    case 'show_sso_message':
+      return {
+        ...state,
+        step: 'email',
+        verifyError: null,
+        ssoError: 'Use your sign-in provider below to continue.',
+      }
+    case 'enter_app_step':
+      return { ...state, step: 'app', verifyError: null }
+    case 'clear_verify_error':
+      return { ...state, verifyError: null }
+    default:
+      return state
+  }
+}
+
 function ssoErrorFromUrl() {
   const params = new URLSearchParams(window.location.search)
   const errorCode = params.get('sso_error')
@@ -34,95 +102,96 @@ function ssoErrorFromUrl() {
   return SSO_ERROR_LABELS[errorCode] ?? 'Sign-in failed — please try again.'
 }
 
+async function verifySignInRequest(endpoint, email, otp) {
+  const response = await fetch(endpoint, jsonRequest({ email, code: otp }, { method: 'POST' }))
+  const data = await response.json().catch(() => ({}))
+
+  if (!response.ok) throw new Error(data.error ?? 'Incorrect code — try again')
+  return data
+}
+
 export function useSignInFlow() {
   const router = useRouter()
-  const [step, setStep] = useState('email')
-  const [email, setEmail] = useState('')
-  const [touched, setTouched] = useState(false)
-  const [submitAttempted, setSubmitAttempted] = useState(false)
-  const [sending, setSending] = useState(false)
-  const [ssoError, setSsoError] = useState(null)
-  const [verifyError, setVerifyError] = useState(null)
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const codeRefs = useRef([])
   const scheduleTimeout = useTrackedTimeout()
   const code = useSixDigitCode({ inputRefs: codeRefs, scheduleTimeout })
-  const [expirySeconds, , resetExpirySeconds] = useCountdown(OTP_TTL_SECONDS, step === 'otp')
-  const [resendTimer, , resetResendTimer] = useCountdown(RESEND_COOLDOWN_SECONDS, step === 'otp')
+  const [expirySeconds, , resetExpirySeconds] = useCountdown(OTP_TTL_SECONDS, state.step === 'otp')
+  const [resendTimer, , resetResendTimer] = useCountdown(RESEND_COOLDOWN_SECONDS, state.step === 'otp')
+
+  const sendCodeMutation = useMutation({
+    mutationFn: sendCodeEmail,
+  })
+
+  const verifyCodeMutation = useMutation({
+    mutationFn: ({ endpoint, digits }) => verifySignInRequest(endpoint, state.email, digits.join('')),
+  })
 
   useEffect(() => {
-    setSsoError(ssoErrorFromUrl())
+    dispatch({ type: 'hydrate_sso_error', value: ssoErrorFromUrl() })
   }, [])
 
   const resetCodeStep = useCallback(() => {
-    setStep('email')
     code.setState('idle')
-    setVerifyError(null)
+    dispatch({ type: 'reset_code_step' })
   }, [code])
 
   const verifySignInCode = useCallback(async (endpoint, digits) => {
-    const otp = digits.join('')
-    if (otp.length !== 6) return
-
+    if (digits.join('').length !== 6) return
     code.setState('checking')
-    setVerifyError(null)
-
+    dispatch({ type: 'clear_verify_error' })
     try {
-      const res = await fetch(endpoint, jsonRequest({ email, code: otp }, { method: 'POST' }))
-        const data = await res.json().catch(() => ({}))
-        if (!res.ok) {
-          code.setError()
-          setVerifyError('Incorrect code — try again')
-          return
-        }
-        if (data.nextStep === 'signup' && data.verificationToken) {
-          window.sessionStorage.setItem(`signup_verification:${email.trim().toLowerCase()}`, data.verificationToken)
-          code.setState('done')
-          scheduleTimeout(() => router.push(`/signup?email=${encodeURIComponent(email.trim().toLowerCase())}`), 200)
-          return
-        }
-        if (data.nextStep === 'sso') {
-          code.reset()
-          setStep('email')
-          setSsoError('Use your sign-in provider below to continue.')
-          return
-        }
-        if (data.nextStep === 'mfa') {
-          code.reset()
-          setStep('app')
-          return
-        }
+      const data = await verifyCodeMutation.mutateAsync({ endpoint, digits })
+
+      if (data.nextStep === 'signup' && data.verificationToken) {
+        const normalizedEmail = state.email.trim().toLowerCase()
+        window.sessionStorage.setItem(`signup_verification:${normalizedEmail}`, data.verificationToken)
         code.setState('done')
-        const { role } = data
-        scheduleTimeout(() => router.replace(homePathForRole(role)), 400)
-      } catch {
-        code.setError()
-      setVerifyError('Something went wrong — try again')
+        scheduleTimeout(() => router.push(`/signup?email=${encodeURIComponent(normalizedEmail)}`), 200)
+        return
+      }
+      if (data.nextStep === 'sso') {
+        code.reset()
+        dispatch({ type: 'show_sso_message' })
+        return
+      }
+      if (data.nextStep === 'mfa') {
+        code.reset()
+        dispatch({ type: 'enter_app_step' })
+        return
+      }
+
+      code.setState('done')
+      scheduleTimeout(() => router.replace(homePathForRole(data.role)), 400)
+    } catch (error) {
+      code.setError()
+      dispatch({
+        type: 'show_verify_error',
+        value: error instanceof Error && error.message ? error.message : 'Something went wrong — try again',
+      })
     }
-  }, [code, email, router, scheduleTimeout])
+  }, [code, router, scheduleTimeout, state.email, verifyCodeMutation])
 
   const verifyOtp = useCallback((digits) => verifySignInCode('/api/auth/verify-code', digits), [verifySignInCode])
   const verifyApp = useCallback((digits) => verifySignInCode('/api/auth/totp/verify', digits), [verifySignInCode])
 
   useEffect(() => {
-    if (step !== 'otp' && step !== 'app') return
+    if (state.step !== 'otp' && state.step !== 'app') return
     if (code.state !== 'idle') return
     if (!code.digits.every(Boolean)) return
-    if (step === 'otp') verifyOtp(code.digits)
+    if (state.step === 'otp') verifyOtp(code.digits)
     else verifyApp(code.digits)
-  }, [code.digits, code.state, step, verifyOtp, verifyApp])
+  }, [code.digits, code.state, state.step, verifyOtp, verifyApp])
 
-  const result = validateEmail(email)
-  const showFeedback = touched || submitAttempted
+  const result = validateEmail(state.email)
+  const showFeedback = state.touched || state.submitAttempted
 
   const handleEmailChange = useCallback((event) => {
-    setEmail(event.target.value)
-    setSubmitAttempted(false)
+    dispatch({ type: 'set_email', value: event.target.value })
   }, [])
 
   const acceptSuggestion = useCallback(() => {
-    setEmail(result.suggestion)
-    setTouched(false)
-    setSubmitAttempted(false)
+    dispatch({ type: 'accept_suggestion', value: result.suggestion })
   }, [result.suggestion])
 
   const submitEmail = useCallback(async (rawEmail) => {
@@ -132,28 +201,20 @@ export function useSignInFlow() {
     const validation = validateEmail(trimmed)
     if (!validation.valid && !validation.suggestion) return
     const resolved = validation.suggestion ?? trimmed
-    setSubmitAttempted(true)
-    setTouched(true)
-    setSsoError(null)
-
-    setSending(true)
+    dispatch({ type: 'begin_submit' })
     try {
-      await sendCodeEmail(resolved)
+      await sendCodeMutation.mutateAsync(resolved)
       resetExpirySeconds()
       resetResendTimer()
       code.setState('idle')
-      setStep('otp')
-    } catch {
-      // Stay on email step.
-    } finally {
-      setSending(false)
-    }
-  }, [code, resetExpirySeconds, resetResendTimer])
+      dispatch({ type: 'enter_otp', email: resolved })
+    } catch {}
+  }, [code, resetExpirySeconds, resetResendTimer, sendCodeMutation])
 
   const handleSubmit = useCallback((event) => {
     event.preventDefault()
-    submitEmail(email)
-  }, [email, submitEmail])
+    submitEmail(state.email)
+  }, [state.email, submitEmail])
 
   const handlePaste = useCallback((event) => {
     const pasted = event.clipboardData?.getData('text') ?? ''
@@ -162,40 +223,38 @@ export function useSignInFlow() {
 
   const handleResend = useCallback(async () => {
     try {
-      await sendCodeEmail(email)
+      await sendCodeMutation.mutateAsync(state.email)
       resetExpirySeconds()
       resetResendTimer()
       code.reset()
-      setVerifyError(null)
-    } catch {
-      // Keep the current code screen available.
-    }
-  }, [code, email, resetExpirySeconds, resetResendTimer])
+      dispatch({ type: 'clear_verify_error' })
+    } catch {}
+  }, [code, resetExpirySeconds, resetResendTimer, sendCodeMutation, state.email])
 
   return {
-    btnLabel:     sending ? 'Sending…' : 'Login',
+    btnLabel: sendCodeMutation.isPending ? 'Sending…' : 'Login',
     code,
     codeRefs,
-    email,
+    email: state.email,
     expirySeconds,
     handleEmailChange,
     handlePaste,
     handleResend,
     handleSubmit,
-    isChecking:   sending,
+    isChecking: sendCodeMutation.isPending,
     isNewAccount: false,
     resetCodeStep,
     resendTimer,
-    resolvedEmail: email,
+    resolvedEmail: state.email,
     result,
     showFeedback,
-    ssoError,
-    step,
-    touched,
+    ssoError: state.ssoError,
+    step: state.step,
+    touched: state.touched,
     verifyApp,
-    verifyError,
+    verifyError: state.verifyError,
     verifyOtp,
     acceptSuggestion,
-    setTouched,
+    setTouched: (value) => dispatch({ type: 'set_touched', value }),
   }
 }

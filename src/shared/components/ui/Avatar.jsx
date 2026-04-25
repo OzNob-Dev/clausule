@@ -10,11 +10,11 @@ export function Avatar({ initials, bg, color, size = 'md', className = '' }) {
   return (
     <div
       className={cn(
-        'inline-flex items-center justify-center rounded-full font-bold leading-none shrink-0',
+        'inline-flex items-center justify-center rounded-full font-bold leading-none shrink-0 bg-[var(--avatar-bg)] text-[var(--avatar-fg)]',
         sizes[size] ?? sizes.md,
         className
       )}
-      style={{ backgroundColor: bg, color }}
+      style={{ '--avatar-bg': bg, '--avatar-fg': color }}
     >
       {initials}
     </div>

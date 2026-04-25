@@ -5,22 +5,16 @@ import BragRail from '@features/brag/components/BragRail'
 import BragSidebar from '@features/brag/components/BragSidebar'
 import FeedbackCenter from '@features/brag/components/FeedbackCenter'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import { ROUTES } from '@shared/utils/routes'
 import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-page.css'
-
-function profileDisplayName(profile) {
-  return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
-}
 
 export default function FeedbackScreen() {
   const router = useRouter()
   const profile = useProfileStore((state) => state.profile)
   const displayName = profileDisplayName(profile)
-  const avatarInitials =
-    ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
-    profile.email?.[0]?.toUpperCase() ||
-    '?'
+  const avatarInitials = profileInitials(profile)
 
   return (
     <div className="be-page">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BragRail from '@features/brag/components/BragRail'
 import BragSettingsDangerZone from '@features/brag/components/BragSettingsDangerZone'
 import BragSettingsIdentity from '@features/brag/components/BragSettingsIdentity'
@@ -30,27 +30,27 @@ export default function BragSettings() {
   const [reminderFrequency, setReminderFrequency]   = useState('weekly')
   const [deleteModal, setDeleteModal]               = useState(false)
 
-  useProfileQuery({
-    onSuccess: (data) => {
-      const profileData = {
-        firstName:  typeof data?.firstName  === 'string' ? data.firstName  : undefined,
-        lastName:   typeof data?.lastName   === 'string' ? data.lastName   : undefined,
-        email:      typeof data?.email      === 'string' ? data.email      : undefined,
-        mobile:     typeof data?.mobile     === 'string' ? data.mobile     : undefined,
-        jobTitle:   typeof data?.jobTitle   === 'string' ? data.jobTitle   : undefined,
-        department: typeof data?.department === 'string' ? data.department : undefined,
-      }
-      if (Object.values(profileData).some((v) => v !== undefined)) setProfile(profileData)
-    },
-  })
+  const profileQuery = useProfileQuery()
+  const totpStatusQuery = useTotpStatusQuery()
 
-  useTotpStatusQuery({
-    onSuccess: (data) => {
-      if (typeof data?.configured === 'boolean') {
-        setSecurity({ authenticatorAppConfigured: data.configured })
-      }
-    },
-  })
+  useEffect(() => {
+    const data = profileQuery.data
+    const profileData = {
+      firstName: typeof data?.firstName === 'string' ? data.firstName : undefined,
+      lastName: typeof data?.lastName === 'string' ? data.lastName : undefined,
+      email: typeof data?.email === 'string' ? data.email : undefined,
+      mobile: typeof data?.mobile === 'string' ? data.mobile : undefined,
+      jobTitle: typeof data?.jobTitle === 'string' ? data.jobTitle : undefined,
+      department: typeof data?.department === 'string' ? data.department : undefined,
+    }
+    if (Object.values(profileData).some((value) => value !== undefined)) setProfile(profileData)
+  }, [profileQuery.data, setProfile])
+
+  useEffect(() => {
+    if (typeof totpStatusQuery.data?.configured === 'boolean') {
+      setSecurity({ authenticatorAppConfigured: totpStatusQuery.data.configured })
+    }
+  }, [setSecurity, totpStatusQuery.data])
 
   const handleTotpDone = () => {
     setSecurity({ authenticatorAppConfigured: true })

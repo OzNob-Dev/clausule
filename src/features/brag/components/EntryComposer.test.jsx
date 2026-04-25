@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import EntryComposer from './EntryComposer'
+import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
 describe('EntryComposer', () => {
   beforeEach(() => {
@@ -23,7 +24,7 @@ describe('EntryComposer', () => {
       },
     }), { status: 201, headers: { 'Content-Type': 'application/json' } }))
 
-    render(<EntryComposer onSave={onSave} onClose={vi.fn()} />)
+    renderWithQueryClient(<EntryComposer onSave={onSave} onClose={vi.fn()} />)
 
     await user.type(screen.getByPlaceholderText(/what did you achieve/i), 'Won migration')
     await user.type(screen.getByPlaceholderText(/describe what you did/i), 'Cut deployment risk.')
@@ -46,7 +47,7 @@ describe('EntryComposer', () => {
     const user = userEvent.setup()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ error: 'failed' }), { status: 500 }))
 
-    render(<EntryComposer onSave={vi.fn()} onClose={vi.fn()} />)
+    renderWithQueryClient(<EntryComposer onSave={vi.fn()} onClose={vi.fn()} />)
 
     await user.type(screen.getByPlaceholderText(/what did you achieve/i), 'Won migration')
     await user.click(screen.getByRole('button', { name: /save entry/i }))

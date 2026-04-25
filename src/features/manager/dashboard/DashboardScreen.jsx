@@ -1,10 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import { useDeferredValue, useState } from 'react'
 import { AppShell } from '@features/manager/components/AppShell'
-import { KanbanBoard } from '@features/manager/dashboard/KanbanBoard'
 import { ALL_EMP } from '@shared/data/employees'
+
+const KanbanBoard = dynamic(
+  () => import('@features/manager/dashboard/KanbanBoard').then((module) => module.KanbanBoard),
+  {
+    loading: () => <div className="flex-1 px-7 py-6 text-sm text-tx-3" role="status">Loading board…</div>,
+  }
+)
 
 const STATS = [
   { n: '84',  l: 'Total entries' },
@@ -15,7 +22,8 @@ const STATS = [
 
 export default function Dashboard() {
   const [query, setQuery] = useState('')
-  const normalizedQuery = query.trim().toLowerCase()
+  const deferredQuery = useDeferredValue(query)
+  const normalizedQuery = deferredQuery.trim().toLowerCase()
   const filteredEmployees = normalizedQuery
     ? ALL_EMP.filter((employee) => employee.name.toLowerCase().includes(normalizedQuery))
     : ALL_EMP

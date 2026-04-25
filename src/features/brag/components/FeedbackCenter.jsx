@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import FeedbackComposer from '@features/brag/components/FeedbackComposer'
 
 function formatDate(value) {
@@ -13,31 +14,24 @@ function buildMessages(thread) {
 }
 
 export default function FeedbackCenter({ userEmail, onClose }) {
-  const [threads, setThreads] = useState([])
-  const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('compose')
+  const queryClient = useQueryClient()
+  const feedbackQuery = useQuery({
+    queryKey: ['feedback', 'threads'],
+    queryFn: async () => {
+      const response = await fetch('/api/feedback', { credentials: 'same-origin' })
+      if (!response.ok) return []
+      const data = await response.json().catch(() => ({ feedback: [] }))
+      return data.feedback ?? []
+    },
+    retry: false,
+  })
 
-  useEffect(() => {
-    const controller = new AbortController()
-
-    fetch('/api/feedback', { credentials: 'same-origin', signal: controller.signal })
-      .then((response) => response.ok ? response.json() : { feedback: [] })
-      .then((data) => {
-        setThreads(data.feedback ?? [])
-        setLoading(false)
-      })
-      .catch((error) => {
-        if (error.name !== 'AbortError') {
-          setThreads([])
-          setLoading(false)
-        }
-      })
-
-    return () => controller.abort()
-  }, [])
+  const threads = feedbackQuery.data ?? []
+  const loading = feedbackQuery.isPending
 
   const addThread = (thread) => {
-    if (thread) setThreads((current) => [thread, ...current])
+    if (thread) queryClient.setQueryData(['feedback', 'threads'], (current = []) => [thread, ...current])
   }
 
   return (

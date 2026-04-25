@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { AppShell } from '@features/manager/components/AppShell'
+import { Avatar } from '@shared/components/ui/Avatar'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
 import { cn } from '@shared/utils/cn'
 import { ALL_EMP, SAMPLE_ENTRIES, MOCK_RESULTS } from '@shared/data/employees'
@@ -14,6 +15,7 @@ export default function Entries() {
   const [searching, setSearching] = useState(false)
   const [results, setResults]   = useState(null)
   const [selected, setSelected] = useState(null)
+  const [, startSearchTransition] = useTransition()
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -21,8 +23,10 @@ export default function Entries() {
     setSearching(true)
     setResults(null)
     setTimeout(() => {
-      setSearching(false)
-      setResults(MOCK_RESULTS)
+      startSearchTransition(() => {
+        setSearching(false)
+        setResults(MOCK_RESULTS)
+      })
     }, 1200)
   }
 
@@ -109,12 +113,12 @@ export default function Entries() {
                 <div key={emp.name} className="mb-6 border-t border-border pt-4">
                   {/* Person header */}
                   <div className="flex items-center gap-3 mb-3">
-                    <div
-                      className="flex items-center justify-center shrink-0 w-[34px] h-[34px] rounded-[11px] text-[11px] font-extrabold"
-                      style={{ background: emp.avBg, color: emp.avCol }}
-                    >
-                      {emp.av}
-                    </div>
+                    <Avatar
+                      initials={emp.av}
+                      bg={emp.avBg}
+                      color={emp.avCol}
+                      className="!h-[34px] !w-[34px] rounded-[11px] text-[11px] font-extrabold"
+                    />
                     <div>
                       <Link href="/profile" className="text-sm font-bold text-tx-1 no-underline">{emp.name}</Link>
                       <div className="text-[11px] text-tx-2 mt-[1px]">{emp.role}</div>

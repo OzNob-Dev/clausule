@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { formatCardNumber, formatExpiry } from '@features/signup/utils/signupFormatting'
 import { useSubscriptionStore } from '@features/signup/store/useSubscriptionStore'
 import { jsonRequest } from '@shared/utils/api'
@@ -14,40 +15,41 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
   const [cardNum, setCardNum] = useState(initialData.cardNum)
   const [expiry, setExpiry] = useState(initialData.expiry)
   const [cvc, setCvc] = useState(initialData.cvc)
-  const [busy, setBusy] = useState(false)
   const [apiError, setApiError] = useState('')
 
   const save = () => ({ cardName, cardNum, expiry, cvc })
+
+  const registerMutation = useMutation({
+    mutationFn: async (plan) => {
+      const response = await fetch('/api/auth/register', jsonRequest({
+        email: accountData.email,
+        firstName: accountData.firstName,
+        lastName: accountData.lastName,
+        verificationToken: accountData.emailVerificationToken,
+        subscription: { amountCents: plan.amountCents, currency: plan.currency, interval: plan.interval },
+      }, { method: 'POST', credentials: 'same-origin' }))
+
+      const json = await response.json()
+      if (!response.ok) throw new Error(json.error ?? 'Registration failed — please try again.')
+      return json
+    },
+  })
 
   // Keep the mocked payment step isolated until a Stripe Elements flow is wired in.
   const handleSubscribe = async () => {
     setMonthlyIndividualPlan()
     const plan = useSubscriptionStore.getState()
-    setBusy(true)
     setApiError('')
 
     try {
-      const response = await fetch('/api/auth/register', jsonRequest({
-          email: accountData.email,
-          firstName: accountData.firstName,
-          lastName: accountData.lastName,
-          verificationToken: accountData.emailVerificationToken,
-          subscription: { amountCents: plan.amountCents, currency: plan.currency, interval: plan.interval },
-        }, { method: 'POST', credentials: 'same-origin' }))
-
-      const json = await response.json()
-      if (!response.ok) {
-        setApiError(json.error ?? 'Registration failed — please try again.')
-        return
-      }
-
+      await registerMutation.mutateAsync(plan)
       onNext(save())
-    } catch {
-      setApiError('Network error — please check your connection and try again.')
-    } finally {
-      setBusy(false)
+    } catch (error) {
+      setApiError(error instanceof Error ? error.message : 'Network error — please check your connection and try again.')
     }
   }
+
+  const busy = registerMutation.isPending
 
   return (
     <div>

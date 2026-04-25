@@ -17,7 +17,7 @@ export function EntryComposer({ onSave, onClose }) {
 
   const handleSave = () => {
     if (!title.trim()) return
-    onSave({ cat, type, title, body, date: new Date().toISOString().split('T')[0], id: Date.now().toString(), tags: [] })
+    onSave({ cat, type, title, body, date: new Date().toISOString().split('T')[0], id: crypto.randomUUID(), tags: [] })
     onClose()
   }
 

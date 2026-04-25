@@ -1,31 +1,16 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { cn } from '@shared/utils/cn'
+import { Modal } from '@shared/components/ui/Modal'
 
 export default function DeleteAccountModal({ open, onClose }) {
   const { logout } = useAuth()
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [deleteError, setDeleteError] = useState('')
   const [deleting, setDeleting] = useState(false)
-  const [visible, setVisible] = useState(false)
   const inputRef = useRef(null)
-  const frameRef = useRef(null)
-
-  useEffect(() => {
-    if (open) {
-      frameRef.current = requestAnimationFrame(() => setVisible(true))
-    } else {
-      setVisible(false)
-      setDeleteConfirm('')
-      setDeleteError('')
-      setDeleting(false)
-    }
-    return () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current)
-    }
-  }, [open])
 
   const confirmReady = deleteConfirm === 'DELETE'
 
@@ -56,20 +41,21 @@ export default function DeleteAccountModal({ open, onClose }) {
   }
 
   const handleClose = () => {
+    setDeleteConfirm('')
+    setDeleteError('')
+    setDeleting(false)
     onClose()
   }
 
-  if (!open && !visible) return null
-
   return (
-    <div
-      className={cn('fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity duration-200', visible ? 'opacity-100' : 'opacity-0')}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="delete-modal-title"
-      onClick={(e) => e.target === e.currentTarget && handleClose()}
+    <Modal
+      open={open}
+      onClose={handleClose}
+      title={null}
+      footer={null}
+      dialogClassName="max-w-[34rem] border-none bg-transparent"
     >
-      <div className={cn('w-full max-w-[34rem] rounded-[var(--r2)] border border-rule-em bg-card p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)] transition-all duration-200', visible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-[0.98] opacity-0')}>
+      <div className={cn('w-full max-w-[34rem] rounded-[var(--r2)] border border-rule-em bg-card p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)]')}>
         <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-red/20 bg-red-bg text-red" aria-hidden="true">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-[18px] w-[18px]">
             <polyline points="3 6 5 6 17 6"/>
@@ -100,15 +86,15 @@ export default function DeleteAccountModal({ open, onClose }) {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <button onClick={handleConfirm} disabled={deleting} className={cn('rounded-[var(--r)] border-none px-4 py-3 text-[14px] font-bold text-[#FAF7F3] cursor-pointer transition-opacity duration-150 disabled:cursor-default disabled:opacity-60', confirmReady ? 'bg-red' : 'bg-red/70')}>
+          <button type="button" onClick={handleConfirm} disabled={deleting} className={cn('rounded-[var(--r)] border-none px-4 py-3 text-[14px] font-bold text-[#FAF7F3] cursor-pointer transition-opacity duration-150 disabled:cursor-default disabled:opacity-60', confirmReady ? 'bg-red' : 'bg-red/70')}>
             {deleting ? 'Deleting account...' : 'Yes, permanently delete my account'}
           </button>
-          <button className="rounded-[var(--r)] border border-rule bg-transparent px-4 py-3 text-[14px] font-bold text-tp cursor-pointer transition-colors duration-150 hover:border-tp disabled:cursor-default disabled:opacity-60" onClick={handleClose} disabled={deleting}>
+          <button type="button" className="rounded-[var(--r)] border border-rule bg-transparent px-4 py-3 text-[14px] font-bold text-tp cursor-pointer transition-colors duration-150 hover:border-tp disabled:cursor-default disabled:opacity-60" onClick={handleClose} disabled={deleting}>
             Cancel
           </button>
         </div>
         {deleteError && <p className="mt-4 text-[12px] font-medium text-red" role="alert">{deleteError}</p>}
       </div>
-    </div>
+    </Modal>
   )
 }

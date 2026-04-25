@@ -1,13 +1,81 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import SsoProviderIcon from '@shared/components/SsoProviderIcon'
+import { useEffect, useReducer } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { SsoProviderIcon } from '@shared/components/SsoProviderIcon'
 import { jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { getActiveSsoProviders, ssoAuthPath, ssoConfigFromEnv } from '@shared/utils/sso'
 import { CtaBtn } from './SignupButtons'
 import { FieldInput, FieldLabel } from './SignupFormField'
 import { ArrowIcon } from './SignupIcons'
+
+function createState(initialData) {
+  return {
+    firstName: initialData.firstName,
+    lastName: initialData.lastName,
+    email: initialData.email,
+    emailDirty: false,
+    agreed: initialData.agreed,
+    emailVerificationToken: initialData.emailVerificationToken ?? '',
+    verificationCode: '',
+    awaitingVerification: false,
+    verificationError: '',
+    nameError: false,
+    agreedError: false,
+  }
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'hydrate':
+      return createState(action.value)
+    case 'set_first_name':
+      return { ...state, firstName: action.value, nameError: false }
+    case 'set_last_name':
+      return { ...state, lastName: action.value }
+    case 'set_email':
+      return {
+        ...state,
+        email: action.value,
+        emailDirty: true,
+        emailVerificationToken: '',
+        verificationCode: '',
+        awaitingVerification: false,
+        verificationError: '',
+      }
+    case 'accept_suggestion':
+      return { ...state, email: action.value, emailDirty: false }
+    case 'set_email_dirty':
+      return { ...state, emailDirty: action.value }
+    case 'set_agreed':
+      return { ...state, agreed: action.value, agreedError: false }
+    case 'set_verification_code':
+      return { ...state, verificationCode: action.value, verificationError: '' }
+    case 'show_validation':
+      return { ...state, nameError: action.nameError, agreedError: action.agreedError, emailDirty: true }
+    case 'awaiting_verification':
+      return { ...state, awaitingVerification: true, verificationError: '' }
+    case 'verification_error':
+      return { ...state, verificationError: action.value }
+    case 'verification_success':
+      return {
+        ...state,
+        emailVerificationToken: action.value,
+        awaitingVerification: false,
+        verificationError: '',
+      }
+    case 'restore_verification_token':
+      return {
+        ...state,
+        emailVerificationToken: action.value,
+        awaitingVerification: false,
+        verificationError: '',
+      }
+    default:
+      return state
+  }
+}
 
 function SsoArrow() {
   return (
@@ -18,34 +86,12 @@ function SsoArrow() {
 }
 
 export default function SignupStepAccount({ emailLocked = false, hideSso = false, initialData, onNext }) {
-  const [firstName, setFirstName] = useState(initialData.firstName)
-  const [lastName, setLastName] = useState(initialData.lastName)
-  const [email, setEmail] = useState(initialData.email)
-  const [emailDirty, setEmailDirty] = useState(false)
-  const [agreed, setAgreed] = useState(initialData.agreed)
-  const [emailVerificationToken, setEmailVerificationToken] = useState(initialData.emailVerificationToken ?? '')
-  const [verificationCode, setVerificationCode] = useState('')
-  const [awaitingVerification, setAwaitingVerification] = useState(false)
-  const [sendingCode, setSendingCode] = useState(false)
-  const [verifyingCode, setVerifyingCode] = useState(false)
-  const [verificationError, setVerificationError] = useState('')
-  const [nameError, setNameError] = useState(false)
-  const [agreedError, setAgreedError] = useState(false)
+  const [state, dispatch] = useReducer(reducer, initialData, createState)
   const activeSsoProviders = hideSso ? [] : getActiveSsoProviders(ssoConfigFromEnv)
   const hasSso = activeSsoProviders.length > 0
 
   useEffect(() => {
-    setFirstName(initialData.firstName)
-    setLastName(initialData.lastName)
-    setEmail(initialData.email)
-    setAgreed(initialData.agreed)
-    setEmailVerificationToken(initialData.emailVerificationToken ?? '')
-    setVerificationCode('')
-    setAwaitingVerification(false)
-    setVerificationError('')
-    setEmailDirty(false)
-    setNameError(false)
-    setAgreedError(false)
+    dispatch({ type: 'hydrate', value: initialData })
   }, [initialData])
 
   useEffect(() => {
@@ -54,84 +100,78 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
     if (!normalizedEmail) return
     const stored = window.sessionStorage.getItem(`signup_verification:${normalizedEmail}`)
     if (!stored) return
-    setEmailVerificationToken(stored)
-    setAwaitingVerification(false)
-    setVerificationError('')
+    dispatch({ type: 'restore_verification_token', value: stored })
   }, [initialData.email])
 
-  const emailResult = validateEmail(email)
-  const showEmailFeedback = emailDirty && email.trim().length > 0
-  const normalizedEmail = (emailResult.suggestion ?? email.trim()).toLowerCase()
+  const sendCodeMutation = useMutation({
+    mutationFn: async (email) => {
+      const response = await fetch('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }))
+      const json = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(json.error ?? 'Failed to send verification code')
+      return json
+    },
+  })
+
+  const verifyEmailMutation = useMutation({
+    mutationFn: async ({ email, code }) => {
+      const response = await fetch('/api/auth/signup/verify-email', jsonRequest({ email, code }, { method: 'POST' }))
+      const json = await response.json().catch(() => ({}))
+      if (!response.ok || !json.verificationToken) throw new Error(json.error ?? 'Failed to verify email')
+      return json.verificationToken
+    },
+  })
+
+  const emailResult = validateEmail(state.email)
+  const showEmailFeedback = state.emailDirty && state.email.trim().length > 0
+  const normalizedEmail = (emailResult.suggestion ?? state.email.trim()).toLowerCase()
 
   const acceptSuggestion = () => {
-    setEmail(emailResult.suggestion)
-    setEmailDirty(false)
+    dispatch({ type: 'accept_suggestion', value: emailResult.suggestion })
   }
 
   async function sendVerificationCode() {
-    setSendingCode(true)
-    setVerificationError('')
     try {
-      const response = await fetch('/api/auth/send-code', jsonRequest({ email: normalizedEmail }, { method: 'POST' }))
-      const json = await response.json().catch(() => ({}))
-      if (!response.ok) {
-        setVerificationError(json.error ?? 'Failed to send verification code')
-        return false
-      }
-      setAwaitingVerification(true)
+      await sendCodeMutation.mutateAsync(normalizedEmail)
+      dispatch({ type: 'awaiting_verification' })
       return true
     } catch {
-      setVerificationError('Failed to send verification code')
+      dispatch({ type: 'verification_error', value: 'Failed to send verification code' })
       return false
-    } finally {
-      setSendingCode(false)
     }
   }
 
   async function verifyEmail() {
-    setVerifyingCode(true)
-    setVerificationError('')
     try {
-      const response = await fetch('/api/auth/signup/verify-email', jsonRequest({
+      const token = await verifyEmailMutation.mutateAsync({
         email: normalizedEmail,
-        code: verificationCode,
-      }, { method: 'POST' }))
-      const json = await response.json().catch(() => ({}))
-      if (!response.ok || !json.verificationToken) {
-        setVerificationError(json.error ?? 'Failed to verify email')
-        return null
-      }
+        code: state.verificationCode,
+      })
       if (typeof window !== 'undefined') {
-        window.sessionStorage.setItem(`signup_verification:${normalizedEmail}`, json.verificationToken)
+        window.sessionStorage.setItem(`signup_verification:${normalizedEmail}`, token)
       }
-      setEmailVerificationToken(json.verificationToken)
-      setAwaitingVerification(false)
-      return json.verificationToken
+      dispatch({ type: 'verification_success', value: token })
+      return token
     } catch {
-      setVerificationError('Failed to verify email')
+      dispatch({ type: 'verification_error', value: 'Failed to verify email' })
       return null
-    } finally {
-      setVerifyingCode(false)
     }
   }
 
   const handleContinue = async () => {
-    const noName = !firstName.trim()
+    const noName = !state.firstName.trim()
     const badEmail = !emailResult.valid && !emailResult.suggestion
-    const noAgreed = !agreed
+    const noAgreed = !state.agreed
 
-    setNameError(noName)
-    setAgreedError(noAgreed)
-    setEmailDirty(true)
+    dispatch({ type: 'show_validation', nameError: noName, agreedError: noAgreed })
 
     if (noName || badEmail || noAgreed) return
 
-    let token = emailVerificationToken
+    let token = state.emailVerificationToken
     if (!token) {
-      const sent = awaitingVerification ? true : await sendVerificationCode()
+      const sent = state.awaitingVerification ? true : await sendVerificationCode()
       if (!sent) return
-      if (verificationCode.length !== 6) {
-        setVerificationError('Enter the 6-digit code we sent to your email')
+      if (state.verificationCode.length !== 6) {
+        dispatch({ type: 'verification_error', value: 'Enter the 6-digit code we sent to your email' })
         return
       }
       token = await verifyEmail()
@@ -139,27 +179,24 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
     }
 
     onNext({
-      firstName,
-      lastName,
-      email: emailResult.suggestion ?? email.trim(),
+      firstName: state.firstName,
+      lastName: state.lastName,
+      email: emailResult.suggestion ?? state.email.trim(),
       emailVerificationToken: token,
     })
   }
 
-  const isVerified = Boolean(emailVerificationToken)
+  const isVerified = Boolean(state.emailVerificationToken)
+  const sendingCode = sendCodeMutation.isPending
+  const verifyingCode = verifyEmailMutation.isPending
 
   const handleEmailChange = (event) => {
     if (emailLocked) return
+    const previousNormalizedEmail = normalizedEmail
     const nextEmail = event.target.value
-    setEmail(nextEmail)
-    setEmailDirty(true)
-    setEmailVerificationToken('')
-    setVerificationCode('')
-    setAwaitingVerification(false)
-    setVerificationError('')
+    dispatch({ type: 'set_email', value: nextEmail })
     if (typeof window !== 'undefined') {
-      const current = normalizedEmail
-      if (current) window.sessionStorage.removeItem(`signup_verification:${current}`)
+      if (previousNormalizedEmail) window.sessionStorage.removeItem(`signup_verification:${previousNormalizedEmail}`)
     }
   }
 
@@ -197,12 +234,9 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             id="su-first-name"
             type="text"
             placeholder="Jordan"
-            value={firstName}
-            onChange={(event) => {
-              setFirstName(event.target.value)
-              setNameError(false)
-            }}
-            error={nameError}
+            value={state.firstName}
+            onChange={(event) => dispatch({ type: 'set_first_name', value: event.target.value })}
+            error={state.nameError}
           />
         </div>
         <div className="su-name-col">
@@ -211,8 +245,8 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             id="su-last-name"
             type="text"
             placeholder="Ellis"
-            value={lastName}
-            onChange={(event) => setLastName(event.target.value)}
+            value={state.lastName}
+            onChange={(event) => dispatch({ type: 'set_last_name', value: event.target.value })}
           />
         </div>
       </div>
@@ -223,9 +257,9 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
           id="su-email"
           type="email"
           placeholder="you@email.com"
-          value={email}
+          value={state.email}
           onChange={handleEmailChange}
-          onBlur={() => setEmailDirty(true)}
+          onBlur={() => dispatch({ type: 'set_email_dirty', value: true })}
           readOnly={emailLocked}
           className={emailLocked ? 'su-input--locked' : ''}
           error={showEmailFeedback && !!emailResult.error}
@@ -251,7 +285,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
         </div>
       </div>
 
-      {!isVerified && awaitingVerification && (
+      {!isVerified && state.awaitingVerification && (
         <div className="su-field">
           <FieldLabel htmlFor="su-email-verification-code">Verification code</FieldLabel>
           <FieldInput
@@ -260,15 +294,14 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             inputMode="numeric"
             placeholder="123456"
             maxLength={6}
-            value={verificationCode}
+            value={state.verificationCode}
             onChange={(event) => {
-              setVerificationCode(event.target.value.replace(/\D/g, '').slice(0, 6))
-              setVerificationError('')
+              dispatch({ type: 'set_verification_code', value: event.target.value.replace(/\D/g, '').slice(0, 6) })
             }}
           />
           <div id="su-email-verification-hint">
-            {verificationError ? (
-              <span className="su-field-hint su-field-hint--error" role="alert">{verificationError}</span>
+            {state.verificationError ? (
+              <span className="su-field-hint su-field-hint--error" role="alert">{state.verificationError}</span>
             ) : (
               <span className="su-field-hint">Enter the code we sent to {normalizedEmail}.</span>
             )}
@@ -280,19 +313,18 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
         <label className="su-terms-label">
           <input
             type="checkbox"
-            checked={agreed}
+            checked={state.agreed}
             onChange={(event) => {
-              setAgreed(event.target.checked)
-              setAgreedError(false)
+              dispatch({ type: 'set_agreed', value: event.target.checked })
             }}
           />
           I agree to Clausule's <a href="#">Terms of Service</a>{' '}and <a href="#">Privacy Policy</a>
         </label>
-        {agreedError && <div className="su-terms-error">Please agree to continue.</div>}
+        {state.agreedError && <div className="su-terms-error">Please agree to continue.</div>}
       </div>
 
       <CtaBtn onClick={handleContinue} disabled={sendingCode || verifyingCode}>
-        {sendingCode ? 'Sending code…' : verifyingCode ? 'Verifying…' : isVerified ? <>Continue to payment <ArrowIcon /></> : awaitingVerification ? 'Verify email to continue' : 'Send verification code'}
+        {sendingCode ? 'Sending code…' : verifyingCode ? 'Verifying…' : isVerified ? <>Continue to payment <ArrowIcon /></> : state.awaitingVerification ? 'Verify email to continue' : 'Send verification code'}
       </CtaBtn>
     </div>
   )

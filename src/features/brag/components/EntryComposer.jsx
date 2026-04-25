@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useRef, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { AttachedFileList, EvidenceTypeGroup, FileDropzone } from './EntryComposerParts'
 
 export default function EntryComposer({ onSave, onClose }) {
@@ -7,9 +8,28 @@ export default function EntryComposer({ onSave, onClose }) {
   const [evTypes, setEvTypes]     = useState(new Set())
   const [files, setFiles]         = useState([])
   const [dropActive, setDropActive] = useState(false)
-  const [saving, setSaving]       = useState(false)
   const [error, setError]         = useState('')
   const fileInputRef              = useRef(null)
+
+  const saveEntryMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/brag/entries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          title: title.trim(),
+          body: body.trim(),
+          entry_date: new Date().toISOString().slice(0, 10),
+          evidence_types: [...evTypes],
+          visible_to_manager: true,
+        }),
+      })
+
+      if (!response.ok) throw new Error('Save failed')
+      return response.json()
+    },
+  })
 
   const toggleEvType = (type) => {
     setEvTypes((prev) => {
@@ -40,31 +60,17 @@ export default function EntryComposer({ onSave, onClose }) {
   const handleSave = async () => {
     if (!title.trim()) return
 
-    setSaving(true)
     setError('')
 
     try {
-      const response = await fetch('/api/brag/entries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({
-          title: title.trim(),
-          body: body.trim(),
-          entry_date: new Date().toISOString().slice(0, 10),
-          evidence_types: [...evTypes],
-          visible_to_manager: true,
-        }),
-      })
-
-      if (!response.ok) throw new Error('Save failed')
-      const { entry } = await response.json()
+      const { entry } = await saveEntryMutation.mutateAsync()
       onSave({ entry, evidenceTypes: [...evTypes], files })
     } catch {
       setError('Could not save this entry. Please try again.')
-      setSaving(false)
     }
   }
+
+  const saving = saveEntryMutation.isPending
 
   return (
     <div className="be-composer-stage">

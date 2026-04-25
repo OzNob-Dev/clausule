@@ -1,4 +1,5 @@
 import React from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -18,6 +19,17 @@ vi.mock('@features/brag/components/DeleteAccountModal', () => ({
 vi.mock('@shared/utils/api', () => ({
   apiFetch: vi.fn(),
 }))
+
+function renderWithQueryClient(ui) {
+  const client = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  })
+  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+}
 
 describe('BragSettings integration', () => {
   beforeEach(() => {
@@ -42,7 +54,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     const row = screen.getByText('Google').closest('.bss-sso-row')
 
@@ -68,7 +80,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     expect(screen.queryByText('Single sign-on')).not.toBeInTheDocument()
     expect(screen.queryByText('Google')).not.toBeInTheDocument()
@@ -87,7 +99,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByText(/authenticator setup required/i)).toBeInTheDocument()
     expect(screen.getByText(/set up an authenticator app to unlock the rest of clausule/i)).toBeInTheDocument()
@@ -110,7 +122,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByText('Authenticator app').closest('.bss-mfa-row')).not.toHaveClass('bss-mfa-row--needs-setup')
     expect(screen.getByText(/authenticator setup required/i).closest('.bss-totp-empty')).toHaveClass('bss-totp-empty--required')
@@ -129,7 +141,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByText('Two-factor authentication')).toBeInTheDocument()
     expect(screen.getByText('Authenticator app')).toBeInTheDocument()
@@ -151,7 +163,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByText('Ada')).toBeInTheDocument()
     expect(screen.getByText('ada@example.com')).toBeInTheDocument()
@@ -171,7 +183,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByText('Your profile', { selector: '.be-sidebar-name' })).toBeInTheDocument()
     expect(screen.queryByText('Postbox Adrian', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
@@ -194,7 +206,7 @@ describe('BragSettings integration', () => {
         ? { firstName: 'awerwer', lastName: 'sadfasd', email: 'postbox.adrian+8@gmail.com' }
         : { configured: true }
     ), { status: 200 })))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     await waitFor(() => expect(screen.getByText('awerwer sadfasd', { selector: '.be-sidebar-name' })).toBeInTheDocument())
     expect(screen.queryByText('Your profile', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
@@ -214,7 +226,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByText('Reminder preferences')).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /email/i })).toBeChecked()
@@ -244,7 +256,7 @@ describe('BragSettings integration', () => {
     useProfileStore.setState({ hasSecuritySnapshot: true })
 
     const { default: BragSettings } = await import('./BragSettingsScreen')
-    render(<BragSettings />)
+    renderWithQueryClient(<BragSettings />)
 
     await waitFor(() => expect(screen.getByLabelText('Authenticator app is active')).toHaveTextContent('Active'))
     expect(screen.getByText('Postbox Adrian')).toBeInTheDocument()

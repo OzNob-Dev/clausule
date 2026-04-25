@@ -41,7 +41,7 @@ export default function MfaSetup() {
             onChange={flow.otpCode.handleChange}
             onKeyDown={flow.otpCode.handleKeyDown}
             onPaste={flow.otpCode.handlePaste}
-            onResend={flow.resetResendTimer}
+            onResend={flow.handleResend}
           />
         )}
 

@@ -1,4 +1,4 @@
-export default function SsoProviderIcon({ provider }) {
+export function SsoProviderIcon({ provider }) {
   if (provider === 'google') {
     return (
       <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">

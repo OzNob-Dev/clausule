@@ -1,29 +1,66 @@
-import { useEffect, useRef, useId } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { cn } from '@shared/utils/cn'
 
 const FOCUSABLE_SELECTOR =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
 
-export function Modal({ open, onClose, title, children, footer }) {
-  const dialogRef  = useRef(null)
+export function Modal({ open, onClose, title, children, footer, dialogClassName = '' }) {
+  const dialogRef = useRef(null)
   const triggerRef = useRef(null)
-  const titleId    = useId()
+  const titleId = useId()
+  const [portalNode, setPortalNode] = useState(null)
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined
+    const node = document.createElement('div')
+    node.dataset.modalRoot = 'true'
+    document.body.appendChild(node)
+    setPortalNode(node)
+    return () => {
+      node.remove()
+      setPortalNode(null)
+    }
+  }, [])
 
   // Capture trigger element and move focus into dialog on open;
   // restore focus to trigger on close.
   useEffect(() => {
+    if (!portalNode) return undefined
     if (open) {
       triggerRef.current = document.activeElement
-      const first = dialogRef.current?.querySelector(FOCUSABLE_SELECTOR)
-      first?.focus()
+      const focusTimer = window.setTimeout(() => {
+        if (dialogRef.current?.contains(document.activeElement)) return
+        const focusable = Array.from(dialogRef.current?.querySelectorAll(FOCUSABLE_SELECTOR) ?? [])
+        const first = focusable.find((node) => node.autofocus) ?? focusable[0]
+        first?.focus()
+      }, 0)
+      return () => window.clearTimeout(focusTimer)
     } else if (triggerRef.current instanceof HTMLElement) {
-      triggerRef.current.focus()
+      const focusTarget = triggerRef.current
+      window.setTimeout(() => focusTarget.focus(), 0)
       triggerRef.current = null
     }
-  }, [open])
+  }, [open, portalNode])
 
-  // Trap focus within dialog and handle Escape.
+  // Trap focus within dialog, inert the background, and handle Escape.
   useEffect(() => {
-    if (!open) return
+    if (!open || !portalNode) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const siblings = Array.from(document.body.children).filter((node) => node !== portalNode)
+    const siblingState = siblings.map((node) => ({
+      node,
+      ariaHidden: node.getAttribute('aria-hidden'),
+      hadInert: node.hasAttribute('inert'),
+    }))
+
+    siblings.forEach((node) => {
+      node.setAttribute('aria-hidden', 'true')
+      node.setAttribute('inert', '')
+    })
+
     const onKey = (e) => {
       if (e.key === 'Escape') { onClose(); return }
       if (e.key !== 'Tab') return
@@ -40,12 +77,20 @@ export function Modal({ open, onClose, title, children, footer }) {
       }
     }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [open, onClose])
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = previousOverflow
+      siblingState.forEach(({ node, ariaHidden, hadInert }) => {
+        if (ariaHidden === null) node.removeAttribute('aria-hidden')
+        else node.setAttribute('aria-hidden', ariaHidden)
+        if (!hadInert) node.removeAttribute('inert')
+      })
+    }
+  }, [open, onClose, portalNode])
 
-  if (!open) return null
+  if (!open || !portalNode) return null
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onClick={onClose}
@@ -56,13 +101,14 @@ export function Modal({ open, onClose, title, children, footer }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
-        className="w-full max-w-[28rem] rounded-[var(--r2)] border border-rule-em bg-card"
+        className={cn('w-full max-w-[28rem] rounded-[var(--r2)] border border-rule-em bg-card', dialogClassName)}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
           <div className="flex items-center justify-between border-b border-rule px-6 py-4">
             <h3 id={titleId} className="text-[15px] font-bold text-tp">{title}</h3>
             <button
+              type="button"
               onClick={onClose}
               className="flex h-7 w-7 items-center justify-center rounded-[var(--r)] border-none bg-transparent text-tm cursor-pointer transition-colors duration-150 hover:text-ts"
               aria-label="Close modal"
@@ -79,5 +125,7 @@ export function Modal({ open, onClose, title, children, footer }) {
         )}
       </div>
     </div>
+    ,
+    portalNode
   )
 }

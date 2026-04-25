@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SignupStepAccount from './SignupStepAccount'
+import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
 const initialData = {
   firstName: '',
@@ -28,7 +29,7 @@ describe('SignupStepAccount integration', () => {
     const user = userEvent.setup()
     const onNext = vi.fn()
 
-    render(<SignupStepAccount initialData={initialData} onNext={onNext} />)
+    renderWithQueryClient(<SignupStepAccount initialData={initialData} onNext={onNext} />)
 
     await user.click(screen.getByRole('button', { name: /send verification code/i }))
 
@@ -40,7 +41,7 @@ describe('SignupStepAccount integration', () => {
     const user = userEvent.setup()
     const onNext = vi.fn()
 
-    render(<SignupStepAccount initialData={initialData} onNext={onNext} />)
+    renderWithQueryClient(<SignupStepAccount initialData={initialData} onNext={onNext} />)
 
     await user.type(screen.getByPlaceholderText('Jordan'), 'Ada')
     await user.type(screen.getByPlaceholderText('Ellis'), 'Lovelace')
@@ -59,7 +60,7 @@ describe('SignupStepAccount integration', () => {
   })
 
   it('renders prefilled SSO account details', () => {
-    render(
+    renderWithQueryClient(
       <SignupStepAccount
         initialData={{
           firstName: 'Ada',
@@ -79,7 +80,7 @@ describe('SignupStepAccount integration', () => {
   it('locks redirected email and hides the email signup divider', async () => {
     const user = userEvent.setup()
 
-    render(
+    renderWithQueryClient(
       <SignupStepAccount
         emailLocked
         hideSso

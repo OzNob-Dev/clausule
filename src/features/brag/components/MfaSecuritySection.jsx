@@ -1,4 +1,8 @@
-import TotpSetupPanel from '@features/brag/components/TotpSetupPanel'
+import dynamic from 'next/dynamic'
+
+const TotpSetupPanel = dynamic(() => import('@features/brag/components/TotpSetupPanel'), {
+  loading: () => <div className="bss-loading-state" aria-busy="true">Loading authenticator setup…</div>,
+})
 
 export default function MfaSecuritySection({
   authenticatorAppConfigured,

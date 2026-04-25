@@ -1,4 +1,4 @@
-export default function CodeEmail({ to, code = '••••••', revealed = false }) {
+export function CodeEmail({ to, code = '••••••', revealed = false }) {
   return (
     <div className="ce-shell" aria-label="Demo verification email" role="img">
       {/* Email client chrome */}

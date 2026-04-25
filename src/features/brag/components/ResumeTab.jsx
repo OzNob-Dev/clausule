@@ -94,14 +94,14 @@ export default function ResumeTab({ disabled = false }) {
     }, 1200)
   }, [])
 
-  const handleFieldInput = useCallback((field) => (event) => {
-    const nextValue = event.currentTarget.textContent ?? ''
+  const handleFieldChange = useCallback((field) => (event) => {
+    const nextValue = event.target.value
     setCvData((prev) => (prev[field] === nextValue ? prev : { ...prev, [field]: nextValue }))
     scheduleAutosave()
   }, [scheduleAutosave])
 
-  const handleBulletInput = useCallback((index) => (event) => {
-    const nextValue = event.currentTarget.textContent ?? ''
+  const handleBulletChange = useCallback((index) => (event) => {
+    const nextValue = event.target.value
     setCvData((prev) => ({
       ...prev,
       bullets: prev.bullets.map((bullet, bulletIndex) => (bulletIndex === index ? nextValue : bullet)),
@@ -166,13 +166,13 @@ export default function ResumeTab({ disabled = false }) {
       {disabled && (
         <>
           <p className="be-cv-disabled-note">Add a brag entry to unlock resume generation.</p>
-          <ResumeDocument cvData={cvData} autosaved={false} disabled onBulletInput={handleBulletInput} onFieldInput={handleFieldInput} />
+          <ResumeDocument cvData={cvData} autosaved={false} disabled onBulletChange={handleBulletChange} onFieldChange={handleFieldChange} />
         </>
       )}
 
       {!disabled && cvVisible && (
         <>
-          <ResumeDocument cvData={cvData} autosaved={cvAutosaved} onBulletInput={handleBulletInput} onFieldInput={handleFieldInput} />
+          <ResumeDocument cvData={cvData} autosaved={cvAutosaved} onBulletChange={handleBulletChange} onFieldChange={handleFieldChange} />
           <ResumeActions copied={cvCopied} onCopy={copyCV} onDownload={downloadCV} />
         </>
       )}

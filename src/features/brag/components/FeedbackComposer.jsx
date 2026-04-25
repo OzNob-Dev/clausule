@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { fieldClass, areaClass } from '@shared/constants/classNames'
 
 const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Other']
@@ -11,19 +12,13 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
   const [message, setMessage] = useState('')
   const [improvement, setImprovement] = useState('')
   const [contactOk, setContactOk] = useState(true)
-  const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
 
   const canSend = subject.trim() && message.trim()
 
-  const handleSend = async () => {
-    if (!canSend) return
-
-    setSending(true)
-    setError('')
-
-    try {
+  const sendFeedbackMutation = useMutation({
+    mutationFn: async () => {
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,14 +35,25 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
 
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error('Send failed')
-      onSent?.(data.feedback)
+      return data.feedback
+    },
+  })
+
+  const handleSend = async () => {
+    if (!canSend) return
+
+    setError('')
+
+    try {
+      const savedFeedback = await sendFeedbackMutation.mutateAsync()
+      onSent?.(savedFeedback)
       setSent(true)
     } catch {
       setError('Could not send this feedback. Please try again.')
-    } finally {
-      setSending(false)
     }
   }
+
+  const sending = sendFeedbackMutation.isPending
 
   return (
     <div className="be-feedback-stage">

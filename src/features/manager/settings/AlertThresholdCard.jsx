@@ -16,16 +16,16 @@ export default function AlertThresholdCard({ combined, onToggleCombined, values,
         </div>
         <div className="st-toggle-row">
           <span>Combined</span>
-          <div
-            onClick={onToggleCombined}
+          <button
+            type="button"
             className={`st-toggle${combined ? ' st-toggle--on' : ''}`}
             role="switch"
             aria-checked={combined}
-            tabIndex={0}
-            onKeyDown={(event) => event.key === 'Enter' && onToggleCombined()}
+            aria-label="Combined alerts"
+            onClick={onToggleCombined}
           >
             <div className={`st-toggle-knob${combined ? ' st-toggle-knob--on' : ''}`} />
-          </div>
+          </button>
         </div>
       </div>
 

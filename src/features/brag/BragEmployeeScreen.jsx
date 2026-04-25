@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
+import { useEffect, useState, useTransition } from 'react'
 import { useTheme } from '@shared/hooks/useTheme'
 import BragRail from '@features/brag/components/BragRail'
 import BragSidebar from '@features/brag/components/BragSidebar'
@@ -8,7 +9,6 @@ import BragEmptyState from '@features/brag/components/BragEmptyState'
 import BragLoadingState from '@features/brag/components/BragLoadingState'
 import EntryCard from '@features/brag/components/EntryCard'
 import EntryComposer from '@features/brag/components/EntryComposer'
-import ResumeTab from '@features/brag/components/ResumeTab'
 import Link from 'next/link'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
@@ -16,6 +16,10 @@ import { ROUTES } from '@shared/utils/routes'
 import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-page.css'
 import '@features/brag/styles/resume-tab.css'
+
+const ResumeTab = dynamic(() => import('@features/brag/components/ResumeTab'), {
+  loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,
+})
 
 const MANAGER_NOTE =
   'Jordan has had a strong year. The platform migration was the headline — delivered early with consistently positive stakeholder feedback. Genuine tech lead potential here.'
@@ -84,6 +88,7 @@ export function mapEntryToCard(entry) {
 export default function BragEmployee({ initialEntries = [], initialEntriesError = '' }) {
   useTheme()
   const profile = useProfileStore((state) => state.profile)
+  const [, startPanelTransition] = useTransition()
   const [tab, setTab]                   = useState('brag')
   const [entries, setEntries]           = useState(() => initialEntries.map(cardFromEntry))
   const [entriesLoading] = useState(false)
@@ -106,8 +111,10 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
   }, [panelKey, visiblePanel])
 
   const saveEntry = (savedEntry) => {
-    setEntries((prev) => [cardFromSavedEntry(savedEntry), ...prev])
-    setComposerOpen(false)
+    startPanelTransition(() => {
+      setEntries((prev) => [cardFromSavedEntry(savedEntry), ...prev])
+      setComposerOpen(false)
+    })
   }
 
   const displayName    = profileDisplayName(profile)
@@ -117,7 +124,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
     composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,
     loading: <BragLoadingState />,
     error: <p className="be-entry-load-error" role="alert">{entriesError}</p>,
-    empty: <BragEmptyState onAddEntry={() => setComposerOpen(true)} />,
+    empty: <BragEmptyState onAddEntry={() => startPanelTransition(() => setComposerOpen(true))} />,
     entries: (
       <>
         <div className="be-sec-label">Your entries</div>
@@ -154,7 +161,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
                   role="tab"
                   aria-selected={tab === key}
                   aria-controls={`panel-${key}`}
-                  onClick={() => setTab(key)}
+                  onClick={() => startPanelTransition(() => setTab(key))}
                   className={`be-tab${tab === key ? ' be-tab--active' : ''}`}
                 >
                   {label}
@@ -167,7 +174,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
           <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
             {!composerOpen && entries.length > 0 ? (
               <div className="be-action-row" aria-label="Brag actions">
-                <button type="button" onClick={() => setComposerOpen(true)} className="be-add-trigger be-add-trigger--top">
+                <button type="button" onClick={() => startPanelTransition(() => setComposerOpen(true))} className="be-add-trigger be-add-trigger--top">
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                     <line x1="8" y1="3" x2="8" y2="13"/>
                     <line x1="3" y1="8" x2="13" y2="8"/>

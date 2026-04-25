@@ -16,6 +16,7 @@
 - Prefer small pure helpers for data shaping.
 - Keep hooks and effects focused on one concern.
 - Avoid unnecessary abstraction in component trees.
+- For multi-step flows, keep the public hook/component API stable but move internal branching into a reducer with explicit actions. This keeps screens simple while making impossible UI states harder to express.
 
 ## Review Checks
 

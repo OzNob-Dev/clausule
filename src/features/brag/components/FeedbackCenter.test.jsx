@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import FeedbackCenter from './FeedbackCenter'
+import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
 describe('FeedbackCenter', () => {
   afterEach(() => {
@@ -32,7 +33,7 @@ describe('FeedbackCenter', () => {
       headers: { 'Content-Type': 'application/json' },
     }))
 
-    render(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
+    renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
 
     expect(screen.getByRole('tab', { name: /send feedback/i })).toHaveAttribute('aria-selected', 'true')
     await user.click(screen.getByRole('tab', { name: /feedback centre/i }))

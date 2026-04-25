@@ -89,6 +89,25 @@
   outline: none;
 }
 
+.be-cv-editable {
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  resize: none;
+}
+
+.be-cv-editable:focus {
+  outline: 2px solid rgba(208, 90, 52, 0.28);
+  outline-offset: 4px;
+}
+
+.be-cv-editable:disabled {
+  cursor: default;
+}
+
 .be-cv-name {
   font-size: 30px;
   font-weight: 900;
@@ -141,6 +160,7 @@
   font-size: 12px;
   color: var(--tm);
   white-space: nowrap;
+  text-align: right;
 }
 
 .be-cv-company {
@@ -162,9 +182,6 @@
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  font-size: 13px;
-  color: #2A221A;
-  line-height: 1.7;
 }
 
 .be-cv-bullet-marker {

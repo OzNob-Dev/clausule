@@ -1,132 +1,192 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { apiFetch, jsonRequest } from '@shared/utils/api'
 import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { ROUTES } from '@shared/utils/routes'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
+import { sendCodeEmail } from '@features/auth/api-client/sendCodeEmail'
+
+const INITIAL_STATE = {
+  step: 1,
+  email: 'your email',
+  hasMfaSetup: false,
+  totpSecret: '',
+  totpUri: '',
+  copied: false,
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'bootstrap_loaded':
+      return {
+        ...state,
+        email: action.email,
+        hasMfaSetup: action.hasMfaSetup,
+      }
+    case 'enter_totp_setup':
+      return { ...state, step: 2 }
+    case 'totp_loaded':
+      return {
+        ...state,
+        totpSecret: action.secret,
+        totpUri: action.uri,
+      }
+    case 'copy_secret':
+      return { ...state, copied: true }
+    case 'hide_copied':
+      return { ...state, copied: false }
+    case 'finish_setup':
+      return { ...state, hasMfaSetup: true, step: 3 }
+    default:
+      return state
+  }
+}
 
 export function useMfaSetupFlow() {
   const router = useRouter()
-  const [step, setStep] = useState(1)
-  const [email, setEmail] = useState('your email')
-  const [hasMfaSetup, setHasMfaSetup] = useState(false)
-  const [resendTimer, , resetResendTimer] = useCountdown(30)
-
-  const [totpSecret, setTotpSecret] = useState('')
-  const [totpUri, setTotpUri] = useState('')
-  const [totpSecretDisp, setTotpSecretDisp] = useState('')
-  const [totpLoading, setTotpLoading] = useState(false)
-  const [copied, setCopied] = useState(false)
-
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
+  const [resendTimer, , resetResendTimer] = useCountdown(30, state.step === 1)
   const otpRefs = useRef([])
   const totpRefs = useRef([])
   const scheduleTimeout = useTrackedTimeout()
   const otpCode = useSixDigitCode({ inputRefs: otpRefs, scheduleTimeout })
   const totpCode = useSixDigitCode({ inputRefs: totpRefs, scheduleTimeout })
 
-  useEffect(() => {
-    const controller = new AbortController()
-
-    apiFetch('/api/auth/bootstrap', { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : null)
-      .then((data) => {
-        if (!data) return
-        setEmail(data.profile?.email || data.user?.email || 'your email')
-        setHasMfaSetup(Boolean(data.security?.authenticatorAppConfigured))
-      })
-      .catch(() => {})
-
-    return () => controller.abort()
-  }, [])
+  const bootstrapQuery = useQuery({
+    queryKey: ['auth', 'bootstrap', 'mfa-setup'],
+    queryFn: async () => {
+      const response = await apiFetch('/api/auth/bootstrap')
+      return response.ok ? response.json() : null
+    },
+    retry: false,
+  })
 
   useEffect(() => {
-    if (step !== 2 || totpSecret) return
-    setTotpLoading(true)
-    apiFetch('/api/auth/totp/setup')
-      .then((response) => response.json())
-      .then(({ secret, uri }) => {
-        if (!secret) return
-        setTotpSecret(secret)
-        setTotpUri(uri)
-        setTotpSecretDisp(secret.match(/.{1,4}/g)?.join(' ') ?? secret)
-      })
-      .catch(() => {})
-      .finally(() => setTotpLoading(false))
-  }, [step, totpSecret])
+    const data = bootstrapQuery.data
+    if (!data) return
+    dispatch({
+      type: 'bootstrap_loaded',
+      email: data.profile?.email || data.user?.email || 'your email',
+      hasMfaSetup: Boolean(data.security?.authenticatorAppConfigured),
+    })
+  }, [bootstrapQuery.data])
+
+  const totpSetupQuery = useQuery({
+    queryKey: ['auth', 'totp-setup', 'mfa-screen'],
+    queryFn: async () => {
+      const response = await apiFetch('/api/auth/totp/setup')
+      if (!response.ok) throw new Error('Could not load setup')
+      return response.json()
+    },
+    enabled: state.step === 2 && !state.hasMfaSetup,
+    retry: false,
+  })
+
+  useEffect(() => {
+    if (!totpSetupQuery.data?.secret) return
+    dispatch({
+      type: 'totp_loaded',
+      secret: totpSetupQuery.data.secret,
+      uri: totpSetupQuery.data.uri ?? '',
+    })
+  }, [totpSetupQuery.data])
+
+  const resendMutation = useMutation({
+    mutationFn: () => sendCodeEmail(state.email),
+  })
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: async (digits) => {
+      const response = await fetch('/api/auth/verify-code', jsonRequest({ email: state.email, code: digits.join('') }, { method: 'POST' }))
+      if (!response.ok) throw new Error('Incorrect code')
+      return response
+    },
+  })
+
+  const verifyTotpMutation = useMutation({
+    mutationFn: async (digits) => {
+      const code = digits.join('')
+      if (!state.totpSecret) throw new Error('Missing secret')
+      const response = await apiFetch('/api/auth/totp/setup', jsonRequest({ code, secret: state.totpSecret }, { method: 'POST' }))
+      if (!response.ok) throw new Error('Incorrect code')
+      return response
+    },
+  })
 
   const verifyOtp = useCallback(async (digits) => {
-    const code = digits.join('')
     otpCode.setState('checking')
     try {
-      const res = await fetch('/api/auth/verify-code', jsonRequest({ email, code }, { method: 'POST' }))
-      if (!res.ok) {
-        otpCode.setError()
-        return
-      }
-
+      await verifyOtpMutation.mutateAsync(digits)
       otpCode.setState('done')
-      if (hasMfaSetup) scheduleTimeout(() => router.replace(ROUTES.brag), 500)
-      else scheduleTimeout(() => setStep(2), 500)
+      if (state.hasMfaSetup) scheduleTimeout(() => router.replace(ROUTES.brag), 500)
+      else scheduleTimeout(() => dispatch({ type: 'enter_totp_setup' }), 500)
     } catch {
       otpCode.setError()
     }
-  }, [email, hasMfaSetup, otpCode, router, scheduleTimeout])
+  }, [otpCode, router, scheduleTimeout, state.hasMfaSetup, verifyOtpMutation])
 
   const verifyTotp = useCallback(async (digits) => {
-    const code = digits.join('')
-    if (!totpSecret) return
-
+    if (!state.totpSecret) return
     totpCode.setState('checking')
     try {
-      const res = await apiFetch('/api/auth/totp/setup', jsonRequest({ code, secret: totpSecret }, { method: 'POST' }))
-      if (res.ok) totpCode.setState('done')
-      else totpCode.setError()
+      await verifyTotpMutation.mutateAsync(digits)
+      totpCode.setState('done')
     } catch {
       totpCode.setError()
     }
-  }, [totpCode, totpSecret])
+  }, [state.totpSecret, totpCode, verifyTotpMutation])
 
   useEffect(() => {
     if (otpCode.state === 'idle' && otpCode.digits.every(Boolean)) verifyOtp(otpCode.digits)
   }, [otpCode.digits, otpCode.state, verifyOtp])
 
   useEffect(() => {
-    if (step !== 2) return
+    if (state.step !== 2) return
     if (totpCode.state === 'idle' && totpCode.digits.every(Boolean)) verifyTotp(totpCode.digits)
-  }, [step, totpCode.digits, totpCode.state, verifyTotp])
+  }, [state.step, totpCode.digits, totpCode.state, verifyTotp])
 
   const copySecret = useCallback(() => {
-    navigator.clipboard?.writeText(totpSecret).catch(() => {})
-    setCopied(true)
-    scheduleTimeout(() => setCopied(false), 2000)
-  }, [scheduleTimeout, totpSecret])
+    navigator.clipboard?.writeText(state.totpSecret).catch(() => {})
+    dispatch({ type: 'copy_secret' })
+    scheduleTimeout(() => dispatch({ type: 'hide_copied' }), 2000)
+  }, [scheduleTimeout, state.totpSecret])
 
   const finishSetup = useCallback(() => {
-    setHasMfaSetup(true)
-    setStep(3)
+    dispatch({ type: 'finish_setup' })
   }, [])
 
+  const handleResend = useCallback(async () => {
+    try {
+      await resendMutation.mutateAsync()
+      resetResendTimer()
+      otpCode.reset()
+    } catch {}
+  }, [otpCode, resendMutation, resetResendTimer])
+
   const enterApp = useCallback(() => router.push(ROUTES.brag), [router])
+  const totpSecretDisp = state.totpSecret.match(/.{1,4}/g)?.join(' ') ?? state.totpSecret
 
   return {
-    copied,
+    copied: state.copied,
     copySecret,
-    email,
+    email: state.email,
     enterApp,
     finishSetup,
+    handleResend,
     otpCode,
     otpRefs,
     resendTimer,
     resetResendTimer,
-    step,
+    step: state.step,
     totpCode,
     totpDone: totpCode.state === 'done',
-    totpLoading,
+    totpLoading: totpSetupQuery.isPending,
     totpRefs,
     totpSecretDisp,
-    totpUri,
+    totpUri: state.totpUri,
   }
 }

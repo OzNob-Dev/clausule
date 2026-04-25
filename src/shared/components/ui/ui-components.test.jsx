@@ -1,10 +1,11 @@
 import React from 'react'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 import { CategoryDot, CategoryPill } from './CategoryPill'
-import CodeEmail from './CodeEmail'
+import { CodeEmail } from './CodeEmail'
 import { Modal } from './Modal'
 import { ThinkingDots } from './ThinkingDots'
 
@@ -27,24 +28,51 @@ describe('UI components', () => {
     expect(screen.getByLabelText('Demo verification email')).toBeInTheDocument()
   })
 
-  it('handles modal and category dot interactions', () => {
-    const onClose = vi.fn()
+  it('handles category dot interactions', () => {
     const onClick = vi.fn()
 
     render(
-      <>
-        <CategoryDot cat="dev" onClick={onClick} />
-        <Modal open onClose={onClose} title="Confirm" footer={<button>Done</button>}>
-          Modal body
-        </Modal>
-      </>
+      <CategoryDot cat="dev" onClick={onClick} />
     )
 
     fireEvent.click(screen.getByTitle('Filter by Development'))
-    fireEvent.keyDown(document, { key: 'Escape' })
 
     expect(onClick).toHaveBeenCalledTimes(1)
-    expect(onClose).toHaveBeenCalledTimes(1)
-    expect(screen.getByText('Modal body')).toBeInTheDocument()
+  })
+
+  it('traps focus, inerts the background, and restores focus on close', async () => {
+    const user = userEvent.setup()
+
+    function ModalHarness() {
+      const [open, setOpen] = React.useState(false)
+      return (
+        <>
+          <button type="button" onClick={() => setOpen(true)}>Open modal</button>
+          <Modal open={open} onClose={() => setOpen(false)} title="Confirm" footer={<button type="button">Done</button>}>
+            <input aria-label="Confirmation name" autoFocus />
+          </Modal>
+        </>
+      )
+    }
+
+    render(<ModalHarness />)
+
+    const trigger = screen.getByRole('button', { name: 'Open modal' })
+    const focusSpy = vi.spyOn(trigger, 'focus')
+    trigger.focus()
+    await user.click(trigger)
+
+    expect(screen.getByRole('dialog', { name: 'Confirm' })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Confirmation name' })).toHaveFocus()
+    expect(document.body.style.overflow).toBe('hidden')
+    expect(trigger.closest('[aria-hidden="true"]')).not.toBeNull()
+    expect(trigger.closest('[inert]')).not.toBeNull()
+
+    await user.keyboard('{Escape}')
+
+    expect(screen.queryByRole('dialog', { name: 'Confirm' })).not.toBeInTheDocument()
+    await waitFor(() => expect(focusSpy).toHaveBeenCalled())
+    expect(trigger.closest('[aria-hidden="true"]')).toBeNull()
+    expect(trigger.closest('[inert]')).toBeNull()
   })
 })

@@ -1,16 +1,6 @@
 import { useState } from 'react'
-
-const reminderMethods = [
-  { value: 'email', label: 'Email', desc: 'Send reminders to the inbox tied to this account.' },
-  { value: 'sms', label: 'SMS', desc: 'Send reminders by text message to the mobile number on file.' },
-]
-
-const reminderFrequencies = [
-  { value: 'daily', label: 'Daily' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'quarterly', label: 'Quarterly' },
-]
+import { Modal } from '@shared/components/ui/Modal'
+import { REMINDER_FREQUENCIES, REMINDER_METHODS } from '@shared/constants/reminders'
 
 export default function DeleteAccountSection({
   confirmReady,
@@ -45,7 +35,7 @@ export default function DeleteAccountSection({
           <fieldset className="st-reminder-group">
             <legend className="st-reminder-legend">Delivery method</legend>
             <div className="st-reminder-grid">
-              {reminderMethods.map(({ value, label, desc }) => (
+              {REMINDER_METHODS.map(({ value, label, desc }) => (
                 <label key={value} className={`st-reminder-option${reminderMethod === value ? ' st-reminder-option--active' : ''}`}>
                   <input
                     className="st-reminder-input"
@@ -68,7 +58,7 @@ export default function DeleteAccountSection({
           <fieldset className="st-reminder-group">
             <legend className="st-reminder-legend">Reminder frequency</legend>
             <div className="st-frequency-grid">
-              {reminderFrequencies.map(({ value, label }) => (
+              {REMINDER_FREQUENCIES.map(({ value, label }) => (
                 <label key={value} className={`st-frequency-option${reminderFrequency === value ? ' st-frequency-option--active' : ''}`}>
                   <input
                     className="st-reminder-input"
@@ -105,7 +95,13 @@ export default function DeleteAccountSection({
       </div>
 
       {deleteModal && (
-        <div className="st-modal-overlay" onClick={(event) => event.target === event.currentTarget && onCloseModal()}>
+        <Modal
+          open={deleteModal}
+          onClose={onCloseModal}
+          title={null}
+          footer={null}
+          dialogClassName="max-w-[34rem] border-none bg-transparent"
+        >
           <div className="st-modal">
             <div className="st-modal-icon">
               <svg viewBox="0 0 20 20" fill="none" stroke="var(--red)" strokeWidth="1.8" strokeLinecap="round" style={{ width: 20, height: 20 }}>
@@ -139,18 +135,19 @@ export default function DeleteAccountSection({
 
             <div className="st-modal-actions">
               <button
+                type="button"
                 disabled={!confirmReady}
                 onClick={onConfirmDelete}
                 className={`st-btn-confirm${confirmReady ? ' st-btn-confirm--ready' : ''}`}
               >
                 Yes, permanently delete my account
               </button>
-              <button onClick={onCancelDelete} className="st-btn-modal-cancel">
+              <button type="button" onClick={onCancelDelete} className="st-btn-modal-cancel">
                 Cancel
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </>
   )

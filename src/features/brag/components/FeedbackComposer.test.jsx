@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import FeedbackComposer from './FeedbackComposer'
+import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
 describe('FeedbackComposer', () => {
   beforeEach(() => {
@@ -16,7 +17,7 @@ describe('FeedbackComposer', () => {
       headers: { 'Content-Type': 'application/json' },
     }))
 
-    render(<FeedbackComposer userEmail="ada@example.com" onClose={vi.fn()} />)
+    renderWithQueryClient(<FeedbackComposer userEmail="ada@example.com" onClose={vi.fn()} />)
 
     await user.selectOptions(screen.getByLabelText(/what is this about/i), 'Bug')
     await user.selectOptions(screen.getByLabelText(/how does it feel/i), 'Blocked')
@@ -34,7 +35,7 @@ describe('FeedbackComposer', () => {
     const user = userEvent.setup()
     vi.spyOn(globalThis, 'fetch').mockReturnValue(new Promise(() => {}))
 
-    render(<FeedbackComposer onClose={vi.fn()} />)
+    renderWithQueryClient(<FeedbackComposer onClose={vi.fn()} />)
 
     await user.type(screen.getByLabelText(/short summary/i), 'Navigation idea')
     await user.type(screen.getByLabelText(/feedback for the app owners/i), 'Let me jump between sections faster.')

@@ -1,4 +1,4 @@
-import SsoProviderIcon from '@shared/components/SsoProviderIcon'
+import { SsoProviderIcon } from '@shared/components/SsoProviderIcon'
 import { getActiveSsoProviders, ssoAuthPath } from '@shared/utils/sso'
 
 export default function SsoButtons({ config }) {

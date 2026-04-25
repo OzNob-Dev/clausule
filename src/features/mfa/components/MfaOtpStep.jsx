@@ -1,4 +1,4 @@
-import CodeEmail from '@shared/components/ui/CodeEmail'
+import { CodeEmail } from '@shared/components/ui/CodeEmail'
 import DigitRow from './DigitRow'
 
 export default function MfaOtpStep({

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SignupStepPayment from './SignupStepPayment'
 import { useSubscriptionStore } from '@features/signup/store/useSubscriptionStore'
+import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
 describe('SignupStepPayment integration', () => {
   beforeEach(() => {
@@ -19,7 +20,7 @@ describe('SignupStepPayment integration', () => {
     const user = userEvent.setup()
     const onNext = vi.fn()
 
-    render(
+    renderWithQueryClient(
       <SignupStepPayment
         accountData={{ email: 'ada@example.com', firstName: 'Ada', lastName: 'Lovelace', emailVerificationToken: 'signup-token' }}
         initialData={{ cardName: '', cardNum: '', expiry: '', cvc: '' }}

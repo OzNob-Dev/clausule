@@ -15,6 +15,7 @@
 
 - Use `startTransition` for non-urgent state: tab switches, step changes, filter/sort updates. This keeps inputs and button clicks responsive while the new UI renders.
 - Use `useDeferredValue` for derived display values from large lists (e.g. filtered entry lists).
+- Prefer `useDeferredValue` over throttling when the source input must stay controlled but the filtered list can lag slightly behind.
 
 ## Lazy Loading
 
@@ -22,7 +23,8 @@
   - `KanbanBoard` (manager dashboard)
   - `ResumeTab` (brag CV view)
   - `TotpSetupPanel` (MFA setup)
-- Pattern: `const KanbanBoard = dynamic(() => import('./KanbanBoard'), { ssr: false })`
+- Pattern: `const KanbanBoard = dynamic(() => import('./KanbanBoard'), { loading: () => <Fallback /> })`
+- Reserve `ssr: false` for components that touch browser-only APIs during render. Bundle-splitting alone does not require client-only rendering.
 
 ## List Rendering
 
