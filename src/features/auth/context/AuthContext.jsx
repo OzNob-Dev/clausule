@@ -17,6 +17,7 @@
 import { createContext, useContext, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { apiFetch } from '@shared/utils/api'
 
 const AuthContext = createContext(null)
 
@@ -44,7 +45,7 @@ export function AuthProvider({ children, initialSession = null }) {
 
   const logout = useCallback(async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
+      await apiFetch('/api/auth/logout', { method: 'POST' }, { retryOnUnauthorized: false })
     } catch {
       // Best-effort — navigate regardless of network errors.
     }

@@ -89,8 +89,9 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
   useTheme()
   const profile = useProfileStore((state) => state.profile)
   const [, startPanelTransition] = useTransition()
+  const tabOrder = ['brag', 'cv']
   const [tab, setTab]                   = useState('brag')
-  const [entries, setEntries]           = useState(() => initialEntries.map(cardFromEntry))
+  const [entries, setEntries]           = useState(() => [...initialEntries].sort(newestEntryFirst).map(cardFromEntry))
   const [entriesLoading] = useState(false)
   const [entriesError] = useState(initialEntriesError)
   const [composerOpen, setComposerOpen] = useState(false)
@@ -119,6 +120,34 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
 
   const displayName    = profileDisplayName(profile)
   const avatarInitials = profileInitials(profile)
+
+  const moveTab = (direction) => {
+    const currentIndex = tabOrder.indexOf(tab)
+    const nextIndex = direction === 'start'
+      ? 0
+      : direction === 'end'
+        ? tabOrder.length - 1
+        : (currentIndex + direction + tabOrder.length) % tabOrder.length
+    const nextTab = tabOrder[nextIndex]
+    startPanelTransition(() => setTab(nextTab))
+    document.getElementById(`tab-${nextTab}`)?.focus()
+  }
+
+  const handleTabKeyDown = (event) => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      moveTab(1)
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      moveTab(-1)
+    } else if (event.key === 'Home') {
+      event.preventDefault()
+      moveTab('start')
+    } else if (event.key === 'End') {
+      event.preventDefault()
+      moveTab('end')
+    }
+  }
 
   const panelContent = {
     composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,
@@ -161,7 +190,9 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
                   role="tab"
                   aria-selected={tab === key}
                   aria-controls={`panel-${key}`}
+                  tabIndex={tab === key ? 0 : -1}
                   onClick={() => startPanelTransition(() => setTab(key))}
+                  onKeyDown={handleTabKeyDown}
                   className={`be-tab${tab === key ? ' be-tab--active' : ''}`}
                 >
                   {label}

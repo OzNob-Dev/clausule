@@ -87,7 +87,7 @@ export default function DeleteAccountSection({
                 Permanently remove your account and all associated data. This cannot be undone.
               </div>
             </div>
-            <button onClick={onOpenDelete} className="st-btn-delete-account">
+            <button type="button" onClick={onOpenDelete} className="st-btn-delete-account">
               Delete account
             </button>
           </div>
@@ -101,10 +101,12 @@ export default function DeleteAccountSection({
           title={null}
           footer={null}
           dialogClassName="max-w-[34rem] border-none bg-transparent"
+          labelledBy="st-delete-modal-title"
+          describedBy="st-delete-modal-description"
         >
           <div className="st-modal">
             <div className="st-modal-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="var(--red)" strokeWidth="1.8" strokeLinecap="round" style={{ width: 20, height: 20 }}>
+              <svg viewBox="0 0 20 20" fill="none" stroke="var(--red)" strokeWidth="1.8" strokeLinecap="round" className="st-modal-icon-svg">
                 <polyline points="3 6 5 6 17 6" />
                 <path d="M8 6V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2" />
                 <path d="M16 6l-1 11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
@@ -114,16 +116,17 @@ export default function DeleteAccountSection({
               </svg>
             </div>
 
-            <div className="st-modal-title">Delete your account?</div>
-            <div className="st-modal-body">
-              This will <strong>permanently delete</strong> your account and remove all associated data — including every entry, note, and file record — from our servers. This action <strong style={{ color: 'var(--red)' }}>cannot be undone</strong>.
+            <div className="st-modal-title" id="st-delete-modal-title">Delete your account?</div>
+            <div className="st-modal-body" id="st-delete-modal-description">
+              This will <strong>permanently delete</strong> your account and remove all associated data — including every entry, note, and file record — from our servers. This action <strong className="st-danger-highlight">cannot be undone</strong>.
             </div>
 
             <div className="st-modal-confirm">
-              <label className="st-confirm-label">
+              <label className="st-confirm-label" htmlFor="st-delete-confirm-input">
                 Type <span>DELETE</span> to confirm
               </label>
               <input
+                id="st-delete-confirm-input"
                 type="text"
                 value={deleteConfirmText}
                 onChange={(event) => onChangeConfirmText(event.target.value)}

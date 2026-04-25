@@ -40,36 +40,37 @@ function formatFileSize(size) {
 }
 
 export function FileDropzone({ active, fileInputRef, onAddFiles, onDrop, onSetActive }) {
+  const inputId = 'be-evidence-files'
   return (
     <>
-      <div className="be-comp-ev-label">Evidence files</div>
-      <div
+      <div className="be-comp-ev-label" id={`${inputId}-label`}>Evidence files</div>
+      <input
+        ref={fileInputRef}
+        id={inputId}
+        type="file"
+        multiple
+        onChange={(e) => { onAddFiles(e.target.files); e.target.value = '' }}
+        className="sr-only"
+        tabIndex={-1}
+      />
+      <button
+        type="button"
         className={active ? 'be-dropzone be-dropzone--active' : 'be-dropzone'}
         onDragOver={(e) => { e.preventDefault(); onSetActive(true) }}
         onDragLeave={() => onSetActive(false)}
         onDrop={onDrop}
         onClick={() => fileInputRef.current?.click()}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-        aria-label="Drop evidence files here or press Enter to browse"
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-          multiple
-          onChange={(e) => { onAddFiles(e.target.files); e.target.value = '' }}
-            style={{ display: 'none' }}
-            aria-hidden="true"
-          />
+        aria-labelledby={`${inputId}-label ${inputId}-text`}
+        aria-describedby={`${inputId}-hint`}
+      >
         <svg className="be-dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="17 8 12 3 7 8"/>
           <line x1="12" y1="3" x2="12" y2="15"/>
         </svg>
-        <span className="be-dropzone-text">Drop files here or click to browse</span>
-        <span className="be-dropzone-sub">Screenshots, videos, PDFs, documents</span>
-      </div>
+        <span className="be-dropzone-text" id={`${inputId}-text`}>Drop files here or click to browse</span>
+        <span className="be-dropzone-sub" id={`${inputId}-hint`}>Screenshots, videos, PDFs, documents</span>
+      </button>
     </>
   )
 }

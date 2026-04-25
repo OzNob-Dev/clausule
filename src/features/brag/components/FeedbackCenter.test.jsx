@@ -42,4 +42,24 @@ describe('FeedbackCenter', () => {
     expect(screen.getByText('Please add j/k navigation.')).toBeInTheDocument()
     expect(screen.getByText('Tiny keyboard goblin assigned.')).toBeInTheDocument()
   })
+
+  it('supports arrow key tab navigation', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ feedback: [] }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    }))
+
+    renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
+
+    const composeTab = screen.getByRole('tab', { name: /send feedback/i })
+    const centreTab = screen.getByRole('tab', { name: /feedback centre/i })
+
+    composeTab.focus()
+    await user.keyboard('{ArrowRight}')
+
+    expect(centreTab).toHaveFocus()
+    expect(centreTab).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tabpanel', { name: /feedback centre/i })).toBeVisible()
+  })
 })

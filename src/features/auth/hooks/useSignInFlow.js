@@ -1,15 +1,19 @@
 'use client'
+// @ts-check
 
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { sendCodeEmail } from '@features/auth/api-client/sendCodeEmail'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
-import { jsonRequest } from '@shared/utils/api'
+import { apiJson, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { homePathForRole } from '@shared/utils/routes'
+
+/** @typedef {'email' | 'otp' | 'app'} SignInStep */
+/** @typedef {{ step: SignInStep, email: string, touched: boolean, submitAttempted: boolean, ssoError: string | null, verifyError: string | null }} SignInState */
 
 const OTP_TTL_SECONDS = 600
 const RESEND_COOLDOWN_SECONDS = 30
@@ -24,6 +28,7 @@ const SSO_ERROR_LABELS = {
   sso_denied: 'Sign-in was cancelled.',
 }
 
+/** @type {SignInState} */
 const INITIAL_STATE = {
   step: 'email',
   email: '',
@@ -33,6 +38,7 @@ const INITIAL_STATE = {
   verifyError: null,
 }
 
+/** @param {SignInState} state */
 function reducer(state, action) {
   switch (action.type) {
     case 'hydrate_sso_error':
@@ -103,11 +109,7 @@ function ssoErrorFromUrl() {
 }
 
 async function verifySignInRequest(endpoint, email, otp) {
-  const response = await fetch(endpoint, jsonRequest({ email, code: otp }, { method: 'POST' }))
-  const data = await response.json().catch(() => ({}))
-
-  if (!response.ok) throw new Error(data.error ?? 'Incorrect code — try again')
-  return data
+  return apiJson(endpoint, jsonRequest({ email, code: otp }, { method: 'POST' }), { retryOnUnauthorized: false })
 }
 
 export function useSignInFlow() {

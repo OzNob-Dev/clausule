@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 
@@ -39,25 +39,31 @@ export function useProfileForm(profile) {
     setBaseline(next)
   }, [profile])
 
-  const current = normalize(form)
-  const initial = normalize(baseline)
-  const changed = Object.entries(current).filter(([k, v]) => v !== initial[k]).map(([k]) => k)
+  const derived = useMemo(() => {
+    const current = normalize(form)
+    const initial = normalize(baseline)
+    const changed = Object.entries(current).filter(([key, value]) => value !== initial[key]).map(([key]) => key)
+    const emailChanged = changed.includes('email')
 
-  const emailChanged  = changed.includes('email')
-  const mobileChanged = changed.includes('mobile')
-  const dirty         = changed.length > 0
-  const baseReady     = !!(current.firstName && validateEmail(current.email).valid && current.mobile)
-  const displayName   = profileDisplayName(current)
-  const initials      = profileInitials(current)
-  const emailWarning  = emailChanged
-    ? `We'll verify ${current.email} before saving.`
-    : 'Your sign-in email stays unchanged.'
+    return {
+      current,
+      initial,
+      changed,
+      dirty: changed.length > 0,
+      emailChanged,
+      mobileChanged: changed.includes('mobile'),
+      baseReady: !!(current.firstName && validateEmail(current.email).valid && current.mobile),
+      displayName: profileDisplayName(current),
+      initials: profileInitials(current),
+      emailWarning: emailChanged
+        ? `We'll verify ${current.email} before saving.`
+        : 'Your sign-in email stays unchanged.',
+    }
+  }, [baseline, form])
 
   return {
     form, setForm,
-    current, initial,
-    changed, dirty, emailChanged, mobileChanged,
-    baseReady, displayName, initials, emailWarning,
+    ...derived,
     resetForm:      () => setForm(baseline),
     commitBaseline: (next) => setBaseline(next),
   }

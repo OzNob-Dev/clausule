@@ -45,7 +45,7 @@ export default function NewEntry() {
             className={`${controlClass} appearance-none cursor-pointer`}
           >
             <option value="">Select employee…</option>
-            {ALL_EMP.map((e) => <option key={e.name} value={e.name}>{e.name}</option>)}
+            {ALL_EMP.map((e) => <option key={e.id} value={e.name}>{e.name}</option>)}
           </select>
         </Field>
 

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { cn } from '@shared/utils/cn'
 import { Modal } from '@shared/components/ui/Modal'
+import { apiFetch } from '@shared/utils/api'
 
 export default function DeleteAccountModal({ open, onClose }) {
   const { logout } = useAuth()
@@ -27,10 +28,9 @@ export default function DeleteAccountModal({ open, onClose }) {
     setDeleteError('')
 
     try {
-      const response = await fetch('/api/account', {
+      const response = await apiFetch('/api/account', {
         method: 'DELETE',
-        credentials: 'same-origin',
-      })
+      }, { retryOnUnauthorized: false })
 
       if (!response.ok) throw new Error('Delete failed')
       await logout()
@@ -54,6 +54,8 @@ export default function DeleteAccountModal({ open, onClose }) {
       title={null}
       footer={null}
       dialogClassName="max-w-[34rem] border-none bg-transparent"
+      labelledBy="delete-modal-title"
+      describedBy="delete-modal-description"
     >
       <div className={cn('w-full max-w-[34rem] rounded-[var(--r2)] border border-rule-em bg-card p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)]')}>
         <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-red/20 bg-red-bg text-red" aria-hidden="true">
@@ -67,7 +69,7 @@ export default function DeleteAccountModal({ open, onClose }) {
           </svg>
         </div>
         <div className="text-[18px] font-bold tracking-[-0.3px] text-tp" id="delete-modal-title">Delete your account?</div>
-        <div className="mt-3 text-[14px] leading-[1.7] text-tm">
+        <div className="mt-3 text-[14px] leading-[1.7] text-tm" id="delete-modal-description">
           This will <strong>permanently delete</strong> your brag doc and all associated entries, evidence files, and records from our servers. This action <strong>cannot be undone</strong>.
         </div>
         <div className="mb-5 mt-5">

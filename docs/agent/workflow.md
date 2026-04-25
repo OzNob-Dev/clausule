@@ -30,3 +30,7 @@
 - If the change touches a screen, inspect the paired tests in `*.test.jsx`.
 - If the change touches an API route, inspect the matching `route.test.js`.
 - If the change touches a migration, inspect the dependent API and UI files too.
+
+## Build Notes
+
+- Treat `next build` as two separate signals: compile/type validity first, then page-data collection. If compile and type-check pass but the build fails later because required env vars are missing, report that as an environment blocker instead of undoing unrelated code changes.

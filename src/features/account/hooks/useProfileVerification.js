@@ -1,53 +1,69 @@
-import { useEffect, useState } from 'react'
-import { apiFetch, jsonRequest } from '@shared/utils/api'
+import { useCallback, useReducer } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { apiJson, jsonRequest } from '@shared/utils/api'
+
+const INITIAL_STATE = {
+  confirmOpen: false,
+  emailCode: '',
+  emailCodeState: 'idle',
+  mobileCheck: '',
+  mobileAck: false,
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'open_confirm':
+      return { ...state, confirmOpen: true }
+    case 'reset':
+      return INITIAL_STATE
+    case 'set_email_code':
+      return { ...state, emailCode: action.value }
+    case 'set_email_code_state':
+      return { ...state, emailCodeState: action.value }
+    case 'set_mobile_check':
+      return { ...state, mobileCheck: action.value }
+    case 'set_mobile_ack':
+      return { ...state, mobileAck: action.value }
+    default:
+      return state
+  }
+}
 
 export function useProfileVerification({ current, emailChanged, mobileChanged, patchProfile, setError }) {
-  const [confirmOpen,    setConfirmOpen]    = useState(false)
-  const [emailCode,      setEmailCode]      = useState('')
-  const [emailCodeState, setEmailCodeState] = useState('idle')
-  const [mobileCheck,    setMobileCheck]    = useState('')
-  const [mobileAck,      setMobileAck]      = useState(false)
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
 
-  const resetVerification = () => {
-    setConfirmOpen(false)
-    setEmailCode('')
-    setEmailCodeState('idle')
-    setMobileCheck('')
-    setMobileAck(false)
-  }
+  const sendCodeMutation = useMutation({
+    mutationFn: (email) => apiJson('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }), { retryOnUnauthorized: false }),
+    retry: false,
+  })
 
-  useEffect(() => {
-    if (!confirmOpen || !emailChanged || emailCodeState !== 'idle') return
-    let active = true
-    setEmailCodeState('sending')
-    apiFetch('/api/auth/send-code', jsonRequest({ email: current.email }, { method: 'POST' }))
-      .then(async (res) => {
-        if (!active) return
-        if (!res.ok) {
-          const d = await res.json().catch(() => ({}))
-          throw new Error(d.error || 'Failed to send verification code')
-        }
-        setEmailCodeState('sent')
-      })
-      .catch((err) => {
-        if (!active) return
-        setEmailCodeState('error')
-        setError(err.message || 'Failed to send verification code')
-      })
-    return () => { active = false }
-  }, [confirmOpen, current.email, emailChanged, emailCodeState, setError])
+  const sendEmailCode = useCallback(async () => {
+    dispatch({ type: 'set_email_code_state', value: 'sending' })
+    try {
+      await sendCodeMutation.mutateAsync(current.email)
+      dispatch({ type: 'set_email_code_state', value: 'sent' })
+    } catch (err) {
+      dispatch({ type: 'set_email_code_state', value: 'error' })
+      setError(err instanceof Error && err.message ? err.message : 'Failed to send verification code')
+    }
+  }, [current.email, sendCodeMutation, setError])
 
-  const verificationReady = !emailChanged  || (emailCodeState === 'sent' && emailCode.trim().length === 6)
-  const mobileReady       = !mobileChanged || (mobileCheck.trim() === current.mobile && mobileAck)
+  const resetVerification = useCallback(() => {
+    dispatch({ type: 'reset' })
+  }, [])
+
+  const verificationReady = !emailChanged  || (state.emailCodeState === 'sent' && state.emailCode.trim().length === 6)
+  const mobileReady       = !mobileChanged || (state.mobileCheck.trim() === current.mobile && state.mobileAck)
   const finalReady        = verificationReady && mobileReady
 
-  const openConfirm = () => {
+  const openConfirm = useCallback(() => {
     setError('')
-    setConfirmOpen(true)
-  }
+    dispatch({ type: 'open_confirm' })
+    if (emailChanged && state.emailCodeState === 'idle') void sendEmailCode()
+  }, [emailChanged, sendEmailCode, setError, state.emailCodeState])
 
   const submitConfirm = () => {
-    if (emailChanged && emailCode.trim().length !== 6) {
+    if (emailChanged && state.emailCode.trim().length !== 6) {
       setError('Enter the 6-digit code we sent to the new email.')
       return
     }
@@ -56,17 +72,23 @@ export function useProfileVerification({ current, emailChanged, mobileChanged, p
       return
     }
     void patchProfile({
-      emailVerificationCode: emailChanged ? emailCode.trim() : '',
+      emailVerificationCode: emailChanged ? state.emailCode.trim() : '',
       mobileConfirmed:       !mobileChanged || mobileReady,
-      mobileConfirmation:    mobileCheck.trim(),
+      mobileConfirmation:    state.mobileCheck.trim(),
     })
   }
 
   return {
-    confirmOpen, openConfirm, resetVerification,
-    emailCode, setEmailCode, emailCodeState,
-    mobileCheck, setMobileCheck,
-    mobileAck, setMobileAck,
+    confirmOpen: state.confirmOpen,
+    openConfirm,
+    resetVerification,
+    emailCode: state.emailCode,
+    setEmailCode: (value) => dispatch({ type: 'set_email_code', value }),
+    emailCodeState: state.emailCodeState,
+    mobileCheck: state.mobileCheck,
+    setMobileCheck: (value) => dispatch({ type: 'set_mobile_check', value }),
+    mobileAck: state.mobileAck,
+    setMobileAck: (value) => dispatch({ type: 'set_mobile_ack', value }),
     verificationReady, mobileReady, finalReady,
     submitConfirm,
   }

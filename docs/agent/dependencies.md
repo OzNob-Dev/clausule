@@ -9,6 +9,7 @@
 - Avoid adding overlapping packages.
 - Prefer pinned or intentionally bounded versions.
 - Verify new dependencies do not conflict with current runtime or tooling.
+- Keep `react` / `react-dom` and `@types/react` / `@types/react-dom` on matching major versions. Do not leave the runtime on React 18 while the type packages drift to React 19.
 - Remove unused dependencies promptly.
 
 ## Review Triggers

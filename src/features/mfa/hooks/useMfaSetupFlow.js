@@ -1,15 +1,20 @@
 'use client'
+// @ts-check
 
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { apiFetch, jsonRequest } from '@shared/utils/api'
+import { apiFetch, apiJson, jsonRequest, readJson } from '@shared/utils/api'
 import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { ROUTES } from '@shared/utils/routes'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 import { sendCodeEmail } from '@features/auth/api-client/sendCodeEmail'
 
+/** @typedef {1 | 2 | 3} MfaSetupStep */
+/** @typedef {{ step: MfaSetupStep, email: string, hasMfaSetup: boolean, totpSecret: string, totpUri: string, copied: boolean }} MfaSetupState */
+
+/** @type {MfaSetupState} */
 const INITIAL_STATE = {
   step: 1,
   email: 'your email',
@@ -19,6 +24,7 @@ const INITIAL_STATE = {
   copied: false,
 }
 
+/** @param {MfaSetupState} state */
 function reducer(state, action) {
   switch (action.type) {
     case 'bootstrap_loaded':
@@ -60,7 +66,7 @@ export function useMfaSetupFlow() {
     queryKey: ['auth', 'bootstrap', 'mfa-setup'],
     queryFn: async () => {
       const response = await apiFetch('/api/auth/bootstrap')
-      return response.ok ? response.json() : null
+      return response.ok ? readJson(response, null) : null
     },
     retry: false,
   })
@@ -77,11 +83,7 @@ export function useMfaSetupFlow() {
 
   const totpSetupQuery = useQuery({
     queryKey: ['auth', 'totp-setup', 'mfa-screen'],
-    queryFn: async () => {
-      const response = await apiFetch('/api/auth/totp/setup')
-      if (!response.ok) throw new Error('Could not load setup')
-      return response.json()
-    },
+    queryFn: () => apiJson('/api/auth/totp/setup', {}, { retryOnUnauthorized: false }),
     enabled: state.step === 2 && !state.hasMfaSetup,
     retry: false,
   })
@@ -100,20 +102,15 @@ export function useMfaSetupFlow() {
   })
 
   const verifyOtpMutation = useMutation({
-    mutationFn: async (digits) => {
-      const response = await fetch('/api/auth/verify-code', jsonRequest({ email: state.email, code: digits.join('') }, { method: 'POST' }))
-      if (!response.ok) throw new Error('Incorrect code')
-      return response
-    },
+    mutationFn: (digits) =>
+      apiJson('/api/auth/verify-code', jsonRequest({ email: state.email, code: digits.join('') }, { method: 'POST' }), { retryOnUnauthorized: false }),
   })
 
   const verifyTotpMutation = useMutation({
     mutationFn: async (digits) => {
       const code = digits.join('')
       if (!state.totpSecret) throw new Error('Missing secret')
-      const response = await apiFetch('/api/auth/totp/setup', jsonRequest({ code, secret: state.totpSecret }, { method: 'POST' }))
-      if (!response.ok) throw new Error('Incorrect code')
-      return response
+      return apiJson('/api/auth/totp/setup', jsonRequest({ code, secret: state.totpSecret }, { method: 'POST' }), { retryOnUnauthorized: false })
     },
   })
 

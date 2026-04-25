@@ -5,11 +5,22 @@ import { cn } from '@shared/utils/cn'
 const FOCUSABLE_SELECTOR =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
 
-export function Modal({ open, onClose, title, children, footer, dialogClassName = '' }) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  dialogClassName = '',
+  ariaLabel,
+  labelledBy,
+  describedBy,
+}) {
   const dialogRef = useRef(null)
   const triggerRef = useRef(null)
   const titleId = useId()
   const [portalNode, setPortalNode] = useState(null)
+  const resolvedLabelledBy = ariaLabel ? undefined : labelledBy ?? (title ? titleId : undefined)
 
   useEffect(() => {
     if (typeof document === 'undefined') return undefined
@@ -100,7 +111,9 @@ export function Modal({ open, onClose, title, children, footer, dialogClassName 
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? titleId : undefined}
+        aria-label={ariaLabel}
+        aria-labelledby={resolvedLabelledBy}
+        aria-describedby={describedBy}
         className={cn('w-full max-w-[28rem] rounded-[var(--r2)] border border-rule-em bg-card', dialogClassName)}
         onClick={(e) => e.stopPropagation()}
       >

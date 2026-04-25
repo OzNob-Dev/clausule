@@ -110,7 +110,7 @@ export default function Entries() {
               </div>
 
               {results.map(({ emp, entries, pattern }) => (
-                <div key={emp.name} className="mb-6 border-t border-border pt-4">
+                <div key={emp.id} className="mb-6 border-t border-border pt-4">
                   {/* Person header */}
                   <div className="flex items-center gap-3 mb-3">
                     <Avatar

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { formatCardNumber, formatExpiry } from '@features/signup/utils/signupFormatting'
 import { useSubscriptionStore } from '@features/signup/store/useSubscriptionStore'
-import { jsonRequest } from '@shared/utils/api'
+import { apiJson, jsonRequest } from '@shared/utils/api'
 import { BackBtn, CtaBtn } from './SignupButtons'
 import { FieldInput, FieldLabel } from './SignupFormField'
 import { ArrowIcon } from './SignupIcons'
@@ -20,19 +20,14 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
   const save = () => ({ cardName, cardNum, expiry, cvc })
 
   const registerMutation = useMutation({
-    mutationFn: async (plan) => {
-      const response = await fetch('/api/auth/register', jsonRequest({
+    mutationFn: (plan) =>
+      apiJson('/api/auth/register', jsonRequest({
         email: accountData.email,
         firstName: accountData.firstName,
         lastName: accountData.lastName,
         verificationToken: accountData.emailVerificationToken,
         subscription: { amountCents: plan.amountCents, currency: plan.currency, interval: plan.interval },
-      }, { method: 'POST', credentials: 'same-origin' }))
-
-      const json = await response.json()
-      if (!response.ok) throw new Error(json.error ?? 'Registration failed — please try again.')
-      return json
-    },
+      }, { method: 'POST' }), { retryOnUnauthorized: false }),
   })
 
   // Keep the mocked payment step isolated until a Stripe Elements flow is wired in.
@@ -88,13 +83,13 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
           />
           <div className="su-card-icons">
             <div className="su-card-icon">
-              <svg viewBox="0 0 30 20" fill="none" style={{ width: 18, height: 12 }}>
+              <svg viewBox="0 0 30 20" fill="none" width="18" height="12">
                 <rect width="30" height="20" rx="2" fill="#1A1FAC" />
                 <text x="4" y="14" fontFamily="Arial" fontSize="9" fontWeight="900" fill="white">VISA</text>
               </svg>
             </div>
             <div className="su-card-icon">
-              <svg viewBox="0 0 30 20" style={{ width: 18, height: 12 }}>
+              <svg viewBox="0 0 30 20" width="18" height="12">
                 <circle cx="11" cy="10" r="7" fill="#EB001B" />
                 <circle cx="19" cy="10" r="7" fill="#F79E1B" />
                 <path d="M15 5a7 7 0 0 1 0 10 7 7 0 0 1 0-10z" fill="#FF5F00" />
@@ -130,7 +125,7 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
       </div>
 
       <div className="su-secure-note">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 13, height: 13, flexShrink: 0 }}>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-[13px] w-[13px] shrink-0">
           <rect x="3" y="7" width="10" height="8" rx="1.5" />
           <path d="M5 7V5a3 3 0 0 1 6 0v2" />
         </svg>

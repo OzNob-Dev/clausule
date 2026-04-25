@@ -26,4 +26,22 @@ describe('DeleteAccountSection', () => {
     expect(screen.getByLabelText('SMS')).toBeChecked()
     expect(screen.getByLabelText('Monthly')).toBeChecked()
   })
+
+  it('renders a named confirmation dialog when deletion is open', () => {
+    render(
+      <DeleteAccountSection
+        confirmReady={false}
+        deleteConfirmText=""
+        deleteModal
+        onCancelDelete={vi.fn()}
+        onChangeConfirmText={vi.fn()}
+        onCloseModal={vi.fn()}
+        onConfirmDelete={vi.fn()}
+        onOpenDelete={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('dialog', { name: /delete your account/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/type delete to confirm/i)).toBeInTheDocument()
+  })
 })

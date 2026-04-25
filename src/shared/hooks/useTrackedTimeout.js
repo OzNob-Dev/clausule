@@ -1,17 +1,20 @@
 import { useCallback, useEffect, useRef } from 'react'
 
 export function useTrackedTimeout() {
-  const timeoutRefs = useRef([])
+  const timeoutRefs = useRef(new Set())
 
   const scheduleTimeout = useCallback((fn, delay) => {
-    const id = setTimeout(fn, delay)
-    timeoutRefs.current.push(id)
+    const id = setTimeout(() => {
+      timeoutRefs.current.delete(id)
+      fn()
+    }, delay)
+    timeoutRefs.current.add(id)
     return id
   }, [])
 
   useEffect(() => () => {
-    timeoutRefs.current.forEach(clearTimeout)
-    timeoutRefs.current = []
+    timeoutRefs.current.forEach((id) => clearTimeout(id))
+    timeoutRefs.current.clear()
   }, [])
 
   return scheduleTimeout

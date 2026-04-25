@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { apiFetch } from './api'
+import { apiFetch, apiJson, readJson } from './api'
 
 describe('apiFetch', () => {
   beforeEach(() => {
@@ -36,5 +36,23 @@ describe('apiFetch', () => {
 
     expect(res.status).toBe(401)
     expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('returns parsed json with a fallback when the body is empty', async () => {
+    const result = await readJson(new Response(null, { status: 204 }), { ok: true })
+
+    expect(result).toEqual({ ok: true })
+  })
+
+  it('throws the server error message for failed json requests', async () => {
+    fetch.mockResolvedValueOnce(new Response(JSON.stringify({ error: 'No thanks' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    }))
+
+    await expect(apiJson('/api/private')).rejects.toMatchObject({
+      message: 'No thanks',
+      status: 400,
+    })
   })
 })

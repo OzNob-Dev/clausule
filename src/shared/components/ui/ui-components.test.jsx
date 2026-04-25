@@ -28,6 +28,12 @@ describe('UI components', () => {
     expect(screen.getByLabelText('Demo verification email')).toBeInTheDocument()
   })
 
+  it('reveals email code digits when requested', () => {
+    render(<CodeEmail to="ada@example.com" code="123456" revealed />)
+
+    expect(screen.getByLabelText('Verification code sent to your email')).toHaveTextContent('123456')
+  })
+
   it('handles category dot interactions', () => {
     const onClick = vi.fn()
 

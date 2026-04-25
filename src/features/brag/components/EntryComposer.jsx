@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import { apiJson, jsonRequest } from '@shared/utils/api'
 import { AttachedFileList, EvidenceTypeGroup, FileDropzone } from './EntryComposerParts'
 
 export default function EntryComposer({ onSave, onClose }) {
@@ -12,23 +13,14 @@ export default function EntryComposer({ onSave, onClose }) {
   const fileInputRef              = useRef(null)
 
   const saveEntryMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/brag/entries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({
+    mutationFn: () =>
+      apiJson('/api/brag/entries', jsonRequest({
           title: title.trim(),
           body: body.trim(),
           entry_date: new Date().toISOString().slice(0, 10),
           evidence_types: [...evTypes],
           visible_to_manager: true,
-        }),
-      })
-
-      if (!response.ok) throw new Error('Save failed')
-      return response.json()
-    },
+        }, { method: 'POST' })),
   })
 
   const toggleEvType = (type) => {
@@ -74,7 +66,14 @@ export default function EntryComposer({ onSave, onClose }) {
 
   return (
     <div className="be-composer-stage">
-      <div className="be-composer" role="form" aria-label="Add a new entry">
+      <form
+        className="be-composer"
+        aria-label="Add a new entry"
+        onSubmit={(event) => {
+          event.preventDefault()
+          void handleSave()
+        }}
+      >
         <input
           type="text"
           className="be-comp-title"
@@ -103,13 +102,13 @@ export default function EntryComposer({ onSave, onClose }) {
           <div />
           <div className="be-comp-btns">
             <button type="button" onClick={onClose} className="be-comp-cancel" disabled={saving}>Cancel</button>
-            <button type="button" onClick={handleSave} className="be-comp-save" disabled={saving || !title.trim()}>
+            <button type="submit" className="be-comp-save" disabled={saving || !title.trim()}>
               {saving ? 'Saving...' : 'Save entry'}
             </button>
           </div>
         </div>
         {error && <p className="be-comp-error" role="alert">{error}</p>}
-      </div>
+      </form>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BragEmployeeScreen from './BragEmployeeScreen'
 
@@ -65,8 +66,33 @@ describe('BragEmployeeScreen', () => {
 
     expect(screen.getByText('Newest win')).toBeInTheDocument()
     expect(screen.getByText('Older win')).toBeInTheDocument()
-    expect(container.querySelectorAll('.be-entry-card')[0]).toHaveTextContent('Older win')
+    expect(container.querySelectorAll('.be-entry-card')[0]).toHaveTextContent('Newest win')
     expect(screen.queryByRole('heading', { name: /you've done great things/i })).not.toBeInTheDocument()
+  })
+
+  it('supports arrow key tab navigation when entries are present', async () => {
+    const user = userEvent.setup()
+
+    render(<BragEmployeeScreen initialEntries={[{
+      id: 'new',
+      title: 'Newest win',
+      body: 'A fresh result.',
+      entry_date: '2025-12-01',
+      created_at: '2025-12-01T01:00:00Z',
+      strength: 'Solid',
+      strength_hint: 'Add a third evidence type to reach Strong',
+      brag_entry_evidence: [{ type: 'Metrics / data' }],
+    }]} />)
+
+    const bragTab = screen.getByRole('tab', { name: /brag doc/i })
+    const resumeTab = screen.getByRole('tab', { name: /resume/i })
+
+    bragTab.focus()
+    await user.keyboard('{ArrowRight}')
+
+    expect(resumeTab).toHaveFocus()
+    expect(resumeTab).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tabpanel', { name: /resume/i })).toBeVisible()
   })
 
   it('opens the composer from the empty state', async () => {

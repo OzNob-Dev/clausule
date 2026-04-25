@@ -25,8 +25,8 @@ export const ALL_EMP = [
 ]
 
 export const FLAGGED_EMPLOYEES = [
-  { name: "Marcus O'Brien", role: 'Engineer I',  team: 'Platform', reason: '4 conduct notes + 2 escalations in 60d', days: 60, risk: 'High' },
-  { name: 'Sophie Okafor',  role: 'Engineer II', team: 'Security', reason: '3 weeks at Needs work + 1 escalation',   days: 21, risk: 'High' },
+  { id: 'flagged-mo', name: "Marcus O'Brien", role: 'Engineer I',  team: 'Platform', reason: '4 conduct notes + 2 escalations in 60d', days: 60, risk: 'High' },
+  { id: 'flagged-so', name: 'Sophie Okafor',  role: 'Engineer II', team: 'Security', reason: '3 weeks at Needs work + 1 escalation',   days: 21, risk: 'High' },
 ]
 
 export const SAMPLE_ENTRIES = [

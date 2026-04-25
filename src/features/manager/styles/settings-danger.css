@@ -350,11 +350,6 @@
   .st-reminder-grid,
   .st-frequency-grid { grid-template-columns: 1fr; }
 
-  .st-flagged-table { overflow-x: auto; }
-
-  .st-flagged-header,
-  .st-flagged-row { min-width: 480px; }
-
   .st-reminder-summary { width: fit-content; }
   .st-btn-delete-account { width: 100%; text-align: center; }
 }

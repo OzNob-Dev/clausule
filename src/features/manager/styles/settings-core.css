@@ -330,19 +330,24 @@
   margin-bottom: 14px;
 }
 
-.st-flagged-table {
+.st-flagged-table-wrap {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r2);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
-.st-flagged-header {
-  display: grid;
-  grid-template-columns: 1fr 120px 90px 80px;
-  padding: 10px 20px;
-  border-bottom: 1px solid var(--border);
+.st-flagged-table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
+
+.st-flagged-col-reason { width: 120px; }
+.st-flagged-col-days { width: 90px; }
+.st-flagged-col-risk { width: 80px; }
 
 .st-flagged-hcell {
   font-size: 10px;
@@ -350,17 +355,27 @@
   color: var(--tx-4);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  padding: 10px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
 }
 
 .st-flagged-row {
-  display: grid;
-  grid-template-columns: 1fr 120px 90px 80px;
-  align-items: center;
-  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
 }
 
 .st-flagged-row:last-child { border-bottom: none; }
+
+.st-flagged-person,
+.st-flagged-cell {
+  padding: 14px 20px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.st-flagged-person {
+  font-weight: 400;
+}
 
 .st-flagged-name {
   font-size: 14px;
@@ -388,4 +403,3 @@
   background: var(--red-bg);
   color: var(--red);
 }
-

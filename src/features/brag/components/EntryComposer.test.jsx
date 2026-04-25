@@ -54,4 +54,10 @@ describe('EntryComposer', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent(/could not save/i)
   })
+
+  it('uses a native button to trigger evidence upload', () => {
+    renderWithQueryClient(<EntryComposer onSave={vi.fn()} onClose={vi.fn()} />)
+
+    expect(screen.getByRole('button', { name: /drop files here or click to browse/i })).toBeInTheDocument()
+  })
 })

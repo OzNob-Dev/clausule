@@ -7,11 +7,7 @@ const QRCodeSVG = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div
-        style={{ width: 148, height: 148, background: 'rgba(180,140,110,0.08)', borderRadius: 8 }}
-        role="img"
-        aria-label="Loading QR code"
-      />
+      <div className="tsb-qr-loading" role="img" aria-label="Loading QR code" />
     ),
   }
 )

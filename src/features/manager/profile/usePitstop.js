@@ -5,12 +5,11 @@ export function usePitstop(pageKey, initial = 'g') {
   const [value, setValue] = useState(initial)
   const [saved, setSaved]         = useState(false)
   const savedTimerRef = useRef(null)
-  const unmountedRef  = useRef(false)
 
   useEffect(() => {
     setValue(storage.getPitstop(pageKey) || initial)
+    setSaved(false)
     return () => {
-      unmountedRef.current = true
       if (savedTimerRef.current) clearTimeout(savedTimerRef.current)
     }
   }, [initial, pageKey])
@@ -21,7 +20,7 @@ export function usePitstop(pageKey, initial = 'g') {
     setSaved(true)
     if (savedTimerRef.current) clearTimeout(savedTimerRef.current)
     savedTimerRef.current = setTimeout(() => {
-      if (!unmountedRef.current) setSaved(false)
+      setSaved(false)
     }, 2200)
   }
 

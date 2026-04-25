@@ -47,17 +47,21 @@ export interface BragEntry {
 export interface SavedBragEntry {
   entry: BragEntry
   evidenceTypes: string[]
-  files: Array<{ name: string }>
+  files: Array<{ id: string, name: string, size: number, type: string }>
 }
 
 export interface FeedbackReply {
   id: string
+  author_name?: string | null
   body: string
+  from_team?: boolean
   created_at: string
 }
 
 export interface FeedbackThread {
   id: string
+  category: string
+  feeling: string
   subject: string
   message: string
   created_at: string

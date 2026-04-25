@@ -12,6 +12,7 @@
 - Use native `form`, `button`, `input`, `dialog`, `fieldset`, and `legend` elements before reaching for `div` + ARIA stand-ins.
 - Treat custom dialogs as full focus-management work: initial focus, focus trap, `Escape`, inert background, and focus return are required.
 - Custom dialogs should render through the shared `Modal` portal unless there is a compelling reason not to. Feature-local overlays drift on focus, inerting, and scroll locking too easily.
+- If a `Modal` caller passes `title={null}`, it must provide `labelledBy` and `describedBy`, and any confirmation input inside the dialog must still have a real `label`/`htmlFor` association.
 - Treat tabs, switches, OTP inputs, and dropzones as composite widgets that must match APG keyboard behavior, not just visual state.
 - For `role="switch"`, prefer a native `<button type="button" role="switch">` or checkbox. Do not ship clickable `div` switches with hand-rolled key handlers.
 - Avoid `contentEditable` for form-like editing unless there is no practical alternative and the screen-reader and keyboard story is explicitly tested.
@@ -72,6 +73,7 @@ useEffect(() => {
 - Multi-step flows (sign-in, MFA setup) use parallel `step` string + boolean flags. Prefer a discriminated union `type Step = 'email' | 'otp' | 'totp' | ...` when adding new steps so the compiler can narrow state.
 - When a hook manages 5 or more related state variables for a state machine (auth flow, MFA setup, signup), use `useReducer` with a discriminated union action type instead of parallel `useState` calls. This prevents impossible intermediate states (e.g. `loading=true` + `error` set simultaneously) that parallel `useState` cannot prevent.
 - During the JS → TS migration, add JSDoc typedef imports from `src/shared/types/contracts.ts` to reducer-driven hooks and contexts before renaming everything to `.ts`/`.tsx`. This keeps the shared contracts connected to real frontend state machines instead of drifting into unused types.
+- In `// @ts-check` JSX files, type the whole reducer surface, not just state objects: annotate reducer params and returns, provider `children`, and updater callback params inside `useCallback`. `next build` will fail on untyped callback bindings even when the surrounding state typedefs exist.
 - Auto-verify on code completion (e.g. OTP digit fill) is implemented as a `useEffect` watching `digits` and `state`. This is acceptable **only** when the effect has a state guard (`if (code.state !== 'idle') return`) that prevents double-fire. The guard works because verification sets `state` to `'checking'` synchronously before the async call, so the effect exits on re-run. Do not remove these guards.
 - Hooks that compute derived values from state (filtered lists, changed-field sets, display strings) must wrap those computations in `useMemo`. Recomputing inline creates a new reference every render, which breaks `React.memo` bailouts downstream and triggers unnecessary re-renders in any hook subscriber.
 

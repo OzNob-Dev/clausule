@@ -12,6 +12,15 @@ const pillStyles = {
   dev: { pill: 'bg-gb text-gt', dot: 'bg-gt' },
 }
 
+const dotSizeClass = {
+  6: 'h-1.5 w-1.5',
+  8: 'h-2 w-2',
+  10: 'h-2.5 w-2.5',
+  12: 'h-3 w-3',
+  14: 'h-3.5 w-3.5',
+  16: 'h-4 w-4',
+}
+
 export function CategoryPill({ cat, showDot = false, className = '' }) {
   const cfg = catConfig[cat] || catConfig.perf
   return (
@@ -24,8 +33,10 @@ export function CategoryPill({ cat, showDot = false, className = '' }) {
 
 export function CategoryDot({ cat, size = 8, className = '', onClick }) {
   const cfg = catConfig[cat] || catConfig.perf
+  const sizeClass = dotSizeClass[size] ?? dotSizeClass[8]
   const dot = cn(
     'inline-flex shrink-0 rounded-full border border-transparent',
+    sizeClass,
     pillStyles[cfg.mod].dot,
     onClick && 'cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-acc-text focus-visible:outline-offset-2',
     className
@@ -35,12 +46,11 @@ export function CategoryDot({ cat, size = 8, className = '', onClick }) {
     <button
       type="button"
       className={dot}
-      style={{ width: `${size}px`, height: `${size}px` }}
       onClick={onClick}
       title={`Filter by ${cfg.label}`}
       aria-label={`Filter by ${cfg.label}`}
     />
   ) : (
-    <span className={dot} style={{ width: `${size}px`, height: `${size}px` }} title={cfg.label} aria-hidden="true" />
+    <span className={dot} title={cfg.label} aria-hidden="true" />
   )
 }

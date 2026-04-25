@@ -1,8 +1,9 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
 const refresh = vi.fn()
 const updateUser = vi.fn()
@@ -41,7 +42,7 @@ describe('ProfileScreen', () => {
     const { default: ProfileScreen } = await import('./ProfileScreen')
     const user = userEvent.setup()
 
-    render(<ProfileScreen />)
+    renderWithQueryClient(<ProfileScreen />)
 
     await user.clear(screen.getByLabelText('Email'))
     await user.type(screen.getByLabelText('Email'), 'ada@new.example.com')
@@ -58,7 +59,7 @@ describe('ProfileScreen', () => {
   it('shows the brag rail with profile selected', async () => {
     const { default: ProfileScreen } = await import('./ProfileScreen')
 
-    render(<ProfileScreen />)
+    renderWithQueryClient(<ProfileScreen />)
 
     const profileLink = screen.getByRole('link', { name: /profile/i })
     expect(profileLink).toHaveAttribute('href', '/profile')

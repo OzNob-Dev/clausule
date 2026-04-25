@@ -2,10 +2,10 @@
 
 import { useEffect, useReducer } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { SsoProviderIcon } from '@shared/components/SsoProviderIcon'
-import { jsonRequest } from '@shared/utils/api'
+import { apiJson, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
-import { getActiveSsoProviders, ssoAuthPath, ssoConfigFromEnv } from '@shared/utils/sso'
+import { getActiveSsoProviders, ssoConfigFromEnv } from '@shared/utils/sso'
+import { SsoProviderButton } from '@features/auth/components/SsoProviderButton'
 import { CtaBtn } from './SignupButtons'
 import { FieldInput, FieldLabel } from './SignupFormField'
 import { ArrowIcon } from './SignupIcons'
@@ -77,14 +77,6 @@ function reducer(state, action) {
   }
 }
 
-function SsoArrow() {
-  return (
-    <span className="su-sso-arrow">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><polyline points="6 4 10 8 6 12"/></svg>
-    </span>
-  )
-}
-
 export default function SignupStepAccount({ emailLocked = false, hideSso = false, initialData, onNext }) {
   const [state, dispatch] = useReducer(reducer, initialData, createState)
   const activeSsoProviders = hideSso ? [] : getActiveSsoProviders(ssoConfigFromEnv)
@@ -104,19 +96,13 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
   }, [initialData.email])
 
   const sendCodeMutation = useMutation({
-    mutationFn: async (email) => {
-      const response = await fetch('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }))
-      const json = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(json.error ?? 'Failed to send verification code')
-      return json
-    },
+    mutationFn: (email) => apiJson('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }), { retryOnUnauthorized: false }),
   })
 
   const verifyEmailMutation = useMutation({
     mutationFn: async ({ email, code }) => {
-      const response = await fetch('/api/auth/signup/verify-email', jsonRequest({ email, code }, { method: 'POST' }))
-      const json = await response.json().catch(() => ({}))
-      if (!response.ok || !json.verificationToken) throw new Error(json.error ?? 'Failed to verify email')
+      const json = await apiJson('/api/auth/signup/verify-email', jsonRequest({ email, code }, { method: 'POST' }), { retryOnUnauthorized: false })
+      if (!json.verificationToken) throw new Error('Failed to verify email')
       return json.verificationToken
     },
   })
@@ -210,13 +196,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
       {hasSso && (
         <>
           {activeSsoProviders.map((provider) => (
-            <button key={provider.id} type="button" className="su-sso-provider" onClick={() => { window.location.href = ssoAuthPath(provider.id) }}>
-              <span className="su-sso-logo">
-                <SsoProviderIcon provider={provider.id} />
-              </span>
-              <span className="su-sso-label">{provider.ctaLabel}</span>
-              <SsoArrow />
-            </button>
+            <SsoProviderButton key={provider.id} provider={provider} />
           ))}
 
           <div className="su-sso-divider">

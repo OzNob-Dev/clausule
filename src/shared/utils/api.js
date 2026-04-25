@@ -19,6 +19,24 @@ export async function apiFetch(input, init = {}, options = {}) {
   return fetch(input, requestInit)
 }
 
+export async function readJson(response, fallback = {}) {
+  return response.json().catch(() => fallback)
+}
+
+export async function apiJson(input, init = {}, options = {}) {
+  const response = await apiFetch(input, init, options)
+  const data = await readJson(response, {})
+
+  if (!response.ok) {
+    const error = new Error(data.error ?? 'API request failed')
+    error.status = response.status
+    error.data = data
+    throw error
+  }
+
+  return data
+}
+
 export function jsonRequest(body, init = {}) {
   return {
     ...init,
@@ -34,9 +52,6 @@ export function jsonRequest(body, init = {}) {
  * @returns {Promise<string>} summary text
  */
 export async function draftSummary(employeeName, entries) {
-  const res = await apiFetch('/api/ai/draft-summary', jsonRequest({ employeeName, entries }, { method: 'POST' }))
-
-  if (!res.ok) throw new Error('API request failed')
-  const data = await res.json()
+  const data = await apiJson('/api/ai/draft-summary', jsonRequest({ employeeName, entries }, { method: 'POST' }))
   return data.text
 }

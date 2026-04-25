@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { fieldClass, areaClass } from '@shared/constants/classNames'
+import { apiJson, jsonRequest } from '@shared/utils/api'
 
 const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Other']
 const FEELINGS = ['Love it', 'Confusing', 'Blocked', 'Just noting']
@@ -19,22 +20,14 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
 
   const sendFeedbackMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({
+      const data = await apiJson('/api/feedback', jsonRequest({
           category,
           feeling,
           subject: subject.trim(),
           message: message.trim(),
           improvement: improvement.trim(),
           contactOk,
-        }),
-      })
-
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error('Send failed')
+        }, { method: 'POST' }))
       return data.feedback
     },
   })
@@ -98,7 +91,14 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
         </div>
       ) : (
         <>
-          <div className="be-feedback-form" role="form" aria-label="Send app feedback">
+          <form
+            className="be-feedback-form"
+            aria-label="Send app feedback"
+            onSubmit={(event) => {
+              event.preventDefault()
+              void handleSend()
+            }}
+          >
             <div className="be-feedback-head">
               <p className="be-feedback-eyebrow">Product feedback</p>
               <h2>Tell the Clausule team what would make this better.</h2>
@@ -142,12 +142,12 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
               <p>Sent privately to the app owners. This will not appear in your brag doc.</p>
               <div className="be-feedback-actions">
                 <button type="button" className="be-comp-cancel" onClick={onClose}>Cancel</button>
-                <button type="button" className="be-comp-save" onClick={handleSend} disabled={!canSend}>Send feedback</button>
+                <button type="submit" className="be-comp-save" disabled={!canSend}>Send feedback</button>
               </div>
             </div>
 
             {error && <p className="be-comp-error" role="alert">{error}</p>}
-          </div>
+          </form>
         </>
       )}
     </div>
