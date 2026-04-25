@@ -21,6 +21,7 @@
 - Fail clearly when required config is missing.
 - Do not leak secret values in logs or client code.
 - Prefer feature flags for product toggles, not env hacks.
+- Treat `NEXT_PUBLIC_RP_ID` and `NEXT_PUBLIC_ORIGIN` as required production config for WebAuthn; only local/test flows may derive them from the request.
 
 ## Review Triggers
 

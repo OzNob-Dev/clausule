@@ -197,6 +197,42 @@ describe('createSubscription', () => {
     )
   })
 
+  it('fails safely before Stripe side effects when subscription preflight lookup fails', async () => {
+    createUser.mockResolvedValueOnce({ data: { user: { id: 'user-10' } }, error: null })
+    rpc.mockImplementationOnce(async () => startedOperation())
+    hasActiveSubscription.mockResolvedValueOnce({ hasPaid: false, error: { message: 'db down' } })
+
+    await expect(createSubscription({
+      body: { paymentMethodId: 'pm_2', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace', verificationToken: 'token' },
+      authedId: null,
+    })).rejects.toMatchObject({
+      message: 'Failed to save subscription',
+      status: 500,
+      log: ['[subscribe] subscription lookup error:', { message: 'db down' }],
+    })
+
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  it('refuses to reuse a soft-deleted account in the unauthenticated subscribe flow', async () => {
+    rpc.mockImplementationOnce(async () => startedOperation())
+    findProfileByEmail.mockResolvedValueOnce({
+      profile: { id: 'user-deleted', totp_secret: null, is_deleted: true },
+      error: null,
+    })
+
+    await expect(createSubscription({
+      body: { paymentMethodId: 'pm_3', email: 'Ada@Example.com', firstName: 'Ada', lastName: 'Lovelace', verificationToken: 'token' },
+      authedId: null,
+    })).rejects.toMatchObject({
+      message: 'Account unavailable - contact support',
+      status: 403,
+    })
+
+    expect(global.fetch).not.toHaveBeenCalled()
+    expect(createUser).not.toHaveBeenCalled()
+  })
+
   it('reuses a completed subscribe operation without creating new Stripe objects', async () => {
     rpc.mockImplementationOnce(async () => completedOperation())
 

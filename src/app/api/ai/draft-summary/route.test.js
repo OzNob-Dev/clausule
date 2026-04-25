@@ -56,4 +56,31 @@ describe('draft summary route', () => {
     expect(payload.messages[0].content).not.toContain('x'.repeat(1001))
     expect(payload.messages[0].content).not.toContain('y'.repeat(1001))
   })
+
+  it('logs sanitized provider failures without echoing note content', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
+      type: 'error',
+      error: {
+        type: 'invalid_request_error',
+        message: 'Model rejected note: highly sensitive employee detail',
+      },
+    }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    }))
+
+    const response = await POST(request({
+      entries: [{ cat: 'perf', title: 'Sensitive title', body: 'Highly sensitive employee detail' }],
+    }))
+    const data = await response.json()
+
+    expect(response.status).toBe(502)
+    expect(data).toEqual({ error: 'AI request failed' })
+    expect(errorSpy).toHaveBeenCalledWith('[draft-summary] Anthropic error:', {
+      status: 400,
+      type: 'error',
+      code: 'invalid_request_error',
+    })
+  })
 })

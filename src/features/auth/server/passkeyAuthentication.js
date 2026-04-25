@@ -167,6 +167,20 @@ function credentialIdFromAssertion(credential) {
   return String(credential?.rawId ?? credential?.id ?? '').trim()
 }
 
+function passkeyRequestConfig(request, context) {
+  try {
+    return {
+      rpId: getRpId(request),
+      expectedOrigin: getExpectedOrigin(request),
+    }
+  } catch (error) {
+    return {
+      error,
+      log: [`[${context}] WebAuthn config error:`, error?.message ?? error],
+    }
+  }
+}
+
 async function resolvePasskeyAccount(credentialId) {
   const query = new URLSearchParams({
     credential_id: `eq.${credentialId}`,
@@ -203,6 +217,14 @@ async function markCurrentPasskey({ passkeyId, userId, previousCount, nextCount 
 }
 
 export async function createPasskeyAuthenticationOptions({ request }) {
+  const config = passkeyRequestConfig(request, 'passkeys/auth/options')
+  if (config.error) {
+    return {
+      log: config.log,
+      ...jsonError('Passkey configuration is incomplete', 500),
+    }
+  }
+
   const challengeBytes = crypto.randomBytes(32)
   const signedChallenge = signChallenge(challengeBytes)
   const expiresAt = new Date(Date.now() + getChallengeTtlMs()).toISOString()
@@ -219,7 +241,7 @@ export async function createPasskeyAuthenticationOptions({ request }) {
     body: {
       options: {
         challenge: challengeBytes.toString('base64url'),
-        rpId: getRpId(request),
+        rpId: config.rpId,
         timeout: 60_000,
         userVerification: 'required',
         allowCredentials: [],
@@ -231,6 +253,14 @@ export async function createPasskeyAuthenticationOptions({ request }) {
 }
 
 export async function verifyPasskeyAuthentication({ request, body }) {
+  const config = passkeyRequestConfig(request, 'passkeys/auth/verify')
+  if (config.error) {
+    return {
+      log: config.log,
+      ...jsonError('Passkey configuration is incomplete', 500),
+    }
+  }
+
   const { credential, _signedChallenge } = body
   if (!credential || !_signedChallenge) return jsonError('credential and _signedChallenge required')
 
@@ -271,9 +301,9 @@ export async function verifyPasskeyAuthentication({ request, body }) {
 
   if (clientData.type !== 'webauthn.get') return jsonError('Unexpected clientData type')
   if (clientData.challenge !== expectedChallenge) return jsonError('Challenge in clientDataJSON does not match')
-  if (clientData.origin !== getExpectedOrigin(request)) return jsonError('Origin mismatch')
+  if (clientData.origin !== config.expectedOrigin) return jsonError('Origin mismatch')
 
-  const expectedRpIdHash = crypto.createHash('sha256').update(getRpId(request)).digest()
+  const expectedRpIdHash = crypto.createHash('sha256').update(config.rpId).digest()
   const rpIdHash = authenticatorData.subarray(0, 32)
   if (rpIdHash.length !== expectedRpIdHash.length || !crypto.timingSafeEqual(rpIdHash, expectedRpIdHash)) {
     return jsonError('RP ID hash mismatch')

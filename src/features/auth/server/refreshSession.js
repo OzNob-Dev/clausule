@@ -39,7 +39,15 @@ export async function rotateRefreshSession(rawToken) {
     return { clearCookies: true, body: { error: 'Refresh token expired — please sign in again' }, status: 401 }
   }
 
-  const { profile } = await findProfileById(row.user_id, 'id,email,role,is_active,is_deleted')
+  const { profile, error: profileError } = await findProfileById(row.user_id, 'id,email,role,is_active,is_deleted')
+  if (profileError) {
+    return {
+      clearCookies: true,
+      log: ['error', '[refresh] profile lookup error:', profileError],
+      body: { error: 'Failed to rotate session' },
+      status: 500,
+    }
+  }
   if (!profile || profile.is_deleted) {
     await del('refresh_tokens', `user_id=eq.${row.user_id}`)
     return { clearCookies: true, body: { error: 'User not found' }, status: 401 }
@@ -47,7 +55,15 @@ export async function rotateRefreshSession(rawToken) {
 
   // Use the same accountActive(profile, hasPaid) predicate as session-mint paths.
   if (!profile.is_active) {
-    const { hasPaid } = await hasActiveSubscription(row.user_id)
+    const { hasPaid, error: subscriptionError } = await hasActiveSubscription(row.user_id)
+    if (subscriptionError) {
+      return {
+        clearCookies: true,
+        log: ['error', '[refresh] subscription lookup error:', subscriptionError],
+        body: { error: 'Failed to rotate session' },
+        status: 500,
+      }
+    }
     if (!hasPaid) {
       await del('refresh_tokens', `user_id=eq.${row.user_id}`)
       return { clearCookies: true, body: { error: 'User not found' }, status: 401 }

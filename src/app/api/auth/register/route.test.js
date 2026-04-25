@@ -220,6 +220,17 @@ describe('register route', () => {
     expect(createPersistentSession).not.toHaveBeenCalled()
   })
 
+  it('refuses to reuse a soft-deleted existing account', async () => {
+    select.mockResolvedValueOnce({ data: [{ id: 'user-deleted', totp_secret: null, is_deleted: true }] })
+
+    const response = await POST(registerRequest())
+    const data = await response.json()
+
+    expect(response.status).toBe(403)
+    expect(data).toEqual({ error: 'Account unavailable - contact support' })
+    expect(createPersistentSession).not.toHaveBeenCalled()
+  })
+
   it('replays a completed registration after session creation fails once', async () => {
     select.mockResolvedValueOnce({ data: [{ id: 'user-8', role: 'employee' }] })
     createPersistentSession

@@ -8,6 +8,35 @@ function challengeSecret() {
   return secret
 }
 
+function requestHost(request) {
+  const forwardedHost = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim()
+  return forwardedHost || request.headers.get('host') || 'localhost'
+}
+
+function requestHostName(request) {
+  return requestHost(request).split(':')[0]
+}
+
+function requestProtocol(request) {
+  const forwardedProto = request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim()
+  if (forwardedProto) return forwardedProto
+
+  try {
+    return new URL(request.url).protocol.replace(':', '')
+  } catch {
+    return 'https'
+  }
+}
+
+function localHost(hostname) {
+  return /^(localhost|127\.|0\.0\.0\.0)/.test(hostname)
+}
+
+function allowRequestDerivedOrigin(request) {
+  const hostname = requestHostName(request)
+  return process.env.NODE_ENV !== 'production' || localHost(hostname)
+}
+
 export function getRpName() {
   return process.env.NEXT_PUBLIC_RP_NAME ?? 'Clausule'
 }
@@ -18,15 +47,14 @@ export function getChallengeTtlMs() {
 
 export function getRpId(request) {
   if (process.env.NEXT_PUBLIC_RP_ID) return process.env.NEXT_PUBLIC_RP_ID
-  const host = request.headers.get('host') ?? 'localhost'
-  return host.split(':')[0]
+  if (allowRequestDerivedOrigin(request)) return requestHostName(request)
+  throw new Error('NEXT_PUBLIC_RP_ID must be configured for WebAuthn in production')
 }
 
 export function getExpectedOrigin(request) {
   if (process.env.NEXT_PUBLIC_ORIGIN) return process.env.NEXT_PUBLIC_ORIGIN
-  const host = request.headers.get('host') ?? 'localhost:3000'
-  const proto = /^(localhost|127\.|0\.0\.0\.0)/.test(host) ? 'http' : 'https'
-  return `${proto}://${host}`
+  if (allowRequestDerivedOrigin(request)) return `${requestProtocol(request)}://${requestHost(request)}`
+  throw new Error('NEXT_PUBLIC_ORIGIN must be configured for WebAuthn in production')
 }
 
 export function signChallenge(challengeBytes) {

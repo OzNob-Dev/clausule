@@ -103,7 +103,15 @@ function parseAttestationObject(encoded) {
 }
 
 export async function createPasskeyRegistrationOptions({ request, userId }) {
-  const rpId = getRpId(request)
+  let rpId
+  try {
+    rpId = getRpId(request)
+  } catch (error) {
+    return {
+      log: ['[passkeys/register/options] WebAuthn config error:', error?.message ?? error],
+      ...jsonError('Passkey configuration is incomplete', 500),
+    }
+  }
   const { profile } = await findProfileById(userId, 'email,first_name,last_name')
 
   if (!profile) return jsonError('User profile not found', 404)
@@ -155,8 +163,17 @@ export async function createPasskeyRegistrationOptions({ request, userId }) {
 }
 
 export async function verifyPasskeyRegistration({ request, userId, body }) {
-  const rpId = getRpId(request)
-  const expectedOrigin = getExpectedOrigin(request)
+  let rpId
+  let expectedOrigin
+  try {
+    rpId = getRpId(request)
+    expectedOrigin = getExpectedOrigin(request)
+  } catch (error) {
+    return {
+      log: ['[passkeys/register/verify] WebAuthn config error:', error?.message ?? error],
+      ...jsonError('Passkey configuration is incomplete', 500),
+    }
+  }
   const { credential, _signedChallenge, deviceName, deviceType, method } = body
 
   if (!credential || !_signedChallenge) return jsonError('credential and _signedChallenge required')
@@ -188,7 +205,7 @@ export async function verifyPasskeyRegistration({ request, userId, body }) {
 
   if (clientData.type !== 'webauthn.create') return jsonError('Unexpected clientData type')
   if (clientData.challenge !== expectedChallenge) return jsonError('Challenge in clientDataJSON does not match')
-  if (clientData.origin !== expectedOrigin) return jsonError(`Origin mismatch: got ${clientData.origin}, expected ${expectedOrigin}`)
+  if (clientData.origin !== expectedOrigin) return jsonError('Origin mismatch')
 
   let authData
   try {

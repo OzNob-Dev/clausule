@@ -26,6 +26,10 @@ function isActiveSubscriptionConflict(dbError) {
   )
 }
 
+function isDeletedAccountError(dbError) {
+  return `${dbError?.message ?? ''} ${dbError?.details ?? ''}`.toLowerCase().includes('deleted profiles cannot be reactivated')
+}
+
 async function stripe(path, body = null, method = 'POST', idempotencyKey = null) {
   const res = await fetchWithTimeout(`${STRIPE_API}${path}`, {
     method,
@@ -39,6 +43,10 @@ async function stripe(path, body = null, method = 'POST', idempotencyKey = null)
   const data = await res.json()
   if (!res.ok) throw new Error(data.error?.message ?? `Stripe HTTP ${res.status}`)
   return data
+}
+
+function deletedAccountError() {
+  return Object.assign(new Error('Account unavailable - contact support'), { status: 403 })
 }
 
 async function resolveUserIdentity({ authedId, authEmail, email, firstName, lastName }) {
@@ -55,8 +63,12 @@ async function resolveUserIdentity({ authedId, authEmail, email, firstName, last
     }
   }
 
-  const { profile } = await findProfileByEmail(email, 'id,totp_secret')
+  const { profile, error: profileError } = await findProfileByEmail(email, 'id,totp_secret,is_deleted')
+  if (profileError) {
+    throw Object.assign(new Error('Failed to resolve user'), { status: 500, log: ['[subscribe] profile lookup error:', profileError] })
+  }
   if (profile) {
+    if (profile.is_deleted) throw deletedAccountError()
     // Unauthenticated subscribe path — refuse to mint a session for accounts that
     // require SSO or TOTP, since email-OTP proof alone doesn't satisfy those policies.
     const { provider, error: authErr } = await getUserSsoProvider(profile.id)
@@ -110,7 +122,10 @@ export async function createSubscription({ body, authedId, authEmail = null }) {
   const canonicalLastName = identity.lastName
   const fullName = [canonicalFirstName, canonicalLastName].filter(Boolean).join(' ')
 
-  const { hasPaid } = await hasActiveSubscription(userId)
+  const { hasPaid, error: subscriptionError } = await hasActiveSubscription(userId)
+  if (subscriptionError) {
+    throw Object.assign(new Error('Failed to save subscription'), { status: 500, log: ['[subscribe] subscription lookup error:', subscriptionError] })
+  }
   if (hasPaid) return { body: { error: 'Active subscription already exists' }, status: 409 }
 
   const customer = await stripe('/customers', new URLSearchParams({ email: canonicalEmail, name: fullName }), 'POST', `${operationKey}:customer`)
@@ -157,6 +172,7 @@ export async function createSubscription({ body, authedId, authEmail = null }) {
     if (isActiveSubscriptionConflict(finalizeError)) {
       throw Object.assign(new Error('Active subscription already exists'), { status: 409 })
     }
+    if (isDeletedAccountError(finalizeError)) throw deletedAccountError()
     throw Object.assign(new Error('Failed to save subscription'), { status: 500, log: ['[subscribe] finalize subscription error:', finalizeError] })
   }
 

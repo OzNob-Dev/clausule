@@ -20,6 +20,20 @@ function clean(value) {
   return String(value ?? '').trim()
 }
 
+function safeProviderError(payload) {
+  return {
+    type: clean(payload?.type).slice(0, 80) || 'unknown',
+    code: clean(payload?.error?.type ?? payload?.error?.code).slice(0, 80) || 'unknown',
+  }
+}
+
+function safeResponseShape(payload) {
+  return {
+    keys: payload && typeof payload === 'object' ? Object.keys(payload).slice(0, 10) : [],
+    contentItems: Array.isArray(payload?.content) ? payload.content.length : 0,
+  }
+}
+
 function validateEntries(entries) {
   if (!Array.isArray(entries) || entries.length > MAX_ENTRIES) return null
   return entries.map((entry) => ({
@@ -84,14 +98,14 @@ export async function POST(request) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    console.error('[draft-summary] Anthropic error:', err)
+    console.error('[draft-summary] Anthropic error:', { status: res.status, ...safeProviderError(err) })
     return NextResponse.json({ error: 'AI request failed' }, { status: 502 })
   }
 
   const data = await res.json()
   const text = data?.content?.[0]?.text
   if (!text) {
-    console.error('[draft-summary] unexpected Anthropic response shape:', JSON.stringify(data))
+    console.error('[draft-summary] unexpected Anthropic response shape:', safeResponseShape(data))
     return NextResponse.json({ error: 'AI request failed' }, { status: 502 })
   }
   return NextResponse.json({ text })

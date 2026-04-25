@@ -64,7 +64,16 @@ function isActiveSubscriptionConflict(dbError) {
   )
 }
 
+function isDeletedAccountError(dbError) {
+  return `${dbError?.message ?? ''} ${dbError?.details ?? ''}`.toLowerCase().includes('deleted profiles cannot be reactivated')
+}
+
+function deletedAccountResult() {
+  return error({ error: 'Account unavailable - contact support' }, 403)
+}
+
 async function reuseExistingProfile(profile) {
+  if (profile.is_deleted) return deletedAccountResult()
   const { provider, error: authErr } = await getUserSsoProvider(profile.id)
   if (authErr) return { log: ['[register] auth user lookup failed:', authErr], ...error({ error: 'Failed to create user account' }, 500) }
   if (provider) return error({ error: 'Account requires SSO sign-in', nextStep: 'sso' }, 403)
@@ -73,7 +82,10 @@ async function reuseExistingProfile(profile) {
 }
 
 async function resolveUserId({ email, firstName, lastName }) {
-  const { profile } = await findProfileByEmail(email, 'id,totp_secret')
+  const { profile, error: profileError } = await findProfileByEmail(email, 'id,totp_secret,is_deleted')
+  if (profileError) {
+    return { log: ['[register] profile lookup failed:', profileError], ...error({ error: 'Failed to create user account' }, 500) }
+  }
   if (profile) return reuseExistingProfile(profile)
 
   const { data: created, error: createErr } = await createUser({
@@ -86,7 +98,10 @@ async function resolveUserId({ email, firstName, lastName }) {
     return userId ? { userId } : { log: ['[register] createUser returned no id:', created], ...error({ error: 'Failed to create user account' }, 500) }
   }
 
-  const { profile: retryProfile } = await findProfileByEmail(email, 'id,totp_secret')
+  const { profile: retryProfile, error: retryProfileError } = await findProfileByEmail(email, 'id,totp_secret,is_deleted')
+  if (retryProfileError) {
+    return { log: ['[register] retry profile lookup failed:', retryProfileError], ...error({ error: 'Failed to create user account' }, 500) }
+  }
   if (retryProfile) return reuseExistingProfile(retryProfile)
 
   return { log: ['[register] createUser error:', createErr], ...error({ error: 'Failed to create user account' }, 500) }
@@ -144,6 +159,7 @@ export async function registerAccount(body) {
     if (isActiveSubscriptionConflict(finalizeError)) {
       return error({ error: 'Active subscription already exists' }, 409)
     }
+    if (isDeletedAccountError(finalizeError)) return deletedAccountResult()
     return { log: ['[register] finalize subscription error:', finalizeError], ...error({ error: 'Failed to create subscription' }, 500) }
   }
 

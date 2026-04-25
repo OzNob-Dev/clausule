@@ -107,6 +107,17 @@ describe('passkeyRegistration service', () => {
     })
   })
 
+  it('requires explicit WebAuthn production config outside local origins', async () => {
+    const nodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const result = await createPasskeyRegistrationOptions({ request: request('app.example.com'), userId: 'user-1' })
+
+    process.env.NODE_ENV = nodeEnv
+    expect(result.status).toBe(500)
+    expect(result.body).toEqual({ error: 'Passkey configuration is incomplete' })
+  })
+
   it('rejects verification without a credential or signed challenge', async () => {
     const result = await verifyPasskeyRegistration({
       request: request(),

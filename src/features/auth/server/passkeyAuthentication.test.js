@@ -119,6 +119,17 @@ describe('passkeyAuthentication service', () => {
     })
   })
 
+  it('requires explicit WebAuthn production config outside local origins', async () => {
+    const nodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const result = await createPasskeyAuthenticationOptions({ request: request('app.example.com') })
+
+    process.env.NODE_ENV = nodeEnv
+    expect(result.status).toBe(500)
+    expect(result.body).toEqual({ error: 'Passkey configuration is incomplete' })
+  })
+
   it('verifies a valid assertion and returns a passkey session', async () => {
     const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' })
     const options = await createPasskeyAuthenticationOptions({ request: request() })

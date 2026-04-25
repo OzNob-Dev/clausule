@@ -14,6 +14,7 @@ const authDeliveryHardeningPath = path.resolve(__dirname, '../../supabase/migrat
 const ssoStateAndReconciliationPath = path.resolve(__dirname, '../../supabase/migrations/015_sso_state_and_email_reconciliation.sql')
 const passkeyAuthenticationPath = path.resolve(__dirname, '../../supabase/migrations/016_passkey_authentication.sql')
 const functionHardeningPath = path.resolve(__dirname, '../../supabase/migrations/020_function_privilege_and_search_path_hardening.sql')
+const deletedAccountAndPasskeyGuardsPath = path.resolve(__dirname, '../../supabase/migrations/021_deleted_account_and_passkey_guards.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
@@ -24,6 +25,7 @@ const authDeliveryHardeningSql = readFileSync(authDeliveryHardeningPath, 'utf8')
 const ssoStateAndReconciliationSql = readFileSync(ssoStateAndReconciliationPath, 'utf8')
 const passkeyAuthenticationSql = readFileSync(passkeyAuthenticationPath, 'utf8')
 const functionHardeningSql = readFileSync(functionHardeningPath, 'utf8')
+const deletedAccountAndPasskeyGuardsSql = readFileSync(deletedAccountAndPasskeyGuardsPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -114,5 +116,13 @@ describe('backend hardening migration', () => {
     expect(functionHardeningSql).toContain('alter function public.consume_email_otp_code(text, text, timestamptz) set search_path = public, extensions, pg_temp;')
     expect(functionHardeningSql).toContain('alter function public.consume_sso_auth_state(text, text, timestamptz) set search_path = public, pg_temp;')
     expect(functionHardeningSql).toContain('alter function public.consume_passkey_auth_challenge(text, timestamptz) set search_path = public, pg_temp;')
+  })
+
+  it('blocks deleted-account reactivation and makes passkey deletion atomic', () => {
+    expect(deletedAccountAndPasskeyGuardsSql).toContain('create or replace function public.finalize_individual_subscription')
+    expect(deletedAccountAndPasskeyGuardsSql).toContain('Deleted profiles cannot be reactivated through subscription finalization')
+    expect(deletedAccountAndPasskeyGuardsSql).toContain('create or replace function public.delete_passkey_device')
+    expect(deletedAccountAndPasskeyGuardsSql).toContain("return query select 'last_device'::text;")
+    expect(deletedAccountAndPasskeyGuardsSql).toContain('grant execute on function public.delete_passkey_device(uuid, uuid) to service_role;')
   })
 })
