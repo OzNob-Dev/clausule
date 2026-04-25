@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clausule Frontend"
+  short_description: "UI, React, accessibility rules"
+  default_prompt: "Use $clausule-frontend when changing Clausule screens, components, hooks, or styles."

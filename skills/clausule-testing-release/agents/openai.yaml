@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clausule Testing Release"
+  short_description: "Tests, reviews, flags, releases"
+  default_prompt: "Use $clausule-testing-release when verifying, reviewing, flagging, or preparing Clausule changes for release."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clausule Core"
+  short_description: "Repo workflow and product rules"
+  default_prompt: "Use $clausule-core before changing Clausule repo-wide conventions."
