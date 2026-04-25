@@ -21,7 +21,7 @@ export default function EntryComposer({ onSave, onClose }) {
 
   const addFiles = (fileList) => {
     const mapped = [...fileList].map((f) => ({
-      id: `${f.name}-${Date.now()}-${Math.random()}`,
+      id: crypto.randomUUID(),
       name: f.name,
       size: f.size,
       type: f.type,

@@ -32,8 +32,7 @@ export function DateCategoryFields({ form, onChange }) {
         <select
           value={form.category}
           onChange={(e) => onChange('category', e.target.value)}
-          className={controlClass}
-          style={{ appearance: 'none', cursor: 'pointer' }}
+          className={`${controlClass} appearance-none cursor-pointer`}
         >
           {CATEGORIES.map((category) => <option key={category}>{category}</option>)}
         </select>

@@ -141,7 +141,7 @@ function SignUpInner() {
 export default function SignUp() {
   return (
     <SignupProvider>
-      <Suspense>
+      <Suspense fallback={<div className="su-page" aria-busy="true" />}>
         <SignUpInner />
       </Suspense>
     </SignupProvider>

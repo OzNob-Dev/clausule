@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { validateEmail } from '@shared/utils/emailValidation'
+import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 
 const EMPTY_FORM = {
   firstName: '',
@@ -38,20 +39,16 @@ export function useProfileForm(profile) {
     setBaseline(next)
   }, [profile])
 
-  const current = useMemo(() => normalize(form),     [form])
-  const initial = useMemo(() => normalize(baseline), [baseline])
-  const changed = useMemo(
-    () => Object.entries(current).filter(([k, v]) => v !== initial[k]).map(([k]) => k),
-    [current, initial]
-  )
+  const current = normalize(form)
+  const initial = normalize(baseline)
+  const changed = Object.entries(current).filter(([k, v]) => v !== initial[k]).map(([k]) => k)
 
   const emailChanged  = changed.includes('email')
   const mobileChanged = changed.includes('mobile')
   const dirty         = changed.length > 0
   const baseReady     = !!(current.firstName && validateEmail(current.email).valid && current.mobile)
-  const displayName   = [current.firstName, current.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
-  const initials      = ((current.firstName[0] ?? '') + (current.lastName[0] ?? '')).toUpperCase()
-                        || current.email?.[0]?.toUpperCase() || 'U'
+  const displayName   = profileDisplayName(current)
+  const initials      = profileInitials(current)
   const emailWarning  = emailChanged
     ? `We'll verify ${current.email} before saving.`
     : 'Your sign-in email stays unchanged.'
@@ -61,7 +58,7 @@ export function useProfileForm(profile) {
     current, initial,
     changed, dirty, emailChanged, mobileChanged,
     baseReady, displayName, initials, emailWarning,
-    resetForm:       () => setForm(baseline),
-    commitBaseline:  (next) => setBaseline(next),
+    resetForm:      () => setForm(baseline),
+    commitBaseline: (next) => setBaseline(next),
   }
 }

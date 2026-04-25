@@ -1,17 +1,27 @@
 'use client'
 
 import { Modal } from '@shared/components/ui/Modal'
+import { useVerification } from '@features/account/context/VerificationContext'
 import '@features/account/styles/profile.css'
 
-export function VerifyChangesModal({
-  open, onClose, saving, finalReady,
-  initial, current,
-  emailChanged, mobileChanged, security,
-  emailCode, setEmailCode, emailCodeState,
-  mobileCheck, setMobileCheck,
-  mobileAck, setMobileAck,
-  onSubmit,
-}) {
+export function VerifyChangesModal({ open, onClose, onSubmit }) {
+  const {
+    verification,
+    saving,
+    emailChanged,
+    mobileChanged,
+    initial,
+    current,
+    security,
+  } = useVerification()
+
+  const {
+    finalReady,
+    emailCode, setEmailCode, emailCodeState,
+    mobileCheck, setMobileCheck,
+    mobileAck, setMobileAck,
+  } = verification
+
   return (
     <Modal
       open={open}

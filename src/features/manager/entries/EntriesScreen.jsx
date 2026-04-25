@@ -5,33 +5,14 @@ import Link from 'next/link'
 import { AppShell } from '@features/manager/components/AppShell'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
 import { cn } from '@shared/utils/cn'
-import { ALL_EMP, SAMPLE_ENTRIES } from '@shared/data/employees'
+import { ALL_EMP, SAMPLE_ENTRIES, MOCK_RESULTS } from '@shared/data/employees'
 import { relativeTime } from '@shared/utils/relativeTime'
 import { controlClass } from '@features/manager/entries/EntryFormFields'
 
-const CAT_DOT = {
-  perf:    'var(--blue)',
-  conduct: 'var(--amber)',
-  dev:     'var(--teal)',
-}
-
-const MOCK_RESULTS = [
-  {
-    emp: ALL_EMP[0],
-    entries: [SAMPLE_ENTRIES[0], SAMPLE_ENTRIES[3]],
-    pattern: 'Strong performance trend — 2 positive entries in the last quarter.',
-  },
-  {
-    emp: ALL_EMP[2],
-    entries: [SAMPLE_ENTRIES[2]],
-    pattern: null,
-  },
-]
-
 export default function Entries() {
-  const [query, setQuery] = useState('')
+  const [query, setQuery]       = useState('')
   const [searching, setSearching] = useState(false)
-  const [results, setResults] = useState(null)
+  const [results, setResults]   = useState(null)
   const [selected, setSelected] = useState(null)
 
   const handleSearch = (e) => {
@@ -67,7 +48,7 @@ export default function Entries() {
               className={cn(controlClass, 'py-3 pl-3.5 pr-11 text-base')}
             />
             <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-tx-4 [&>svg]:w-4 [&>svg]:h-4" aria-label="Search">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                 <circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/>
               </svg>
             </button>
@@ -93,21 +74,22 @@ export default function Entries() {
               {SAMPLE_ENTRIES.map((entry) => {
                 const emp = ALL_EMP[0]
                 return (
-                  <div
+                  <button
                     key={entry.id}
-                    className="py-5 px-0 border-b border-border cursor-pointer transition-[padding-left] duration-150 hover:pl-[5px]"
+                    type="button"
+                    className="w-full text-left py-5 px-0 border-b border-border cursor-pointer transition-[padding-left] duration-150 hover:pl-[5px] bg-transparent"
                     onClick={() => setSelected(entry)}
                   >
                     <div className="flex items-center gap-1.5 mb-1.5 text-[11px] text-tx-3">
                       <span
-                        className="shrink-0 w-[5px] h-[5px] rounded-full"
-                        style={{ background: CAT_DOT[entry.cat] || 'var(--blue)' }}
+                        className="shrink-0 w-[5px] h-[5px] rounded-full entry-cat-dot"
+                        data-cat={entry.cat}
                       />
                       {emp.name} · {relativeTime(entry.date)}
                     </div>
                     <div className="text-[19px] font-extrabold text-tx-1 leading-[1.3] mb-2">{entry.title}</div>
                     <div className="text-[13px] text-tx-2 leading-[1.75]">{entry.body}</div>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -118,7 +100,7 @@ export default function Entries() {
             <div>
               <div className="flex items-center justify-between pt-4 pb-2 px-0">
                 <div className="text-xs font-semibold text-tx-3">
-                  {results.reduce((n, r) => n + r.entries.length, 0)} results for "{query}"
+                  {results.reduce((n, r) => n + r.entries.length, 0)} results for &ldquo;{query}&rdquo;
                 </div>
                 <div className="text-[11px] text-tx-4 italic">Ranked by relevance</div>
               </div>
@@ -147,21 +129,22 @@ export default function Entries() {
                   )}
 
                   {entries.map((entry) => (
-                    <div
+                    <button
                       key={entry.id}
-                      className="py-[13px] px-0 border-b border-border cursor-pointer transition-[padding-left] duration-150 hover:pl-[6px]"
+                      type="button"
+                      className="w-full text-left py-[13px] px-0 border-b border-border cursor-pointer transition-[padding-left] duration-150 hover:pl-[6px] bg-transparent"
                       onClick={() => setSelected(entry)}
                     >
                       <div className="flex items-center gap-1.5 mb-1.5 text-[10px] text-tx-3">
                         <span
-                          className="shrink-0 w-[5px] h-[5px] rounded-full"
-                          style={{ background: CAT_DOT[entry.cat] || 'var(--blue)' }}
+                          className="shrink-0 w-[5px] h-[5px] rounded-full entry-cat-dot"
+                          data-cat={entry.cat}
                         />
                         {relativeTime(entry.date)}
                       </div>
                       <div className="text-base font-extrabold text-tx-1 mb-1.5">{entry.title}</div>
                       <div className="text-[13px] text-tx-2 leading-[1.75]">{entry.body}</div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               ))}

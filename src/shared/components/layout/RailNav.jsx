@@ -6,7 +6,7 @@ import { ROUTES } from '@shared/utils/routes'
 import { cn } from '@shared/utils/cn'
 
 const settingsIcon = (
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
     <circle cx="8" cy="8" r="2.5"/>
     <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/>
   </svg>
@@ -17,7 +17,7 @@ const navItems = [
     to: '/dashboard',
     tip: 'Dashboard',
     icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
         <rect x="2" y="2" width="5" height="5" rx="1.5"/><rect x="9" y="2" width="5" height="5" rx="1.5"/>
         <rect x="2" y="9" width="5" height="5" rx="1.5"/><rect x="9" y="9" width="5" height="5" rx="1.5"/>
       </svg>
@@ -27,7 +27,7 @@ const navItems = [
     to: '/entries',
     tip: 'Search entries',
     icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
         <circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/>
       </svg>
     ),
@@ -37,7 +37,7 @@ const navItems = [
     tip: 'Escalated',
     badge: true,
     icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
         <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
       </svg>
     ),
@@ -46,7 +46,7 @@ const navItems = [
     to: ROUTES.profile,
     tip: 'Profile',
     icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
         <circle cx="8" cy="5.5" r="2.25"/>
         <path d="M3 13c.8-2.5 3-4 5-4s4.2 1.5 5 4"/>
       </svg>
@@ -66,7 +66,7 @@ export function RailNav({ items = navItems, locked = false, onLogout, userInitia
   return (
     <aside className="sticky top-0 flex h-screen w-[52px] shrink-0 flex-col items-center border-r border-border bg-nav py-4 max-sm:fixed max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:top-auto max-sm:z-[100] max-sm:h-[56px] max-sm:w-full max-sm:flex-row max-sm:justify-around max-sm:border-r-0 max-sm:border-t max-sm:px-2">
       <div className="mb-[18px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-[9px] bg-acc max-sm:hidden">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="h-4 w-4 text-canvas">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="h-4 w-4 text-canvas" aria-hidden="true">
           <path d="M3 5h12M3 9h8M3 13h5"/>
         </svg>
       </div>

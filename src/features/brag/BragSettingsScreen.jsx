@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import BragRail from '@features/brag/components/BragRail'
 import BragSettingsDangerZone from '@features/brag/components/BragSettingsDangerZone'
 import BragSettingsIdentity from '@features/brag/components/BragSettingsIdentity'
@@ -8,83 +8,57 @@ import DeleteAccountModal from '@features/brag/components/DeleteAccountModal'
 import MfaSecuritySection from '@features/brag/components/MfaSecuritySection'
 import SsoStatusSection from '@features/brag/components/SsoStatusSection'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
-import { apiFetch } from '@shared/utils/api'
+import { useProfileQuery, useTotpStatusQuery } from '@shared/queries/useProfileQuery'
+import { profileDisplayName, profileInitials } from '@shared/utils/profile'
+import { REMINDER_METHODS, REMINDER_FREQUENCIES } from '@shared/constants/reminders'
 import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
 
-const reminderMethods = [
-  { value: 'email', label: 'Email', desc: 'Send reminders to the inbox tied to this account.' },
-  { value: 'sms', label: 'SMS', desc: 'Send reminders by text message to the mobile number on file.' },
-]
-
-const reminderFrequencies = [
-  { value: 'daily', label: 'Daily' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'quarterly', label: 'Quarterly' },
-]
-
-function profileDisplayName(profile) {
-  return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
-}
-
 export default function BragSettings() {
   const profile = useProfileStore((state) => state.profile)
-  const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
-  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const setProfile = useProfileStore((state) => state.setProfile)
   const setSecurity = useProfileStore((state) => state.setSecurity)
+  const authenticatorAppConfigured = useProfileStore((state) => state.security.authenticatorAppConfigured)
+  const ssoConfigured = useProfileStore((state) => state.security.ssoConfigured)
   const hasSecuritySnapshot = useProfileStore((state) => state.hasSecuritySnapshot)
   const showMfaSection = !ssoConfigured
   const mfaRestrictionEnabled = showMfaSection && hasSecuritySnapshot && !authenticatorAppConfigured
 
-  const [totpExpanded, setTotpExpanded]     = useState(false)
-  const [reminderMethod, setReminderMethod] = useState('email')
-  const [reminderFrequency, setReminderFrequency] = useState('weekly')
+  const [totpExpanded, setTotpExpanded]           = useState(false)
+  const [reminderMethod, setReminderMethod]         = useState('email')
+  const [reminderFrequency, setReminderFrequency]   = useState('weekly')
+  const [deleteModal, setDeleteModal]               = useState(false)
 
-  const [deleteModal, setDeleteModal] = useState(false)
+  useProfileQuery({
+    onSuccess: (data) => {
+      const profileData = {
+        firstName:  typeof data?.firstName  === 'string' ? data.firstName  : undefined,
+        lastName:   typeof data?.lastName   === 'string' ? data.lastName   : undefined,
+        email:      typeof data?.email      === 'string' ? data.email      : undefined,
+        mobile:     typeof data?.mobile     === 'string' ? data.mobile     : undefined,
+        jobTitle:   typeof data?.jobTitle   === 'string' ? data.jobTitle   : undefined,
+        department: typeof data?.department === 'string' ? data.department : undefined,
+      }
+      if (Object.values(profileData).some((v) => v !== undefined)) setProfile(profileData)
+    },
+  })
+
+  useTotpStatusQuery({
+    onSuccess: (data) => {
+      if (typeof data?.configured === 'boolean') {
+        setSecurity({ authenticatorAppConfigured: data.configured })
+      }
+    },
+  })
 
   const handleTotpDone = () => {
     setSecurity({ authenticatorAppConfigured: true })
     setTotpExpanded(false)
   }
 
-  useEffect(() => {
-    const controller = new AbortController()
-
-    apiFetch('/api/auth/profile', { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : null)
-      .then((data) => {
-        const profileData = {
-          firstName: typeof data?.firstName === 'string' ? data.firstName : undefined,
-          lastName: typeof data?.lastName === 'string' ? data.lastName : undefined,
-          email: typeof data?.email === 'string' ? data.email : undefined,
-          mobile: typeof data?.mobile === 'string' ? data.mobile : undefined,
-          jobTitle: typeof data?.jobTitle === 'string' ? data.jobTitle : undefined,
-          department: typeof data?.department === 'string' ? data.department : undefined,
-        }
-
-        if (Object.values(profileData).some((value) => value !== undefined)) setProfile(profileData)
-      })
-      .catch(() => {})
-
-    apiFetch('/api/auth/totp/status', { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : null)
-      .then((data) => {
-        if (typeof data?.configured === 'boolean') setSecurity({ authenticatorAppConfigured: data.configured })
-      })
-      .catch(() => {})
-
-    return () => controller.abort()
-  }, [setProfile, setSecurity])
-
-  const displayName = profileDisplayName(profile)
-
-  const avatarInitials =
-    ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
-    profile.email?.[0]?.toUpperCase() ||
-    '?'
+  const displayName    = profileDisplayName(profile)
+  const avatarInitials = profileInitials(profile)
 
   return (
     <div className="be-page">
@@ -133,7 +107,7 @@ export default function BragSettings() {
               <fieldset className="bss-reminder-group">
                 <legend className="bss-reminder-legend">Delivery method</legend>
                 <div className="bss-reminder-grid">
-                  {reminderMethods.map(({ value, label, desc }) => (
+                  {REMINDER_METHODS.map(({ value, label, desc }) => (
                     <label key={value} className={`bss-reminder-option${reminderMethod === value ? ' bss-reminder-option--active' : ''}`}>
                       <input
                         className="bss-reminder-input"
@@ -155,7 +129,7 @@ export default function BragSettings() {
               <fieldset className="bss-reminder-group">
                 <legend className="bss-reminder-legend">Reminder frequency</legend>
                 <div className="bss-frequency-grid">
-                  {reminderFrequencies.map(({ value, label }) => (
+                  {REMINDER_FREQUENCIES.map(({ value, label }) => (
                     <label key={value} className={`bss-frequency-option${reminderFrequency === value ? ' bss-frequency-option--active' : ''}`}>
                       <input
                         className="bss-reminder-input"

@@ -1,26 +1,20 @@
 'use client'
 
 /**
- * AuthContext — provides authenticated user state to the protected component tree.
+ * AuthContext — provides sign-in/sign-out actions to the component tree.
  *
- * The JWT lives in an httpOnly cookie (clausule_at); the client never accesses
- * it directly. Protected routes provide the initial authenticated session from
- * the server so the client context can focus on local auth UI actions.
+ * User identity is stored in useProfileStore (Zustand) as the single source
+ * of truth. This context only owns side-effectful actions that require the
+ * Next.js router (logout redirect). Consumers read user via useProfileStore,
+ * not from this context.
  *
  * Provided value:
- *   user    { id, email, role } | null
- *   loading boolean — kept for compatibility with existing consumers
- *   signIn  (userData) => void — call after successful authentication to hydrate
- *   logout  () => Promise<void> — revokes server session, clears cookies, redirects
+ *   signIn     (userData) => void — hydrate user after successful auth
+ *   updateUser (patch)    => void — partial update to user fields
+ *   logout     ()         => Promise<void> — revoke session + redirect
  */
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react'
+import { createContext, useContext, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 
@@ -28,38 +22,26 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children, initialSession = null }) {
   const router = useRouter()
-  const [user, setUser] = useState(initialSession?.user ?? null)
-  const [loading] = useState(false)
 
   useEffect(() => {
+    const store = useProfileStore.getState()
     if (!initialSession) {
-      useProfileStore.getState().clearProfile()
-      setUser(null)
+      store.clearProfile()
       return
     }
-
-    const { setProfile, setSecurity } = useProfileStore.getState()
-    setUser(initialSession.user)
-    setProfile(initialSession.profile)
-    setSecurity(initialSession.security)
+    store.setUser(initialSession.user)
+    store.setProfile(initialSession.profile)
+    store.setSecurity(initialSession.security)
   }, [initialSession])
 
-  /**
-   * Hydrate the context after a successful sign-in without an extra round-trip.
-   * @param {{ id: string, email: string, role: string }} userData
-   */
   const signIn = useCallback((userData) => {
-    setUser(userData)
+    useProfileStore.getState().setUser(userData)
   }, [])
 
   const updateUser = useCallback((patch) => {
-    setUser((current) => (current ? { ...current, ...patch } : current))
+    useProfileStore.getState().updateUser(patch)
   }, [])
 
-  /**
-   * Revoke the server-side session, expire the auth cookies, clear context
-   * state, and navigate to the sign-in page.
-   */
   const logout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
@@ -67,23 +49,23 @@ export function AuthProvider({ children, initialSession = null }) {
       // Best-effort — navigate regardless of network errors.
     }
     useProfileStore.getState().clearProfile()
-    setUser(null)
     router.push('/')
   }, [router])
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, updateUser, logout }}>
+    <AuthContext.Provider value={{ signIn, updateUser, logout }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
 /**
- * Access auth context. Must be used inside <AuthProvider>.
- * @returns {{ user: {id,email,role}|null, loading: boolean, signIn: Function, logout: Function }}
+ * Access auth actions. User identity is read directly from useProfileStore.
+ * @returns {{ signIn: Function, updateUser: Function, logout: Function, user: object|null, loading: false }}
  */
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>')
-  return ctx
+  const user = useProfileStore((s) => s.user)
+  return { ...ctx, user, loading: false }
 }

@@ -11,6 +11,7 @@ import EntryComposer from '@features/brag/components/EntryComposer'
 import ResumeTab from '@features/brag/components/ResumeTab'
 import Link from 'next/link'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import { ROUTES } from '@shared/utils/routes'
 import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-page.css'
@@ -76,10 +77,6 @@ function newestEntryFirst(a, b) {
   return new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
 }
 
-function profileDisplayName(profile) {
-  return [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() || 'Your profile'
-}
-
 export function mapEntryToCard(entry) {
   return cardFromEntry(entry)
 }
@@ -113,12 +110,8 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
     setComposerOpen(false)
   }
 
-  const displayName = profileDisplayName(profile)
-
-  const avatarInitials =
-    ((profile.firstName?.[0] ?? '') + (profile.lastName?.[0] ?? '')).toUpperCase() ||
-    profile.email?.[0]?.toUpperCase() ||
-    '?'
+  const displayName    = profileDisplayName(profile)
+  const avatarInitials = profileInitials(profile)
 
   const panelContent = {
     composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,

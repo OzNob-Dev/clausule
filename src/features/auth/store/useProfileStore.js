@@ -22,9 +22,15 @@ const EMPTY_META = {
 }
 
 export const useProfileStore = create((set) => ({
+  user: null,
   profile: EMPTY_PROFILE,
   security: EMPTY_SECURITY,
   ...EMPTY_META,
+  setUser: (user) => set({ user }),
+  updateUser: (patch) =>
+    set((state) => ({
+      user: state.user ? { ...state.user, ...patch } : state.user,
+    })),
   setProfile: (nextProfile) =>
     set((state) => ({
       profile: {
@@ -44,6 +50,7 @@ export const useProfileStore = create((set) => ({
     })),
   clearProfile: () =>
     set({
+      user: null,
       profile: EMPTY_PROFILE,
       security: EMPTY_SECURITY,
       ...EMPTY_META,

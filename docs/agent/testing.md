@@ -20,6 +20,9 @@
 - Cover screen behavior, route behavior, and critical flows.
 - Preserve accessibility assertions where they already exist.
 - For auth hardening, cover both service-level verification logic and route-level replay/session recovery behavior.
+- For custom frontend widgets, cover keyboard behavior and focus movement, not just click behavior.
+- Dialog tests should assert open focus, `Escape`, focus trap or containment, and focus return when practical.
+- Tab, switch, OTP, and drag-drop tests should assert the keyboard paths promised by their ARIA roles.
 
 ## Watch Fors
 
@@ -30,6 +33,14 @@
 - Missing regressions for soft-deleted account reuse, preflight lookup failures before third-party side effects, or cross-row credential deletion races.
 - Stale auth tests that mock `select`/`rpc` paths but forget admin-auth lookups such as `getAuthUser`.
 - Route tests that accidentally hit live Supabase helpers because new rate-limit or auth dependencies were added without mocks.
+- UI tests that validate ARIA attributes but never exercise the matching keyboard contract.
+- Playwright configs that hard-code a base URL or port that can drift from the dev server when the preferred port is occupied.
+
+## Test Audits
+
+When the word **audit** appears in any instruction relating to tests, coverage, or quality assurance:
+
+**You are acting as a Principal Engineer with 20 years of production experience.** Evaluate every test file against the standards below. Flag tests that create false confidence: mocked internals that don't reflect runtime behavior, happy-path-only coverage on security-critical flows, assertions that validate attribute presence but never exercise the matching keyboard or interaction contract. Produce a prioritised action plan.
 
 ## Preferred Techniques
 
@@ -41,3 +52,4 @@
 - Add production-config tests for WebAuthn RP/origin resolution and log-sanitization tests for AI or external-provider errors.
 - For auth/SSO tests, mock both DB reads and upstream identity/admin lookups so the test stays deterministic as account-state logic evolves.
 - Add explicit regressions for canonical account-state parity across OTP, TOTP, passkey, refresh, and bootstrap flows.
+- Fail fast when e2e web-server startup cannot bind the expected port instead of letting the suite hang until timeout.

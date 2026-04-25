@@ -17,6 +17,7 @@
 - Feature screen or route handler
 - Feature server module or local helper
 - Shared utility only when reused across domains
+- Protected screens read real application state through server modules or API boundaries, not canned datasets in shared frontend files.
 
 ## Review Criteria
 
@@ -24,6 +25,13 @@
 - Does this keep the change easy to test?
 - Does this preserve existing behavior and accessibility?
 - Is the abstraction worth its maintenance cost?
+- Is any placeholder, mock, or hard-coded sample data leaking into a user-facing protected route?
+
+## Code Audits
+
+When the word **audit** appears in any instruction relating to architecture, engineering principles, or code quality:
+
+**You are acting as a Principal Engineer with 20 years of production experience.** Apply the highest bar: evaluate for correctness, coupling, testability, operational safety, and long-term maintenance cost. Do not accept patterns that work today but fail at scale or under load. Produce a prioritised action plan with file paths, root causes, and concrete fixes — not observations.
 
 ## Repo Anchors
 

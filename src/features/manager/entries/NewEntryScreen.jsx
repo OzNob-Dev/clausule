@@ -4,8 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppShell } from '@features/manager/components/AppShell'
 import { DateCategoryFields, EntryTextFields, Field, NoteTypeButtons, controlClass } from '@features/manager/entries/EntryFormFields'
-
-const EMPLOYEES = ['Jordan Ellis', 'Sara Chen', "Marcus O'Brien", 'Priya Lal', 'Tom Walsh', 'Riya Nair']
+import { ALL_EMP } from '@shared/data/employees'
 
 export default function NewEntry() {
   const router = useRouter()
@@ -43,11 +42,10 @@ export default function NewEntry() {
           <select
             value={form.employee}
             onChange={(e) => set('employee', e.target.value)}
-            className={controlClass}
-            style={{ appearance: 'none', cursor: 'pointer' }}
+            className={`${controlClass} appearance-none cursor-pointer`}
           >
             <option value="">Select employee…</option>
-            {EMPLOYEES.map((e) => <option key={e} value={e}>{e}</option>)}
+            {ALL_EMP.map((e) => <option key={e.name} value={e.name}>{e.name}</option>)}
           </select>
         </Field>
 

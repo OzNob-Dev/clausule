@@ -24,6 +24,11 @@ export const ALL_EMP = [
   { name: 'Sam Achebe',    role: 'Engineer I',       team: 'Data',     av: 'SA', avBg: 'rgba(93,202,165,0.14)',   avCol: '#5DCAA5', ps: 'g', last: '2025-12-02', entries: 1  },
 ]
 
+export const FLAGGED_EMPLOYEES = [
+  { name: "Marcus O'Brien", role: 'Engineer I',  team: 'Platform', reason: '4 conduct notes + 2 escalations in 60d', days: 60, risk: 'High' },
+  { name: 'Sophie Okafor',  role: 'Engineer II', team: 'Security', reason: '3 weeks at Needs work + 1 escalation',   days: 21, risk: 'High' },
+]
+
 export const SAMPLE_ENTRIES = [
   {
     id: 'e1',
@@ -60,5 +65,19 @@ export const SAMPLE_ENTRIES = [
     body: 'Handled the 3am payment outage calmly. Kept the channel updated every 15 mins, looped in the right people without needing prompting. Full RCA posted within 24 hours.',
     date: '2025-11-10',
     tags: ['incident', 'on-call'],
+  },
+]
+
+// Demo search results — used until a real search API is wired up.
+export const MOCK_RESULTS = [
+  {
+    emp:     ALL_EMP[0],
+    entries: [SAMPLE_ENTRIES[0], SAMPLE_ENTRIES[3]],
+    pattern: 'Strong performance trend — 2 positive entries in the last quarter.',
+  },
+  {
+    emp:     ALL_EMP[2],
+    entries: [SAMPLE_ENTRIES[2]],
+    pattern: null,
   },
 ]

@@ -172,13 +172,8 @@ export function useSignInFlow() {
     }
   }, [code, email, resetExpirySeconds, resetResendTimer])
 
-  const isChecking = sending
-  const isNewAccount = false
-  const btnLabel = isChecking ? 'Sending…' : 'Login'
-  const resolvedEmail = email
-
   return {
-    btnLabel,
+    btnLabel:     sending ? 'Sending…' : 'Login',
     code,
     codeRefs,
     email,
@@ -187,11 +182,11 @@ export function useSignInFlow() {
     handlePaste,
     handleResend,
     handleSubmit,
-    isChecking,
-    isNewAccount,
+    isChecking:   sending,
+    isNewAccount: false,
     resetCodeStep,
     resendTimer,
-    resolvedEmail,
+    resolvedEmail: email,
     result,
     showFeedback,
     ssoError,
