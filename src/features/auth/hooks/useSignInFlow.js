@@ -247,7 +247,6 @@ export function useSignInFlow() {
     isNewAccount: false,
     resetCodeStep,
     resendTimer,
-    resolvedEmail: state.email,
     result,
     showFeedback,
     ssoError: state.ssoError,

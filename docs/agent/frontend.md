@@ -27,6 +27,11 @@
 - Use links or anchors for navigation and buttons for actions.
 - Prefer native form submission over click-only save handlers when the UI is collecting user input.
 - Do not use inline `style={{ backgroundColor: x, color: y }}` objects for dynamic per-item values (avatar colors, status badges, kanban card accents). Use a single CSS custom property instead: `style={{ '--av-bg': bg, '--av-col': col }}` and reference `var(--av-bg)` in the stylesheet. This avoids new object references every render and keeps Tailwind purging intact.
+- `<button>` elements inside or near forms **must** have an explicit `type="button"` or `type="submit"`. The HTML default is `type="submit"`, which causes unintended form submissions. The shared `Button` component defaults to `type="button"`; pass `type="submit"` explicitly where needed.
+- Form-field label wrappers must be `<label htmlFor={id}>` tied to the input's `id`, not `<div>`. For toggle button groups (note type, category selectors), use `role="group"` on the container with `aria-label` — do not wrap in `<Field>` without an `htmlFor`.
+- Never use global names (`window`, `document`, `name`, `status`) as prop or parameter names. They shadow browser globals silently, producing confusing bugs in SSR or conditional branches.
+- Do not call `startTransition` inside a `setTimeout` callback — by that point React has already committed the preceding state update, so the transition does nothing. `startTransition` must wrap the state setter that triggers the heavy render, called synchronously in the same event handler or effect.
+- Inline `style` props with computed values (e.g. `animationDelay: \`${i * 150}ms\``) create a new object reference every render. For a fixed-length list, prefer hardcoded Tailwind arbitrary-value classes (`[animation-delay:150ms]`) over per-item inline styles.
 
 ## Shared Utilities
 
@@ -70,6 +75,9 @@ useEffect(() => {
 - User identity lives in `useProfileStore` (Zustand) — the single source of truth.
 - `AuthContext` owns only router-dependent side effects (logout redirect). Do not add new state there. Do not read `user` or `loading` from `AuthContext` — read from `useProfileStore` directly.
 - `useProfileStore` exposes: `user`, `profile`, `security`, `setUser`, `setProfile`, `setSecurity`, `updateUser`, `clearProfile`.
+- When reading multiple related fields from `useProfileStore` to compute a single derived value, collapse into one selector: `useProfileStore(s => s.hasSecuritySnapshot && !s.security.X)`. Three separate `useProfileStore` calls for one boolean triple-subscribes and re-renders on any field change.
+- User display name and initials must come from `useProfileStore` via `profileDisplayName`/`profileInitials` from `@shared/utils/profile`. Never hardcode developer names or initials as default prop values.
+- For inline timer refs, use `useTrackedTimeout` from `@shared/hooks/useTrackedTimeout` instead of raw `useRef` + `setTimeout` + manual `clearTimeout`. It tracks all outstanding timers and clears them on unmount automatically.
 - Multi-step flows (sign-in, MFA setup) use parallel `step` string + boolean flags. Prefer a discriminated union `type Step = 'email' | 'otp' | 'totp' | ...` when adding new steps so the compiler can narrow state.
 - When a hook manages 5 or more related state variables for a state machine (auth flow, MFA setup, signup), use `useReducer` with a discriminated union action type instead of parallel `useState` calls. This prevents impossible intermediate states (e.g. `loading=true` + `error` set simultaneously) that parallel `useState` cannot prevent.
 - During the JS → TS migration, add JSDoc typedef imports from `src/shared/types/contracts.ts` to reducer-driven hooks and contexts before renaming everything to `.ts`/`.tsx`. This keeps the shared contracts connected to real frontend state machines instead of drifting into unused types.

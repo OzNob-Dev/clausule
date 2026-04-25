@@ -1,15 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@shared/utils/cn'
 import { CategoryPill } from '@shared/components/ui/CategoryPill'
 import { relativeTime } from '@shared/utils/relativeTime'
 
-export function EntryCard({ entry, onDelete, isFiltered }) {
+export function EntryCard({ entry, onDelete, onSave, isFiltered }) {
   const [editing, setEditing] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [title, setTitle] = useState(entry.title)
   const [body, setBody] = useState(entry.body)
 
-  const handleSave = () => setEditing(false)
+  // Sync edit fields when entry prop updates (e.g. after server refresh)
+  useEffect(() => {
+    setTitle(entry.title)
+    setBody(entry.body)
+  }, [entry.title, entry.body])
+
+  const handleSave = () => {
+    onSave?.({ ...entry, title, body })
+    setEditing(false)
+  }
+
+  const handleCancel = () => {
+    setTitle(entry.title)
+    setBody(entry.body)
+    setEditing(false)
+    setConfirmDelete(false)
+  }
 
   return (
     <div
@@ -45,12 +61,14 @@ export function EntryCard({ entry, onDelete, isFiltered }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             autoFocus
+            aria-label="Entry title"
             className="mb-2.5 w-full border-none border-b-[1.5px] border-dashed border-border2 bg-transparent pb-[6px] font-sans text-base font-bold text-tx-1 outline-none"
           />
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={3}
+            aria-label="Entry details"
             className="mb-3 block box-border min-w-0 w-full resize-none rounded-[var(--r)] border-[1.5px] border-border bg-[rgba(255,255,255,0.05)] px-3 py-2.5 font-sans text-[13px] leading-[1.75] text-tx-1 outline-none transition-colors duration-150 focus:border-acc-text"
           />
           <div className="flex items-center justify-between">
@@ -58,23 +76,23 @@ export function EntryCard({ entry, onDelete, isFiltered }) {
               <div className="flex items-center gap-2.5">
                 <span className="text-xs font-semibold text-tx-2">Delete this entry?</span>
                 <div className="flex gap-[6px]">
-                  <button onClick={() => setConfirmDelete(false)} className="border-none bg-transparent font-sans text-xs font-semibold text-tx-3 cursor-pointer">Cancel</button>
-                  <button onClick={() => onDelete(entry.id)} className="rounded-[var(--r)] border-none bg-red px-3 py-[5px] font-sans text-[11px] font-bold text-[#FAF7F3] cursor-pointer">Delete</button>
+                  <button type="button" onClick={() => setConfirmDelete(false)} className="border-none bg-transparent font-sans text-xs font-semibold text-tx-3 cursor-pointer">Cancel</button>
+                  <button type="button" onClick={() => onDelete(entry.id)} className="rounded-[var(--r)] border-none bg-red px-3 py-[5px] font-sans text-[11px] font-bold text-[#FAF7F3] cursor-pointer">Delete</button>
                 </div>
               </div>
             ) : (
-              <button onClick={() => setConfirmDelete(true)} className="flex items-center gap-[6px] border-none bg-transparent font-sans text-[11px] font-bold text-red cursor-pointer transition-opacity duration-150 hover:opacity-80 [&>svg]:h-3 [&>svg]:w-3">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <button type="button" onClick={() => setConfirmDelete(true)} className="flex items-center gap-[6px] border-none bg-transparent font-sans text-[11px] font-bold text-red cursor-pointer transition-opacity duration-150 hover:opacity-80 [&>svg]:h-3 [&>svg]:w-3">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <polyline points="3 6 4 14 12 14 13 6"/><line x1="1" y1="6" x2="15" y2="6"/>
                 </svg>
                 Delete
               </button>
             )}
             <div className="flex gap-[6px]">
-              <button onClick={() => { setEditing(false); setConfirmDelete(false) }} className="border-none bg-transparent font-sans text-xs font-semibold text-tx-3 cursor-pointer">
+              <button type="button" onClick={handleCancel} className="border-none bg-transparent font-sans text-xs font-semibold text-tx-3 cursor-pointer">
                 Cancel
               </button>
-              <button onClick={handleSave} className="rounded-[var(--r)] border-none bg-acc px-[14px] py-[6px] font-sans text-xs font-bold text-[#FAF7F3] cursor-pointer">
+              <button type="button" onClick={handleSave} className="rounded-[var(--r)] border-none bg-acc px-[14px] py-[6px] font-sans text-xs font-bold text-[#FAF7F3] cursor-pointer">
                 Save
               </button>
             </div>

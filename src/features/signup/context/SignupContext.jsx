@@ -27,7 +27,7 @@ const INITIAL_STATE = {
 function reducer(state, action) {
   switch (action.type) {
     case 'set_step':
-      return { ...state, step: /** @type {1 | 2 | 3} */ (action.value) }
+      return { ...state, step: /** @type {1 | 2 | 3} */ (typeof action.value === 'function' ? action.value(state.step) : action.value) }
     case 'set_step1':
       return { ...state, step1Data: typeof action.value === 'function' ? action.value(state.step1Data) : action.value }
     case 'set_step2':
@@ -46,8 +46,8 @@ export function SignupProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
 
   const setStep = useCallback(/** @param {1 | 2 | 3 | ((current: 1 | 2 | 3) => 1 | 2 | 3)} value */ (value) => {
-    dispatch({ type: 'set_step', value: typeof value === 'function' ? value(state.step) : value })
-  }, [state.step])
+    dispatch({ type: 'set_step', value })
+  }, [])
 
   const setStep1Data = useCallback(/** @param {SignupStep1State | ((current: SignupStep1State) => SignupStep1State)} value */ (value) => {
     dispatch({ type: 'set_step1', value })

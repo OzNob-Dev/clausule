@@ -1,15 +1,5 @@
 import EntryRings from './EntryRings'
-
-function formatRelativeDate(dateStr) {
-  const then = new Date(dateStr)
-  const now = new Date()
-  const diffDays = Math.floor((now - then) / (1000 * 60 * 60 * 24))
-  if (diffDays < 1) return 'today'
-  if (diffDays < 30) return `${diffDays}d ago`
-  const diffMonths = Math.floor(diffDays / 30)
-  if (diffMonths < 12) return `${diffMonths}mo ago`
-  return `${Math.floor(diffMonths / 12)}y ago`
-}
+import { relativeTime } from '@shared/utils/relativeTime'
 
 export default function EntryCard({ entry }) {
   return (
@@ -17,7 +7,7 @@ export default function EntryCard({ entry }) {
       <div className="be-entry-head">
         <div className="be-entry-title">{entry.title}</div>
         <div className="be-entry-date">
-          <time dateTime={entry.date}>{formatRelativeDate(entry.date)}</time>
+          <time dateTime={entry.date}>{relativeTime(entry.date)}</time>
         </div>
       </div>
       <p className="be-entry-body">{entry.body}</p>

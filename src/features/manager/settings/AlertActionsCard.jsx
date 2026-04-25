@@ -5,7 +5,7 @@ const ACTIONS = [
   { key: 'autoSummary', label: 'Auto-generate HR summary', sub: 'Creates a draft summary for HR review' },
 ]
 
-export default function AlertActionsCard({ actions, conductThreshold, escalationThreshold, onToggleAction, window }) {
+export default function AlertActionsCard({ actions, conductThreshold, escalationThreshold, onToggleAction, timeWindow }) {
   return (
     <div className="st-card">
       <div className="st-actions-title">When threshold is hit</div>
@@ -32,7 +32,7 @@ export default function AlertActionsCard({ actions, conductThreshold, escalation
         <div className="st-preview-label">Preview notification</div>
         <div className="st-preview-text">
           An employee will be flagged after {conductThreshold} conduct/performance notes
-          {' '}or {escalationThreshold} escalation{escalationThreshold !== 1 ? 's' : ''} within {window}.
+          {' '}or {escalationThreshold} escalation{escalationThreshold !== 1 ? 's' : ''} within {timeWindow}.
         </div>
       </div>
     </div>

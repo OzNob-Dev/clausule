@@ -28,6 +28,7 @@ export interface AuthBootstrap {
   security: SecuritySnapshot
 }
 
+// TODO: expand when evidence model is finalised (attachments, metadata, etc.)
 export interface BragEvidence {
   type: string
 }

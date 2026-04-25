@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { AppShell } from '@features/manager/components/AppShell'
 import { Avatar } from '@shared/components/ui/Avatar'
@@ -15,18 +15,14 @@ export default function Entries() {
   const [searching, setSearching] = useState(false)
   const [results, setResults]   = useState(null)
   const [selected, setSelected] = useState(null)
-  const [, startSearchTransition] = useTransition()
-
   const handleSearch = (e) => {
     e.preventDefault()
     if (!query.trim()) return
     setSearching(true)
     setResults(null)
     setTimeout(() => {
-      startSearchTransition(() => {
-        setSearching(false)
-        setResults(MOCK_RESULTS)
-      })
+      setSearching(false)
+      setResults(MOCK_RESULTS)
     }, 1200)
   }
 

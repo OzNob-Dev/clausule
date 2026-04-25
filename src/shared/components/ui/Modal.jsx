@@ -49,8 +49,9 @@ export function Modal({
       return () => window.clearTimeout(focusTimer)
     } else if (triggerRef.current instanceof HTMLElement) {
       const focusTarget = triggerRef.current
-      window.setTimeout(() => focusTarget.focus(), 0)
       triggerRef.current = null
+      const id = window.setTimeout(() => focusTarget.focus(), 0)
+      return () => window.clearTimeout(id)
     }
   }, [open, portalNode])
 

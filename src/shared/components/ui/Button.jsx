@@ -14,9 +14,10 @@ const sizeStyles = {
   lg: 'px-5 py-3 text-sm',
 }
 
-export function Button({ children, variant = 'primary', size = 'md', className, ...props }) {
+export function Button({ children, variant = 'primary', size = 'md', className, type = 'button', ...props }) {
   return (
     <button
+      type={type}
       className={cn(
         'inline-flex items-center justify-center font-sans font-bold transition-opacity duration-150 cursor-pointer border-none rounded-[var(--r)]',
         variantStyles[variant],

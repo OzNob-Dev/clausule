@@ -15,7 +15,7 @@ describe('AlertThresholdCard', () => {
         onToggleCombined={onToggleCombined}
         values={{ conductThreshold: 3, escalationThreshold: 2, needsWorkWeeks: 4 }}
         onChangeThreshold={vi.fn()}
-        window="60 days"
+        timeWindow="60 days"
         onChangeWindow={vi.fn()}
       />
     )

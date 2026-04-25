@@ -38,8 +38,9 @@ export default function NewEntry() {
         <div className="h-[1px] bg-border mb-6" />
 
         {/* Employee */}
-        <Field label="Employee">
+        <Field label="Employee" htmlFor="ne-employee">
           <select
+            id="ne-employee"
             value={form.employee}
             onChange={(e) => set('employee', e.target.value)}
             className={`${controlClass} appearance-none cursor-pointer`}

@@ -6,7 +6,7 @@ const THRESHOLDS = [
 
 const WINDOWS = ['30 days', '60 days', '90 days', '6 months']
 
-export default function AlertThresholdCard({ combined, onToggleCombined, values, onChangeThreshold, window, onChangeWindow }) {
+export default function AlertThresholdCard({ combined, onToggleCombined, values, onChangeThreshold, timeWindow, onChangeWindow }) {
   return (
     <div className="st-card">
       <div className="st-card-head">
@@ -54,13 +54,14 @@ export default function AlertThresholdCard({ combined, onToggleCombined, values,
       <div className="st-window-row">
         <div className="st-window-label">Time window</div>
         <div className="st-window-btns">
-          {WINDOWS.map((currentWindow) => (
+          {WINDOWS.map((w) => (
             <button
-              key={currentWindow}
-              onClick={() => onChangeWindow(currentWindow)}
-              className={`st-window-btn${window === currentWindow ? ' st-window-btn--active' : ''}`}
+              key={w}
+              type="button"
+              onClick={() => onChangeWindow(w)}
+              className={`st-window-btn${timeWindow === w ? ' st-window-btn--active' : ''}`}
             >
-              {currentWindow}
+              {w}
             </button>
           ))}
         </div>

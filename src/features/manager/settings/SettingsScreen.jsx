@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { AppShell } from '@features/manager/components/AppShell'
 import AlertActionsCard from '@features/manager/settings/AlertActionsCard'
 import AlertThresholdCard from '@features/manager/settings/AlertThresholdCard'
@@ -15,13 +15,16 @@ export default function Settings() {
   const [deleteModal, setDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [combined, setCombined] = useState(true)
-  const [conductThreshold, setConductThreshold] = useState(3)
-  const [escalationThreshold, setEscalationThreshold] = useState(2)
-  const [needsWorkWeeks, setNeedsWorkWeeks] = useState(3)
-  const [window, setWindow] = useState('60 days')
+  const [thresholds, setThresholds] = useState({ conductThreshold: 3, escalationThreshold: 2, needsWorkWeeks: 3 })
+  const [timeWindow, setTimeWindow] = useState('60 days')
   const [actions, setActions] = useState({ notifyHR: true, flagRecord: true, notifyMgr: false, autoSummary: false })
 
-  const toggleAction = (key) => setActions((a) => ({ ...a, [key]: !a[key] }))
+  const toggleCombined = useCallback(() => setCombined((c) => !c), [])
+  const handleThresholdChange = useCallback((key, value) => setThresholds((t) => ({ ...t, [key]: value })), [])
+  const toggleAction = useCallback((key) => setActions((a) => ({ ...a, [key]: !a[key] })), [])
+  const openDelete = useCallback(() => { setDeleteConfirmText(''); setDeleteModal(true) }, [])
+  const closeDelete = useCallback(() => setDeleteModal(false), [])
+
   const confirmReady = deleteConfirmText === 'DELETE'
 
   return (
@@ -36,41 +39,34 @@ export default function Settings() {
 
           <AlertThresholdCard
             combined={combined}
-            onToggleCombined={() => setCombined((current) => !current)}
-            values={{ conductThreshold, escalationThreshold, needsWorkWeeks }}
-            onChangeThreshold={(key, value) => {
-              if (key === 'conductThreshold') setConductThreshold(value)
-              if (key === 'escalationThreshold') setEscalationThreshold(value)
-              if (key === 'needsWorkWeeks') setNeedsWorkWeeks(value)
-            }}
-            window={window}
-            onChangeWindow={setWindow}
+            onToggleCombined={toggleCombined}
+            values={thresholds}
+            onChangeThreshold={handleThresholdChange}
+            timeWindow={timeWindow}
+            onChangeWindow={setTimeWindow}
           />
 
           <AlertActionsCard
             actions={actions}
-            conductThreshold={conductThreshold}
-            escalationThreshold={escalationThreshold}
+            conductThreshold={thresholds.conductThreshold}
+            escalationThreshold={thresholds.escalationThreshold}
             onToggleAction={toggleAction}
-            window={window}
+            timeWindow={timeWindow}
           />
 
           <FlaggedEmployeesTable />
 
-          <button className="st-btn-save">Save settings</button>
+          <button type="button" className="st-btn-save">Save settings</button>
 
           <DeleteAccountSection
             confirmReady={confirmReady}
             deleteConfirmText={deleteConfirmText}
             deleteModal={deleteModal}
-            onCancelDelete={() => setDeleteModal(false)}
+            onCancelDelete={closeDelete}
             onChangeConfirmText={setDeleteConfirmText}
-            onCloseModal={() => setDeleteModal(false)}
-            onConfirmDelete={() => logout()}
-            onOpenDelete={() => {
-              setDeleteConfirmText('')
-              setDeleteModal(true)
-            }}
+            onCloseModal={closeDelete}
+            onConfirmDelete={logout}
+            onOpenDelete={openDelete}
           />
 
         </div>

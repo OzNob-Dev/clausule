@@ -56,7 +56,8 @@ export default function Dashboard() {
             </div>
           ))}
           <div className="py-[14px] px-6 border-r border-border last:border-r-0 ml-auto border-r-0 flex items-center max-sm:ml-0 max-sm:border-l-0 max-sm:w-full max-sm:py-3 max-sm:px-4">
-            <label className="flex min-w-0 items-center gap-[7px] bg-canvas border-[1.5px] border-border2 rounded-[var(--r)] py-[7px] px-[11px] transition-colors duration-150 cursor-text focus-within:border-acc-text max-sm:w-full">
+            <label htmlFor="db-search" className="flex min-w-0 items-center gap-[7px] bg-canvas border-[1.5px] border-border2 rounded-[var(--r)] py-[7px] px-[11px] transition-colors duration-150 cursor-text focus-within:border-acc-text max-sm:w-full">
+              <span className="sr-only">Search people</span>
               <svg className="shrink-0 w-[13px] h-[13px] text-tx-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                 <circle cx="6.5" cy="6.5" r="4.5"/>
                 <path d="M10.5 10.5l3 3"/>

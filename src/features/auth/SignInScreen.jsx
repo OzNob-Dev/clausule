@@ -18,7 +18,7 @@ export default function SignIn() {
   if (flow.step === 'app') {
     return (
       <MfaLoginAppStep
-        email={flow.resolvedEmail}
+        email={flow.email}
         otp={flow.code.digits}
         otpRefs={flow.codeRefs}
         otpState={flow.code.state}
@@ -35,7 +35,7 @@ export default function SignIn() {
   if (flow.step === 'otp') {
     return (
       <MfaLoginEmailStep
-        email={flow.resolvedEmail}
+        email={flow.email}
         otp={flow.code.digits}
         otpRefs={flow.codeRefs}
         otpState={flow.code.state}

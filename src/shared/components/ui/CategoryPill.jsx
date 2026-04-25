@@ -22,7 +22,7 @@ const dotSizeClass = {
 }
 
 export function CategoryPill({ cat, showDot = false, className = '' }) {
-  const cfg = catConfig[cat] || catConfig.perf
+  const cfg = catConfig[cat] ?? catConfig.perf
   return (
     <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold', pillStyles[cfg.mod].pill, className)}>
       {showDot && <span className={cn('h-2 w-2 rounded-full', pillStyles[cfg.mod].dot)} />}
@@ -32,7 +32,7 @@ export function CategoryPill({ cat, showDot = false, className = '' }) {
 }
 
 export function CategoryDot({ cat, size = 8, className = '', onClick }) {
-  const cfg = catConfig[cat] || catConfig.perf
+  const cfg = catConfig[cat] ?? catConfig.perf
   const sizeClass = dotSizeClass[size] ?? dotSizeClass[8]
   const dot = cn(
     'inline-flex shrink-0 rounded-full border border-transparent',

@@ -59,7 +59,7 @@ const navItems = [
   },
 ]
 
-export function RailNav({ items = navItems, locked = false, onLogout, userInitials = 'AD', userTitle = 'Adrian Diente' }) {
+export function RailNav({ items = navItems, locked = false, onLogout, userInitials = '', userTitle = '' }) {
   const pathname = usePathname()
   const visibleItems = locked ? [] : items
 
