@@ -7,7 +7,7 @@ vi.mock('@features/brag/components/BragRail', () => ({
   default: () => <nav aria-label="Brag navigation" />,
 }))
 
-vi.mock('@features/brag/components/BragSidebar', () => ({
+vi.mock('@features/brag/components/BragIdentitySidebar', () => ({
   default: () => <aside aria-label="Feedback guidance">Feedback sidebar</aside>,
 }))
 

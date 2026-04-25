@@ -14,9 +14,7 @@ vi.mock('@features/signup/context/SignupContext', () => ({
     setStep: vi.fn(),
     step1Data: {},
     setStep1Data: vi.fn(),
-    step2Data: {},
-    setStep2Data: vi.fn(),
-    completePayment: vi.fn(),
+    completeSignup: vi.fn(),
   }),
 }))
 

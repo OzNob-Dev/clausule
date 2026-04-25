@@ -1,8 +1,8 @@
-import crypto from 'node:crypto'
 import { BrevoClient } from '@getbrevo/brevo'
 import { createUser, rpc } from '@api/_lib/supabase.js'
 import { withTimeout } from '@api/_lib/network.js'
 import { findProfileByEmail, getUserSsoProvider } from '@features/auth/server/accountRepository.js'
+import { INDIVIDUAL_MONTHLY_PLAN, formatPlanAmount } from '@features/signup/shared/plan'
 import {
   beginBackendOperation,
   completeBackendOperation,
@@ -11,44 +11,43 @@ import {
 } from '@features/auth/server/backendOperation.js'
 import { verifySignupVerificationToken } from '@features/auth/server/signupVerification.js'
 
-const PLAN_AMOUNT_CENTS = 500
-const PLAN_CURRENCY = 'AUD'
-const PLAN_INTERVAL = 'month'
-const PLAN_LABEL = 'Clausule Individual'
+const PLAN_AMOUNT_CENTS = INDIVIDUAL_MONTHLY_PLAN.amountCents
+const PLAN_CURRENCY = INDIVIDUAL_MONTHLY_PLAN.currency
+const PLAN_INTERVAL = INDIVIDUAL_MONTHLY_PLAN.interval
+const PLAN_LABEL = INDIVIDUAL_MONTHLY_PLAN.label
 
 function authUserId(created) {
   return created?.id ?? created?.user?.id ?? null
 }
 
 function money(amountCents) {
-  return new Intl.NumberFormat('en-AU', { style: 'currency', currency: PLAN_CURRENCY }).format(amountCents / 100)
+  return formatPlanAmount(amountCents, PLAN_CURRENCY)
 }
 
-async function sendInvoiceEmail({ email, firstName, amountCents, periodStart, periodEnd }) {
+async function sendPlanActivationEmail({ email, firstName, amountCents, periodStart, periodEnd }) {
   if (!process.env.BREVO_API_KEY) throw new Error('Email service not configured')
 
-  const invoiceNumber = `INV-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`
   const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY })
 
   await withTimeout(
     () => client.transactionalEmails.sendTransacEmail({
-      subject: `Your Clausule invoice ${invoiceNumber}`,
+      subject: 'Your Clausule plan is active',
       sender: { name: 'Clausule', email: 'noreply@clausule.app' },
       to: [{ email }],
       htmlContent: `
         <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#FAF7F3;border-radius:12px;color:#1A1510;">
-          <p style="margin:0 0 8px;color:#786B5F;font-size:13px;">Invoice ${invoiceNumber}</p>
           <h2 style="margin:0 0 12px;font-size:22px;">Thanks${firstName ? `, ${firstName}` : ''}</h2>
-          <p style="margin:0 0 24px;color:#5B4E42;">Your Clausule subscription is active.</p>
+          <p style="margin:0 0 24px;color:#5B4E42;">Your Clausule account and fixed rollout plan are now active.</p>
           <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-            <tr><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;">${PLAN_LABEL}</td><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;text-align:right;">${money(amountCents)} / month</td></tr>
-            <tr><td style="padding:12px 0;font-weight:700;">Paid today</td><td style="padding:12px 0;text-align:right;font-weight:700;">${money(amountCents)}</td></tr>
+            <tr><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;">Plan</td><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;text-align:right;">${PLAN_LABEL}</td></tr>
+            <tr><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;">Price</td><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;text-align:right;">${money(amountCents)} / month</td></tr>
+            <tr><td style="padding:12px 0;font-weight:700;">Status</td><td style="padding:12px 0;text-align:right;font-weight:700;">Active</td></tr>
           </table>
-          <p style="margin:0;color:#786B5F;font-size:13px;">Billing period: ${periodStart.toLocaleDateString('en-AU')} to ${periodEnd.toLocaleDateString('en-AU')}.</p>
+          <p style="margin:0;color:#786B5F;font-size:13px;">Current access period: ${periodStart.toLocaleDateString('en-AU')} to ${periodEnd.toLocaleDateString('en-AU')}.</p>
         </div>
       `,
     }),
-    { timeoutMs: 10_000, timeoutLabel: 'Brevo invoice email' }
+    { timeoutMs: 10_000, timeoutLabel: 'Brevo plan activation email' }
   )
 }
 
@@ -183,9 +182,9 @@ export async function registerAccount(body) {
   }
 
   try {
-    await sendInvoiceEmail({ email, firstName, amountCents, periodStart: now, periodEnd: currentPeriodEnd })
+    await sendPlanActivationEmail({ email, firstName, amountCents, periodStart: now, periodEnd: currentPeriodEnd })
   } catch (err) {
-    console.error('[register] invoice email error:', err?.message ?? err)
+    console.error('[register] plan activation email error:', err?.message ?? err)
   }
 
   return result

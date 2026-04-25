@@ -4,9 +4,8 @@ import dynamic from 'next/dynamic'
 import { useEffect, useState, useTransition } from 'react'
 import { useTheme } from '@shared/hooks/useTheme'
 import BragRail from '@features/brag/components/BragRail'
-import BragSidebar from '@features/brag/components/BragSidebar'
+import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import BragEmptyState from '@features/brag/components/BragEmptyState'
-import BragLoadingState from '@features/brag/components/BragLoadingState'
 import EntryCard from '@features/brag/components/EntryCard'
 import EntryComposer from '@features/brag/components/EntryComposer'
 import Link from 'next/link'
@@ -20,9 +19,6 @@ import '@features/brag/styles/resume-tab.css'
 const ResumeTab = dynamic(() => import('@features/brag/components/ResumeTab'), {
   loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,
 })
-
-const MANAGER_NOTE =
-  'Jordan has had a strong year. The platform migration was the headline — delivered early with consistently positive stakeholder feedback. Genuine tech lead potential here.'
 
 function evidenceTypeToPill(type) {
   if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
@@ -39,11 +35,7 @@ function ringOffsets(count) {
   ]
 }
 
-function cardFromSavedEntry({ entry, evidenceTypes, files }) {
-  const pills = evidenceTypes.length
-    ? evidenceTypes.slice(0, 4).map(evidenceTypeToPill)
-    : files.slice(0, 4).map((file) => ({ label: file.name.replace(/\.[^.]+$/, ''), type: 'filled' }))
-
+function cardFromSavedEntry({ entry, evidenceTypes }) {
   return {
     id: entry.id,
     title: entry.title,
@@ -52,7 +44,7 @@ function cardFromSavedEntry({ entry, evidenceTypes, files }) {
     strength: entry.strength,
     strengthHint: entry.strength_hint,
     ringOffsets: ringOffsets(evidenceTypes.length),
-    pills,
+    pills: evidenceTypes.slice(0, 4).map(evidenceTypeToPill),
   }
 }
 
@@ -92,10 +84,9 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
   const tabOrder = ['brag', 'cv']
   const [tab, setTab]                   = useState('brag')
   const [entries, setEntries]           = useState(() => [...(initialEntries ?? [])].sort(newestEntryFirst).map(cardFromEntry))
-  const [entriesLoading] = useState(false)
-  const [entriesError] = useState(initialEntriesError)
+  const entriesError                    = initialEntriesError
   const [composerOpen, setComposerOpen] = useState(false)
-  const panelKey = entriesLoading ? 'loading' : composerOpen ? 'composer' : entriesError ? 'error' : entries.length ? 'entries' : 'empty'
+  const panelKey = composerOpen ? 'composer' : entriesError ? 'error' : entries.length ? 'entries' : 'empty'
   const [visiblePanel, setVisiblePanel] = useState(panelKey)
   const [panelExiting, setPanelExiting] = useState(false)
 
@@ -151,7 +142,6 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
 
   const panelContent = {
     composer: <EntryComposer onSave={saveEntry} onClose={() => setComposerOpen(false)} />,
-    loading: <BragLoadingState />,
     error: <p className="be-entry-load-error" role="alert">{entriesError}</p>,
     empty: <BragEmptyState onAddEntry={() => startPanelTransition(() => setComposerOpen(true))} />,
     entries: (
@@ -168,11 +158,10 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
     <div className="be-page">
       <BragRail activePage="brag" />
 
-      <BragSidebar
+      <BragIdentitySidebar
         avatarInitials={avatarInitials}
         displayName={displayName}
         email={profile.email}
-        note={MANAGER_NOTE}
       />
 
       <main className="be-main" aria-labelledby="brag-page-title">
@@ -229,7 +218,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
 
           {entries.length > 0 && (
             <section id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
-              <ResumeTab />
+              <ResumeTab entries={entries} />
             </section>
           )}
 

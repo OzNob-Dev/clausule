@@ -1,5 +1,9 @@
+// @ts-check
 import { useCallback, useEffect, useRef } from 'react'
 
+/**
+ * @returns {(fn: () => void, delay: number) => ReturnType<typeof setTimeout>}
+ */
 export function useTrackedTimeout() {
   const timeoutRefs = useRef(new Set())
 

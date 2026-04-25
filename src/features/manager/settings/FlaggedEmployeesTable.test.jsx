@@ -3,14 +3,12 @@ import { describe, expect, it } from 'vitest'
 import FlaggedEmployeesTable from './FlaggedEmployeesTable'
 
 describe('FlaggedEmployeesTable', () => {
-  it('renders a semantic flagged-employees table with row headers', () => {
+  it('renders an honest placeholder instead of fixture-backed risk rows', () => {
     render(<FlaggedEmployeesTable />)
 
-    const table = screen.getByRole('table', { name: /flagged employees requiring attention/i })
-    const marcusRow = within(table).getByRole('rowheader', { name: /marcus o'brien/i })
+    const status = screen.getByRole('status')
 
-    expect(within(table).getByRole('columnheader', { name: /employee/i })).toBeInTheDocument()
-    expect(marcusRow).toBeInTheDocument()
-    expect(within(table).getByText(/4 conduct notes \+ 2 escalations in 60d/i)).toBeInTheDocument()
+    expect(within(status).getByText(/flagged employee records will appear here/i)).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 })

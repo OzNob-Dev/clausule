@@ -24,8 +24,8 @@ vi.mock('next/headers', () => ({
   headers: async () => ({ get: (key) => (key === 'x-clausule-pathname' ? pathname : null) }),
 }))
 
-vi.mock('@features/auth/components/ProtectedAppProvider', () => ({
-  default: ({ children }) => <>{children}</>,
+vi.mock('@features/auth/context/AuthContext', () => ({
+  AuthProvider: ({ children }) => <>{children}</>,
 }))
 
 vi.mock('@features/auth/server/serverSession.js', () => ({

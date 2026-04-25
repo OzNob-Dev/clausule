@@ -18,7 +18,7 @@ export default function EntryCard({ entry }) {
           <div className="be-strength-hint">{entry.strengthHint}</div>
           <div className="be-ev-pills" role="list" aria-label="Evidence">
             {entry.pills.map((pill, i) => (
-              <span key={i} role="listitem" className={`be-ev-pill be-ev-pill--${pill.type}`}>
+              <span key={`${pill.label}-${i}`} role="listitem" className={`be-ev-pill be-ev-pill--${pill.type}`}>
                 <span className="be-ev-pill-dot" aria-hidden="true" />
                 {pill.label}
               </span>

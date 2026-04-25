@@ -9,10 +9,11 @@ import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { ROUTES } from '@shared/utils/routes'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
+import { useTotpSetup } from '@features/mfa/hooks/useTotpSetup'
 import { sendCodeEmail } from '@features/auth/api-client/sendCodeEmail'
 
 /** @typedef {1 | 2 | 3} MfaSetupStep */
-/** @typedef {{ step: MfaSetupStep, email: string, hasMfaSetup: boolean, totpSecret: string, totpUri: string, copied: boolean }} MfaSetupState */
+/** @typedef {{ step: MfaSetupStep, email: string, hasMfaSetup: boolean, totpSecret: string, totpUri: string }} MfaSetupState */
 
 /** @type {MfaSetupState} */
 const INITIAL_STATE = {
@@ -21,7 +22,6 @@ const INITIAL_STATE = {
   hasMfaSetup: false,
   totpSecret: '',
   totpUri: '',
-  copied: false,
 }
 
 /** @param {MfaSetupState} state */
@@ -41,10 +41,6 @@ function reducer(state, action) {
         totpSecret: action.secret,
         totpUri: action.uri,
       }
-    case 'copy_secret':
-      return { ...state, copied: true }
-    case 'hide_copied':
-      return { ...state, copied: false }
     case 'finish_setup':
       return { ...state, hasMfaSetup: true, step: 3 }
     default:
@@ -57,10 +53,9 @@ export function useMfaSetupFlow() {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const [resendTimer, , resetResendTimer] = useCountdown(30, state.step === 1)
   const otpRefs = useRef([])
-  const totpRefs = useRef([])
   const scheduleTimeout = useTrackedTimeout()
   const otpCode = useSixDigitCode({ inputRefs: otpRefs, scheduleTimeout })
-  const totpCode = useSixDigitCode({ inputRefs: totpRefs, scheduleTimeout })
+  const totpSetup = useTotpSetup({ enabled: state.step === 2 && !state.hasMfaSetup })
 
   const bootstrapQuery = useQuery({
     queryKey: ['auth', 'bootstrap', 'mfa-setup'],
@@ -81,21 +76,14 @@ export function useMfaSetupFlow() {
     })
   }, [bootstrapQuery.data])
 
-  const totpSetupQuery = useQuery({
-    queryKey: ['auth', 'totp-setup', 'mfa-screen'],
-    queryFn: () => apiJson('/api/auth/totp/setup', {}, { retryOnUnauthorized: false }),
-    enabled: state.step === 2 && !state.hasMfaSetup,
-    retry: false,
-  })
-
   useEffect(() => {
-    if (!totpSetupQuery.data?.secret) return
+    if (!totpSetup.secret) return
     dispatch({
       type: 'totp_loaded',
-      secret: totpSetupQuery.data.secret,
-      uri: totpSetupQuery.data.uri ?? '',
+      secret: totpSetup.secret,
+      uri: totpSetup.uri,
     })
-  }, [totpSetupQuery.data])
+  }, [totpSetup.secret, totpSetup.uri])
 
   const resendMutation = useMutation({
     mutationFn: () => sendCodeEmail(state.email),
@@ -104,14 +92,6 @@ export function useMfaSetupFlow() {
   const verifyOtpMutation = useMutation({
     mutationFn: (digits) =>
       apiJson('/api/auth/verify-code', jsonRequest({ email: state.email, code: digits.join('') }, { method: 'POST' }), { retryOnUnauthorized: false }),
-  })
-
-  const verifyTotpMutation = useMutation({
-    mutationFn: async (digits) => {
-      const code = digits.join('')
-      if (!state.totpSecret) throw new Error('Missing secret')
-      return apiJson('/api/auth/totp/setup', jsonRequest({ code, secret: state.totpSecret }, { method: 'POST' }), { retryOnUnauthorized: false })
-    },
   })
 
   const verifyOtp = useCallback(async (digits) => {
@@ -126,31 +106,9 @@ export function useMfaSetupFlow() {
     }
   }, [otpCode, router, scheduleTimeout, state.hasMfaSetup, verifyOtpMutation])
 
-  const verifyTotp = useCallback(async (digits) => {
-    if (!state.totpSecret) return
-    totpCode.setState('checking')
-    try {
-      await verifyTotpMutation.mutateAsync(digits)
-      totpCode.setState('done')
-    } catch {
-      totpCode.setError()
-    }
-  }, [state.totpSecret, totpCode, verifyTotpMutation])
-
   useEffect(() => {
     if (otpCode.state === 'idle' && otpCode.digits.every(Boolean)) verifyOtp(otpCode.digits)
   }, [otpCode.digits, otpCode.state, verifyOtp])
-
-  useEffect(() => {
-    if (state.step !== 2) return
-    if (totpCode.state === 'idle' && totpCode.digits.every(Boolean)) verifyTotp(totpCode.digits)
-  }, [state.step, totpCode.digits, totpCode.state, verifyTotp])
-
-  const copySecret = useCallback(() => {
-    navigator.clipboard?.writeText(state.totpSecret).catch(() => {})
-    dispatch({ type: 'copy_secret' })
-    scheduleTimeout(() => dispatch({ type: 'hide_copied' }), 2000)
-  }, [scheduleTimeout, state.totpSecret])
 
   const finishSetup = useCallback(() => {
     dispatch({ type: 'finish_setup' })
@@ -168,8 +126,8 @@ export function useMfaSetupFlow() {
   const totpSecretDisp = state.totpSecret.match(/.{1,4}/g)?.join(' ') ?? state.totpSecret
 
   return {
-    copied: state.copied,
-    copySecret,
+    copied: totpSetup.copied,
+    copySecret: totpSetup.copySecret,
     email: state.email,
     enterApp,
     finishSetup,
@@ -179,10 +137,10 @@ export function useMfaSetupFlow() {
     resendTimer,
     resetResendTimer,
     step: state.step,
-    totpCode,
-    totpDone: totpCode.state === 'done',
-    totpLoading: totpSetupQuery.isPending,
-    totpRefs,
+    totpCode: totpSetup.totpCode,
+    totpDone: totpSetup.totpCode.state === 'done',
+    totpLoading: totpSetup.loading,
+    totpRefs: totpSetup.inputRefs,
     totpSecretDisp,
     totpUri: state.totpUri,
   }

@@ -19,7 +19,7 @@ import '@features/signup/styles/signup-aside.css'
 // ── Root component ─────────────────────────────────────────────────
 function SignUpInner() {
   const searchParams = useSearchParams()
-  const { step, setStep, step1Data, setStep1Data, step2Data, setStep2Data, completePayment } = useSignup()
+  const { step, setStep, step1Data, setStep1Data, completeSignup } = useSignup()
   const setProfile = useProfileStore((state) => state.setProfile)
 
   const emailPrefill     = decodeURIComponent(searchParams.get('email')     ?? '')
@@ -46,8 +46,6 @@ function SignUpInner() {
       lastName: data.lastName,
       email: data.email,
     })
-    const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ')
-    setStep2Data((prev) => ({ ...prev, cardName: prev.cardName || fullName }))
     goStep(2)
   }
 
@@ -125,9 +123,8 @@ function SignUpInner() {
         <div className="su-narrow">
           {step === 2 && (
             <SignupStepPayment
-              onNext={(data) => { setStep2Data(data); completePayment() }}
-              onBack={(data) => { setStep2Data(data); goStep(1) }}
-              initialData={step2Data}
+              onNext={completeSignup}
+              onBack={() => goStep(1)}
               accountData={step1Data}
             />
           )}

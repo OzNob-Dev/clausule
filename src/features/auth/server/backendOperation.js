@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
 import { rpc } from '@api/_lib/supabase.js'
+import { INDIVIDUAL_MONTHLY_PLAN } from '@features/signup/shared/plan'
 
 const REGISTER_OPERATION_TYPE = 'register'
 const SUBSCRIBE_OPERATION_TYPE = 'subscribe'
@@ -48,12 +49,12 @@ function firstRow(data) {
 }
 
 export function registerOperationKey({ email }) {
-  return `register:${normalizeEmail(email)}:individual:aud:500:month`
+  return `register:${normalizeEmail(email)}:individual:${INDIVIDUAL_MONTHLY_PLAN.currency.toLowerCase()}:${INDIVIDUAL_MONTHLY_PLAN.amountCents}:${INDIVIDUAL_MONTHLY_PLAN.interval}`
 }
 
 export function subscribeOperationKey({ authedId, email, paymentMethodId }) {
   const owner = authedId || normalizeEmail(email)
-  return `subscribe:${owner}:individual:aud:500:month`
+  return `subscribe:${owner}:individual:${INDIVIDUAL_MONTHLY_PLAN.currency.toLowerCase()}:${INDIVIDUAL_MONTHLY_PLAN.amountCents}:${INDIVIDUAL_MONTHLY_PLAN.interval}`
 }
 
 export function authAttemptOperationKey({ operationType, email, code }) {

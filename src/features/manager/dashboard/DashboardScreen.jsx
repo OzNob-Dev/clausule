@@ -1,85 +1,15 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-import Link from 'next/link'
-import { useDeferredValue, useMemo, useState } from 'react'
-import { AppShell } from '@features/manager/components/AppShell'
-import { ALL_EMP } from '@shared/data/employees'
-
-const KanbanBoard = dynamic(
-  () => import('@features/manager/dashboard/KanbanBoard').then((module) => module.KanbanBoard),
-  {
-    loading: () => <div className="flex-1 px-7 py-6 text-sm text-tx-3" role="status">Loading board…</div>,
-  }
-)
-
-const STATS = [
-  { n: '84',  l: 'Total entries' },
-  { n: '23',  l: 'People tracked' },
-  { n: '3',   l: 'Escalated' },
-  { n: '3.6', l: 'Avg entries / person' },
-]
+import { ManagerWorkspacePlaceholder } from '@features/manager/components/ManagerWorkspacePlaceholder'
 
 export default function Dashboard() {
-  const [query, setQuery] = useState('')
-  const deferredQuery = useDeferredValue(query)
-
-  const employeesByStatus = useMemo(() => {
-    const normalized = deferredQuery.trim().toLowerCase()
-    const filtered = normalized
-      ? ALL_EMP.filter((emp) => emp.name.toLowerCase().includes(normalized))
-      : ALL_EMP
-    const groups = { g: [], y: [], r: [] }
-    filtered.forEach((emp) => {
-      if (groups[emp.ps]) groups[emp.ps].push(emp)
-    })
-    return groups
-  }, [deferredQuery])
-
   return (
-    <AppShell>
-      <div className="flex flex-col h-screen overflow-hidden">
-        {/* Top bar */}
-        <div className="flex items-end justify-between shrink-0 pt-[22px] px-7 pb-0 max-sm:px-4 max-sm:pt-4 max-sm:flex-wrap max-sm:gap-2.5">
-          <div>
-            <div className="text-[22px] font-black text-tx-1 tracking-[-0.6px]">Dashboard</div>
-            <div className="text-xs font-medium text-tx-3 mt-[3px]">Acme Corp · April 2026</div>
-          </div>
-          <Link href="/new-entry" className="bg-acc text-bg-doc rounded-[var(--r)] text-xs font-bold py-[9px] px-4 no-underline transition-opacity duration-150 hover:opacity-90">
-            + New entry
-          </Link>
-        </div>
-
-        {/* Stats strip + inline search */}
-        <div className="flex items-stretch shrink-0 border-b border-border mt-[18px]">
-          {STATS.map(({ n, l }) => (
-            <div key={l} className="py-[14px] px-6 border-r border-border last:border-r-0 max-sm:py-3 max-sm:px-4">
-              <div className="text-[28px] font-black text-tx-1 tracking-[-1px] leading-none max-sm:text-[22px]">{n}</div>
-              <div className="text-[11px] font-medium text-tx-3 mt-1">{l}</div>
-            </div>
-          ))}
-          <div className="py-[14px] px-6 border-r border-border last:border-r-0 ml-auto border-r-0 flex items-center max-sm:ml-0 max-sm:border-l-0 max-sm:w-full max-sm:py-3 max-sm:px-4">
-            <label htmlFor="db-search" className="flex min-w-0 items-center gap-[7px] bg-canvas border-[1.5px] border-border2 rounded-[var(--r)] py-[7px] px-[11px] transition-colors duration-150 cursor-text focus-within:border-acc-text max-sm:w-full">
-              <span className="sr-only">Search people</span>
-              <svg className="shrink-0 w-[13px] h-[13px] text-tx-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                <circle cx="6.5" cy="6.5" r="4.5"/>
-                <path d="M10.5 10.5l3 3"/>
-              </svg>
-              <input
-                id="db-search"
-                type="search"
-                placeholder="Search people…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="block min-w-0 w-[160px] bg-transparent border-none p-0 text-xs font-medium text-tx-1 outline-none font-sans placeholder:text-tx-3 [&::-webkit-search-cancel-button]:cursor-pointer max-sm:w-full"
-              />
-            </label>
-          </div>
-        </div>
-
-        {/* Kanban */}
-        <KanbanBoard employeesByStatus={employeesByStatus} />
-      </div>
-    </AppShell>
+    <ManagerWorkspacePlaceholder
+      title="Dashboard"
+      description="The manager dashboard is hidden until employee records, alert states, and summary metrics are backed by live production data."
+      detail="Fixture-driven board columns, search results, and stats were removed so this route does not present demo information as current team health."
+      actionHref="/profile"
+      actionLabel="Open profile"
+    />
   )
 }

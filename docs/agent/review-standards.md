@@ -20,6 +20,7 @@
 - One sign-in path can bypass another required sign-in method.
 - Side effects can fire before durable state is committed.
 - Retry or replay behavior is unclear, unbounded, or untested.
+- The UI promises persistence, deletion, uploads, alerts, or payment handling that the underlying implementation does not actually perform.
 
 ## Focus Areas
 

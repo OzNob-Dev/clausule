@@ -1,6 +1,6 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import ProtectedAppProvider from '@features/auth/components/ProtectedAppProvider'
+import { AuthProvider } from '@features/auth/context/AuthContext'
 import { getServerBootstrapSession } from '@features/auth/server/serverSession.js'
 import { ROUTES } from '@shared/utils/routes'
 
@@ -15,5 +15,5 @@ export default async function ProtectedLayout({ children }) {
     redirect(ROUTES.bragSettings)
   }
 
-  return <ProtectedAppProvider session={session}>{children}</ProtectedAppProvider>
+  return <AuthProvider initialSession={session}>{children}</AuthProvider>
 }

@@ -2,43 +2,35 @@
 
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { formatCardNumber, formatExpiry } from '@features/signup/utils/signupFormatting'
-import { useSubscriptionStore } from '@features/signup/store/useSubscriptionStore'
+import { INDIVIDUAL_MONTHLY_PLAN, formatPlanLabel } from '@features/signup/shared/plan'
 import { apiJson, jsonRequest } from '@shared/utils/api'
 import { BackBtn, CtaBtn } from './SignupButtons'
-import { FieldInput, FieldLabel } from './SignupFormField'
 import { ArrowIcon } from './SignupIcons'
 
-export default function SignupStepPayment({ accountData, initialData, onBack, onNext }) {
-  const setMonthlyIndividualPlan = useSubscriptionStore((state) => state.setMonthlyIndividualPlan)
-  const [cardName, setCardName] = useState(initialData.cardName)
-  const [cardNum, setCardNum] = useState(initialData.cardNum)
-  const [expiry, setExpiry] = useState(initialData.expiry)
-  const [cvc, setCvc] = useState(initialData.cvc)
+export default function SignupStepPayment({ accountData, onBack, onNext }) {
   const [apiError, setApiError] = useState('')
 
-  const save = () => ({ cardName, cardNum, expiry, cvc })
-
   const registerMutation = useMutation({
-    mutationFn: (plan) =>
+    mutationFn: () =>
       apiJson('/api/auth/register', jsonRequest({
         email: accountData.email,
         firstName: accountData.firstName,
         lastName: accountData.lastName,
         verificationToken: accountData.emailVerificationToken,
-        subscription: { amountCents: plan.amountCents, currency: plan.currency, interval: plan.interval },
+        subscription: {
+          amountCents: INDIVIDUAL_MONTHLY_PLAN.amountCents,
+          currency: INDIVIDUAL_MONTHLY_PLAN.currency,
+          interval: INDIVIDUAL_MONTHLY_PLAN.interval,
+        },
       }, { method: 'POST' }), { retryOnUnauthorized: false }),
   })
 
-  // Keep the mocked payment step isolated until a Stripe Elements flow is wired in.
   const handleSubscribe = async () => {
-    setMonthlyIndividualPlan()
-    const plan = useSubscriptionStore.getState()
     setApiError('')
 
     try {
-      await registerMutation.mutateAsync(plan)
-      onNext(save())
+      await registerMutation.mutateAsync()
+      onNext()
     } catch (error) {
       setApiError(error instanceof Error ? error.message : 'Network error — please check your connection and try again.')
     }
@@ -48,98 +40,40 @@ export default function SignupStepPayment({ accountData, initialData, onBack, on
 
   return (
     <div>
-      <div className="su-step-heading">Payment details</div>
-      <div className="su-step-sub">Secured by Stripe. We never store your card details.</div>
+      <div className="su-step-heading">Review your plan</div>
+      <div className="su-step-sub">Checkout is not connected in this build, so this step does not ask for or store card details.</div>
 
       <div className="su-order-summary">
         <div className="su-order-label">Order summary</div>
         <div className="su-order-row">
-          <span className="su-order-item">Clausule Individual</span>
-          <span className="su-order-val">$5.00 / mo</span>
+          <span className="su-order-item">{INDIVIDUAL_MONTHLY_PLAN.label}</span>
+          <span className="su-order-val">{formatPlanLabel(INDIVIDUAL_MONTHLY_PLAN)}</span>
         </div>
         <div className="su-order-divider" />
         <div className="su-order-row">
-          <span className="su-order-total-label">Due today</span>
-          <span className="su-order-total-val">$5.00</span>
+          <span className="su-order-total-label">Sign-up flow</span>
+          <span className="su-order-total-val">No card collected</span>
         </div>
       </div>
 
-      <div className="su-pay-field">
-        <FieldLabel htmlFor="su-card-name">Name on card</FieldLabel>
-        <FieldInput id="su-card-name" type="text" placeholder="Jordan Ellis" value={cardName} onChange={(event) => setCardName(event.target.value)} />
-      </div>
-
-      <div className="su-pay-field su-card-input-wrap">
-        <FieldLabel htmlFor="su-card-number">Card number</FieldLabel>
-        <div className="su-card-input-wrap">
-          <FieldInput
-            id="su-card-number"
-            type="text"
-            placeholder="1234 5678 9012 3456"
-            maxLength={19}
-            value={cardNum}
-            onChange={(event) => setCardNum(formatCardNumber(event.target.value))}
-            className="su-card-input"
-          />
-          <div className="su-card-icons">
-            <div className="su-card-icon">
-              <svg viewBox="0 0 30 20" fill="none" width="18" height="12">
-                <rect width="30" height="20" rx="2" fill="#1A1FAC" />
-                <text x="4" y="14" fontFamily="Arial" fontSize="9" fontWeight="900" fill="white">VISA</text>
-              </svg>
-            </div>
-            <div className="su-card-icon">
-              <svg viewBox="0 0 30 20" width="18" height="12">
-                <circle cx="11" cy="10" r="7" fill="#EB001B" />
-                <circle cx="19" cy="10" r="7" fill="#F79E1B" />
-                <path d="M15 5a7 7 0 0 1 0 10 7 7 0 0 1 0-10z" fill="#FF5F00" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="su-expiry-cvc-row">
-        <div>
-          <FieldLabel htmlFor="su-card-expiry">Expiry</FieldLabel>
-          <FieldInput
-            id="su-card-expiry"
-            type="text"
-            placeholder="MM / YY"
-            maxLength={7}
-            value={expiry}
-            onChange={(event) => setExpiry(formatExpiry(event.target.value))}
-          />
-        </div>
-        <div>
-          <FieldLabel htmlFor="su-card-cvc">CVC</FieldLabel>
-          <FieldInput
-            id="su-card-cvc"
-            type="text"
-            placeholder="123"
-            maxLength={4}
-            value={cvc}
-            onChange={(event) => setCvc(event.target.value.replace(/\D/g, ''))}
-          />
-        </div>
-      </div>
-
-      <div className="su-secure-note">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-[13px] w-[13px] shrink-0">
-          <rect x="3" y="7" width="10" height="8" rx="1.5" />
-          <path d="M5 7V5a3 3 0 0 1 6 0v2" />
-        </svg>
-        256-bit SSL encryption · PCI DSS compliant · Powered by Stripe
+      <div className="rounded-[var(--r)] border border-border bg-canvas px-4 py-4 text-[14px] leading-[1.75] text-tx-2">
+        <p className="font-semibold text-tx-1">What happens next</p>
+        <p className="mt-2">
+          Continuing creates your Clausule account, activates the fixed individual monthly plan for this rollout, and sends a confirmation to <strong>{accountData.email}</strong>.
+        </p>
+        <p className="mt-2 text-[13px] text-tx-3">
+          We removed the placeholder Stripe form here until the app is wired to a real checkout flow.
+        </p>
       </div>
 
       {apiError && <div className="su-api-error" role="alert">{apiError}</div>}
 
       <CtaBtn terra onClick={handleSubscribe} disabled={busy}>
-        {busy ? 'Processing…' : <>Subscribe — $5/mo <ArrowIcon /></>}
+        {busy ? 'Creating account…' : <>Activate account <ArrowIcon /></>}
       </CtaBtn>
-      <BackBtn onClick={() => onBack(save())} />
+      <BackBtn onClick={onBack} />
       <div className="su-trial-note">
-        By subscribing you agree to our <a href="#">Subscription Terms</a>. Cancel any time from your account settings.
+        Subscription checkout will be added separately. This screen currently provisions access without collecting payment details.
       </div>
     </div>
   )

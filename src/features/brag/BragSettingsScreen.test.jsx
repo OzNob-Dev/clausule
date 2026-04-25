@@ -212,8 +212,7 @@ describe('BragSettings integration', () => {
     expect(screen.queryByText('Your profile', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
   })
 
-  it('renders reminder delivery and frequency choices on security settings', async () => {
-    const user = userEvent.setup()
+  it('shows an honest notification placeholder instead of unsaved reminder controls', async () => {
     const { useProfileStore } = await import('@features/auth/store/useProfileStore')
     useProfileStore.getState().setProfile({
       firstName: 'Ada',
@@ -228,14 +227,9 @@ describe('BragSettings integration', () => {
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
     renderWithQueryClient(<BragSettings />)
 
-    expect(screen.getByText('Reminder preferences')).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: /email/i })).toBeChecked()
-    expect(screen.getByRole('radio', { name: /weekly/i })).toBeChecked()
-
-    await user.click(screen.getByRole('radio', { name: /sms/i }))
-    await user.click(screen.getByRole('radio', { name: /quarterly/i }))
-
-    expect(screen.getByText('SMS · quarterly')).toBeInTheDocument()
+    expect(screen.getByText('Notifications')).toBeInTheDocument()
+    expect(screen.getByText(/preference sync is unavailable/i)).toBeInTheDocument()
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 
   it('uses the saved TOTP status to correct stale MFA settings', async () => {

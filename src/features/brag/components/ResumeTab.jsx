@@ -1,31 +1,44 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { profileDisplayName } from '@shared/utils/profile'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
 import ResumeDocument from './ResumeDocument'
 
-const GENERATED_BULLETS = [
-  'Led observability guild session for cross-functional engineering team — drove adoption across 2 teams and received peer recognition for knowledge sharing impact',
-  'Facilitated platform migration architecture review; produced formal decision record and secured sign-off from 4 teams with zero rollback events on go-live',
-  'Delivered Q3 platform migration ahead of schedule with measurable improvement to system reliability across dependent services',
-]
+function bulletFromEntry(entry) {
+  return [entry.title, entry.body].filter(Boolean).join(' — ').trim()
+}
 
-const INITIAL_CV = {
-  name: 'Jordan Ellis',
-  tagline: 'Senior software engineer — platform infrastructure, distributed systems, technical leadership',
-  contact: 'jordan.ellis@acmecorp.com · Platform team · Acme Corp',
-  jobTitle: 'Senior engineer',
-  jobMeta: 'Acme Corp · Mar 2022–present',
-  company: 'Platform team',
-  education: 'Bachelor of Computer Science',
-  educationDates: '2018–2022',
-  institution: 'University of Technology · Click to edit',
-  bullets: GENERATED_BULLETS,
+function generatedBullets(entries = []) {
+  const bullets = entries.map(bulletFromEntry).filter(Boolean).slice(0, 3)
+  while (bullets.length < 3) bullets.push('')
+  return bullets
+}
+
+function buildInitialCv(profile, entries = []) {
+  const displayName = profileDisplayName(profile)
+  const tagline = [profile.jobTitle, profile.department].filter(Boolean).join(' — ') || 'Add your professional summary'
+  const contact = [profile.email, profile.mobile, profile.department].filter(Boolean).join(' · ')
+  const company = profile.department || 'Team or business unit'
+
+  return {
+    name: displayName === 'Your profile' ? '' : displayName,
+    tagline,
+    contact,
+    jobTitle: profile.jobTitle || 'Current role title',
+    jobMeta: 'Current role · Edit dates',
+    company,
+    education: 'Add your degree',
+    educationDates: 'Add study dates',
+    institution: 'Add your institution',
+    bullets: generatedBullets(entries),
+  }
 }
 
 function GenerateButton({ disabled, generating, visible, onClick }) {
   return (
-    <button onClick={onClick} disabled={disabled || generating} className="be-btn-generate">
+    <button type="button" onClick={onClick} disabled={disabled || generating} className="be-btn-generate">
       {generating ? (
         <>
           <ThinkingDots />
@@ -46,14 +59,14 @@ function GenerateButton({ disabled, generating, visible, onClick }) {
 function ResumeActions({ copied, onCopy, onDownload }) {
   return (
     <div className="be-cv-actions">
-      <button onClick={onCopy} className="be-cv-copy-btn">
+      <button type="button" onClick={onCopy} className="be-cv-copy-btn">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <rect x="5" y="5" width="9" height="9" rx="1"/>
           <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
         </svg>
         Copy text
       </button>
-      <button onClick={onDownload} className="be-cv-dl-btn">
+      <button type="button" onClick={onDownload} className="be-cv-dl-btn">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <path d="M8 2v8M5 7l3 3 3-3"/>
           <line x1="2" y1="13" x2="14" y2="13"/>
@@ -65,10 +78,11 @@ function ResumeActions({ copied, onCopy, onDownload }) {
   )
 }
 
-export default function ResumeTab({ disabled = false }) {
+export default function ResumeTab({ disabled = false, entries = [] }) {
+  const profile = useProfileStore((state) => state.profile)
   const [cvVisible, setCvVisible] = useState(false)
   const [generating, setGenerating] = useState(false)
-  const [cvData, setCvData] = useState(INITIAL_CV)
+  const [cvData, setCvData] = useState(() => buildInitialCv(profile, entries))
   const [cvAutosaved, setCvAutosaved] = useState(false)
   const [cvCopied, setCvCopied] = useState(false)
 
@@ -83,6 +97,11 @@ export default function ResumeTab({ disabled = false }) {
     if (autosaveHideTimerRef.current) clearTimeout(autosaveHideTimerRef.current)
     if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
   }, [])
+
+  useEffect(() => {
+    if (cvVisible) return
+    setCvData(buildInitialCv(profile, entries))
+  }, [cvVisible, entries, profile])
 
   const scheduleAutosave = useCallback(() => {
     if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
@@ -116,7 +135,11 @@ export default function ResumeTab({ disabled = false }) {
 
     generateTimerRef.current = setTimeout(() => {
       setGenerating(false)
-      setCvData((prev) => ({ ...prev, bullets: GENERATED_BULLETS }))
+      setCvData((prev) => ({
+        ...buildInitialCv(profile, entries),
+        ...prev,
+        bullets: generatedBullets(entries),
+      }))
       setCvVisible(true)
     }, 1400)
   }

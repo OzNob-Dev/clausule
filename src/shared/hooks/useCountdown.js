@@ -1,5 +1,11 @@
+// @ts-check
 import { useEffect, useState } from 'react'
 
+/**
+ * @param {number} initialValue
+ * @param {boolean} [active]
+ * @returns {[number, import('react').Dispatch<import('react').SetStateAction<number>>, () => void]}
+ */
 export function useCountdown(initialValue, active = true) {
   const [value, setValue] = useState(initialValue)
 

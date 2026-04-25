@@ -119,9 +119,9 @@ describe('register route', () => {
       p_response_body: { ok: true, role: 'employee' },
     }), { expectRows: 'single' })
     expect(sendTransacEmail).toHaveBeenCalledWith(expect.objectContaining({
-      subject: expect.stringContaining('Your Clausule invoice'),
+      subject: 'Your Clausule plan is active',
       to: [{ email: 'ada@example.com' }],
-      htmlContent: expect.stringContaining('$5.00'),
+      htmlContent: expect.stringContaining('Status'),
     }))
     expect(createPersistentSession).toHaveBeenCalledWith({
       userId: 'user-1',
@@ -176,7 +176,7 @@ describe('register route', () => {
     expect(rpc).not.toHaveBeenCalled()
   })
 
-  it('keeps registration successful when the invoice email fails', async () => {
+  it('keeps registration successful when the activation email fails', async () => {
     select.mockResolvedValueOnce({ data: [{ id: 'user-3', role: 'employee' }] })
     sendTransacEmail.mockRejectedValueOnce(new Error('email failed'))
 

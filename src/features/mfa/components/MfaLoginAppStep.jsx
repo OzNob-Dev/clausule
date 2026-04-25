@@ -55,7 +55,7 @@ export default function MfaLoginAppStep({
         </section>
 
         <section className="mfa-app-right">
-          <button className="mfa-app-back" onClick={onBack} aria-label="Back to sign in">
+          <button type="button" className="mfa-app-back" onClick={onBack} aria-label="Back to sign in">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
               <polyline points="10 4 6 8 10 12" />
             </svg>
@@ -94,6 +94,7 @@ export default function MfaLoginAppStep({
           )}
 
           <button
+            type="button"
             className="mfa-app-btn"
             onClick={onVerify}
             disabled={!codeReady || otpState === 'checking' || otpState === 'done'}
@@ -108,7 +109,7 @@ export default function MfaLoginAppStep({
           {onUseRecovery && (
             <p className="mfa-app-footer">
               Can't access your app?{' '}
-              <button className="mfa-app-link" onClick={onUseRecovery}>Use a recovery code</button>
+              <button type="button" className="mfa-app-link" onClick={onUseRecovery}>Use a recovery code</button>
             </p>
           )}
 

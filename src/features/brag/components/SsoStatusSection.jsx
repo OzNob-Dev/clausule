@@ -3,6 +3,8 @@
 import { SsoProviderIcon } from '@shared/components/SsoProviderIcon'
 import { getActiveSsoProviders } from '@shared/utils/sso'
 
+export { getActiveSsoProviders }
+
 export default function SsoStatusSection({ displayName, email, avatarInitials, config }) {
   const activeSsoProviders = getActiveSsoProviders(config)
 

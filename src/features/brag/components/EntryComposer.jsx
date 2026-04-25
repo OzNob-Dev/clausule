@@ -1,16 +1,13 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { apiJson, jsonRequest } from '@shared/utils/api'
-import { AttachedFileList, EvidenceTypeGroup, FileDropzone } from './EntryComposerParts'
+import { EvidenceTypeGroup, EvidenceUploadNotice } from './EntryComposerParts'
 
 export default function EntryComposer({ onSave, onClose }) {
   const [title, setTitle]         = useState('')
   const [body, setBody]           = useState('')
   const [evTypes, setEvTypes]     = useState(new Set())
-  const [files, setFiles]         = useState([])
-  const [dropActive, setDropActive] = useState(false)
   const [error, setError]         = useState('')
-  const fileInputRef              = useRef(null)
 
   const saveEntryMutation = useMutation({
     mutationFn: () =>
@@ -31,24 +28,6 @@ export default function EntryComposer({ onSave, onClose }) {
     })
   }
 
-  const addFiles = (fileList) => {
-    const mapped = [...fileList].map((f) => ({
-      id: crypto.randomUUID(),
-      name: f.name,
-      size: f.size,
-      type: f.type,
-    }))
-    setFiles((prev) => [...prev, ...mapped])
-  }
-
-  const removeFile = (id) => setFiles((prev) => prev.filter((f) => f.id !== id))
-
-  const handleDrop = (e) => {
-    e.preventDefault()
-    setDropActive(false)
-    addFiles(e.dataTransfer.files)
-  }
-
   const handleSave = async () => {
     if (!title.trim()) return
 
@@ -60,7 +39,7 @@ export default function EntryComposer({ onSave, onClose }) {
         setError('Could not save this entry. Please try again.')
         return
       }
-      onSave({ entry, evidenceTypes: [...evTypes], files })
+      onSave({ entry, evidenceTypes: [...evTypes] })
     } catch {
       setError('Could not save this entry. Please try again.')
     }
@@ -94,14 +73,7 @@ export default function EntryComposer({ onSave, onClose }) {
           onChange={(e) => setBody(e.target.value)}
         />
         <EvidenceTypeGroup selectedTypes={evTypes} onToggle={toggleEvType} />
-        <FileDropzone
-          active={dropActive}
-          fileInputRef={fileInputRef}
-          onAddFiles={addFiles}
-          onDrop={handleDrop}
-          onSetActive={setDropActive}
-        />
-        <AttachedFileList files={files} onRemove={removeFile} />
+        <EvidenceUploadNotice />
         <div className="be-comp-footer">
           <div />
           <div className="be-comp-btns">

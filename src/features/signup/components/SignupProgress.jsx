@@ -1,4 +1,4 @@
-const STEPS = ['Account', 'Payment', 'Done']
+const STEPS = ['Account', 'Plan', 'Done']
 
 export default function SignupProgress({ step }) {
   return (

@@ -1,3 +1,4 @@
+// @ts-check
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@shared/utils/api'
 

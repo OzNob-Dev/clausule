@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Supabase admin client using the service role key.
  * Only call from server-side API routes — never expose SUPABASE_SERVICE_ROLE_KEY
@@ -19,16 +21,12 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
   console.warn('[supabase] NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set')
 }
 
-/**
- * Execute a PostgREST query against Supabase.
- * @param {string} path - e.g. '/rest/v1/otp_codes'
- * @param {RequestInit} init - fetch options
- * @returns {Promise<{ data: any, error: any }>}
- */
+/** @param {string} message @param {string} [code] @returns {{ message: string, code?: string }} */
 function mutationError(message, code) {
   return { message, code }
 }
 
+/** @param {unknown} payload @param {'single' | 'any' | undefined} expectRows */
 function applyRowExpectation(payload, expectRows) {
   if (!expectRows) return { data: payload, error: null }
 
@@ -43,6 +41,13 @@ function applyRowExpectation(payload, expectRows) {
   return { data: payload, error: null }
 }
 
+/**
+ * Execute a PostgREST query against Supabase.
+ * @param {string} path - e.g. '/rest/v1/otp_codes'
+ * @param {RequestInit} [init]
+ * @param {{ expectRows?: 'single' | 'any' }} [options]
+ * @returns {Promise<{ data: unknown, error: { message: string, code?: string } | null }>}
+ */
 async function supaFetch(path, init = {}, options = {}) {
   const url = `${SUPABASE_URL}${path}`
   const res = await fetch(url, {

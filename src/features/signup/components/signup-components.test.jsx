@@ -30,8 +30,8 @@ describe('Signup component integration', () => {
       </>
     )
 
-    expect(screen.getByText('$5')).toBeInTheDocument()
-    expect(screen.getByText('Payment')).toBeInTheDocument()
+    expect(screen.getByText('$5.00')).toBeInTheDocument()
+    expect(screen.getByText('Plan')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /continue/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /back/i })).toBeInTheDocument()
   })

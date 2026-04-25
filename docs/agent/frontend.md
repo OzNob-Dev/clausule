@@ -25,11 +25,14 @@
 - Reuse local feature styles before adding new shared styles.
 - Keep component props small and focused.
 - Prefer readable state names and minimal branching.
+- Do not create pass-through wrapper components that only re-export another component unchanged (`function Foo(props) { return <Bar {...props} /> }`). Delete the wrapper and import the real component directly at each call site. Update test `vi.mock` paths to match.
 - Use links or anchors for navigation and buttons for actions.
 - Prefer native form submission over click-only save handlers when the UI is collecting user input.
+- If a screen is not wired to durable backend state yet, render an explicit unavailable/coming-soon state. Do not ship local-only controls, fixture-backed tables, timer-driven fake search, or save buttons that imply persistence when nothing is stored.
+- Unsupported uploads, reminders, or other follow-on capabilities must be hidden or replaced with truthful copy. Do not keep optimistic local-only file metadata or preference state if the backend contract does not exist yet.
 - Do not use inline `style={{ backgroundColor: x, color: y }}` objects for dynamic per-item values (avatar colors, status badges, kanban card accents). Use a single CSS custom property instead: `style={{ '--av-bg': bg, '--av-col': col }}` and reference `var(--av-bg)` in the stylesheet. This avoids new object references every render and keeps Tailwind purging intact.
 - `<button>` elements inside or near forms **must** have an explicit `type="button"` or `type="submit"`. The HTML default is `type="submit"`, which causes unintended form submissions. The shared `Button` component defaults to `type="button"`; pass `type="submit"` explicitly where needed.
-- Form-field label wrappers must be `<label htmlFor={id}>` tied to the input's `id`, not `<div>`. For toggle button groups (note type, category selectors), use `role="group"` on the container with `aria-label` — do not wrap in `<Field>` without an `htmlFor`.
+- Form-field label wrappers must be `<label htmlFor={id}>` tied to the input's `id`, not `<div>`. For toggle button groups (note type, category selectors), use `role="group"` on the container with `aria-label`, and add `aria-pressed={isSelected}` to each button — do not wrap in `<Field>` without an `htmlFor`.
 - Never use global names (`window`, `document`, `name`, `status`) as prop or parameter names. They shadow browser globals silently, producing confusing bugs in SSR or conditional branches.
 - Do not call `startTransition` inside a `setTimeout` callback — by that point React has already committed the preceding state update, so the transition does nothing. `startTransition` must wrap the state setter that triggers the heavy render, called synchronously in the same event handler or effect.
 - Inline `style` props with computed values (e.g. `animationDelay: \`${i * 150}ms\``) create a new object reference every render. For a fixed-length list, prefer hardcoded Tailwind arbitrary-value classes (`[animation-delay:150ms]`) over per-item inline styles.
@@ -40,6 +43,7 @@
 - Form field class strings: `src/shared/constants/classNames.js` — `fieldClass`, `areaClass`
 - Reminder constants: `src/shared/constants/reminders.js` — `REMINDER_METHODS`, `REMINDER_FREQUENCIES`
 - Demo/fixture data: `src/shared/data/employees.js` — `ALL_EMP`, `SAMPLE_ENTRIES`, `MOCK_RESULTS`, `FLAGGED_EMPLOYEES`
+- `src/shared/data/employees.js` is for tests, prototypes, or stories only. Do not render it in protected production routes.
 
 ## Data Fetching
 
@@ -48,6 +52,7 @@
 - Do not use raw `fetch()` inside components or hooks for GET requests that benefit from caching.
 - React Query v5 query hooks should not rely on legacy per-query lifecycle callbacks like `onSuccess`/`onError`. Read `query.data` / `query.error` from the caller and sync derived local state in `useEffect` only when unavoidable.
 - Mutations (POST/PATCH/DELETE) must use React Query `useMutation`, not raw `apiFetch`. After a successful mutation, call `queryClient.invalidateQueries` for affected query keys so the cache stays consistent. Direct `apiFetch` calls in feature hooks bypass retry, loading state, and cache invalidation — do not introduce new ones.
+- Shared account-security flows (delete account, TOTP setup, MFA recovery) must not be duplicated per screen. Keep the network/mutation logic in one shared hook and reuse a single dialog/panel component so copy, retries, and auth guarantees stay in sync.
 - If a mutation only needs to append or replace already-fetched local server state (for example, prepending a newly created feedback thread), update the cache with `queryClient.setQueryData` instead of duplicating the server state in local component `useState`.
 - `apiFetch` handles 401 → token refresh internally. React Query's global `retry: 1` is on top of that; prefer `{ retry: false }` per-query for auth endpoints that should fail fast.
 - When fetching inside `useEffect`, always use `AbortController` — pass `signal` to `fetch`, and call `controller.abort()` in the cleanup function. Do **not** use an `alive` boolean flag: it prevents state updates but does not cancel the in-flight request, and `finally` still fires after unmount. Skip all state updates when `error.name === 'AbortError'` — do not call `setLoading` either.
@@ -77,11 +82,13 @@ useEffect(() => {
 - `AuthContext` owns only router-dependent side effects (logout redirect). Do not add new state there. Do not read `user` or `loading` from `AuthContext` — read from `useProfileStore` directly.
 - `useProfileStore` exposes: `user`, `profile`, `security`, `setUser`, `setProfile`, `setSecurity`, `updateUser`, `clearProfile`.
 - When reading multiple related fields from `useProfileStore` to compute a single derived value, collapse into one selector: `useProfileStore(s => s.hasSecuritySnapshot && !s.security.X)`. Three separate `useProfileStore` calls for one boolean triple-subscribes and re-renders on any field change.
+- `useState` that is initialised once and never updated is dead state. Convert to a `const` (direct prop read or computed value). Dead state misleads readers into thinking the value can change and wastes a re-render slot.
 - User display name and initials must come from `useProfileStore` via `profileDisplayName`/`profileInitials` from `@shared/utils/profile`. Never hardcode developer names or initials as default prop values.
 - For inline timer refs, use `useTrackedTimeout` from `@shared/hooks/useTrackedTimeout` instead of raw `useRef` + `setTimeout` + manual `clearTimeout`. It tracks all outstanding timers and clears them on unmount automatically.
 - Multi-step flows (sign-in, MFA setup) use parallel `step` string + boolean flags. Prefer a discriminated union `type Step = 'email' | 'otp' | 'totp' | ...` when adding new steps so the compiler can narrow state.
 - When a hook manages 5 or more related state variables for a state machine (auth flow, MFA setup, signup), use `useReducer` with a discriminated union action type instead of parallel `useState` calls. This prevents impossible intermediate states (e.g. `loading=true` + `error` set simultaneously) that parallel `useState` cannot prevent.
 - During the JS → TS migration, add JSDoc typedef imports from `src/shared/types/contracts.ts` to reducer-driven hooks and contexts before renaming everything to `.ts`/`.tsx`. This keeps the shared contracts connected to real frontend state machines instead of drifting into unused types.
+- Multi-step signup state should only store values the user can actually edit and revisit. Do not preserve empty placeholder “payment” step state once card collection has been removed; derive fixed plan metadata from shared constants instead.
 - In `// @ts-check` JSX files, type the whole reducer surface, not just state objects: annotate reducer params and returns, provider `children`, and updater callback params inside `useCallback`. `next build` will fail on untyped callback bindings even when the surrounding state typedefs exist.
 - Auto-verify on code completion (e.g. OTP digit fill) is implemented as a `useEffect` watching `digits` and `state`. This is acceptable **only** when the effect has a state guard (`if (code.state !== 'idle') return`) that prevents double-fire. The guard works because verification sets `state` to `'checking'` synchronously before the async call, so the effect exits on re-run. Do not remove these guards.
 - Hooks that compute derived values from state (filtered lists, changed-field sets, display strings) must wrap those computations in `useMemo`. Recomputing inline creates a new reference every render, which breaks `React.memo` bailouts downstream and triggers unnecessary re-renders in any hook subscriber.
@@ -99,7 +106,7 @@ useEffect(() => {
 - Wrap non-urgent state updates (tab switches, step transitions, filter changes) in `startTransition` so input stays responsive on slow devices.
 - For heavy route-level components (KanbanBoard, ResumeTab, TotpSetupPanel), use `next/dynamic` with a loading fallback to defer their bundle. Add `ssr: false` only when the module requires browser-only APIs during render.
 - Memoize list-item callbacks with `useCallback` before passing to `React.memo`-wrapped children in high-density lists (KanbanBoard columns, entry lists).
-- `key={index}` is acceptable only for stable, non-reorderable lists (OTP digit rows). Use a stable data-model `id` as key for any other list — never use a display string like `name` as a key, even if it appears unique, because uniqueness is not enforced.
+- `key={index}` is acceptable only for stable, non-reorderable lists (OTP digit rows). For view-model lists with no stable ID (pills, badges, generated bullets), use a compound key: `key={\`${label}-${i}\`}`. Use a stable data-model `id` for any list that can be reordered, filtered, or independently updated — never use a display string like `name` alone as a key.
 - All fixture/mock objects in `src/shared/data/` must include an `id` field so list keys are stable.
 
 ## Examples In This Repo
@@ -118,7 +125,7 @@ useEffect(() => {
 - Brag entries live in local component state (seeded from `initialEntries` server prop), not in a React Query cache. This is intentional: new entries must be prepended optimistically and immediately without a round-trip refetch.
 - Two distinct mapping functions exist and must stay separate:
   - `cardFromEntry` — maps a server-fetched entry (list shape) to a card view model.
-  - `cardFromSavedEntry` — maps a mutation response (create shape) to a card view model. The create response includes `entry`, `evidenceTypes`, and `files` as separate fields.
+  - `cardFromSavedEntry` — maps a mutation response (create shape) to a card view model. The create response includes `entry` and `evidenceTypes`.
 - Do not merge these functions. Their input shapes differ by design.
 - Always guard the mutation response: `if (!entry) { setError(...); return }` before calling `onSave`. The API contract may evolve; a missing `entry` field must not crash the UI.
 

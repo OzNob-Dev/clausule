@@ -75,10 +75,3 @@ export interface SignupStep1Data {
   email: string
   agreed?: boolean
 }
-
-export interface SignupStep2Data {
-  cardName: string
-  cardNum: string
-  expiry: string
-  cvc: string
-}

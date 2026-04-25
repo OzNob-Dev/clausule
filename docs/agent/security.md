@@ -11,6 +11,7 @@
 - Keep sensitive data out of logs and UI.
 - Treat account, MFA, passkey, and payment flows as high-risk changes.
 - Follow `docs/agent/privacy.md` for PII handling and data minimization.
+- Never collect raw card numbers, expiry dates, or CVC values in React state, context, or local storage unless the flow is using a vetted PCI-scoped provider integration such as Stripe Elements or hosted checkout. If checkout is not live, do not render card inputs.
 - Never expose server-only secrets to client code.
 - Keep session cookies and token handling explicit and bounded.
 - Preserve existing auth failure behavior unless the change is deliberate.
@@ -19,6 +20,7 @@
 - Verify upstream identity tokens and assertions cryptographically; decoding a JWT or WebAuthn payload is never sufficient proof.
 - Treat WebAuthn registration as a verified ceremony: require and validate `attestationObject` or equivalent registration proof before persisting a credential.
 - In production, resolve WebAuthn RP ID and origin from trusted configuration, not request headers.
+- Destructive-account UI copy must match the actual mutation path. If the action only signs the user out or otherwise falls short of permanent deletion, the UI is wrong and must be fixed before shipping.
 
 ## High-Risk Areas
 

@@ -7,7 +7,7 @@ export function CtaBtn({ onClick, terra = false, children, as: As = 'button', hr
     return <a href={href} className={className}>{children}</a>
   }
 
-  return <button onClick={onClick} className={className} {...props}>{children}</button>
+  return <button onClick={onClick} className={className} type={props.type ?? 'button'} {...props}>{children}</button>
 }
 
 export function BackBtn({ onClick }) {

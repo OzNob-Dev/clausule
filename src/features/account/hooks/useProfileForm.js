@@ -1,3 +1,4 @@
+// @ts-check
 import { useEffect, useMemo, useState } from 'react'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
@@ -35,9 +36,26 @@ export function useProfileForm(profile) {
       jobTitle:   profile.jobTitle   ?? '',
       department: profile.department ?? '',
     }
+    const normalizedNext = normalize(next)
+    const normalizedBaseline = normalize(baseline)
+    const normalizedForm = normalize(form)
+    const localEdits = Object.keys(normalizedForm).some((key) => normalizedForm[key] !== normalizedBaseline[key])
+    const alreadyHydrated = Object.keys(normalizedNext).every((key) => normalizedNext[key] === normalizedBaseline[key])
+
+    if (localEdits || alreadyHydrated) return
+
     setForm(next)
     setBaseline(next)
-  }, [profile])
+  }, [
+    baseline,
+    form,
+    profile.department,
+    profile.email,
+    profile.firstName,
+    profile.jobTitle,
+    profile.lastName,
+    profile.mobile,
+  ])
 
   const derived = useMemo(() => {
     const current = normalize(form)

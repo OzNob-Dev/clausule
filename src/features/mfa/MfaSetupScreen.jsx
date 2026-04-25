@@ -14,7 +14,7 @@ export default function MfaSetup() {
 
   return (
     <div className="mfa-wrap">
-      <div className="mfa-card" role="main">
+      <main className="mfa-card">
 
         {/* Progress */}
         <nav className="mfa-progress" aria-label="Setup progress">
@@ -65,7 +65,7 @@ export default function MfaSetup() {
 
         {flow.step === 3 && <MfaSuccessStep onEnterApp={flow.enterApp} />}
 
-      </div>
+      </main>
     </div>
   )
 }

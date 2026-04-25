@@ -1,13 +1,13 @@
 /**
  * POST /api/auth/register
  *
- * Lightweight registration endpoint — no payment required.
- * Creates or updates a user profile and immediately issues JWT session cookies.
+ * Creates or updates a user profile, activates the fixed individual rollout plan,
+ * and immediately issues JWT session cookies.
  *
- * Temporary: replaces the Stripe subscribe flow while payment is disabled.
- * Replace with /api/payments/subscribe when Stripe is re-enabled.
+ * This rollout does not collect card details from the UI.
+ * Replace with /api/payments/subscribe when live checkout is re-enabled.
  *
- * Body:   { email: string, firstName: string, lastName?: string }
+ * Body:   { email: string, firstName: string, lastName?: string, verificationToken: string, subscription: { amountCents: number, currency: string, interval: string } }
  * 200:    { ok: true, role: string }
  * 400:    { error: string }
  * 500:    { error: string }

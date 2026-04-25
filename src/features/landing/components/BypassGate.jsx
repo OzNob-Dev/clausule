@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react'
 import ComingSoon from '@features/landing/components/ComingSoon'
 
-// Development-only gate. Stripped from production builds by the NODE_ENV check.
+// Non-production gate. Kept disabled in production, but available in development and tests.
 export default function BypassGate({ children }) {
   const [bypassed, setBypassed] = useState(false)
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.NODE_ENV === 'production') {
       setBypassed(false)
       return
     }

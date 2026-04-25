@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import BragRail from '@features/brag/components/BragRail'
-import BragSidebar from '@features/brag/components/BragSidebar'
+import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import FeedbackCenter from '@features/brag/components/FeedbackCenter'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
@@ -19,7 +19,7 @@ export default function FeedbackScreen() {
   return (
     <div className="be-page">
       <BragRail activePage="feedback" />
-      <BragSidebar
+      <BragIdentitySidebar
         ariaLabel="Feedback guidance"
         eyebrow="Clausule · Feedback"
         avatarInitials={avatarInitials}

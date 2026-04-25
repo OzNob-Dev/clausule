@@ -1,7 +1,11 @@
+// @ts-check
 'use client'
 
 import { useCallback, useState } from 'react'
 
+/**
+ * @param {{ inputRefs: import('react').MutableRefObject<HTMLInputElement[]>, scheduleTimeout: (fn: () => void, delay: number) => void }} params
+ */
 export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
   const [digits, setDigits] = useState(['', '', '', '', '', ''])
   const [state, setState] = useState('idle')

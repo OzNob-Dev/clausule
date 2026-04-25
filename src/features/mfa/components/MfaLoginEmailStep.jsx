@@ -54,7 +54,7 @@ export default function MfaLoginEmailStep({
         </section>
 
         <section className="mfa-email-right">
-          <button className="mfa-email-back" onClick={onBack} aria-label="Back to sign in">
+          <button type="button" className="mfa-email-back" onClick={onBack} aria-label="Back to sign in">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
               <polyline points="10 4 6 8 10 12" />
             </svg>
@@ -119,6 +119,7 @@ export default function MfaLoginEmailStep({
           )}
 
           <button
+            type="button"
             className="mfa-email-verify"
             onClick={onVerify}
             disabled={!codeReady || otpState === 'checking' || otpState === 'done' || expirySeconds <= 0}
@@ -136,13 +137,13 @@ export default function MfaLoginEmailStep({
               {resendTimer > 0 ? (
                 <span>Resend in {resendTimer}s</span>
               ) : (
-                <button className="mfa-email-resend" onClick={onResend}>Resend code</button>
+                <button type="button" className="mfa-email-resend" onClick={onResend}>Resend code</button>
               )}
             </p>
             {onSetupApp && (
               <p>
                 Want more security?{' '}
-                <button className="mfa-email-resend" onClick={onSetupApp}>Set up an authenticator app</button>
+                <button type="button" className="mfa-email-resend" onClick={onSetupApp}>Set up an authenticator app</button>
               </p>
             )}
           </div>

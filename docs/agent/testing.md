@@ -28,6 +28,8 @@
 - If a React Query screen mirrors query results into a store, add at least one regression test proving the screen reacts to query `data` changes without relying on stale query callbacks.
 - Components that call `useQuery` / `useMutation` must render in tests under a `QueryClientProvider`. Reuse `src/shared/test/renderWithQueryClient.jsx` instead of open-coding ad hoc query clients in each test file.
 - When replacing `contentEditable` with native form controls, add a regression that asserts the accessible textbox fields exist and that no editable `contenteditable="true"` nodes remain.
+- When removing fake persistence or gating an unfinished feature, add a regression that asserts the misleading control is gone and the honest replacement copy is present.
+- If checkout or uploads are intentionally unavailable, add tests that assert card fields or file-picking controls are absent so placeholder UI does not quietly creep back in.
 - When a screen delegates resend, cancel, or continue handlers through a flow hook, add one wiring test at the screen boundary so prop plumbing cannot silently drift.
 - For timers that drive transient UI states (`saved`, copied, resend cooldowns), add one regression that rerenders or changes the owning key/props mid-flight. Cleanup bugs often only show up after the component context changes.
 

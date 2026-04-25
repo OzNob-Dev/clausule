@@ -14,8 +14,9 @@ export default function GlobalError({ reset }) {
         >
           <p className="text-sm font-medium">Something went wrong.</p>
           <button
+            type="button"
             onClick={reset}
-            style={{ padding: '8px 16px', borderRadius: 8, cursor: 'pointer' }}
+            className="rounded-[var(--r)] border border-border bg-canvas px-4 py-2 text-sm font-semibold text-tp transition-colors duration-150 hover:border-tp"
           >
             Try again
           </button>

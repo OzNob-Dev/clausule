@@ -2,41 +2,36 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DeleteAccountSection from './DeleteAccountSection'
 
+vi.mock('@features/account/components/DeleteAccountDialog', () => ({
+  DeleteAccountDialog: ({ open }) => open ? (
+    <div role="dialog" aria-label="Delete your account?">
+      <label htmlFor="delete-confirm-input">Type DELETE to confirm</label>
+      <input id="delete-confirm-input" />
+    </div>
+  ) : null,
+}))
+
 describe('DeleteAccountSection', () => {
-  it('renders reminder delivery and frequency choices', async () => {
+  it('renders the danger-zone trigger', async () => {
+    const onOpenDelete = vi.fn()
+
     render(
       <DeleteAccountSection
-        confirmReady={false}
-        deleteConfirmText=""
         deleteModal={false}
-        onCancelDelete={vi.fn()}
-        onChangeConfirmText={vi.fn()}
         onCloseModal={vi.fn()}
-        onConfirmDelete={vi.fn()}
-        onOpenDelete={vi.fn()}
+        onOpenDelete={onOpenDelete}
       />,
     )
 
-    expect(screen.getByLabelText('Email')).toBeChecked()
-    expect(screen.getByLabelText('Weekly')).toBeChecked()
-
-    await userEvent.click(screen.getByLabelText('SMS'))
-    await userEvent.click(screen.getByLabelText('Monthly'))
-
-    expect(screen.getByLabelText('SMS')).toBeChecked()
-    expect(screen.getByLabelText('Monthly')).toBeChecked()
+    await userEvent.click(screen.getByRole('button', { name: /delete account/i }))
+    expect(onOpenDelete).toHaveBeenCalledTimes(1)
   })
 
   it('renders a named confirmation dialog when deletion is open', () => {
     render(
       <DeleteAccountSection
-        confirmReady={false}
-        deleteConfirmText=""
         deleteModal
-        onCancelDelete={vi.fn()}
-        onChangeConfirmText={vi.fn()}
         onCloseModal={vi.fn()}
-        onConfirmDelete={vi.fn()}
         onOpenDelete={vi.fn()}
       />,
     )

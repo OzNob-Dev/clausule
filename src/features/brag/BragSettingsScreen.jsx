@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import BragRail from '@features/brag/components/BragRail'
+import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import BragSettingsDangerZone from '@features/brag/components/BragSettingsDangerZone'
-import BragSettingsIdentity from '@features/brag/components/BragSettingsIdentity'
 import DeleteAccountModal from '@features/brag/components/DeleteAccountModal'
 import MfaSecuritySection from '@features/brag/components/MfaSecuritySection'
 import SsoStatusSection from '@features/brag/components/SsoStatusSection'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { useProfileQuery, useTotpStatusQuery } from '@shared/queries/useProfileQuery'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
-import { REMINDER_METHODS, REMINDER_FREQUENCIES } from '@shared/constants/reminders'
 import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
@@ -26,8 +25,6 @@ export default function BragSettings() {
   const mfaRestrictionEnabled = showMfaSection && hasSecuritySnapshot && !authenticatorAppConfigured
 
   const [totpExpanded, setTotpExpanded]           = useState(false)
-  const [reminderMethod, setReminderMethod]         = useState('email')
-  const [reminderFrequency, setReminderFrequency]   = useState('weekly')
   const [deleteModal, setDeleteModal]               = useState(false)
 
   const profileQuery = useProfileQuery()
@@ -64,7 +61,15 @@ export default function BragSettings() {
     <div className="be-page">
       <BragRail activePage="settings" />
 
-      <BragSettingsIdentity avatarInitials={avatarInitials} displayName={displayName} email={profile.email} />
+      <BragIdentitySidebar
+        ariaLabel="Profile"
+        eyebrow="Clausule · Settings"
+        noteLabel="Account security"
+        note="Manage two-factor authentication for secure sign-in."
+        avatarInitials={avatarInitials}
+        displayName={displayName}
+        email={profile.email}
+      />
 
       <main className="be-main" aria-labelledby="brag-settings-title">
         <div className="be-inner">
@@ -92,58 +97,17 @@ export default function BragSettings() {
           )}
 
           <section className="bss-reminders" aria-labelledby="bss-reminders-title">
-            <div className="bss-section-label" id="bss-reminders-title">Reminder preferences</div>
+            <div className="bss-section-label" id="bss-reminders-title">Notifications</div>
             <div className="bss-card bss-reminder-card">
               <div className="bss-reminder-head">
                 <div>
-                  <div className="bss-reminder-title">Delivery and frequency</div>
-                  <div className="bss-reminder-desc">Choose where reminders arrive and how often they repeat.</div>
+                  <div className="bss-reminder-title">Preference sync is unavailable</div>
+                  <div className="bss-reminder-desc">
+                    Local-only reminder toggles were removed until notification preferences can be saved to your account.
+                  </div>
                 </div>
-                <div className="bss-reminder-summary" aria-live="polite">
-                  {reminderMethod.toUpperCase()} · {reminderFrequency}
-                </div>
+                <div className="bss-reminder-summary" aria-live="polite">Live settings pending</div>
               </div>
-
-              <fieldset className="bss-reminder-group">
-                <legend className="bss-reminder-legend">Delivery method</legend>
-                <div className="bss-reminder-grid">
-                  {REMINDER_METHODS.map(({ value, label, desc }) => (
-                    <label key={value} className={`bss-reminder-option${reminderMethod === value ? ' bss-reminder-option--active' : ''}`}>
-                      <input
-                        className="bss-reminder-input"
-                        type="radio"
-                        name="reminder-method"
-                        value={value}
-                        checked={reminderMethod === value}
-                        onChange={() => setReminderMethod(value)}
-                      />
-                      <span className="bss-reminder-option-body">
-                        <span className="bss-reminder-option-title">{label}</span>
-                        <span className="bss-reminder-option-desc">{desc}</span>
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-
-              <fieldset className="bss-reminder-group">
-                <legend className="bss-reminder-legend">Reminder frequency</legend>
-                <div className="bss-frequency-grid">
-                  {REMINDER_FREQUENCIES.map(({ value, label }) => (
-                    <label key={value} className={`bss-frequency-option${reminderFrequency === value ? ' bss-frequency-option--active' : ''}`}>
-                      <input
-                        className="bss-reminder-input"
-                        type="radio"
-                        name="reminder-frequency"
-                        value={value}
-                        checked={reminderFrequency === value}
-                        onChange={() => setReminderFrequency(value)}
-                      />
-                      <span className="bss-frequency-text">{label}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
             </div>
           </section>
 
