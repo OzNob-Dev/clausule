@@ -16,6 +16,20 @@
 - Use `startTransition` for non-urgent state: tab switches, step changes, filter/sort updates. This keeps inputs and button clicks responsive while the new UI renders.
 - Use `useDeferredValue` for derived display values from large lists (e.g. filtered entry lists).
 - Prefer `useDeferredValue` over throttling when the source input must stay controlled but the filtered list can lag slightly behind.
+- **`useDeferredValue` only defers re-renders — it does not skip inline computations.** Any `.filter()`, `.reduce()`, or grouping logic that runs inline in the render body still executes synchronously every render regardless of deferral. Wrap all derived computations that depend on a deferred value in `useMemo([deferredValue])`. Without `useMemo`, the deferral has no effect on CPU cost.
+
+  ```js
+  // Wrong — filter runs on every render, deferral wasted
+  const deferredQuery = useDeferredValue(query)
+  const filtered = ALL_EMP.filter((e) => e.name.includes(deferredQuery))
+
+  // Correct — React skips the memo when deferredQuery hasn't resolved yet
+  const deferredQuery = useDeferredValue(query)
+  const filtered = useMemo(
+    () => ALL_EMP.filter((e) => e.name.includes(deferredQuery.trim().toLowerCase())),
+    [deferredQuery]
+  )
+  ```
 
 ## Lazy Loading
 

@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useDeferredValue, useState } from 'react'
+import { useDeferredValue, useMemo, useState } from 'react'
 import { AppShell } from '@features/manager/components/AppShell'
 import { ALL_EMP } from '@shared/data/employees'
 
@@ -23,15 +23,18 @@ const STATS = [
 export default function Dashboard() {
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
-  const normalizedQuery = deferredQuery.trim().toLowerCase()
-  const filteredEmployees = normalizedQuery
-    ? ALL_EMP.filter((employee) => employee.name.toLowerCase().includes(normalizedQuery))
-    : ALL_EMP
-  const employeesByStatus = { g: [], y: [], r: [] }
 
-  filteredEmployees.forEach((employee) => {
-    if (employeesByStatus[employee.ps]) employeesByStatus[employee.ps].push(employee)
-  })
+  const employeesByStatus = useMemo(() => {
+    const normalized = deferredQuery.trim().toLowerCase()
+    const filtered = normalized
+      ? ALL_EMP.filter((emp) => emp.name.toLowerCase().includes(normalized))
+      : ALL_EMP
+    const groups = { g: [], y: [], r: [] }
+    filtered.forEach((emp) => {
+      if (groups[emp.ps]) groups[emp.ps].push(emp)
+    })
+    return groups
+  }, [deferredQuery])
 
   return (
     <AppShell>

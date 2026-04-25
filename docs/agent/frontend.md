@@ -18,6 +18,7 @@
 - Avoid `contentEditable` for form-like editing unless there is no practical alternative and the screen-reader and keyboard story is explicitly tested.
 - Prefer styled native `input` / `textarea` controls over `contentEditable` even for document-like surfaces (resume builders, structured notes, inline profile sections). Match the visual design in CSS; do not trade away selection, labeling, IME support, and testability.
 - `AppShell` includes a skip-nav link (`href="#main-content"`) and the `<main>` has `id="main-content"`. Preserve both when editing layout.
+- Multi-column list containers (e.g. Kanban boards) must have `role="group"` with a descriptive `aria-label` on each column wrapper so screen readers can announce column boundaries and counts. Example: `<div role="group" aria-label="Going well — 3 people">`. Do not rely on the visual header alone; it is not announced in list-navigation mode.
 
 ## UI Rules
 

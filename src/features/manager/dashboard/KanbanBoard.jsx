@@ -18,7 +18,7 @@ export function KanbanBoard({ employeesByStatus, employees = [] }) {
         {COLUMNS.map(({ id, label, headerClass, dotClass, badgeClass }) => {
           const people = groupedEmployees[id] ?? []
           return (
-            <div key={id} className="flex flex-col overflow-hidden">
+            <div key={id} className="flex flex-col overflow-hidden" role="group" aria-label={`${label} — ${people.length} ${people.length === 1 ? 'person' : 'people'}`}>
               {/* Column header */}
               <div className="flex items-center justify-between px-1 pt-0 pb-[10px]">
                 <div className={`flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.8px] ${headerClass}`}>
