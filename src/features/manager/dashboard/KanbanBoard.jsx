@@ -44,7 +44,7 @@ export function KanbanBoard({ employeesByStatus, employees = [] }) {
                 {people.length === 0 ? (
                   <div className="text-xs py-5 px-0 text-center text-tc">None</div>
                 ) : (
-                  people.map((emp) => <KanbanCard key={emp.name} emp={emp} />)
+                  people.map((emp) => <KanbanCard key={emp.id} emp={emp} />)
                 )}
               </div>
             </div>

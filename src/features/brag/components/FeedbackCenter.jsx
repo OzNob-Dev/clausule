@@ -18,23 +18,22 @@ export default function FeedbackCenter({ userEmail, onClose }) {
   const [activeTab, setActiveTab] = useState('compose')
 
   useEffect(() => {
-    let alive = true
+    const controller = new AbortController()
 
-    fetch('/api/feedback', { credentials: 'same-origin' })
+    fetch('/api/feedback', { credentials: 'same-origin', signal: controller.signal })
       .then((response) => response.ok ? response.json() : { feedback: [] })
       .then((data) => {
-        if (alive) setThreads(data.feedback ?? [])
+        setThreads(data.feedback ?? [])
+        setLoading(false)
       })
-      .catch(() => {
-        if (alive) setThreads([])
-      })
-      .finally(() => {
-        if (alive) setLoading(false)
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          setThreads([])
+          setLoading(false)
+        }
       })
 
-    return () => {
-      alive = false
-    }
+    return () => controller.abort()
   }, [])
 
   const addThread = (thread) => {

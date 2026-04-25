@@ -37,13 +37,34 @@
 - Do not use raw `fetch()` inside components or hooks for GET requests that benefit from caching.
 - Mutations (POST/PATCH/DELETE) may use `apiFetch` directly or via React Query `useMutation`.
 - `apiFetch` handles 401 → token refresh internally. React Query's global `retry: 1` is on top of that; prefer `{ retry: false }` per-query for auth endpoints that should fail fast.
+- When fetching inside `useEffect`, always use `AbortController` — pass `signal` to `fetch`, and call `controller.abort()` in the cleanup function. Do **not** use an `alive` boolean flag: it prevents state updates but does not cancel the in-flight request, and `finally` still fires after unmount. Skip all state updates when `error.name === 'AbortError'` — do not call `setLoading` either.
+
+```js
+useEffect(() => {
+  const controller = new AbortController()
+  fetch('/api/endpoint', { signal: controller.signal })
+    .then((r) => r.ok ? r.json() : fallback)
+    .then((data) => {
+      setState(data)
+      setLoading(false)
+    })
+    .catch((error) => {
+      if (error.name !== 'AbortError') {
+        setState(fallback)
+        setLoading(false)
+      }
+    })
+  return () => controller.abort()
+}, [])
+```
 
 ## State Management
 
 - User identity lives in `useProfileStore` (Zustand) — the single source of truth.
-- `AuthContext` owns only router-dependent side effects (logout redirect). Do not add new state there.
+- `AuthContext` owns only router-dependent side effects (logout redirect). Do not add new state there. Do not read `user` or `loading` from `AuthContext` — read from `useProfileStore` directly.
 - `useProfileStore` exposes: `user`, `profile`, `security`, `setUser`, `setProfile`, `setSecurity`, `updateUser`, `clearProfile`.
 - Multi-step flows (sign-in, MFA setup) use parallel `step` string + boolean flags. Prefer a discriminated union `type Step = 'email' | 'otp' | 'totp' | ...` when adding new steps so the compiler can narrow state.
+- Auto-verify on code completion (e.g. OTP digit fill) is implemented as a `useEffect` watching `digits` and `state`. This is acceptable **only** when the effect has a state guard (`if (code.state !== 'idle') return`) that prevents double-fire. The guard works because verification sets `state` to `'checking'` synchronously before the async call, so the effect exits on re-run. Do not remove these guards.
 
 ## Error Boundaries
 
@@ -58,7 +79,8 @@
 - Wrap non-urgent state updates (tab switches, step transitions, filter changes) in `startTransition` so input stays responsive on slow devices.
 - For heavy route-level components (KanbanBoard, ResumeTab, TotpSetupPanel), use `next/dynamic` with `ssr: false` to defer their bundle.
 - Memoize list-item callbacks with `useCallback` before passing to `React.memo`-wrapped children in high-density lists (KanbanBoard columns, entry lists).
-- `key={index}` is acceptable only for stable, non-reorderable lists (OTP digit rows). Use a data-model ID as key for any editable or sortable list.
+- `key={index}` is acceptable only for stable, non-reorderable lists (OTP digit rows). Use a stable data-model `id` as key for any other list — never use a display string like `name` as a key, even if it appears unique, because uniqueness is not enforced.
+- All fixture/mock objects in `src/shared/data/` must include an `id` field so list keys are stable.
 
 ## Examples In This Repo
 
