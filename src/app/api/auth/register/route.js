@@ -23,11 +23,7 @@ export async function POST(request) {
   try {
     const result = await registerAccount(body)
     if (result.log) console.error(...result.log)
-    if (!result.session) {
-      console.log('[register] no session in result:', { status: result.status, hasSession: !!result.session })
-      return NextResponse.json(result.body, { status: result.status })
-    }
-    console.log('[register] issuing session for:', result.session.email)
+    if (!result.session) return NextResponse.json(result.body, { status: result.status })
     const response = await issueRecoverableSession({
       operationKey: registerOperationKey({ email: body.email }),
       operationType: registerOperationType(),
@@ -38,7 +34,6 @@ export async function POST(request) {
       session: result.session,
       failureMessage: 'Failed to create session',
     })
-    console.log('[register] response status:', response.status, 'has cookies:', response.headers.get('set-cookie'))
     return response
   } catch (err) {
     console.error('[register] error:', err)
