@@ -9,6 +9,7 @@ import { VerifyChangesModal } from '@features/account/components/VerifyChangesMo
 import { VerificationProvider } from '@features/account/context/VerificationContext'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/account/styles/profile.css'
+import '@shared/styles/page-loader.css'
 
 export default function ProfileScreen() {
   const { profile, security } = useProfileStore(useShallow((state) => ({
@@ -40,7 +41,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <main className="be-main" aria-labelledby="profile-page-title">
+    <main className="be-main page-enter" aria-labelledby="profile-page-title">
         <div className="be-inner">
           <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
           <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>

@@ -7,13 +7,14 @@ import MfaTotpStep from '@features/mfa/components/MfaTotpStep'
 import '@features/mfa/styles/mfa-layout.css'
 import '@features/mfa/styles/mfa-factors.css'
 import '@features/mfa/styles/code-email.css'
+import '@shared/styles/page-loader.css'
 
 export default function MfaSetup() {
   const flow = useMfaSetupFlow()
   const stepLabels = ['Verify email', 'Secure account', 'All set']
 
   return (
-    <div className="mfa-wrap">
+    <div className="mfa-wrap page-enter">
       <main className="mfa-card">
 
         {/* Progress */}

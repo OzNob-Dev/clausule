@@ -8,6 +8,7 @@ import { useSignInFlow } from '@features/auth/hooks/useSignInFlow'
 import MfaLoginEmailStep from '@features/mfa/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@features/mfa/components/MfaLoginAppStep'
 import '@features/mfa/styles/mfa-layout.css'
+import '@shared/styles/page-loader.css'
 
 export default function SignIn() {
   const flow = useSignInFlow()
@@ -51,7 +52,7 @@ export default function SignIn() {
   }
 
   return (
-    <div className="su-narrow">
+    <div className="su-narrow page-enter">
       <SignInEmailForm
         email={flow.email}
         result={flow.result}

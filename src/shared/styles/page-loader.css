@@ -1,0 +1,121 @@
+/* ── Page loader overlay + page enter transition ─────────────── */
+
+@keyframes loader-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes loader-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+@keyframes loader-icon-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes loader-icon-pulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(1.09); opacity: 0.82; }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Wrapper helpers ─────────────────────────────────────────── */
+
+/* Centred loader inside be-main or su-shell-right */
+.page-loader-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Auth context: fills the right panel of su-shell */
+.page-loader-auth-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+}
+
+/* ── Core loader ─────────────────────────────────────────────── */
+
+.page-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: loader-fade-in 0.22s ease forwards;
+  pointer-events: none;
+  user-select: none;
+}
+
+.page-loader-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(201, 79, 42, 0.08);
+  border: 1.5px solid rgba(201, 79, 42, 0.16);
+  color: var(--be-motion-clay, #C94F2A);
+  flex-shrink: 0;
+}
+
+.page-loader-icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.page-loader-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tm, #54483F);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ── Variant animations ──────────────────────────────────────── */
+
+.page-loader-icon--pencil  { animation: loader-icon-float  2.4s ease-in-out infinite; }
+.page-loader-icon--envelope { animation: loader-icon-float  2.8s ease-in-out infinite; }
+.page-loader-icon--gear    { animation: loader-icon-spin   2.8s linear infinite; }
+.page-loader-icon--person  { animation: loader-icon-pulse  1.8s ease-in-out infinite; }
+.page-loader-icon--key     { animation: loader-icon-float  2.4s ease-in-out infinite; }
+.page-loader-icon--spark   { animation: loader-icon-spin   3.2s linear infinite; }
+.page-loader-icon--shield  { animation: loader-icon-pulse  2.0s ease-in-out infinite; }
+
+/* ── Page enter (content fades in after loader replaced) ─────── */
+
+.page-enter {
+  animation: page-enter 0.28s ease forwards;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader,
+  .page-loader-icon--pencil,
+  .page-loader-icon--envelope,
+  .page-loader-icon--gear,
+  .page-loader-icon--person,
+  .page-loader-icon--key,
+  .page-loader-icon--spark,
+  .page-loader-icon--shield,
+  .page-enter {
+    animation: none;
+  }
+}

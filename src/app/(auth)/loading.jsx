@@ -1,0 +1,10 @@
+import PageLoader from '@shared/components/ui/PageLoader'
+import '@shared/styles/page-loader.css'
+
+export default function Loading() {
+  return (
+    <div className="page-loader-auth-wrap" aria-busy="true">
+      <PageLoader variant="auth" />
+    </div>
+  )
+}

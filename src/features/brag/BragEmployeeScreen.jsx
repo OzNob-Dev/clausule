@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { ROUTES } from '@shared/utils/routes'
 import '@features/brag/styles/brag-page.css'
 import '@features/brag/styles/resume-tab.css'
+import '@shared/styles/page-loader.css'
 
 const ResumeTab = dynamic(() => import('@features/brag/components/ResumeTab'), {
   loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,
@@ -142,7 +143,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
   }
 
   return (
-    <main className="be-main" aria-labelledby="brag-page-title">
+    <main className="be-main page-enter" aria-labelledby="brag-page-title">
         <div className="be-inner">
 
           <h1 id="brag-page-title" className="sr-only">Brag document</h1>

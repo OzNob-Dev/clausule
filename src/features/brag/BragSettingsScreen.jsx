@@ -11,6 +11,7 @@ import { useProfileQuery, useTotpStatusQuery } from '@shared/queries/useProfileQ
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
+import '@shared/styles/page-loader.css'
 
 export default function BragSettings() {
   const {
@@ -66,7 +67,7 @@ export default function BragSettings() {
 
   return (
     <>
-    <main className="be-main" aria-labelledby="brag-settings-title">
+    <main className="be-main page-enter" aria-labelledby="brag-settings-title">
         <div className="be-inner">
           <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
           <p className="bss-subheading">Manage how you sign in to Clausule.</p>

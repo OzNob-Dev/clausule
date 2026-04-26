@@ -15,6 +15,7 @@ import '@features/signup/styles/signup-form.css'
 import '@features/signup/styles/signup-payment.css'
 import '@features/signup/styles/signup-success.css'
 import '@features/signup/styles/signup-aside.css'
+import '@shared/styles/page-loader.css'
 
 // ── Root component ─────────────────────────────────────────────────
 function SignUpInner() {
@@ -68,7 +69,7 @@ function SignUpInner() {
   }
 
   return (
-    <div className="su-page su-fullscreen">
+    <div className="su-page su-fullscreen page-enter">
       <div className="su-bg-lines" aria-hidden="true" />
 
       <div className="su-topbar">
