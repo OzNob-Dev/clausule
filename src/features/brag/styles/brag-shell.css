@@ -8,7 +8,7 @@
   --be-identity-surface: #D8CEC1;
   --be-identity-surface-strong: #CEC2B3;
   --be-identity-rule: rgba(60, 45, 35, 0.16);
-  --be-identity-muted: #6D5F53;
+  --be-identity-muted: #3D3228;
   --be-motion-clay: #C94F2A;
   --be-motion-gold: #F8D37B;
   --be-motion-green: #2F6F5E;
@@ -195,9 +195,9 @@
   --tp: #241D16;
   --ts: #4D4035;
   --tm: var(--be-identity-muted);
-  --tc: #82766B;
+  --tc: #3D3228;
   --rule: var(--be-identity-rule);
-  --acc-text: #8F371F;
+  --acc-text: #4A2416;
 }
 
 .be-sidebar-header {

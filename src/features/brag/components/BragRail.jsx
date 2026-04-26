@@ -32,7 +32,7 @@ export default function BragRail({ activePage }) {
       aria-label="App navigation"
     >
       <img className="be-rail-logo max-sm:hidden" src="/favicon.svg" alt="" aria-hidden="true" />
-      <nav className="be-rail-nav max-sm:flex-none max-sm:w-full max-sm:flex-row max-sm:justify-around max-sm:gap-0" aria-label="Primary">
+      <nav className="be-rail-nav max-sm:flex-1 max-sm:w-auto max-sm:flex-row max-sm:justify-around max-sm:gap-0" aria-label="Primary">
         {!mfaSetupRequired && (
           navItems.map(({ page, href, label, icon }) => (
             <Link
@@ -77,8 +77,8 @@ export default function BragRail({ activePage }) {
           ))
         )}
       </nav>
-      <div className="be-rail-foot max-sm:hidden">
-        <button type="button" onClick={logout} className="be-rail-icon-btn" aria-label="Sign out">
+      <div className="be-rail-foot max-sm:flex max-sm:flex-none">
+        <button type="button" onClick={logout} className="be-rail-icon-btn max-sm:h-11 max-sm:w-11" aria-label="Sign out">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>
             <polyline points="11 11 14 8 11 5"/><line x1="14" y1="8" x2="6" y2="8"/>

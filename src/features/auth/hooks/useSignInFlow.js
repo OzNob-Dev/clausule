@@ -159,7 +159,6 @@ export function useSignInFlow() {
 
       if (data.nextStep === 'signup' && data.verificationToken) {
         const normalizedEmail = state.email.trim().toLowerCase()
-        window.sessionStorage.setItem(`signup_verification:${normalizedEmail}`, data.verificationToken)
         code.setState('done')
         scheduleTimeout(() => router.push(`/signup?email=${encodeURIComponent(normalizedEmail)}`), 200)
         return

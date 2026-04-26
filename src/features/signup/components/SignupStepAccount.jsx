@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useReducer } from 'react'
+import { useReducer } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { apiJson, jsonRequest } from '@shared/utils/api'
 import { validateEmail } from '@shared/utils/emailValidation'
@@ -90,15 +90,6 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
   const activeSsoProviders = hideSso ? [] : getActiveSsoProviders(ssoConfigFromEnv)
   const hasSso = activeSsoProviders.length > 0
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const normalizedEmail = (initialData.email ?? '').trim().toLowerCase()
-    if (!normalizedEmail) return
-    const stored = window.sessionStorage.getItem(`signup_verification:${normalizedEmail}`)
-    if (!stored) return
-    dispatch({ type: 'restore_verification_token', value: stored })
-  }, [initialData.email])
-
   const sendCodeMutation = useMutation({
     mutationFn: (email) => apiJson('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }), { retryOnUnauthorized: false }),
   })
@@ -136,9 +127,6 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
         email: normalizedEmail,
         code: state.verificationCode,
       })
-      if (typeof window !== 'undefined') {
-        window.sessionStorage.setItem(`signup_verification:${normalizedEmail}`, token)
-      }
       dispatch({ type: 'verification_success', value: token })
       return token
     } catch {
@@ -182,12 +170,8 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
 
   const handleEmailChange = (event) => {
     if (emailLocked) return
-    const previousNormalizedEmail = normalizedEmail
     const nextEmail = event.target.value
     dispatch({ type: 'set_email', value: nextEmail })
-    if (typeof window !== 'undefined') {
-      if (previousNormalizedEmail) window.sessionStorage.removeItem(`signup_verification:${previousNormalizedEmail}`)
-    }
   }
 
   const handleSubmit = (event) => {

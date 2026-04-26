@@ -187,7 +187,12 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
           )}
 
           {/* Brag doc tab */}
-          <section id="panel-brag" role="tabpanel" aria-labelledby="tab-brag" hidden={tab !== 'brag'}>
+          <section
+            id="panel-brag"
+            {...(entries.length > 0
+              ? { role: 'tabpanel', 'aria-labelledby': 'tab-brag', hidden: tab !== 'brag' }
+              : { 'aria-labelledby': 'brag-page-title' })}
+          >
             {!composerOpen && entries.length > 0 ? (
               <div className="be-action-row" role="group" aria-label="Brag actions">
                 <button type="button" onClick={() => startPanelTransition(() => setComposerOpen(true))} className="be-add-trigger be-add-trigger--top">

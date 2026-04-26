@@ -84,6 +84,7 @@ export default function ResumeTab({ disabled = false, entries = [] }) {
   const [generating, setGenerating] = useState(false)
   const [cvData, setCvData] = useState(() => buildInitialCv(profile, entries))
   const [cvCopied, setCvCopied] = useState(false)
+  const [cvCopyError, setCvCopyError] = useState('')
 
   const generateTimerRef = useRef(null)
   const copyTimerRef = useRef(null)
@@ -141,9 +142,16 @@ export default function ResumeTab({ disabled = false, entries = [] }) {
     cvData.institution,
   ].join('\n')
 
-  const copyCV = () => {
-    navigator.clipboard.writeText(getCVText()).catch(() => {})
-    setCvCopied(true)
+  const copyCV = async () => {
+    setCvCopyError('')
+    try {
+      await navigator.clipboard.writeText(getCVText())
+      setCvCopied(true)
+    } catch {
+      setCvCopied(false)
+      setCvCopyError('Could not copy resume text')
+      return
+    }
     if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
     copyTimerRef.current = setTimeout(() => setCvCopied(false), 2000)
   }
@@ -182,6 +190,7 @@ export default function ResumeTab({ disabled = false, entries = [] }) {
           <p className="be-cv-local-note">Resume edits stay only in this browser tab for now.</p>
           <ResumeDocument cvData={cvData} onBulletChange={handleBulletChange} onFieldChange={handleFieldChange} />
           <ResumeActions copied={cvCopied} onCopy={copyCV} onDownload={downloadCV} />
+          {cvCopyError && <p className="be-comp-error" role="alert">{cvCopyError}</p>}
         </>
       )}
     </>
