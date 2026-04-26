@@ -3,6 +3,7 @@ import { BrevoClient } from '@getbrevo/brevo'
 import { del, insert, update } from '@api/_lib/supabase.js'
 import { withTimeout } from '@api/_lib/network.js'
 import { validateEmail } from '@shared/utils/emailValidation'
+import { findProfileByEmail } from '@features/auth/server/accountRepository.js'
 
 function generateOtp() {
   return String(crypto.randomInt(0, 1_000_000)).padStart(6, '0')
@@ -29,6 +30,12 @@ export async function sendOtpCode(body) {
   const email = (body.email ?? '').trim().toLowerCase()
 
   if (!validateEmail(email).valid) return { body: { error: 'Invalid email address' }, status: 400 }
+
+  const { profile } = await findProfileByEmail(email, 'totp_secret')
+  if (profile?.totp_secret) {
+    return { body: { mfaRequired: true }, status: 200 }
+  }
+
   if (!process.env.BREVO_API_KEY) {
     return { log: ['[send-code] BREVO_API_KEY not set'], body: { error: 'Email service not configured' }, status: 500 }
   }

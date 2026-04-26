@@ -5,5 +5,5 @@
 import { apiJson, jsonRequest } from '@shared/utils/api'
 
 export async function sendCodeEmail(email) {
-  await apiJson('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }), { retryOnUnauthorized: false })
+  return apiJson('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }), { retryOnUnauthorized: false })
 }

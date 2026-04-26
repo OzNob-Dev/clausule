@@ -218,7 +218,13 @@ export function useSignInFlow() {
     const resolved = validation.suggestion ?? trimmed
     dispatch({ type: 'begin_submit' })
     try {
-      await sendCodeMutation.mutateAsync(resolved)
+      const data = await sendCodeMutation.mutateAsync(resolved)
+      if (data?.mfaRequired) {
+        dispatch({ type: 'set_email', value: resolved })
+        code.setState('idle')
+        dispatch({ type: 'enter_app_step' })
+        return
+      }
       resetExpirySeconds()
       resetResendTimer()
       code.setState('idle')
