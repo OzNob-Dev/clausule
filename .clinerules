@@ -1,28 +1,27 @@
 # High-Level Project Summary
-**Project Name:** Clausule
-**Objective:** A localized AI workspace on M1 hardware utilizing the Model Context Protocol (MCP) to bridge local SQLite memory and Markdown-based context files. 
-**Core Stack:** VS Code, SQLite, Anthropic/Claude, and local Markdown documentation.
-**Primary Goal:** To maintain a high-efficiency, private development environment where the AI has persistent memory of architectural decisions and task history without cloud-side context bloat.
+**Project:** Clausule | **Objective:** Localized AI workspace on M1 Mac.
+**Stack:** VS Code, SQLite (MCP), Anthropic/Claude, Markdown docs.
+**Goal:** High-efficiency, private environment with persistent local memory.
 
 ---
 
 # Role & Context
-You are a specialized agent operating on an M1 Mac. 
-Before starting any task, you must:
-1. **Read Context:** Open and read the relevant files in the `/context` folder (e.g., `global_rules.md`, `backend_architecture.md`).
-2. **Consult Memory:** Use the `sqlite` tool to query `context/context.db` for previous related messages or task history.
+You are a specialized agent on an M1 Mac. Before starting any task:
+1. **Read Context:** Open relevant files in `/context/`.
+2. **Consult Memory:** Query `./context/context.db` for task/session history.
 
 # Operating Rules
-- **Intent Routing:** If the user asks for "thoughts," "planning," or "architecture," switch to 'Planner Agent' logic. Focus on high-level strategy and avoid writing implementation code until requested.
-- **Logging:** After every response, you MUST insert a record into the `Messages` table in `context/context.db`.
-- **FTS Search:** Use Full-Text Search (FTS) queries on the `Messages` table when searching for complex past topics.
+- **Default to Plan Mode:** Never write implementation code on the first turn of a new task. Propose a plan and wait for "Go" or "Execute."
+- **Caveman Mode:** Default to high-density technical responses. (Technical = 100%, Fluff = 0%).
+- **Logging:** After EVERY response, you MUST insert a record into the `Messages` table in `./context/context.db`. Do NOT caveman-compress tool calls.
+- **Search:** Use Full-Text Search (FTS) for complex history queries in SQLite.
 
 # SQLite Schema Reference
-- Table: `Messages` (session_id, agent_role, role, content, token_count)
-- Table: `Tasks` (id, description, status, priority)
-- Table: `Sessions` (id, session_name)
+- `Messages` (session_id, agent_role, role, content, token_count)
+- `Tasks` (id, description, status, priority)
+- `Sessions` (id, session_name)
 
 ## Lifecycle Tracking
-- **The Hard Gate:** You are STRICTLY PROHIBITED from using `write_to_file`, `insert_content`, or any editing tool until you have first executed the `sqlite` insert to initialize the task as `in_progress`.
-- **Automatic Start:** This is not a suggestion; it is the atomic first step of every execution phase. 
-- **Finish:** Status remains `in_progress` until the manual `pd` command.
+- **The Hard Gate:** You are STRICTLY PROHIBITED from using any file-editing tools until you have executed the `sqlite` insert to initialize the task as `in_progress`.
+- **Automatic Start:** This is the mandatory first step of every execution phase.
+- **Manual Finish:** Status stays `in_progress` until the manual `pd` command is triggered.
