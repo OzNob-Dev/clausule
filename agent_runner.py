@@ -112,24 +112,22 @@ def retrieved_context(conn: sqlite3.Connection, keyword: str, limit: int = 8) ->
     return xml_block("retrieved_context", "\n".join(items))
 
 
-def fit_prompt(static: str, retrieved: str, history: str, user_prompt: str, model: str, max_tokens: int) -> str:
-    user = xml_block("user_request", user_prompt)
-    parts = [static, retrieved, history, user]
-    total = count_tokens("\n\n".join(parts), model)
-    if total <= max_tokens:
-        return "\n\n".join(parts)
 
-    static_user_tokens = count_tokens("\n\n".join([static, user]), model)
-    budget = max(max_tokens - static_user_tokens, 0)
-    retrieved_budget = budget // 3
-    history_budget = budget - retrieved_budget
-    retrieved = xml_block("retrieved_context", truncate_tokens(retrieved, retrieved_budget, model))
-    history = xml_block("recent_history", truncate_tokens(history, history_budget, model))
-    prompt = "\n\n".join([static, retrieved, history, user])
-    if count_tokens(prompt, model) <= max_tokens:
-        return prompt
-    return "\n\n".join([static, xml_block("retrieved_context", ""), xml_block("recent_history", ""), user])
-
+def detect_intent(user_prompt: str) -> str | None:
+    triggers = [
+        "what are your thoughts",
+        "how should we approach",
+        "can we plan",
+        "what is the best way to",
+        "architectural review",
+        "think about",
+        "what do you think"
+    ]
+    prompt_lower = user_prompt.lower()
+    for trigger in triggers:
+        if trigger in prompt_lower:
+            return "planner_agent"
+    return None
 
 def build_prompt(
     conn: sqlite3.Connection,
@@ -151,6 +149,25 @@ def build_prompt(
         int(defaults.get("max_prompt_tokens") or 120000),
     )
     return prompt, agent, sid
+
+
+def fit_prompt(static: str, retrieved: str, history: str, user_prompt: str, model: str, max_tokens: int) -> str:
+    user = xml_block("user_request", user_prompt)
+    parts = [static, retrieved, history, user]
+    total = count_tokens("\n\n".join(parts), model)
+    if total <= max_tokens:
+        return "\n\n".join(parts)
+
+    static_user_tokens = count_tokens("\n\n".join([static, user]), model)
+    budget = max(max_tokens - static_user_tokens, 0)
+    retrieved_budget = budget // 3
+    history_budget = budget - retrieved_budget
+    retrieved = xml_block("retrieved_context", truncate_tokens(retrieved, retrieved_budget, model))
+    history = xml_block("recent_history", truncate_tokens(history, history_budget, model))
+    prompt = "\n\n".join([static, retrieved, history, user])
+    if count_tokens(prompt, model) <= max_tokens:
+        return prompt
+    return "\n\n".join([static, xml_block("retrieved_context", ""), xml_block("recent_history", ""), user])
 
 
 def log_message(conn: sqlite3.Connection, sid: int, agent: str, role: str, content: str, tokens: int) -> None:
@@ -230,6 +247,13 @@ def run_agent(agent_name: str, user_prompt: str, keyword: str = "") -> str:
     config = load_config()
     db_path = initialize_database(database_path(config))
     session_name = config.get("defaults", {}).get("session_name") or "Main Project"
+    
+    # Fast Intent Routing Check
+    routed_agent = detect_intent(user_prompt)
+    if routed_agent and routed_agent in config.get("agents", {}):
+        print(f"\n[Router] Intercepted planning intent. Routing away from '{agent_name}' to '{routed_agent}'.\n")
+        agent_name = routed_agent
+
     with sqlite3.connect(db_path) as conn:
         conn.execute("PRAGMA foreign_keys=ON;")
         prompt, agent, sid = build_prompt(conn, config, agent_name, session_name, user_prompt, keyword)
