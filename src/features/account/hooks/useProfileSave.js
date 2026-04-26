@@ -6,6 +6,7 @@ import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { apiFetch, apiJson, jsonRequest } from '@shared/utils/api'
 
+/** @param {{ current: Record<string, string>, emailChanged: boolean, commitBaseline: (next: Record<string, string>) => void }} props */
 export function useProfileSave({ current, emailChanged, commitBaseline }) {
   const router         = useRouter()
   const queryClient    = useQueryClient()
@@ -15,7 +16,7 @@ export function useProfileSave({ current, emailChanged, commitBaseline }) {
   const [success, setSuccess] = useState('')
 
   const patchProfileMutation = useMutation({
-    mutationFn: ({ emailVerificationCode, mobileConfirmed, mobileConfirmation }) =>
+    mutationFn: (/** @type {{ emailVerificationCode?: string, mobileConfirmed?: boolean, mobileConfirmation?: string }} */ { emailVerificationCode, mobileConfirmed, mobileConfirmation }) =>
       apiJson('/api/auth/profile', jsonRequest({
         ...current,
         emailVerificationCode,
@@ -25,7 +26,7 @@ export function useProfileSave({ current, emailChanged, commitBaseline }) {
     retry: false,
   })
 
-  const patchProfile = async ({ emailVerificationCode, mobileConfirmed, mobileConfirmation }) => {
+  const patchProfile = async (/** @type {{ emailVerificationCode?: string, mobileConfirmed?: boolean, mobileConfirmation?: string }} */ { emailVerificationCode, mobileConfirmed, mobileConfirmation }) => {
     setError('')
     setSuccess('')
     try {

@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useMemo, useReducer } from 'rea
 
 /** @typedef {import('@shared/types/contracts').SignupStep1Data & { agreed: boolean, emailVerificationToken: string }} SignupStep1State */
 /** @typedef {{ step: 1 | 2 | 3, step1Data: SignupStep1State }} SignupState */
-/** @typedef {{ type: 'set_step', value: 1 | 2 | 3 } | { type: 'set_step1', value: SignupStep1State | ((current: SignupStep1State) => SignupStep1State) } | { type: 'complete_signup' }} SignupAction */
+/** @typedef {{ type: 'set_step', value: 1 | 2 | 3 | ((current: 1 | 2 | 3) => 1 | 2 | 3) } | { type: 'set_step1', value: SignupStep1State | ((current: SignupStep1State) => SignupStep1State) } | { type: 'complete_signup' }} SignupAction */
 /** @typedef {{ step: 1 | 2 | 3, setStep: (value: 1 | 2 | 3 | ((current: 1 | 2 | 3) => 1 | 2 | 3)) => void, step1Data: SignupStep1State, setStep1Data: (value: SignupStep1State | ((current: SignupStep1State) => SignupStep1State)) => void, completeSignup: () => void }} SignupContextValue */
 
 const SignupContext = createContext(/** @type {SignupContextValue | null} */ (null))
@@ -22,10 +22,14 @@ const INITIAL_STATE = {
 /** @param {SignupState} state @param {SignupAction} action @returns {SignupState} */
 function reducer(state, action) {
   switch (action.type) {
-    case 'set_step':
-      return { ...state, step: /** @type {1 | 2 | 3} */ (typeof action.value === 'function' ? action.value(state.step) : action.value) }
-    case 'set_step1':
-      return { ...state, step1Data: typeof action.value === 'function' ? action.value(state.step1Data) : action.value }
+    case 'set_step': {
+      const a = /** @type {{ type: 'set_step', value: 1 | 2 | 3 | ((current: 1 | 2 | 3) => 1 | 2 | 3) }} */ (action)
+      return { ...state, step: typeof a.value === 'function' ? a.value(state.step) : a.value }
+    }
+    case 'set_step1': {
+      const a = /** @type {{ type: 'set_step1', value: SignupStep1State | ((current: SignupStep1State) => SignupStep1State) }} */ (action)
+      return { ...state, step1Data: typeof a.value === 'function' ? a.value(state.step1Data) : a.value }
+    }
     case 'complete_signup':
       return { ...state, step: 3 }
     default:

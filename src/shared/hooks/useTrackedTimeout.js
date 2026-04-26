@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef } from 'react'
 export function useTrackedTimeout() {
   const timeoutRefs = useRef(new Set())
 
-  const scheduleTimeout = useCallback((fn, delay) => {
+  const scheduleTimeout = useCallback((/** @type {() => void} */ fn, /** @type {number} */ delay) => {
     const id = setTimeout(() => {
       timeoutRefs.current.delete(id)
       fn()

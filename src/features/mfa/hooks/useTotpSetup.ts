@@ -6,7 +6,7 @@ import { apiJson, jsonRequest } from '@shared/utils/api'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { useSixDigitCode } from '@features/mfa/hooks/useSixDigitCode'
 
-export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0 } = {}) {
+export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0 }: { enabled?: boolean, onVerified?: () => void, onVerifiedDelayMs?: number } = {}) {
   const [copied, setCopied] = useState(false)
   const inputRefs = useRef([])
   const scheduleTimeout = useTrackedTimeout()
@@ -24,7 +24,7 @@ export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0
   const loadError = setupQuery.isError || Boolean(setupQuery.data && !secret)
 
   const verifyMutation = useMutation({
-    mutationFn: (digits) => {
+    mutationFn: (digits: string[]) => {
       if (!secret) throw new Error('Missing secret')
       return apiJson('/api/auth/totp/setup', jsonRequest({
         code: digits.join(''),
@@ -33,7 +33,7 @@ export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0
     },
   })
 
-  const verifyTotp = useCallback(async (digits) => {
+  const verifyTotp = useCallback(async (digits: string[]) => {
     if (!secret) return
     totpCode.setState('checking')
 

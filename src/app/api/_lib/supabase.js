@@ -86,6 +86,9 @@ async function supaFetch(path, init = {}, options = {}) {
 
 /**
  * Insert a row and return the created record.
+ * @param {string} table
+ * @param {object} body
+ * @param {{ expectRows?: 'single' | 'any' }} [options]
  */
 export function insert(table, body, options = {}) {
   return supaFetch(`/rest/v1/${table}`, {
@@ -97,6 +100,8 @@ export function insert(table, body, options = {}) {
 /**
  * Select rows.  `query` is a URLSearchParams-compatible string, e.g.
  * "email=eq.foo@bar.com&used_at=is.null&expires_at=gt.now()"
+ * @param {string} table
+ * @param {string} [query]
  */
 export function select(table, query = '') {
   return supaFetch(`/rest/v1/${table}?${query}`)
@@ -104,6 +109,10 @@ export function select(table, query = '') {
 
 /**
  * Update rows matching query.
+ * @param {string} table
+ * @param {string} query
+ * @param {object} body
+ * @param {{ expectRows?: 'single' | 'any' }} [options]
  */
 export function update(table, query, body, options = {}) {
   return supaFetch(`/rest/v1/${table}?${query}`, {
@@ -114,6 +123,9 @@ export function update(table, query, body, options = {}) {
 
 /**
  * Delete rows matching query.
+ * @param {string} table
+ * @param {string} query
+ * @param {{ expectRows?: 'single' | 'any' }} [options]
  */
 export function del(table, query, options = {}) {
   return supaFetch(`/rest/v1/${table}?${query}`, { method: 'DELETE' }, options)
@@ -138,6 +150,12 @@ export function upsert(table, body, onConflict = 'id', options = {}) {
   }, options)
 }
 
+/**
+ * Call a PostgREST RPC function.
+ * @param {string} fn - Function name
+ * @param {object} [body]
+ * @param {{ expectRows?: 'single' | 'any' }} [options]
+ */
 export function rpc(fn, body = {}, options = {}) {
   return supaFetch(`/rest/v1/rpc/${fn}`, {
     method: 'POST',
@@ -184,6 +202,11 @@ export function deleteUser(userId) {
   return supaFetch(`/auth/v1/admin/users/${userId}`, { method: 'DELETE' })
 }
 
+/**
+ * Update a Supabase Auth user.
+ * @param {string} userId - UUID
+ * @param {object} body
+ */
 export function updateAuthUser(userId, body) {
   return supaFetch(`/auth/v1/admin/users/${userId}`, {
     method: 'PUT',

@@ -20,7 +20,7 @@ export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
     scheduleTimeout(reset, 700)
   }, [reset, scheduleTimeout])
 
-  const handleChange = useCallback((index, value) => {
+  const handleChange = useCallback((/** @type {number} */ index, /** @type {string} */ value) => {
     const nextDigit = value.replace(/\D/g, '').slice(-1)
     setDigits((previous) => {
       const next = previous.map((digit, digitIndex) => (digitIndex === index ? nextDigit : digit))
@@ -33,7 +33,7 @@ export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
     })
   }, [inputRefs, scheduleTimeout])
 
-  const handleKeyDown = useCallback((index, event) => {
+  const handleKeyDown = useCallback((/** @type {number} */ index, /** @type {KeyboardEvent} */ event) => {
     if (event.key === 'Backspace') {
       setDigits((previous) => {
         if (previous[index]) {
@@ -58,9 +58,9 @@ export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
     }
   }, [inputRefs, scheduleTimeout])
 
-  const handlePaste = useCallback((event) => {
+  const handlePaste = useCallback((/** @type {ClipboardEvent} */ event) => {
     event.preventDefault()
-    const text = event.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    const text = (event.clipboardData?.getData('text') ?? '').replace(/\D/g, '').slice(0, 6)
     if (!text) return
 
     const next = Array.from({ length: 6 }, (_, index) => text[index] ?? '')
