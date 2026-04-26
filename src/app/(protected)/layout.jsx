@@ -16,7 +16,7 @@ export default async function ProtectedLayout({ children }) {
   const mfaSetupRequired = !session.security.authenticatorAppConfigured && !session.security.ssoConfigured
 
   console.log('[protected-layout] mfaSetupRequired:', mfaSetupRequired, 'pathname:', JSON.stringify(pathname))
-  if (mfaSetupRequired && pathname && pathname !== ROUTES.bragSettings) {
+  if (mfaSetupRequired && pathname !== ROUTES.bragSettings) {
     console.log('[protected-layout] mfa required, redirecting to settings from pathname:', pathname)
     redirect(ROUTES.bragSettings)
   }
