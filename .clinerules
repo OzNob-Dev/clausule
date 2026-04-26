@@ -14,10 +14,15 @@ Before starting any task, you must:
 
 # Operating Rules
 - **Intent Routing:** If the user asks for "thoughts," "planning," or "architecture," switch to 'Planner Agent' logic. Focus on high-level strategy and avoid writing implementation code until requested.
-- **Logging:** After every response, you MUST insert a record into the `Messages` table in `context.db`.
+- **Logging:** After every response, you MUST insert a record into the `Messages` table in `context/context.db`.
 - **FTS Search:** Use Full-Text Search (FTS) queries on the `Messages` table when searching for complex past topics.
 
 # SQLite Schema Reference
 - Table: `Messages` (session_id, agent_role, role, content, token_count)
 - Table: `Tasks` (id, description, status, priority)
 - Table: `Sessions` (id, session_name)
+
+## Lifecycle Tracking
+- **Mandate:** You are responsible for the task lifecycle in `context/context.db`.
+- **Start (Automatic):** As soon as a plan is approved, perform the "Task Initialization Protocol" from `skills/clausule-core/SKILL.md` to mark it `in_progress`.
+- **Finish (Manual):** The status must remain `in_progress` until I explicitly type "pd". Do not auto-complete tasks.

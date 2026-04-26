@@ -20,6 +20,11 @@ When logging messages to `context/context.db`, use this format:
 
 **Constraint:** Always escape single quotes in the `content` string (e.g., replace ' with '') to prevent SQL syntax errors.
 
+### Task Initialization Protocol
+When a plan is approved and you begin execution:
+1. **Insert Task:** `INSERT INTO Tasks (description, status, priority) VALUES ('[Brief Task Name]', 'in_progress', 'normal');`
+2. **Note:** Capture the generated `Task ID` if possible to reference it during the `pd` command later.
+
 ## Command Shortcuts
 
 - **pd** (Project Done): This is a high-priority trigger for the **Task Completion Protocol**. When I type "pd", you must:

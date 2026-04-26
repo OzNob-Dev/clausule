@@ -41,6 +41,10 @@
 - Consult `/context/` and `context/context.db` before making any non-trivial suggestions.
 - **Automatic Logging:** After every response, you MUST use the `sqlite` tool to log the interaction into the `Messages` table of `context/context.db`.
 - **Shortcuts:** Interpret the input "pd" as the "Project Done" command defined in `./skills/clausule-core/SKILL.md`.
+- **Lifecycle Tracking:** Automatically `INSERT` tasks as `in_progress` upon plan approval.
+- **Manual Completion:** Only use the `pd` shortcut from `skills/clausule-core/SKILL.md` to mark tasks as `completed`.
+- **Context First:** Always query `context/context.db` for active `in_progress` tasks at the start of a session.
+
 
 ## Conflict Rules
 
