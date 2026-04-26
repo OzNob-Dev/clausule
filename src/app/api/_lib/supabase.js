@@ -21,6 +21,16 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
   console.warn('[supabase] NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set')
 }
 
+/**
+ * Returns the service role key or throws at call time if missing.
+ * Prevents `string | undefined` from leaking into header values.
+ * @returns {string}
+ */
+function requireServiceKey() {
+  if (!SERVICE_KEY) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set')
+  return SERVICE_KEY
+}
+
 /** @param {string} message @param {string} [code] @returns {{ message: string, code?: string }} */
 function mutationError(message, code) {
   return { message, code }
@@ -54,8 +64,8 @@ async function supaFetch(path, init = {}, options = {}) {
     ...init,
     headers: {
       'Content-Type': 'application/json',
-      apikey: SERVICE_KEY,
-      Authorization: `Bearer ${SERVICE_KEY}`,
+      apikey: requireServiceKey(),
+      Authorization: `Bearer ${requireServiceKey()}`,
       Prefer: 'return=representation',
       ...init.headers,
     },
@@ -145,8 +155,8 @@ export function createUser({ email, password, user_metadata }) {
   return supaFetch('/auth/v1/admin/users', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-      'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
+      'Authorization': `Bearer ${requireServiceKey()}`,
+      'apikey': requireServiceKey(),
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({

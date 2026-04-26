@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { resolveClientIp } from '@api/_lib/network.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { verifyEmailOtpCode } from '@features/auth/server/emailOtpVerification.js'
 import { signSignupVerificationToken } from '@features/auth/server/signupVerification.js'
@@ -13,7 +14,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'email and 6-digit code required' }, { status: 400 })
   }
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const ip = resolveClientIp(request)
 
   const { allowed: ipAllowed, retryAfterMs: ipRetry, error: ipLimitError } = await consumeDistributedRateLimit({
     scope: 'signup_verify_email_ip',

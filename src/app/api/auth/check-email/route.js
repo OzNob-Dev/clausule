@@ -10,11 +10,12 @@
  */
 
 import { NextResponse }   from 'next/server'
+import { resolveClientIp } from '@api/_lib/network.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { validateEmail }  from '@shared/utils/emailValidation'
 
 export async function POST(request) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const ip = resolveClientIp(request)
   const { allowed, error: limitError } = await consumeDistributedRateLimit({
     scope: 'auth_check_email_ip',
     identifier: ip,

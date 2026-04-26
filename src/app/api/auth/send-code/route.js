@@ -5,13 +5,14 @@
  */
 
 import { NextResponse } from 'next/server'
+import { resolveClientIp } from '@api/_lib/network.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { sendOtpCode } from '@features/auth/server/sendOtpCode.js'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const email = (body.email ?? '').trim().toLowerCase()
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const ip = resolveClientIp(request)
 
   const { allowed: ipAllowed, retryAfterMs: ipRetry, error: ipError } = await consumeDistributedRateLimit({
     scope: 'auth_send_code_ip',

@@ -16,7 +16,7 @@ export default function EntryComposer({ onSave, onClose }) {
           body: body.trim(),
           entry_date: new Date().toISOString().slice(0, 10),
           evidence_types: [...evTypes],
-          visible_to_manager: true,
+          visible_to_manager: false,
         }, { method: 'POST' })),
   })
 

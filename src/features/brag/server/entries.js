@@ -45,7 +45,7 @@ export async function createEntry({ userId, body }) {
   const title = (body.title ?? '').trim()
   const entryBody = (body.body ?? '').trim()
   const entryDate = body.entry_date ?? new Date().toISOString().slice(0, 10)
-  const visible = body.visible_to_manager !== false
+  const visible = body.visible_to_manager === true
 
   if (!title) return { body: { error: 'title is required' }, status: 400 }
   if (title.length > 500) return { body: { error: 'title is too long' }, status: 400 }

@@ -92,3 +92,61 @@ describe('ProtectedLayout MFA lock', () => {
     expect(redirect).not.toHaveBeenCalled()
   })
 })
+
+describe('ProtectedLayout role guard', () => {
+  beforeEach(() => {
+    redirect.mockClear()
+  })
+
+  it('redirects an employee deep-linking to /dashboard to /brag', async () => {
+    pathname = '/dashboard'
+    session = {
+      user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+      profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com', mobile: '', jobTitle: '', department: '' },
+      security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: false },
+    }
+
+    await expect(ProtectedLayout({ children: <div>Manager dashboard</div> })).rejects.toThrow('redirect:/brag')
+    expect(redirect).toHaveBeenCalledWith('/brag')
+  })
+
+  it('redirects an employee deep-linking to /entries to /brag', async () => {
+    pathname = '/entries'
+    session = {
+      user: { id: 'user-1', email: 'ada@example.com', role: 'employee' },
+      profile: { firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com', mobile: '', jobTitle: '', department: '' },
+      security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: false },
+    }
+
+    await expect(ProtectedLayout({ children: <div>Manager entries</div> })).rejects.toThrow('redirect:/brag')
+    expect(redirect).toHaveBeenCalledWith('/brag')
+  })
+
+  it('allows a manager to access /dashboard', async () => {
+    pathname = '/dashboard'
+    session = {
+      user: { id: 'user-2', email: 'mgr@example.com', role: 'manager' },
+      profile: { firstName: 'Max', lastName: 'Mgr', email: 'mgr@example.com', mobile: '', jobTitle: '', department: '' },
+      security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: false },
+    }
+
+    render(await ProtectedLayout({ children: <div>Manager dashboard</div> }))
+
+    expect(screen.getByText('Manager dashboard')).toBeInTheDocument()
+    expect(redirect).not.toHaveBeenCalled()
+  })
+
+  it('allows a manager to access /entries', async () => {
+    pathname = '/entries'
+    session = {
+      user: { id: 'user-2', email: 'mgr@example.com', role: 'manager' },
+      profile: { firstName: 'Max', lastName: 'Mgr', email: 'mgr@example.com', mobile: '', jobTitle: '', department: '' },
+      security: { authenticatorAppConfigured: true, authenticatedWithOtp: true, ssoConfigured: false },
+    }
+
+    render(await ProtectedLayout({ children: <div>Manager entries</div> }))
+
+    expect(screen.getByText('Manager entries')).toBeInTheDocument()
+    expect(redirect).not.toHaveBeenCalled()
+  })
+})

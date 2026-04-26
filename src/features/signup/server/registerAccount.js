@@ -16,6 +16,16 @@ const PLAN_CURRENCY = INDIVIDUAL_MONTHLY_PLAN.currency
 const PLAN_INTERVAL = INDIVIDUAL_MONTHLY_PLAN.interval
 const PLAN_LABEL = INDIVIDUAL_MONTHLY_PLAN.label
 
+/** @param {string} str @returns {string} */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function authUserId(created) {
   return created?.id ?? created?.user?.id ?? null
 }
@@ -36,7 +46,7 @@ async function sendPlanActivationEmail({ email, firstName, amountCents, periodSt
       to: [{ email }],
       htmlContent: `
         <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#FAF7F3;border-radius:12px;color:#1A1510;">
-          <h2 style="margin:0 0 12px;font-size:22px;">Thanks${firstName ? `, ${firstName}` : ''}</h2>
+          <h2 style="margin:0 0 12px;font-size:22px;">Thanks${firstName ? `, ${escapeHtml(firstName)}` : ''}</h2>
           <p style="margin:0 0 24px;color:#5B4E42;">Your Clausule account and fixed rollout plan are now active.</p>
           <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
             <tr><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;">Plan</td><td style="padding:12px 0;border-bottom:1px solid #E6DDD3;text-align:right;">${PLAN_LABEL}</td></tr>

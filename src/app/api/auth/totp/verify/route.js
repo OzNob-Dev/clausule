@@ -12,6 +12,7 @@
  */
 
 import { NextResponse }                 from 'next/server'
+import { resolveClientIp }              from '@api/_lib/network.js'
 import { authAttemptOperationKey, beginBackendOperation } from '@features/auth/server/backendOperation.js'
 import { consumeDistributedRateLimit }  from '@features/auth/server/distributedRateLimit.js'
 import { verifyTotpLogin }              from '@features/auth/server/loginVerification.js'
@@ -27,7 +28,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'email and 6-digit code required' }, { status: 400 })
   }
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const ip = resolveClientIp(request)
 
   // Rate limit by IP to cap cross-account TOTP spraying.
   const { allowed: ipAllowed, retryAfterMs: ipRetry, error: ipLimitError } = await consumeDistributedRateLimit({

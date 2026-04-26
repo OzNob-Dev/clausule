@@ -5,11 +5,12 @@
  */
 
 import { NextResponse } from 'next/server'
+import { resolveClientIp } from '@api/_lib/network.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { createSignupUser } from '@features/auth/server/createSignupUser.js'
 
 export async function POST(request) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const ip = resolveClientIp(request)
   const { allowed, retryAfterMs, error } = await consumeDistributedRateLimit({
     scope: 'auth_signup_ip',
     identifier: ip,
