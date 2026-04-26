@@ -1,7 +1,6 @@
 'use client'
 
 import { ssoConfigFromEnv } from '@shared/utils/sso'
-import SignInBrandPanel from '@features/auth/components/SignInBrandPanel'
 import SignInEmailForm from '@features/auth/components/SignInEmailForm'
 import SignUpPrompt from '@features/auth/components/SignUpPrompt'
 import SsoButtons from '@features/auth/components/SsoButtons'
@@ -9,8 +8,6 @@ import { useSignInFlow } from '@features/auth/hooks/useSignInFlow'
 import MfaLoginEmailStep from '@features/mfa/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@features/mfa/components/MfaLoginAppStep'
 import '@features/mfa/styles/mfa-layout.css'
-import '@features/signup/styles/signup-theme.css'
-import '@features/signup/styles/signup-form.css'
 
 export default function SignIn() {
   const flow = useSignInFlow()
@@ -54,31 +51,23 @@ export default function SignIn() {
   }
 
   return (
-    <div className="su-shell-wrap su-page">
-      <div className="su-shell">
-        <SignInBrandPanel />
-
-        <div className="su-shell-right su-page flex-col justify-start">
-          <div className="su-narrow">
-            <SignInEmailForm
-              email={flow.email}
-              result={flow.result}
-              showFeedback={flow.showFeedback}
-              isChecking={flow.isChecking}
-              btnLabel={flow.btnLabel}
-              ssoError={flow.ssoError}
-              submitError={flow.submitError}
-              onAcceptSuggestion={flow.acceptSuggestion}
-              onBlur={flow.handleEmailBlur}
-              onChange={flow.handleEmailChange}
-              onPaste={flow.handlePaste}
-              onSubmit={flow.handleSubmit}
-            />
-            <SsoButtons config={ssoConfigFromEnv} />
-            <SignUpPrompt />
-          </div>
-        </div>
-      </div>
+    <div className="su-narrow">
+      <SignInEmailForm
+        email={flow.email}
+        result={flow.result}
+        showFeedback={flow.showFeedback}
+        isChecking={flow.isChecking}
+        btnLabel={flow.btnLabel}
+        ssoError={flow.ssoError}
+        submitError={flow.submitError}
+        onAcceptSuggestion={flow.acceptSuggestion}
+        onBlur={flow.handleEmailBlur}
+        onChange={flow.handleEmailChange}
+        onPaste={flow.handlePaste}
+        onSubmit={flow.handleSubmit}
+      />
+      <SsoButtons config={ssoConfigFromEnv} />
+      <SignUpPrompt />
     </div>
   )
 }

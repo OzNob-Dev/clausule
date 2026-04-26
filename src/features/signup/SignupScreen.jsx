@@ -4,7 +4,7 @@ import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { SignupProvider, useSignup } from '@features/signup/context/SignupContext'
-import SignInBrandPanel, { BrandBugIcon } from '@features/auth/components/SignInBrandPanel'
+import { BrandBugIcon } from '@features/auth/components/SignInBrandPanel'
 import SignupAside from '@features/signup/components/SignupAside'
 import SignupProgress from '@features/signup/components/SignupProgress'
 import SignupStepAccount from '@features/signup/components/SignupStepAccount'
@@ -45,36 +45,30 @@ function SignUpInner() {
 
   if (step === 1) {
     return (
-      <div className="su-shell-wrap">
-        <div className="su-shell">
-          <SignInBrandPanel brandHref="/" />
-
-          <div className="su-shell-right su-page">
-            <div className="su-step1-layout">
-              <div className="su-step1-form">
-                <SignupStepAccount
-                  emailLocked={redirectedFromSignIn}
-                  hideSso={redirectedFromSignIn}
-                  onNext={handleStep1}
-                  initialData={step1Initial}
-                />
-              </div>
-              <aside className="su-aside" aria-label="Plan summary">
-                <SignupAside />
-              </aside>
-            </div>
-            <p className="su-shell-signin-note">
-              Already have an account?{' '}
-              <Link href="/">Sign in</Link>
-            </p>
+      <>
+        <div className="su-step1-layout">
+          <div className="su-step1-form">
+            <SignupStepAccount
+              emailLocked={redirectedFromSignIn}
+              hideSso={redirectedFromSignIn}
+              onNext={handleStep1}
+              initialData={step1Initial}
+            />
           </div>
+          <aside className="su-aside" aria-label="Plan summary">
+            <SignupAside />
+          </aside>
         </div>
-      </div>
+        <p className="su-shell-signin-note">
+          Already have an account?{' '}
+          <Link href="/">Sign in</Link>
+        </p>
+      </>
     )
   }
 
   return (
-    <div className="su-page">
+    <div className="su-page su-fullscreen">
       <div className="su-bg-lines" aria-hidden="true" />
 
       <div className="su-topbar">

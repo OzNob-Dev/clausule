@@ -353,6 +353,14 @@
   margin-bottom: 32px;
 }
 
+/* Escape the auth layout shell — used by steps 2+ and MFA overlays */
+.su-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  overflow-y: auto;
+}
+
 @media (max-width: 640px) {
   .su-topbar { padding: 14px 20px; }
   .su-progress { padding: 16px 16px 0; }
