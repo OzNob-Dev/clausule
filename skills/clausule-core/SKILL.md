@@ -7,14 +7,14 @@ description: Repo-wide Clausule guidance for architecture, workflow, and respons
 
 ## Load Strategy
 - Start here, then load matching skill sets (`frontend`, `backend-security`, or `testing-release`).
-- Always load `clausule-frontend` for any implementation work to ensure UX/accessibility constraints are met.
+- Always load `clausule-frontend` for implementation work to ensure UX/accessibility constraints are met.
 - Treat `docs/agent/*.md` as compatibility stubs; update owning skills instead.
 
 ## Database & Lifecycle
 ### 1. Operations
 - **SQL Template:** `INSERT INTO Messages (session_id, agent_role, role, content, timestamp, token_count) VALUES (1, 'assistant_role', 'assistant', '{{CONTENT}}', CURRENT_TIMESTAMP, 0);`
 - **Escaping:** Always replace single quotes (`'`) with double single quotes (`''`) in content strings.
-- **Caveman Protection:** Maintain perfect SQL formatting and professional data integrity. Do NOT use caveman-speak inside SQL strings.
+- **Caveman Protection:** Maintain professional formatting and full technical data integrity. Do NOT use caveman-speak inside SQL strings.
 
 ### 2. Task Initialization (Step 0)
 Before any file modifications occur:
@@ -24,10 +24,11 @@ Before any file modifications occur:
 
 ## Command Shortcuts
 - **pd** (Project Done): Manual trigger to close the active feature.
-  1. **Update:** `UPDATE Tasks SET status = 'completed' WHERE description LIKE '%[feature]%';`
-  2. **Summarize:** Write a 2-3 sentence technical summary of architectural impact.
-  3. **Log:** Insert summary into `Messages` table using the SQL Template above.
-  4. **Notify:** Run `osascript -e 'display notification "Database updated and summary logged." with title "Clausule: pd Complete" sound name "Glass"'`
+  1. **Schema Re-Sync:** If you have not yet read the schema this session, you MUST use `read_file` on this SKILL.md file and `sqlite` to describe the `Tasks` table before attempting the update.
+  2. **Update:** `UPDATE Tasks SET status = 'completed' WHERE description LIKE '%[feature]%';`
+  3. **Summarize:** Write a 2-3 sentence technical summary of architectural impact.
+  4. **Log:** Insert summary into `Messages` table using the SQL Template above.
+  5. **Notify:** Run `osascript -e 'display notification "Database updated and summary logged." with title "Clausule: pd Complete" sound name "Glass"'`
 
 ## Repo Shape
 - Next.js App Router; feature-first organization (`src/app`, `src/features`, `src/shared`).

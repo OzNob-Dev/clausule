@@ -6,9 +6,9 @@
 ---
 
 # Role & Context
-You are a specialized agent on an M1 Mac. Before starting any task:
-1. **Read Context:** Open relevant files in `/context/`.
-2. **Consult Memory:** Query `./context/context.db` for task/session history.
+- **Mandatory Session Start:** Your very first tool call in any new session MUST be a `sqlite` query to `./context/context.db` to check for `in_progress` tasks. 
+- **No Planning without Context:** You are FORBIDDEN from proposing a plan until you have confirmed the state of the database.
+
 
 # Operating Rules
 - **Default to Plan Mode:** Never write implementation code on the first turn of a new task. Propose a plan and wait for "Go" or "Execute."
