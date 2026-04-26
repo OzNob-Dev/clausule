@@ -12,9 +12,9 @@ description: Repo-wide Clausule guidance for architecture, workflow, and respons
 
 ## Database & Lifecycle
 ### 1. Operations
-- **SQL Template:** `INSERT INTO Messages (session_id, agent_role, role, content, token_count) VALUES (1, 'assistant_role', 'assistant', '{{CONTENT}}', 0);`
+- **SQL Template:** `INSERT INTO Messages (session_id, agent_role, role, content, timestamp, token_count) VALUES (1, 'assistant_role', 'assistant', '{{CONTENT}}', CURRENT_TIMESTAMP, 0);`
 - **Escaping:** Always replace single quotes (`'`) with double single quotes (`''`) in content strings.
-- **Caveman Protection:** Maintain perfect SQL formatting and professional data integrity even in compressed modes.
+- **Caveman Protection:** Maintain perfect SQL formatting and professional data integrity. Do NOT use caveman-speak inside SQL strings.
 
 ### 2. Task Initialization (Step 0)
 Before any file modifications occur:

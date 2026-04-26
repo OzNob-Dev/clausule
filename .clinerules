@@ -17,7 +17,7 @@ You are a specialized agent on an M1 Mac. Before starting any task:
 - **Search:** Use Full-Text Search (FTS) for complex history queries in SQLite.
 
 # SQLite Schema Reference
-- `Messages` (session_id, agent_role, role, content, token_count)
+- `Messages` (id, session_id, agent_role, role, content, timestamp, token_count)
 - `Tasks` (id, description, status, priority)
 - `Sessions` (id, session_name)
 
