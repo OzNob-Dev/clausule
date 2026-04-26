@@ -12,6 +12,10 @@ vi.mock('@api/_lib/totp.js', () => ({
   verifyTotp: vi.fn(),
 }))
 
+vi.mock('@api/_lib/totpEncryption.js', () => ({
+  encryptTotpSecret: vi.fn((s) => `enc:v1:${s}`),
+}))
+
 vi.mock('./accountRepository.js', () => ({
   findProfileById: vi.fn(),
 }))
@@ -27,6 +31,6 @@ describe('saveTotpSetup', () => {
     const result = await saveTotpSetup({ userId: 'user-1', body: { code: '123456', secret: 'abcd1234' } })
 
     expect(result).toEqual({ body: { ok: true }, status: 200 })
-    expect(update).toHaveBeenCalledWith('profiles', 'id=eq.user-1', { totp_secret: 'ABCD1234' }, { expectRows: 'single' })
+    expect(update).toHaveBeenCalledWith('profiles', 'id=eq.user-1', { totp_secret: 'enc:v1:ABCD1234' }, { expectRows: 'single' })
   })
 })

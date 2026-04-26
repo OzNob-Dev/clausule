@@ -11,7 +11,8 @@
 export function resolveClientIp(request) {
   const header = request.headers.get('x-forwarded-for') ?? ''
   const ips = header.split(',').map((s) => s.trim()).filter(Boolean)
-  const proxyCount = Math.max(0, parseInt(process.env.TRUSTED_PROXY_COUNT ?? '1', 10))
+  const parsed = parseInt(process.env.TRUSTED_PROXY_COUNT ?? '1', 10)
+  const proxyCount = Number.isFinite(parsed) ? Math.max(0, parsed) : 1
   // The real client IP is just before the trusted proxy chain at the tail.
   return ips[Math.max(0, ips.length - 1 - proxyCount)] ?? 'unknown'
 }

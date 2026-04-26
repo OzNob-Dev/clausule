@@ -14,7 +14,7 @@ describe('signupVerification', () => {
 
     const { signSignupVerificationToken } = await import('./signupVerification.js')
 
-    expect(() => signSignupVerificationToken('ada@example.com')).toThrow('JWT_SECRET or SUPABASE_SERVICE_ROLE_KEY must be set')
+    expect(() => signSignupVerificationToken('ada@example.com')).toThrow('JWT_SECRET environment variable is not set')
   })
 
   it('signs and verifies a token when a secret is configured', async () => {

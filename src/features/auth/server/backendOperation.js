@@ -10,8 +10,8 @@ function normalizeEmail(email) {
 }
 
 function authAttemptKeySecret() {
-  const secret = process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!secret) throw new Error('JWT_SECRET or SUPABASE_SERVICE_ROLE_KEY must be set')
+  const secret = process.env.JWT_SECRET
+  if (!secret) throw new Error('JWT_SECRET environment variable is not set')
   return secret
 }
 

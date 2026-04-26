@@ -1,5 +1,6 @@
 import { update } from '@api/_lib/supabase.js'
 import { generateBase32Secret, verifyTotp } from '@api/_lib/totp.js'
+import { encryptTotpSecret } from '@api/_lib/totpEncryption.js'
 import { findProfileById } from './accountRepository.js'
 
 export async function createTotpSetup({ userId }) {
@@ -25,7 +26,18 @@ export async function saveTotpSetup({ userId, body }) {
 
   if (!verifyTotp(secret, code)) return { body: { error: 'Invalid TOTP code' }, status: 401 }
 
-  const { error } = await update('profiles', `id=eq.${userId}`, { totp_secret: secret }, { expectRows: 'single' })
+  let encryptedSecret
+  try {
+    encryptedSecret = encryptTotpSecret(secret)
+  } catch (err) {
+    return {
+      log: ['[totp/setup POST] encryption error:', err?.message ?? err],
+      body: { error: 'Failed to save TOTP configuration' },
+      status: 500,
+    }
+  }
+
+  const { error } = await update('profiles', `id=eq.${userId}`, { totp_secret: encryptedSecret }, { expectRows: 'single' })
   if (error) {
     return {
       log: ['[totp/setup POST] update error:', error],

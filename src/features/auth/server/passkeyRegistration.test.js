@@ -86,6 +86,8 @@ describe('passkeyRegistration service', () => {
     delete process.env.NEXT_PUBLIC_ORIGIN
     storePasskeyChallenge.mockResolvedValue({ data: [{ user_id: 'user-1' }], error: null })
     consumePasskeyChallenge.mockResolvedValue({ row: { challenge: 'stored', expires_at: new Date(Date.now() + 60_000).toISOString() }, error: null })
+    // Default for passkeys select (excludeCredentials lookup) — overridden per-test by mockResolvedValueOnce for profile
+    select.mockResolvedValue({ data: [], error: null })
   })
 
   it('creates registration options and stores a signed challenge', async () => {

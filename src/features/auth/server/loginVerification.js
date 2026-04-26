@@ -1,4 +1,6 @@
 import { verifyTotp } from '@api/_lib/totp.js'
+import { decryptTotpSecret, encryptTotpSecret } from '@api/_lib/totpEncryption.js'
+import { update } from '@api/_lib/supabase.js'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { accountActive, findProfileByEmail, getUserSsoProvider, hasActiveSubscription } from './accountRepository.js'
 import { verifyEmailOtpCode } from './emailOtpVerification.js'
@@ -98,8 +100,33 @@ export async function verifyTotpLogin({ email, code }) {
   }
   if (!accountActive(profile, hasPaid)) return invalidTotp()
 
-  const { id: userId, role, totp_secret: secret } = profile
+  const { id: userId, role, totp_secret: storedSecret } = profile
+
+  let secret
+  let wasPlaintext = false
+  try {
+    const decrypted = decryptTotpSecret(storedSecret)
+    secret = decrypted.secret
+    wasPlaintext = decrypted.wasPlaintext
+  } catch {
+    return {
+      log: ['[totp/verify] TOTP secret decryption failed for user:', userId],
+      body: { error: 'Failed to verify code' },
+      status: 500,
+    }
+  }
+
   if (!verifyTotp(secret, code)) return invalidTotp()
+
+  // Opportunistically re-encrypt legacy plaintext secrets on first successful login.
+  if (wasPlaintext) {
+    try {
+      const encrypted = encryptTotpSecret(secret)
+      await update('profiles', `id=eq.${userId}`, { totp_secret: encrypted }, { expectRows: 'single' })
+    } catch (err) {
+      console.error('[totp/verify] failed to re-encrypt legacy TOTP secret:', err?.message ?? err)
+    }
+  }
 
   return {
     body: { ok: true, role },

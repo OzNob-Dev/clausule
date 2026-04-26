@@ -1,4 +1,4 @@
-import { insert } from '@api/_lib/supabase.js'
+import { insert, select } from '@api/_lib/supabase.js'
 import { findProfileById } from './accountRepository.js'
 import { consumePasskeyChallenge, storePasskeyChallenge } from './passkeyChallenge.js'
 import {
@@ -132,6 +132,15 @@ export async function createPasskeyRegistrationOptions({ request, userId }) {
     }
   }
 
+  const { data: existingPasskeys } = await select(
+    'passkeys',
+    new URLSearchParams({ user_id: `eq.${userId}`, select: 'credential_id' }).toString()
+  )
+  const excludeCredentials = (existingPasskeys ?? []).map((p) => ({
+    id: p.credential_id,
+    type: 'public-key',
+  }))
+
   const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.email
 
   return {
@@ -154,7 +163,7 @@ export async function createPasskeyRegistrationOptions({ request, userId }) {
           userVerification: 'required',
           residentKey: 'required',
         },
-        excludeCredentials: [],
+        excludeCredentials,
       },
       _signedChallenge: signedChallenge,
     },

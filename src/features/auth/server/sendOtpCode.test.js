@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { del, insert, update } from '@api/_lib/supabase.js'
+import { del, insert, select, update } from '@api/_lib/supabase.js'
 import { sendOtpCode } from './sendOtpCode.js'
 
 const sendTransacEmail = vi.fn()
@@ -7,6 +7,7 @@ const sendTransacEmail = vi.fn()
 vi.mock('@api/_lib/supabase.js', () => ({
   del: vi.fn(),
   insert: vi.fn(),
+  select: vi.fn(),
   update: vi.fn(),
 }))
 
@@ -20,6 +21,7 @@ describe('sendOtpCode', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     process.env.BREVO_API_KEY = 'brevo-key'
+    select.mockResolvedValue({ data: [], error: null })
     insert.mockResolvedValue({ data: [{ id: 'otp-1' }], error: null })
     update.mockResolvedValue({ data: [{ id: 'otp-1', delivered_at: '2026-04-25T00:00:00.000Z' }], error: null })
     del.mockResolvedValue({ data: null, error: null })

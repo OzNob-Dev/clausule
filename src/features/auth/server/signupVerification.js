@@ -3,8 +3,8 @@ import crypto from 'node:crypto'
 const SIGNUP_VERIFICATION_TTL_S = 15 * 60
 
 function secret() {
-  const signingSecret = process.env.JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!signingSecret) throw new Error('JWT_SECRET or SUPABASE_SERVICE_ROLE_KEY must be set')
+  const signingSecret = process.env.JWT_SECRET
+  if (!signingSecret) throw new Error('JWT_SECRET environment variable is not set')
   return signingSecret
 }
 

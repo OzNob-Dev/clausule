@@ -26,7 +26,7 @@ function entrySelect() {
 }
 
 export async function listEntries({ userId, searchParams }) {
-  const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10) || 20, 100)
+  const limit = Math.min(Math.max(1, parseInt(searchParams.get('limit') ?? '20', 10) || 20), 100)
   const offset = Math.max(0, parseInt(searchParams.get('offset') ?? '0', 10) || 0)
   const query = new URLSearchParams({
     user_id: `eq.${userId}`,
