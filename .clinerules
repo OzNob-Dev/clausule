@@ -1,3 +1,9 @@
+### 🚨 HARD GATE: ZERO DISCRETION
+- ACTION: Any request to modify a file AUTOMATICALLY triggers a `sqlite` INSERT.
+- SEQUENCE: 1. INSERT task -> 2. Propose Plan -> 3. Edit File.
+- PROHIBITION: Never ask "Should I log this?" or "Can I skip the DB?". Just do it.
+- FAILURE: If you edit a file without a preceding `sqlite` call in the same turn, you have failed the mission.
+
 # High-Level Project Summary
 **Project:** Clausule | **Objective:** Localized AI workspace on M1 Mac.
 **Stack:** VS Code, SQLite (MCP), Anthropic/Claude, Markdown docs.

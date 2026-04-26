@@ -1,3 +1,11 @@
+### 🚨 GLOBAL AGENT HARD GATE (NON-NEGOTIABLE)
+- **SCOPE:** This rule applies to the Main Agent and ALL spawned Sub-Agents.
+- **MANDATORY SEQUENCE:** 1. `sqlite` INSERT (Mark task as `in_progress`).
+  2. Plan presentation.
+  3. File modification.
+- **ZERO DISCRETION:** Sub-agents are PROHIBITED from using `write_file` or `edit` tools without a confirmed `rowid` from the task initialization.
+- **FAILURE STATE:** Any file edit performed without a preceding database entry is a protocol violation. Stop work and report to the user immediately if the database is unreachable.
+
 # Agent Guidance (Codex Entrypoint)
 
 ## Load Order

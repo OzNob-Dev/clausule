@@ -1,0 +1,15 @@
+{
+	"servers": {
+		"sqlite": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"mcp-sqlite",
+				"/Users/ado/Desktop/Claude/clausule/context/context.db"
+			],
+			"autoStart": true,
+			"type": "stdio"
+		},
+	},
+	"inputs": []
+}
