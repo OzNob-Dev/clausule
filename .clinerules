@@ -23,6 +23,6 @@ Before starting any task, you must:
 - Table: `Sessions` (id, session_name)
 
 ## Lifecycle Tracking
-- **Mandate:** You are responsible for the task lifecycle in `context/context.db`.
-- **Start (Automatic):** As soon as a plan is approved, perform the "Task Initialization Protocol" from `skills/clausule-core/SKILL.md` to mark it `in_progress`.
-- **Finish (Manual):** The status must remain `in_progress` until I explicitly type "pd". Do not auto-complete tasks.
+- **The Hard Gate:** You are STRICTLY PROHIBITED from using `write_to_file`, `insert_content`, or any editing tool until you have first executed the `sqlite` insert to initialize the task as `in_progress`.
+- **Automatic Start:** This is not a suggestion; it is the atomic first step of every execution phase. 
+- **Finish:** Status remains `in_progress` until the manual `pd` command.

@@ -103,6 +103,12 @@ When a plan is approved and you begin execution:
 
 - When asked to audit architecture, engineering principles, or code quality, keep the same principal-engineer bar. Prioritize correctness, coupling, testability, operational safety, and maintenance cost. Return a prioritized action plan with file paths, root causes, and concrete fixes.
 
+### Task Initialization Protocol (Step 0)
+Before any file modifications occur, you must perform this atomic operation:
+1. **Initialize:** `INSERT INTO Tasks (description, status, priority) VALUES ('[Feature Name]', 'in_progress', 'normal');`
+2. **Context Retention:** You must see the "Success" message from the SQLite tool before proceeding to the first file edit.
+3. **Reference:** Capture the `rowid` from this insert to ensure the `pd` command targets the correct record later.
+
 **Task Completion Protocol:**
 When the user confirms a feature is "solved" or "done":
 1. Update the `Tasks` table: `UPDATE Tasks SET status = 'completed' WHERE description LIKE '%feature_name%';`

@@ -31,6 +31,8 @@
 
 ## Non-Negotiables
 
+- **The Execution Gate:** You are STRICTLY PROHIBITED from modifying files, creating new code, or using any tool other than `read_file` until you have successfully executed the "Task Initialization Protocol" in `skills/clausule-core/SKILL.md`.
+- **Initialization First:** The SQLite `INSERT` to mark a task as `in_progress` must be the first tool call after plan approval. Do not batch this with file edits; it must be a standalone, successful operation.
 - Accessibility first.
 - Security first.
 - Preserve user work.
