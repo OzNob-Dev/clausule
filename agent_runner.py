@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 import sqlite3
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -209,6 +210,42 @@ def prune_session(conn: sqlite3.Connection, sid: int, threshold: int = 500) -> i
     conn.execute(f"DELETE FROM Messages WHERE id IN ({placeholders});", ids)
     return len(ids)
 
+
+
+def execute_shell_command(command: str) -> str:
+    try:
+        # Security check: you can add a list of forbidden commands here
+        result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=60)
+        return f"STDOUT: {result.stdout}\nSTDERR: {result.stderr}"
+    except Exception as e:
+        return f"Error executing command: {str(e)}"
+
+def get_tool_definitions() -> list[dict[str, Any]]:
+    return [
+        {
+            "name": "execute_shell_command",
+            "description": "Execute a bash/shell command on the local M1 Mac terminal. Use this to run python scripts, check file systems, or test code.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string", "description": "The full shell command to execute."}
+                },
+                "required": ["command"]
+            }
+        },
+        {
+            "name": "update_task_status",
+            "description": "Update the status of a task in the SQLite database.",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "task_id": {"type": "integer"},
+                    "status": {"type": "string", "enum": ["pending", "in_progress", "completed", "blocked"]}
+                },
+                "required": ["task_id", "status"]
+            }
+        }
+    ]
 
 def call_anthropic(agent: dict[str, Any], prompt: str) -> tuple[str, int, int]:
     from anthropic import Anthropic

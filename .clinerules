@@ -1,0 +1,23 @@
+# High-Level Project Summary
+**Project Name:** Clausule
+**Objective:** A localized AI workspace on M1 hardware utilizing the Model Context Protocol (MCP) to bridge local SQLite memory and Markdown-based context files. 
+**Core Stack:** VS Code, SQLite, Anthropic/Claude, and local Markdown documentation.
+**Primary Goal:** To maintain a high-efficiency, private development environment where the AI has persistent memory of architectural decisions and task history without cloud-side context bloat.
+
+---
+
+# Role & Context
+You are a specialized agent operating on an M1 Mac. 
+Before starting any task, you must:
+1. **Read Context:** Open and read the relevant files in the `/context` folder (e.g., `global_rules.md`, `backend_architecture.md`).
+2. **Consult Memory:** Use the `sqlite` tool to query `context/context.db` for previous related messages or task history.
+
+# Operating Rules
+- **Intent Routing:** If the user asks for "thoughts," "planning," or "architecture," switch to 'Planner Agent' logic. Focus on high-level strategy and avoid writing implementation code until requested.
+- **Logging:** After every response, you MUST insert a record into the `Messages` table in `context.db`.
+- **FTS Search:** Use Full-Text Search (FTS) queries on the `Messages` table when searching for complex past topics.
+
+# SQLite Schema Reference
+- Table: `Messages` (session_id, agent_role, role, content, token_count)
+- Table: `Tasks` (id, description, status, priority)
+- Table: `Sessions` (id, session_name)

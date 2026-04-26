@@ -23,6 +23,12 @@
   - `skills/clausule-testing-release/SKILL.md` for tests, reviews, feature flags, verification, rollout, and release.
 - Use `docs/agent/*.md` only as routing stubs for older agents.
 
+## Memory & Context
+
+- **Local Knowledge:** Always read relevant files in the `/context/` folder before starting work.
+- **Persistent Memory:** Use the `sqlite` tool to query `context/context.db` for past decisions, session history, or task states.
+- **Logic Routing:** If the prompt involves "thoughts," "planning," or "architecture," prioritize high-level strategy over immediate code implementation (Planner Logic).
+
 ## Non-Negotiables
 
 - Accessibility first.
@@ -32,6 +38,9 @@
 - Do not change behavior without loading the owning skill.
 - Pause and confirm before likely long-running tasks with an estimated duration.
 - When a task is completed, run: `osascript -e 'display notification "Task complete" with title "Codex" sound name "Glass"'`
+- Consult `/context/` and `context/context.db` before making any non-trivial suggestions.
+- **Automatic Logging:** After every response, you MUST use the `sqlite` tool to log the interaction into the `Messages` table of `context/context.db`.
+- **Shortcuts:** Interpret the input "pd" as the "Project Done" command defined in `./skills/clausule-core/SKILL.md`.
 
 ## Conflict Rules
 

@@ -14,6 +14,22 @@ description: Repo-wide Clausule guidance for app structure, architecture, workfl
 - Use `clausule-testing-release` for tests, review, feature flags, rollout, release, or verification strategy.
 - Treat `docs/agent/*.md` as compatibility stubs. Update the owning skill instead of expanding those files.
 
+### Database Operations
+When logging messages to `context/context.db`, use this format:
+`INSERT INTO Messages (session_id, agent_role, role, content, token_count) VALUES (1, 'assistant_role', 'assistant', '{{RESPONSE_CONTENT}}', 0);`
+
+**Constraint:** Always escape single quotes in the `content` string (e.g., replace ' with '') to prevent SQL syntax errors.
+
+## Command Shortcuts
+
+- **pd** (Project Done): This is a high-priority trigger for the **Task Completion Protocol**. When I type "pd", you must:
+  1. **Identify the Active Feature:** Look at the current file context and recent chat history to determine which task is being finished.
+  2. **Update Tasks Table:** Execute `UPDATE Tasks SET status = 'completed' WHERE description LIKE '%[identified_feature]%';`
+  3. **Generate Summary:** Write a 2-3 sentence technical summary of the changes (logic, new files, and architectural impact).
+  4. **Log to Messages:** Insert that summary into the `Messages` table:
+     `INSERT INTO Messages (session_id, agent_role, role, content, token_count) VALUES (1, 'assistant_role', 'assistant', '[Summary text here]', 0);`
+  5. **Notification:** Run the final confirmation: `osascript -e 'display notification "Database updated and summary logged." with title "Clausule: pd Complete" sound name "Glass"'`
+
 ## Repo Shape
 
 - Next.js App Router app with feature-first organization.
@@ -81,3 +97,8 @@ description: Repo-wide Clausule guidance for app structure, architecture, workfl
 ## Audit Mode
 
 - When asked to audit architecture, engineering principles, or code quality, keep the same principal-engineer bar. Prioritize correctness, coupling, testability, operational safety, and maintenance cost. Return a prioritized action plan with file paths, root causes, and concrete fixes.
+
+**Task Completion Protocol:**
+When the user confirms a feature is "solved" or "done":
+1. Update the `Tasks` table: `UPDATE Tasks SET status = 'completed' WHERE description LIKE '%feature_name%';`
+2. Log a final "Summary Entry" into the `Messages` table detailing the final architecture change.
