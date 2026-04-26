@@ -20,7 +20,7 @@ describe('SignupStepPayment integration', () => {
 
     renderWithQueryClient(
       <SignupStepPayment
-        accountData={{ email: 'ada@example.com', firstName: 'Ada', lastName: 'Lovelace', emailVerificationToken: 'signup-token' }}
+        accountData={{ email: 'ada@example.com', firstName: 'Ada', lastName: 'Lovelace' }}
         onBack={vi.fn()}
         onNext={onNext}
       />
@@ -36,7 +36,6 @@ describe('SignupStepPayment integration', () => {
       email: 'ada@example.com',
       firstName: 'Ada',
       lastName: 'Lovelace',
-      verificationToken: 'signup-token',
       subscription: { amountCents: 500, currency: 'AUD', interval: 'month' },
     })
   })

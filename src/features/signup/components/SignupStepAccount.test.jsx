@@ -10,19 +10,12 @@ const initialData = {
   lastName: '',
   email: '',
   agreed: false,
-  emailVerificationToken: '',
 }
 
 describe('SignupStepAccount integration', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     window.sessionStorage.clear()
-    global.fetch = vi.fn(async (input) => {
-      if (String(input).includes('/api/auth/send-code')) {
-        return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } })
-      }
-      return new Response(JSON.stringify({ ok: true, verificationToken: 'signup-token' }), { status: 200, headers: { 'Content-Type': 'application/json' } })
-    })
   })
 
   it('requires first name, valid email, and terms agreement before continuing', async () => {
@@ -31,7 +24,7 @@ describe('SignupStepAccount integration', () => {
 
     renderWithQueryClient(<SignupStepAccount initialData={initialData} onNext={onNext} />)
 
-    await user.click(screen.getByRole('button', { name: /send verification code/i }))
+    await user.click(screen.getByRole('button', { name: /continue to payment/i }))
 
     expect(onNext).not.toHaveBeenCalled()
     expect(screen.getByText(/please agree/i)).toBeInTheDocument()
@@ -40,7 +33,6 @@ describe('SignupStepAccount integration', () => {
   it('passes normalized account data when the step is valid', async () => {
     const user = userEvent.setup()
     const onNext = vi.fn()
-    const setItem = vi.spyOn(Storage.prototype, 'setItem')
 
     renderWithQueryClient(<SignupStepAccount initialData={initialData} onNext={onNext} />)
 
@@ -48,17 +40,13 @@ describe('SignupStepAccount integration', () => {
     await user.type(screen.getByPlaceholderText('Ellis'), 'Lovelace')
     await user.type(screen.getByPlaceholderText('you@email.com'), 'ada@example.com')
     await user.click(screen.getByRole('checkbox'))
-    await user.click(screen.getByRole('button', { name: /send verification code/i }))
-    await user.type(screen.getByPlaceholderText('123456'), '123456')
-    await user.click(screen.getByRole('button', { name: /verify email to continue/i }))
+    await user.click(screen.getByRole('button', { name: /continue to payment/i }))
 
     await waitFor(() => expect(onNext).toHaveBeenCalledWith({
       firstName: 'Ada',
       lastName: 'Lovelace',
       email: 'ada@example.com',
-      emailVerificationToken: 'signup-token',
     }))
-    expect(setItem).not.toHaveBeenCalledWith(expect.stringMatching(/^signup_verification:/), expect.any(String))
   })
 
   it('renders prefilled SSO account details', () => {

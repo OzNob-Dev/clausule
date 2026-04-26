@@ -3,7 +3,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useReducer } from 'react'
 
-/** @typedef {import('@shared/types/contracts').SignupStep1Data & { agreed: boolean, emailVerificationToken: string }} SignupStep1State */
+/** @typedef {import('@shared/types/contracts').SignupStep1Data & { agreed: boolean }} SignupStep1State */
 /** @typedef {{ step: 1 | 2 | 3, step1Data: SignupStep1State }} SignupState */
 /** @typedef {{ type: 'set_step', value: 1 | 2 | 3 | ((current: 1 | 2 | 3) => 1 | 2 | 3) } | { type: 'set_step1', value: SignupStep1State | ((current: SignupStep1State) => SignupStep1State) } | { type: 'complete_signup' }} SignupAction */
 /** @typedef {{ step: 1 | 2 | 3, setStep: (value: 1 | 2 | 3 | ((current: 1 | 2 | 3) => 1 | 2 | 3)) => void, step1Data: SignupStep1State, setStep1Data: (value: SignupStep1State | ((current: SignupStep1State) => SignupStep1State)) => void, completeSignup: () => void }} SignupContextValue */
@@ -11,7 +11,7 @@ import { createContext, useCallback, useContext, useMemo, useReducer } from 'rea
 const SignupContext = createContext(/** @type {SignupContextValue | null} */ (null))
 
 /** @type {SignupStep1State} */
-const EMPTY_STEP1 = { firstName: '', lastName: '', email: '', agreed: false, emailVerificationToken: '' }
+const EMPTY_STEP1 = { firstName: '', lastName: '', email: '', agreed: false }
 
 /** @type {SignupState} */
 const INITIAL_STATE = {
