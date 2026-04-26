@@ -1,0 +1,24 @@
+project:
+  name: Main Project
+  summary: Add the high-level project summary here.
+initial_tasks:
+  - domain: design
+    status: pending
+    payload:
+      title: Define design direction
+      details: Add design task details here.
+  - domain: frontend
+    status: pending
+    payload:
+      title: Build frontend shell
+      details: Add frontend task details here.
+  - domain: backend
+    status: pending
+    payload:
+      title: Initialize backend context
+      details: Add backend task details here.
+  - domain: security
+    status: pending
+    payload:
+      title: Review security posture
+      details: Add security task details here.

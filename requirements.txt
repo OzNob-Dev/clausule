@@ -1,0 +1,5 @@
+pyyaml
+python-dotenv
+anthropic
+openai
+tiktoken

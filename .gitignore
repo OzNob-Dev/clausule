@@ -13,3 +13,4 @@ supabase/
 test-results/
 playwright-report/
 coverage/
+.env
