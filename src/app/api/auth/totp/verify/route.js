@@ -42,7 +42,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Failed to verify code' }, { status: 500 })
   }
   if (!ipAllowed) {
-    return NextResponse.json({ error: 'Too many attempts — please try again later', retryAfterMs: ipRetry }, { status: 429 })
+    return NextResponse.json({ error: 'Too many attempts — please try again later', retryAfterMs: ipRetry }, { status: 429, headers: { 'Retry-After': String(Math.ceil(ipRetry / 1000)) } })
   }
 
   const { allowed, retryAfterMs, error: limitError } = await consumeDistributedRateLimit({
@@ -58,7 +58,7 @@ export async function POST(request) {
   if (!allowed) {
     return NextResponse.json(
       { error: 'Too many attempts — please try again later', retryAfterMs },
-      { status: 429 }
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
     )
   }
 

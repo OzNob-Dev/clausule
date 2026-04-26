@@ -29,6 +29,7 @@ export const authTestBypassBootstrap = {
 }
 
 export function isAuthTestBypassEnabled() {
-  return process.env.NODE_ENV !== 'production' &&
+  const env = process.env.NODE_ENV
+  return (env === 'development' || env === 'test') &&
     process.env.NEXT_PUBLIC_AUTH_TEST_BYPASS === AUTH_TEST_BYPASS_VALUE
 }

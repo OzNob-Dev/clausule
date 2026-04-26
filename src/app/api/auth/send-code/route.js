@@ -8,11 +8,16 @@ import { NextResponse } from 'next/server'
 import { resolveClientIp } from '@api/_lib/network.js'
 import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
 import { sendOtpCode } from '@features/auth/server/sendOtpCode.js'
+import { validateEmail } from '@shared/utils/emailValidation'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const email = (body.email ?? '').trim().toLowerCase()
   const ip = resolveClientIp(request)
+
+  if (!validateEmail(email).valid) {
+    return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
+  }
 
   const { allowed: ipAllowed, retryAfterMs: ipRetry, error: ipError } = await consumeDistributedRateLimit({
     scope: 'auth_send_code_ip',
@@ -25,7 +30,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
   }
   if (!ipAllowed) {
-    return NextResponse.json({ error: 'Too many requests — please try again later', retryAfterMs: ipRetry }, { status: 429 })
+    return NextResponse.json({ error: 'Too many requests — please try again later', retryAfterMs: ipRetry }, { status: 429, headers: { 'Retry-After': String(Math.ceil(ipRetry / 1000)) } })
   }
 
   const { allowed, retryAfterMs, error } = await consumeDistributedRateLimit({
@@ -42,7 +47,7 @@ export async function POST(request) {
   if (!allowed) {
     return NextResponse.json(
       { error: 'Too many requests — please wait before requesting another code', retryAfterMs },
-      { status: 429 }
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
     )
   }
 

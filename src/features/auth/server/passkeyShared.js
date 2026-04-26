@@ -3,8 +3,8 @@ import crypto from 'node:crypto'
 const CHALLENGE_TTL_MS = 5 * 60 * 1000
 
 function challengeSecret() {
-  const secret = process.env.WEBAUTHN_CHALLENGE_SECRET || process.env.JWT_SECRET
-  if (!secret) throw new Error('WEBAUTHN_CHALLENGE_SECRET or JWT_SECRET must be set')
+  const secret = process.env.WEBAUTHN_CHALLENGE_SECRET
+  if (!secret) throw new Error('WEBAUTHN_CHALLENGE_SECRET must be set')
   return secret
 }
 

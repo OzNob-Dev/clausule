@@ -29,7 +29,7 @@ export async function POST(request) {
     windowMs: 60 * 60 * 1000,
   })
   if (limitError) console.error('[brag/entries POST] rate limit error:', limitError)
-  if (!limitError && !allowed) return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429 })
+  if (!limitError && !allowed) return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } })
 
   const result = await createEntry({ userId, body: await request.json().catch(() => ({})) })
   if (result.log) console.error(...result.log)

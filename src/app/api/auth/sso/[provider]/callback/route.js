@@ -6,6 +6,11 @@
 
 import { NextResponse } from 'next/server'
 import { clearAuthCookies } from '@api/_lib/auth.js'
+
+function safeDestination(destination, fallback = '/') {
+  const path = String(destination ?? '')
+  return /^\/[^/\\]/.test(path) || path === '/' ? path : fallback
+}
 import { beginBackendOperation } from '@features/auth/server/backendOperation.js'
 import { resolveSsoCallback } from '@features/auth/server/ssoCallback.js'
 import { issueRecoverableSession } from '@features/auth/server/recoverableSession.js'
@@ -64,7 +69,7 @@ async function handleCallback({ request, provider, code, state, appleUser }) {
       session: operation.replay.session,
       failureMessage: 'Failed to create session',
       successFactory: ({ body }) => {
-        const response = NextResponse.redirect(`${origin}${body.destination}`)
+        const response = NextResponse.redirect(`${origin}${safeDestination(body.destination)}`)
         clearSsoState(response)
         return response
       },

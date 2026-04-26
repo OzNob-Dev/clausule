@@ -27,7 +27,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Failed to verify code' }, { status: 500 })
   }
   if (!ipAllowed) {
-    return NextResponse.json({ error: 'Too many attempts — please try again later', retryAfterMs: ipRetry }, { status: 429 })
+    return NextResponse.json({ error: 'Too many attempts — please try again later', retryAfterMs: ipRetry }, { status: 429, headers: { 'Retry-After': String(Math.ceil(ipRetry / 1000)) } })
   }
 
   const { allowed: emailAllowed, retryAfterMs: emailRetry, error: emailLimitError } = await consumeDistributedRateLimit({
@@ -41,7 +41,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Failed to verify code' }, { status: 500 })
   }
   if (!emailAllowed) {
-    return NextResponse.json({ error: 'Too many attempts — please request a new code', retryAfterMs: emailRetry }, { status: 429 })
+    return NextResponse.json({ error: 'Too many attempts — please request a new code', retryAfterMs: emailRetry }, { status: 429, headers: { 'Retry-After': String(Math.ceil(emailRetry / 1000)) } })
   }
 
   const verified = await verifyEmailOtpCode(email, code)

@@ -16,7 +16,7 @@ import { validateEmail }  from '@shared/utils/emailValidation'
 
 export async function POST(request) {
   const ip = resolveClientIp(request)
-  const { allowed, error: limitError } = await consumeDistributedRateLimit({
+  const { allowed, retryAfterMs, error: limitError } = await consumeDistributedRateLimit({
     scope: 'auth_check_email_ip',
     identifier: ip,
     limit: 20,
@@ -27,7 +27,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Email check failed' }, { status: 500 })
   }
   if (!allowed) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } })
   }
 
   const body  = await request.json().catch(() => ({}))

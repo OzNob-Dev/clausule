@@ -27,7 +27,7 @@ export async function POST(request) {
   }
 
   if (!allowed) {
-    return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429 })
+    return NextResponse.json({ error: 'Too many requests', retryAfterMs }, { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } })
   }
 
   const result = await sendAppFeedback({
