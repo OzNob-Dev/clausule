@@ -5,19 +5,69 @@
   to   { opacity: 1; }
 }
 
-@keyframes loader-icon-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-7px); }
+@keyframes loader-icon-pencil {
+  /* writing stroke: tilt + dip */
+  0%   { transform: rotate(0deg) translateY(0); }
+  25%  { transform: rotate(8deg) translateY(-4px); }
+  50%  { transform: rotate(4deg) translateY(6px); }
+  75%  { transform: rotate(-2deg) translateY(-2px); }
+  100% { transform: rotate(0deg) translateY(0); }
 }
 
-@keyframes loader-icon-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+@keyframes loader-icon-envelope {
+  /* letter toss arc + spin */
+  0%   { transform: translateX(0) translateY(0) rotate(0deg); }
+  25%  { transform: translateX(5px) translateY(-8px) rotate(-15deg); }
+  50%  { transform: translateX(0) translateY(-12px) rotate(-30deg); }
+  75%  { transform: translateX(-5px) translateY(-8px) rotate(-15deg); }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); }
 }
 
-@keyframes loader-icon-pulse {
-  0%, 100% { transform: scale(1);    opacity: 1; }
-  50%      { transform: scale(1.09); opacity: 0.82; }
+@keyframes loader-icon-gear {
+  /* spin with mechanical hiccup reverse */
+  0%   { transform: rotate(0deg); }
+  40%  { transform: rotate(144deg); }
+  50%  { transform: rotate(130deg); }
+  60%  { transform: rotate(144deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes loader-icon-person {
+  /* springy bounce with overshoot */
+  0%   { transform: scaleY(1) translateY(0); }
+  25%  { transform: scaleY(0.9) translateY(3px); }
+  50%  { transform: scaleY(1.15) translateY(-8px); }
+  75%  { transform: scaleY(0.95) translateY(1px); }
+  100% { transform: scaleY(1) translateY(0); }
+}
+
+@keyframes loader-icon-key {
+  /* jingle: quick rattle then rest */
+  0%   { transform: rotate(0deg); }
+  10%  { transform: rotate(12deg); }
+  20%  { transform: rotate(-12deg); }
+  30%  { transform: rotate(12deg); }
+  40%  { transform: rotate(-8deg); }
+  50%  { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes loader-icon-spark {
+  /* electric burst: scale + spin + opacity flicker */
+  0%   { transform: scale(1) rotate(0deg);    opacity: 1; }
+  25%  { transform: scale(1.2) rotate(45deg); opacity: 0.9; }
+  50%  { transform: scale(1) rotate(90deg);   opacity: 1; }
+  75%  { transform: scale(1.15) rotate(225deg); opacity: 0.85; }
+  100% { transform: scale(1) rotate(360deg);  opacity: 1; }
+}
+
+@keyframes loader-icon-shield {
+  /* security heartbeat: double-pulse */
+  0%, 20%  { transform: scale(1);    opacity: 1; }
+  35%      { transform: scale(1.12); opacity: 0.9; }
+  45%, 60% { transform: scale(1);    opacity: 1; }
+  75%      { transform: scale(1.12); opacity: 0.9; }
+  85%, 100% { transform: scale(1);   opacity: 1; }
 }
 
 @keyframes page-enter {
@@ -90,13 +140,13 @@
 
 /* ── Variant animations ──────────────────────────────────────── */
 
-.page-loader-icon--pencil  { animation: loader-icon-float  2.4s ease-in-out infinite; }
-.page-loader-icon--envelope { animation: loader-icon-float  2.8s ease-in-out infinite; }
-.page-loader-icon--gear    { animation: loader-icon-spin   2.8s linear infinite; }
-.page-loader-icon--person  { animation: loader-icon-pulse  1.8s ease-in-out infinite; }
-.page-loader-icon--key     { animation: loader-icon-float  2.4s ease-in-out infinite; }
-.page-loader-icon--spark   { animation: loader-icon-spin   3.2s linear infinite; }
-.page-loader-icon--shield  { animation: loader-icon-pulse  2.0s ease-in-out infinite; }
+.page-loader-icon--pencil   { animation: loader-icon-pencil   2.6s ease-in-out infinite; }
+.page-loader-icon--envelope { animation: loader-icon-envelope 3.0s ease-in-out infinite; }
+.page-loader-icon--gear     { animation: loader-icon-gear     2.4s linear infinite; }
+.page-loader-icon--person   { animation: loader-icon-person   1.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+.page-loader-icon--key      { animation: loader-icon-key      2.0s ease-in-out infinite; }
+.page-loader-icon--spark    { animation: loader-icon-spark    2.2s ease-in-out infinite; }
+.page-loader-icon--shield   { animation: loader-icon-shield   2.4s ease-in-out infinite; }
 
 /* ── Page enter (content fades in after loader replaced) ─────── */
 
@@ -117,5 +167,6 @@
   .page-loader-icon--shield,
   .page-enter {
     animation: none;
+    opacity: 1;
   }
 }
