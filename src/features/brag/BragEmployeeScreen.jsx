@@ -3,16 +3,11 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useState, useTransition } from 'react'
 import { useTheme } from '@shared/hooks/useTheme'
-import BragRail from '@features/brag/components/BragRail'
-import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import BragEmptyState from '@features/brag/components/BragEmptyState'
 import EntryCard from '@features/brag/components/EntryCard'
 import EntryComposer from '@features/brag/components/EntryComposer'
 import Link from 'next/link'
-import { useProfileStore } from '@features/auth/store/useProfileStore'
-import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import { ROUTES } from '@shared/utils/routes'
-import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-page.css'
 import '@features/brag/styles/resume-tab.css'
 
@@ -75,7 +70,6 @@ function newestEntryFirst(a, b) {
 
 export default function BragEmployee({ initialEntries = [], initialEntriesError = '' }) {
   useTheme()
-  const profile = useProfileStore((state) => state.profile)
   const [, startPanelTransition] = useTransition()
   const tabOrder = ['brag', 'cv']
   const [tab, setTab]                   = useState('brag')
@@ -104,9 +98,6 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
       setComposerOpen(false)
     })
   }
-
-  const displayName    = profileDisplayName(profile)
-  const avatarInitials = profileInitials(profile)
 
   const moveTab = (direction) => {
     const currentIndex = tabOrder.indexOf(tab)
@@ -151,16 +142,7 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
   }
 
   return (
-    <div className="be-page">
-      <BragRail activePage="brag" />
-
-      <BragIdentitySidebar
-        avatarInitials={avatarInitials}
-        displayName={displayName}
-        email={profile.email}
-      />
-
-      <main className="be-main" aria-labelledby="brag-page-title">
+    <main className="be-main" aria-labelledby="brag-page-title">
         <div className="be-inner">
 
           <h1 id="brag-page-title" className="sr-only">Brag document</h1>
@@ -224,7 +206,6 @@ export default function BragEmployee({ initialEntries = [], initialEntriesError 
           )}
 
         </div>
-      </main>
-    </div>
+    </main>
   )
 }

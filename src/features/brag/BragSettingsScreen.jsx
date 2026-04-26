@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import BragRail from '@features/brag/components/BragRail'
-import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import BragSettingsDangerZone from '@features/brag/components/BragSettingsDangerZone'
 import MfaSecuritySection from '@features/brag/components/MfaSecuritySection'
 import SsoStatusSection from '@features/brag/components/SsoStatusSection'
@@ -11,7 +9,6 @@ import { DeleteAccountDialog } from '@features/account/components/DeleteAccountD
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { useProfileQuery, useTotpStatusQuery } from '@shared/queries/useProfileQuery'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
-import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
 
@@ -68,20 +65,8 @@ export default function BragSettings() {
   const avatarInitials = profileInitials(profile)
 
   return (
-    <div className="be-page">
-      <BragRail activePage="settings" />
-
-      <BragIdentitySidebar
-        ariaLabel="Profile"
-        eyebrow="Clausule · Settings"
-        noteLabel="Account security"
-        note="Manage two-factor authentication for secure sign-in."
-        avatarInitials={avatarInitials}
-        displayName={displayName}
-        email={profile.email}
-      />
-
-      <main className="be-main" aria-labelledby="brag-settings-title">
+    <>
+    <main className="be-main" aria-labelledby="brag-settings-title">
         <div className="be-inner">
           <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
           <p className="bss-subheading">Manage how you sign in to Clausule.</p>
@@ -123,13 +108,12 @@ export default function BragSettings() {
 
           <BragSettingsDangerZone onDelete={() => setDeleteModal(true)} />
         </div>
-      </main>
-
+    </main>
       <DeleteAccountDialog
         open={deleteModal}
         onClose={() => setDeleteModal(false)}
         description="This will permanently delete your brag doc and all associated entries, evidence files, and records from our servers. This action cannot be undone."
       />
-    </div>
+    </>
   )
 }

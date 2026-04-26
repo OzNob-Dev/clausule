@@ -1,15 +1,12 @@
 'use client'
 
 import { useShallow } from 'zustand/shallow'
-import BragRail from '@features/brag/components/BragRail'
-import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { useProfileForm } from '@features/account/hooks/useProfileForm'
 import { useProfileSave } from '@features/account/hooks/useProfileSave'
 import { useProfileVerification } from '@features/account/hooks/useProfileVerification'
 import { VerifyChangesModal } from '@features/account/components/VerifyChangesModal'
 import { VerificationProvider } from '@features/account/context/VerificationContext'
-import '@features/brag/styles/brag-shell.css'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/account/styles/profile.css'
 
@@ -22,7 +19,7 @@ export default function ProfileScreen() {
   const {
     form, setForm, current, initial,
     dirty, emailChanged, mobileChanged,
-    baseReady, displayName, initials, emailWarning,
+    baseReady, emailWarning,
     resetForm, commitBaseline,
   } = useProfileForm(profile)
 
@@ -35,8 +32,6 @@ export default function ProfileScreen() {
     patchProfile, setError,
   })
 
-  const ssoText = security.ssoConfigured ? 'Single sign-on active' : 'Passwordless or email sign-in'
-
   const onSubmit = (e) => {
     e.preventDefault()
     if (!dirty) return
@@ -45,20 +40,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <div className="be-page">
-      <BragRail activePage="profile" />
-      <BragIdentitySidebar
-        avatarInitials={initials}
-        displayName={displayName}
-        email={current.email}
-        noteLabel="Profile"
-        note="Keep the contact details tied to your account current. Email changes are verified before they go live."
-        overviewLabel="Sign-in"
-        status={ssoText}
-        statusSub={current.mobile || 'Mobile not set'}
-      />
-
-      <main className="be-main" aria-labelledby="profile-page-title">
+    <main className="be-main" aria-labelledby="profile-page-title">
         <div className="be-inner">
           <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
           <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>
@@ -142,7 +124,6 @@ export default function ProfileScreen() {
             onSubmit={verification.submitConfirm}
           />
         </VerificationProvider>
-      </main>
-    </div>
+    </main>
   )
 }
