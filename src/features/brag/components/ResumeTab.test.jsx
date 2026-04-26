@@ -37,4 +37,19 @@ describe('ResumeTab', () => {
     expect(screen.getByText(/resume edits stay only in this browser tab for now/i)).toBeInTheDocument()
     expect(document.querySelector('[contenteditable=\"true\"]')).toBeNull()
   })
+
+  it('reports clipboard failures without announcing a false copy success', async () => {
+    navigator.clipboard.writeText.mockRejectedValueOnce(new Error('Denied'))
+    const { container } = render(<ResumeTab entries={[{ title: 'Shipped auth migration', body: 'Reduced deploy risk.' }]} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /generate resume/i }))
+    act(() => vi.advanceTimersByTime(1400))
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /copy text/i }))
+      await Promise.resolve()
+    })
+
+    expect(screen.getByRole('alert')).toHaveTextContent(/could not copy resume text/i)
+    expect(container.querySelector('.be-cv-copied')).not.toHaveClass('be-cv-copied--show')
+  })
 })

@@ -100,6 +100,7 @@ describe('BragEmployeeScreen', () => {
 
     await screen.findByRole('heading', { name: /you've done great things/i })
     expect(screen.queryByRole('tablist', { name: /brag document views/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tabpanel')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /add a win/i })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /add your first entry/i }))
 

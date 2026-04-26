@@ -40,6 +40,7 @@ describe('SignupStepAccount integration', () => {
   it('passes normalized account data when the step is valid', async () => {
     const user = userEvent.setup()
     const onNext = vi.fn()
+    const setItem = vi.spyOn(Storage.prototype, 'setItem')
 
     renderWithQueryClient(<SignupStepAccount initialData={initialData} onNext={onNext} />)
 
@@ -57,6 +58,7 @@ describe('SignupStepAccount integration', () => {
       email: 'ada@example.com',
       emailVerificationToken: 'signup-token',
     }))
+    expect(setItem).not.toHaveBeenCalledWith(expect.stringMatching(/^signup_verification:/), expect.any(String))
   })
 
   it('renders prefilled SSO account details', () => {
