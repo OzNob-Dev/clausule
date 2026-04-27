@@ -6,5 +6,9 @@
   "/signup": {
     "headline": "Build your record.\nOwn your story.",
     "subtext": "Set up your account in minutes and start capturing the moments that matter."
+  },
+  "/signup/plan": {
+    "headline": "Almost there.\nYour account awaits.",
+    "subtext": "Review your plan, then activate — no card collected at this stage."
   }
 }

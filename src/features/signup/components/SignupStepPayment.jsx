@@ -55,16 +55,6 @@ export default function SignupStepPayment({ accountData, onBack, onNext }) {
         </div>
       </div>
 
-      <div className="rounded-[var(--r)] bg-canvas px-4 py-4 text-[14px] leading-[1.75] text-tx-2">
-        <p className="font-semibold text-tx-1">What happens next</p>
-        <p className="mt-2">
-          Continuing creates your Clausule account, activates the fixed individual monthly plan for this rollout, and sends a confirmation to <strong>{accountData.email}</strong>.
-        </p>
-        <p className="mt-2 text-[13px] text-tx-3">
-          We removed the placeholder Stripe form here until the app is wired to a real checkout flow.
-        </p>
-      </div>
-
       {apiError && <div className="su-api-error" role="alert">{apiError}</div>}
 
       <CtaBtn terra onClick={handleSubscribe} disabled={busy}>
