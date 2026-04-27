@@ -2,88 +2,160 @@
 
 import '@shared/styles/page-loader.css'
 
-const ICONS = {
-  pencil: (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5l-5 1 1-5Z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+/* ── Per-variant animation components ─────────────────────────── */
+
+function SignupAnim() {
+  return (
+    <svg className="pl-signup" viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      {/* rotate-90 starts drawing from 12 o'clock */}
+      <g transform="rotate(-90 48 48)">
+        <circle
+          className="pl-r1"
+          cx="48" cy="48" r="44"
+          stroke="#C94F2A" strokeWidth="3" strokeLinecap="round"
+          strokeDasharray="276.5"
+        />
+        <circle
+          className="pl-r2"
+          cx="48" cy="48" r="30"
+          stroke="#B9824F" strokeWidth="3" strokeLinecap="round"
+          strokeDasharray="188.5"
+        />
+        <circle
+          className="pl-r3"
+          cx="48" cy="48" r="16"
+          stroke="#225F3D" strokeWidth="3" strokeLinecap="round"
+          strokeDasharray="100.5"
+        />
+      </g>
     </svg>
-  ),
-  envelope: (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
-      <path d="m2 7 10 7 10-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  ),
-  gear: (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
-      <path
-        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-    </svg>
-  ),
-  person: (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2" />
-      <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  ),
-  key: (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="7.5" cy="15.5" r="5.5" stroke="currentColor" strokeWidth="2" />
-      <path d="m21 2-9.6 9.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="m15.5 7.5 2 2M17 6l1.5 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  ),
-  spark: (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  ),
-  shield: (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  ),
+  )
 }
 
-const VARIANTS = {
-  brag:     { icon: 'pencil',   label: 'Loading your brag doc' },
-  feedback: { icon: 'envelope', label: 'Loading feedback'       },
-  settings: { icon: 'gear',     label: 'Loading settings'       },
-  profile:  { icon: 'person',   label: 'Loading profile'        },
-  auth:     { icon: 'key',      label: 'Signing in'             },
-  signup:   { icon: 'spark',    label: 'Setting things up'      },
-  mfa:      { icon: 'shield',   label: 'Loading secure setup'   },
+function AuthAnim() {
+  return (
+    <svg viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      {/* Faint track ring */}
+      <circle cx="48" cy="48" r="40" stroke="rgba(201,79,42,0.12)" strokeWidth="4" />
+      {/* Breathing arc */}
+      <circle
+        className="pl-signin-arc"
+        cx="48" cy="48" r="40"
+        stroke="#C94F2A" strokeWidth="4" strokeLinecap="round"
+        strokeDasharray="251"
+        transform="rotate(-90 48 48)"
+      />
+      {/* Halo behind dot */}
+      <circle className="pl-signin-halo" cx="48" cy="48" r="16" fill="rgba(201,79,42,0.18)" />
+      {/* Pulsing centre dot */}
+      <circle className="pl-signin-dot" cx="48" cy="48" r="6" fill="#C94F2A" />
+    </svg>
+  )
 }
+
+function BragAnim() {
+  return (
+    <div className="pl-brag-lines" aria-hidden="true">
+      <div className="pl-brag-line pl-bl1" />
+      <div className="pl-brag-line pl-bl2" />
+      <div className="pl-brag-line pl-bl3" />
+      <div className="pl-brag-line pl-bl4" />
+      <div className="pl-brag-line pl-bl5" />
+    </div>
+  )
+}
+
+function FeedbackAnim() {
+  return (
+    <div className="pl-feedback-dots" aria-hidden="true">
+      <div className="pl-dot pl-fd1" />
+      <div className="pl-dot pl-fd2" />
+      <div className="pl-dot pl-fd3" />
+    </div>
+  )
+}
+
+function SettingsAnim() {
+  return (
+    <svg viewBox="0 0 96 96" fill="none" aria-hidden="true">
+      {/*
+        Outer gear: Feather settings path originally at 24×24, doubled to 48×48
+        in the mockup, then re-centred to 96×96 via translate(48,48) scale(2) translate(-24,-24).
+        The wrapper <g> carries the CSS rotation at transform-origin 48,48.
+      */}
+      <g className="pl-gear-outer">
+        <g transform="translate(48 48) scale(2) translate(-24 -24)">
+          <path
+            d="M24 8a2 2 0 012 2v1.5a12.5 12.5 0 013.46 1.43l1.06-1.06a2 2 0 012.83 0
+               l1.78 1.78a2 2 0 010 2.83l-1.06 1.06A12.5 12.5 0 0135.5 20H37a2 2 0 012 2v2
+               a2 2 0 01-2 2h-1.5a12.5 12.5 0 01-1.43 3.46l1.06 1.06a2 2 0 010 2.83
+               l-1.78 1.78a2 2 0 01-2.83 0l-1.06-1.06A12.5 12.5 0 0126 35.5V37a2 2 0 01-2 2
+               a2 2 0 01-2-2v-1.5a12.5 12.5 0 01-3.46-1.43l-1.06 1.06a2 2 0 01-2.83 0
+               l-1.78-1.78a2 2 0 010-2.83l1.06-1.06A12.5 12.5 0 0112.5 26H11a2 2 0 01-2-2v-2
+               a2 2 0 012-2h1.5a12.5 12.5 0 011.43-3.46l-1.06-1.06a2 2 0 010-2.83
+               l1.78-1.78a2 2 0 012.83 0l1.06 1.06A12.5 12.5 0 0122 11.5V10a2 2 0 012-2z"
+            stroke="#C94F2A"
+            strokeWidth="1"
+            fill="none"
+          />
+        </g>
+      </g>
+      {/* Inner counter-rotating ring */}
+      <g className="pl-gear-inner">
+        <circle cx="48" cy="48" r="14" stroke="#225F3D" strokeWidth="2" />
+      </g>
+    </svg>
+  )
+}
+
+function ProfileAnim() {
+  return (
+    <div className="pl-profile-ring" aria-hidden="true">
+      <div className="pl-profile-face">
+        <div className="pl-profile-shimmer" />
+      </div>
+    </div>
+  )
+}
+
+function MfaAnim() {
+  return (
+    <div className="pl-mfa" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  )
+}
+
+/* ── Variant registry ──────────────────────────────────────────── */
+
+const LOADERS = {
+  signup:   { label: 'Setting things up',     Anim: SignupAnim   },
+  auth:     { label: 'Signing in',            Anim: AuthAnim     },
+  brag:     { label: 'Loading your brag doc', Anim: BragAnim     },
+  feedback: { label: 'Loading feedback',      Anim: FeedbackAnim },
+  settings: { label: 'Loading settings',      Anim: SettingsAnim },
+  profile:  { label: 'Loading profile',       Anim: ProfileAnim  },
+  mfa:      { label: 'Loading secure setup',  Anim: MfaAnim      },
+}
+
+/* ── Component ─────────────────────────────────────────────────── */
 
 export default function PageLoader({ variant = 'brag' }) {
-  const { icon, label } = VARIANTS[variant] ?? VARIANTS.brag
+  const { label, Anim } = LOADERS[variant] ?? LOADERS.brag
 
   return (
     <div className="page-loader" role="status" aria-label={label}>
       <span className="sr-only">{label}</span>
-      <div className={`page-loader-icon page-loader-icon--${icon}`} aria-hidden="true">
-        {ICONS[icon]}
+      <div className="page-loader-icon" aria-hidden="true">
+        <Anim />
       </div>
       <p className="page-loader-label" aria-hidden="true">{label}</p>
     </div>
