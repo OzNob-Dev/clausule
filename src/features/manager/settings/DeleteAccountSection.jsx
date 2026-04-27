@@ -1,3 +1,5 @@
+'use client'
+
 import { DeleteAccountDialog } from '@features/account/components/DeleteAccountDialog'
 
 export default function DeleteAccountSection({
