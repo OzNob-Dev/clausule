@@ -15,6 +15,7 @@ export default function SignInBrandPanel({
   brandHref = null,
   headline = DEFAULT_HEADLINE,
   subtext = DEFAULT_SUBTEXT,
+  children,
 }) {
   const BrandName = brandHref ? Link : 'span'
 
@@ -34,6 +35,7 @@ export default function SignInBrandPanel({
         </h1>
         <p className="su-shell-subtext">{subtext}</p>
       </div>
+      {children}
       <div className="su-shell-footer">Built for teams who care</div>
     </div>
   )

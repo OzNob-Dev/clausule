@@ -254,23 +254,6 @@
   padding: 48px 24px 80px;
 }
 
-.su-step1-layout {
-  display: flex;
-  gap: 48px;
-  align-items: flex-start;
-  max-width: 900px;
-  width: 100%;
-}
-
-.su-step1-form {
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 480px;
-}
-
-.su-aside { flex: 1; display: none; }
-@media (min-width: 900px) { .su-aside { display: block; } }
-
 .su-narrow {
   width: 100%;
   max-width: 900px;
@@ -294,6 +277,5 @@
 
 @media (max-width: 640px) {
   .su-main { padding: 32px 16px 60px; }
-  .su-step1-layout { flex-direction: column; gap: 24px; }
   .su-step-label { display: none; }
 }

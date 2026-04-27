@@ -3,12 +3,10 @@
 import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import SignupAside from '@features/signup/components/SignupAside'
 import SignupProgress from '@features/signup/components/SignupProgress'
 import SignupStepAccount from '@features/signup/components/SignupStepAccount'
 import '@features/signup/styles/signup-theme.css'
 import '@features/signup/styles/signup-form.css'
-import '@features/signup/styles/signup-aside.css'
 import '@shared/styles/page-loader.css'
 
 function SignUpInner() {
@@ -39,18 +37,13 @@ function SignUpInner() {
   return (
     <>
       <SignupProgress />
-      <div className="su-step1-layout">
-        <div className="su-step1-form">
-          <SignupStepAccount
-            emailLocked={redirectedFromSignIn}
-            hideSso={redirectedFromSignIn}
-            onNext={handleStep1}
-            initialData={initialData}
-          />
-        </div>
-        <aside className="su-aside" aria-label="Plan summary">
-          <SignupAside />
-        </aside>
+      <div className="su-narrow">
+        <SignupStepAccount
+          emailLocked={redirectedFromSignIn}
+          hideSso={redirectedFromSignIn}
+          onNext={handleStep1}
+          initialData={initialData}
+        />
       </div>
       <p className="su-shell-signin-note">
         Already have an account?{' '}
