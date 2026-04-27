@@ -23,10 +23,6 @@ vi.mock('@getbrevo/brevo', () => ({
   })),
 }))
 
-vi.mock('@features/auth/server/signupVerification.js', () => ({
-  verifySignupVerificationToken: vi.fn(() => ({ ok: true })),
-}))
-
 function registerRequest(body = {}) {
   return new Request('http://localhost/api/auth/register', {
     method: 'POST',
@@ -35,7 +31,6 @@ function registerRequest(body = {}) {
       email: 'Ada@Example.com',
       firstName: 'Ada',
       lastName: 'Lovelace',
-      verificationToken: 'signup-token',
       subscription: { amountCents: 500, currency: 'AUD', interval: 'month' },
       ...body,
     }),

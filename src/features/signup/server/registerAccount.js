@@ -2,7 +2,6 @@ import { BrevoClient } from '@getbrevo/brevo'
 import { createUser, rpc } from '@api/_lib/supabase.js'
 import { withTimeout } from '@api/_lib/network.js'
 import { findProfileByEmail, getUserSsoProvider } from '@features/auth/server/accountRepository.js'
-import { verifySignupVerificationToken } from '@features/auth/server/signupVerification.js'
 import { INDIVIDUAL_MONTHLY_PLAN, formatPlanAmount } from '@features/signup/shared/plan'
 import {
   beginBackendOperation,
@@ -130,9 +129,6 @@ export async function registerAccount(body) {
   if (amountCents !== PLAN_AMOUNT_CENTS || currency !== PLAN_CURRENCY || interval !== PLAN_INTERVAL) {
     return error({ error: 'Invalid subscription plan' }, 400)
   }
-
-  const tokenVerification = verifySignupVerificationToken(body.verificationToken, email)
-  if (!tokenVerification.ok) return error({ error: tokenVerification.error }, 401)
 
   const operationKey = registerOperationKey({ email })
   const operation = await beginBackendOperation({
