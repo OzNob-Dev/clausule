@@ -55,7 +55,7 @@ export default function SignupStepPayment({ accountData, onBack, onNext }) {
         </div>
       </div>
 
-      <div className="rounded-[var(--r)] border border-border bg-canvas px-4 py-4 text-[14px] leading-[1.75] text-tx-2">
+      <div className="rounded-[var(--r)] bg-canvas px-4 py-4 text-[14px] leading-[1.75] text-tx-2">
         <p className="font-semibold text-tx-1">What happens next</p>
         <p className="mt-2">
           Continuing creates your Clausule account, activates the fixed individual monthly plan for this rollout, and sends a confirmation to <strong>{accountData.email}</strong>.

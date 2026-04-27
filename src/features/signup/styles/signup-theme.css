@@ -184,7 +184,7 @@
 }
 
 .su-progress-inner--wide { max-width: 900px; }
-.su-progress-inner--narrow { max-width: 480px; }
+.su-progress-inner--narrow { max-width: 900px; }
 .su-step-wrap { display: contents; }
 
 .su-step-item {
@@ -273,7 +273,7 @@
 
 .su-narrow {
   width: 100%;
-  max-width: 480px;
+  max-width: 900px;
 }
 
 .su-step-heading {

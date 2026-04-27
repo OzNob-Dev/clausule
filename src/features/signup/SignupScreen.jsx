@@ -46,6 +46,7 @@ function SignUpInner() {
   if (step === 1) {
     return (
       <>
+        <SignupProgress step={step} />
         <div className="su-step1-layout">
           <div className="su-step1-form">
             <SignupStepAccount
