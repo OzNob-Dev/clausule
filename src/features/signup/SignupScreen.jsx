@@ -2,95 +2,68 @@
 
 import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { SignupProvider, useSignup } from '@features/signup/context/SignupContext'
+import { useRouter, useSearchParams } from 'next/navigation'
 import SignupAside from '@features/signup/components/SignupAside'
 import SignupProgress from '@features/signup/components/SignupProgress'
 import SignupStepAccount from '@features/signup/components/SignupStepAccount'
-import SignupStepDone from '@features/signup/components/SignupStepDone'
-import SignupStepPayment from '@features/signup/components/SignupStepPayment'
 import '@features/signup/styles/signup-theme.css'
 import '@features/signup/styles/signup-form.css'
-import '@features/signup/styles/signup-payment.css'
-import '@features/signup/styles/signup-success.css'
 import '@features/signup/styles/signup-aside.css'
 import '@shared/styles/page-loader.css'
 
-// ── Root component ─────────────────────────────────────────────────
 function SignUpInner() {
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const { step, setStep, step1Data, setStep1Data, completeSignup } = useSignup()
 
   const emailPrefill = searchParams.get('email') ?? ''
   const firstNamePrefill = searchParams.get('firstName') ?? ''
   const lastNamePrefill = searchParams.get('lastName') ?? ''
   const redirectedFromSignIn = Boolean(emailPrefill)
 
-  const step1Initial = useMemo(() => ({
-    ...step1Data,
+  const initialData = useMemo(() => ({
     ...(emailPrefill && { email: emailPrefill }),
     ...(firstNamePrefill && { firstName: firstNamePrefill }),
     ...(lastNamePrefill && { lastName: lastNamePrefill }),
-  }), [emailPrefill, firstNamePrefill, lastNamePrefill, step1Data])
-
-  const goStep = (n) => {
-    setStep(n)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  }), [emailPrefill, firstNamePrefill, lastNamePrefill])
 
   const handleStep1 = (data) => {
-    setStep1Data(data)
-    goStep(2)
-  }
-
-  if (step === 1) {
-    return (
-      <>
-        <SignupProgress step={step} />
-        <div className="su-step1-layout">
-          <div className="su-step1-form">
-            <SignupStepAccount
-              emailLocked={redirectedFromSignIn}
-              hideSso={redirectedFromSignIn}
-              onNext={handleStep1}
-              initialData={step1Initial}
-            />
-          </div>
-          <aside className="su-aside" aria-label="Plan summary">
-            <SignupAside />
-          </aside>
-        </div>
-        <p className="su-shell-signin-note">
-          Already have an account?{' '}
-          <Link href="/">Sign in</Link>
-        </p>
-      </>
-    )
+    const params = new URLSearchParams({
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+    })
+    router.push(`/signup/plan?${params}`)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
     <>
-      {step < 3 && <SignupProgress step={step} />}
-      <div className="su-narrow page-enter">
-        {step === 2 && (
-          <SignupStepPayment
-            onNext={completeSignup}
-            onBack={() => goStep(1)}
-            accountData={step1Data}
+      <SignupProgress />
+      <div className="su-step1-layout">
+        <div className="su-step1-form">
+          <SignupStepAccount
+            emailLocked={redirectedFromSignIn}
+            hideSso={redirectedFromSignIn}
+            onNext={handleStep1}
+            initialData={initialData}
           />
-        )}
-        {step === 3 && <SignupStepDone email={step1Data.email} />}
+        </div>
+        <aside className="su-aside" aria-label="Plan summary">
+          <SignupAside />
+        </aside>
       </div>
+      <p className="su-shell-signin-note">
+        Already have an account?{' '}
+        <Link href="/">Sign in</Link>
+      </p>
     </>
   )
 }
 
 export default function SignUp() {
   return (
-    <SignupProvider>
-      <Suspense fallback={<div className="su-page" aria-busy="true" />}>
-        <SignUpInner />
-      </Suspense>
-    </SignupProvider>
+    <Suspense fallback={<div className="su-page" aria-busy="true" />}>
+      <SignUpInner />
+    </Suspense>
   )
 }

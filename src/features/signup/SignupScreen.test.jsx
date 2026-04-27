@@ -1,25 +1,11 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import SignupScreen from './SignupScreen'
 
 vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
-}))
-
-vi.mock('@features/signup/context/SignupContext', () => ({
-  SignupProvider: ({ children }) => <>{children}</>,
-  useSignup: () => ({
-    step: 1,
-    setStep: vi.fn(),
-    step1Data: {},
-    setStep1Data: vi.fn(),
-    completeSignup: vi.fn(),
-  }),
-}))
-
-vi.mock('@features/auth/store/useProfileStore', () => ({
-  useProfileStore: (selector) => selector({ setProfile: vi.fn() }),
+  useRouter: () => ({ push: vi.fn() }),
 }))
 
 vi.mock('@features/signup/components/SignupAside', () => ({
@@ -34,18 +20,7 @@ vi.mock('@features/signup/components/SignupStepAccount', () => ({
   default: () => <div>Account</div>,
 }))
 
-vi.mock('@features/signup/components/SignupStepDone', () => ({
-  default: () => <div>Done</div>,
-}))
-
-vi.mock('@features/signup/components/SignupStepPayment', () => ({
-  default: () => <div>Payment</div>,
-}))
-
 describe('SignupScreen', () => {
-  beforeEach(() => {
-  })
-
   afterEach(() => {
     vi.clearAllMocks()
   })

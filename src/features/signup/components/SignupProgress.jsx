@@ -1,6 +1,13 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+
 const STEPS = ['Account', 'Plan', 'Done']
 
-export default function SignupProgress({ step }) {
+export default function SignupProgress() {
+  const p = usePathname()
+  const step = p.endsWith('/done') ? 3 : p.endsWith('/plan') ? 2 : 1
+
   return (
     <nav className="su-progress" aria-label="Signup progress">
       <ol className={`su-progress-inner${step === 1 ? ' su-progress-inner--wide' : ' su-progress-inner--narrow'}`}>
