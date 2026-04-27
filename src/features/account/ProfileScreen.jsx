@@ -7,6 +7,7 @@ import { useProfileSave } from '@features/account/hooks/useProfileSave'
 import { useProfileVerification } from '@features/account/hooks/useProfileVerification'
 import { VerifyChangesModal } from '@features/account/components/VerifyChangesModal'
 import { VerificationProvider } from '@features/account/context/VerificationContext'
+import { formatMobile } from '@features/account/utils/formatMobile'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/account/styles/profile.css'
 import '@shared/styles/page-loader.css'
@@ -76,7 +77,7 @@ export default function ProfileScreen() {
                 <div className="profile-field profile-field--full">
                   <label className="profile-label" htmlFor="mobile">Mobile</label>
                   <input id="mobile" className="profile-input" type="tel" value={form.mobile} autoComplete="tel"
-                    onChange={(e) => setForm((s) => ({ ...s, mobile: e.target.value }))} required />
+                    onChange={(e) => setForm((s) => ({ ...s, mobile: formatMobile(e.target.value) }))} required />
                   <p className="profile-help">Use the number you want tied to account recovery and contact updates.</p>
                 </div>
               </div>
