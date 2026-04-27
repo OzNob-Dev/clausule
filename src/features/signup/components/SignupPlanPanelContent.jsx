@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import '@features/signup/styles/signup-aside.css'
 
 function PanelContent() {
   const params = useSearchParams()
