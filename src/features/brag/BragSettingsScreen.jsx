@@ -92,21 +92,6 @@ export default function BragSettings() {
             />
           )}
 
-          <section className="bss-reminders" aria-labelledby="bss-reminders-title">
-            <div className="bss-section-label" id="bss-reminders-title">Notifications</div>
-            <div className="bss-card bss-reminder-card">
-              <div className="bss-reminder-head">
-                <div>
-                  <div className="bss-reminder-title">Preference sync is unavailable</div>
-                  <div className="bss-reminder-desc">
-                    Local-only reminder toggles were removed until notification preferences can be saved to your account.
-                  </div>
-                </div>
-                <div className="bss-reminder-summary" aria-live="polite">Live settings pending</div>
-              </div>
-            </div>
-          </section>
-
           <BragSettingsDangerZone onDelete={() => setDeleteModal(true)} />
         </div>
     </main>

@@ -201,25 +201,6 @@ describe('BragSettings integration', () => {
     expect(screen.queryByText('Your profile', { selector: '.be-sidebar-name' })).not.toBeInTheDocument()
   })
 
-  it('shows an honest notification placeholder instead of unsaved reminder controls', async () => {
-    const { useProfileStore } = await import('@features/auth/store/useProfileStore')
-    useProfileStore.getState().setProfile({
-      firstName: 'Ada',
-      lastName: 'Lovelace',
-      email: 'ada@example.com',
-    })
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
-    useProfileStore.setState({ hasSecuritySnapshot: true })
-
-    const { default: BragSettings } = await import('./BragSettingsScreen')
-    const { apiFetch } = await import('@shared/utils/api')
-    apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
-    renderWithQueryClient(<BragSettings />)
-
-    expect(screen.getByText('Notifications')).toBeInTheDocument()
-    expect(screen.getByText(/preference sync is unavailable/i)).toBeInTheDocument()
-    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
-  })
 
   it('uses the saved TOTP status to correct stale MFA settings', async () => {
     process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
