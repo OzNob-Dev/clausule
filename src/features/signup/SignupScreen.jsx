@@ -4,7 +4,6 @@ import { Suspense, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { SignupProvider, useSignup } from '@features/signup/context/SignupContext'
-import { BrandBugIcon } from '@features/auth/components/SignInBrandPanel'
 import SignupAside from '@features/signup/components/SignupAside'
 import SignupProgress from '@features/signup/components/SignupProgress'
 import SignupStepAccount from '@features/signup/components/SignupStepAccount'
@@ -69,37 +68,19 @@ function SignUpInner() {
   }
 
   return (
-    <div className="su-page su-fullscreen page-enter">
-      <div className="su-bg-lines" aria-hidden="true" />
-
-      <div className="su-topbar">
-        <div className="su-topbar-brand">
-          <div className="su-logo-bug">
-            <BrandBugIcon size={14} />
-          </div>
-          <span className="su-brand-name">clausule</span>
-        </div>
-        <Link href="/" className="su-signin-link">
-          Already have an account?{' '}
-          <span>Sign in</span>
-        </Link>
-      </div>
-
+    <>
       {step < 3 && <SignupProgress step={step} />}
-
-      <div className="su-main">
-        <div className="su-narrow">
-          {step === 2 && (
-            <SignupStepPayment
-              onNext={completeSignup}
-              onBack={() => goStep(1)}
-              accountData={step1Data}
-            />
-          )}
-          {step === 3 && <SignupStepDone email={step1Data.email} />}
-        </div>
+      <div className="su-narrow page-enter">
+        {step === 2 && (
+          <SignupStepPayment
+            onNext={completeSignup}
+            onBack={() => goStep(1)}
+            accountData={step1Data}
+          />
+        )}
+        {step === 3 && <SignupStepDone email={step1Data.email} />}
       </div>
-    </div>
+    </>
   )
 }
 

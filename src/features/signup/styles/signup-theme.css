@@ -167,69 +167,8 @@
   position: relative;
 }
 
-.su-bg-lines {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 47px,
-    rgba(26, 21, 16, 0.028) 47px,
-    rgba(26, 21, 16, 0.028) 48px
-  );
-}
-
-.su-topbar {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 48px;
-  border-bottom: 1px solid var(--su-border);
-  background: var(--su-canvas);
-  flex-shrink: 0;
-}
-
-.su-topbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.su-logo-bug {
-  width: 28px;
-  height: 28px;
-  background: var(--su-tx1);
-  color: #F5F0EA;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.su-brand-name {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--su-tx1);
-  letter-spacing: -0.3px;
-}
-
-.su-signin-link {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--su-tx3);
-  text-decoration: none;
-}
-
-.su-signin-link span { color: var(--su-acc-dk); }
-
 .su-progress {
-  position: relative;
-  z-index: 10;
-  padding: 20px 24px 0;
+  padding: 0 0 24px;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
@@ -353,17 +292,7 @@
   margin-bottom: 32px;
 }
 
-/* Escape the auth layout shell — used by steps 2+ and MFA overlays */
-.su-fullscreen {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  overflow-y: auto;
-}
-
 @media (max-width: 640px) {
-  .su-topbar { padding: 14px 20px; }
-  .su-progress { padding: 16px 16px 0; }
   .su-main { padding: 32px 16px 60px; }
   .su-step1-layout { flex-direction: column; gap: 24px; }
   .su-step-label { display: none; }
