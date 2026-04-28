@@ -162,8 +162,8 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
   }
 
   return (
-    <main className="li-page page-enter" aria-labelledby="linkedin-import-title">
-      <div className="li-shell">
+    <main className="be-main li-page page-enter" aria-labelledby="linkedin-import-title">
+      <div className="be-inner li-shell">
         <header className="li-header">
           <span className="li-eyebrow">Brag Doc Builder</span>
           <h1 id="linkedin-import-title">Import from LinkedIn</h1>
