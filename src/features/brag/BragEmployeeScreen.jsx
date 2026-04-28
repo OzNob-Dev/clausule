@@ -1,11 +1,16 @@
 'use client'
 
-import { useMemo } from 'react'
+import dynamic from 'next/dynamic'
+import { useMemo, useState, useTransition } from 'react'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import BragEmptyState from '@features/brag/components/BragEmptyState'
 import '@features/brag/styles/brag-page.css'
 import '@features/brag/styles/resume-tab.css'
 import '@shared/styles/page-loader.css'
+
+const ResumeTab = dynamic(() => import('@features/brag/components/ResumeTab'), {
+  loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,
+})
 
 function evidenceTypeToPill(type) {
   if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
@@ -99,7 +104,39 @@ function EntryDocCard({ entry }) {
 
 export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '' }) {
   const profile = useProfileStore((state) => state.profile)
+  const [, startPanelTransition] = useTransition()
+  const [tab, setTab] = useState('brag')
   const groupedEntries = useMemo(() => groupEntries(initialEntries ?? [], profile), [initialEntries, profile.department, profile.jobTitle])
+  const tabOrder = ['brag', 'cv']
+  const hasEntries = groupedEntries.length > 0
+
+  const moveTab = (direction) => {
+    const currentIndex = tabOrder.indexOf(tab)
+    const nextIndex = direction === 'start'
+      ? 0
+      : direction === 'end'
+        ? tabOrder.length - 1
+        : (currentIndex + direction + tabOrder.length) % tabOrder.length
+    const nextTab = tabOrder[nextIndex]
+    startPanelTransition(() => setTab(nextTab))
+    document.getElementById(`tab-${nextTab}`)?.focus()
+  }
+
+  const handleTabKeyDown = (event) => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      moveTab(1)
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      moveTab(-1)
+    } else if (event.key === 'Home') {
+      event.preventDefault()
+      moveTab('start')
+    } else if (event.key === 'End') {
+      event.preventDefault()
+      moveTab('end')
+    }
+  }
 
   return (
     <main className="be-main be-doc-screen page-enter" aria-labelledby="brag-page-title">
@@ -108,40 +145,87 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
 
         {initialEntriesError ? (
           <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
-        ) : groupedEntries.length ? (
+        ) : hasEntries ? (
           <>
             <header className="be-doc-header">
               <span className="be-doc-eyebrow">Your achievements</span>
               <h1>Your entries</h1>
             </header>
 
-            <div className="be-doc-timeline">
-              {groupedEntries.map(({ year, groups }) => (
-                <section key={year} className="be-doc-year-group" aria-labelledby={`be-doc-year-${year}`}>
-                  <div className="be-doc-year-header">
-                    <h2 className="be-doc-year-badge" id={`be-doc-year-${year}`}>{year}</h2>
-                    <div className="be-doc-year-line" aria-hidden="true" />
-                  </div>
-
-                  {groups.map((group) => (
-                    <div key={group.key} className="be-doc-company-group">
-                      <header className="be-doc-company-header">
-                        <div>
-                          <h3 className="be-doc-company-name">{group.company}</h3>
-                          <p className="be-doc-company-role">{group.role}</p>
-                        </div>
-                      </header>
-
-                      <div className="be-doc-entries-list">
-                        {group.entries.map((entry) => (
-                          <EntryDocCard key={entry.id} entry={entry} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </section>
-              ))}
+            <div className="be-doc-tabs-row">
+              <div className="be-tabs" role="tablist" aria-label="Brag document views">
+                {[['brag', 'Brag doc'], ['cv', 'Resume']].map(([key, label]) => (
+                  <button
+                    key={key}
+                    id={`tab-${key}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={tab === key}
+                    aria-controls={`panel-${key}`}
+                    tabIndex={tab === key ? 0 : -1}
+                    onClick={() => startPanelTransition(() => setTab(key))}
+                    onKeyDown={handleTabKeyDown}
+                    className={`be-tab${tab === key ? ' be-tab--active' : ''}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            <section
+              id="panel-brag"
+              role="tabpanel"
+              aria-labelledby="tab-brag"
+              hidden={tab !== 'brag'}
+            >
+              <div className="be-doc-cta-wrap">
+                <button type="button" className="be-doc-add-button" aria-disabled="true">
+                  <span className="be-doc-add-icon" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <line x1="8" y1="3" x2="8" y2="13" />
+                      <line x1="3" y1="8" x2="13" y2="8" />
+                    </svg>
+                  </span>
+                  <span className="be-doc-add-copy">
+                    <span className="be-doc-add-label">Add a win</span>
+                    <span className="be-doc-add-description">Capture a fresh entry for your brag doc</span>
+                  </span>
+                </button>
+              </div>
+
+              <div className="be-doc-timeline">
+                {groupedEntries.map(({ year, groups }) => (
+                  <section key={year} className="be-doc-year-group" aria-labelledby={`be-doc-year-${year}`}>
+                    <div className="be-doc-year-header">
+                      <h2 className="be-doc-year-badge" id={`be-doc-year-${year}`}>{year}</h2>
+                      <div className="be-doc-year-line" aria-hidden="true" />
+                    </div>
+
+                    {groups.map((group) => (
+                      <div key={group.key} className="be-doc-company-group">
+                        <header className="be-doc-company-header">
+                          <div>
+                            <h3 className="be-doc-company-name">{group.company}</h3>
+                            <p className="be-doc-company-role">{group.role}</p>
+                          </div>
+                        </header>
+
+                        <div className="be-doc-entries-list">
+                          {group.entries.map((entry) => (
+                            <EntryDocCard key={entry.id} entry={entry} />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </section>
+                ))}
+              </div>
+            </section>
+
+            <section id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
+              <ResumeTab entries={initialEntries} />
+            </section>
           </>
         ) : (
           <BragEmptyState onAddEntry={() => {}} />

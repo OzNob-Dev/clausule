@@ -2274,6 +2274,87 @@
   line-height: 1.08;
 }
 
+.be-doc-tabs-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+}
+
+.be-doc-cta-wrap {
+  margin-bottom: 48px;
+  animation: be-doc-group-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+}
+
+.be-doc-add-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 40px 48px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--be-doc-clay) 0%, var(--be-doc-clay-deep) 100%);
+  box-shadow: 0 4px 16px rgba(196, 107, 74, 0.25), 0 12px 40px rgba(196, 107, 74, 0.15);
+  color: #fff;
+  cursor: default;
+  overflow: hidden;
+  text-align: left;
+}
+
+.be-doc-add-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.be-doc-add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(61, 50, 41, 0.15);
+}
+
+.be-doc-add-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--be-doc-clay);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.be-doc-add-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.be-doc-add-label {
+  color: #fff;
+  font-family: var(--be-serif);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.be-doc-add-description {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
 .be-doc-timeline {
   display: grid;
   gap: 72px;
@@ -2931,6 +3012,24 @@
 
   .be-doc-header h1 {
     font-size: 2.5rem;
+  }
+
+  .be-doc-add-button {
+    gap: 18px;
+    padding: 28px 22px;
+  }
+
+  .be-doc-add-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .be-doc-add-label {
+    font-size: 22px;
+  }
+
+  .be-doc-add-description {
+    font-size: 15px;
   }
 
   .be-doc-year-badge {
