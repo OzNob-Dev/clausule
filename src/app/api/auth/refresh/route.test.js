@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { rpc } from '@api/_lib/supabase.js'
-import { rotateRefreshSession } from '@features/auth/server/refreshSession.js'
+import { rotateRefreshSession } from '@auth/server/refreshSession.js'
 import { POST } from './route.js'
 
 vi.mock('@api/_lib/supabase.js', () => ({
@@ -13,7 +13,7 @@ vi.mock('@api/_lib/session.js', () => ({
   appendSessionCookies: vi.fn((response) => response),
 }))
 
-vi.mock('@features/auth/server/refreshSession.js', () => ({
+vi.mock('@auth/server/refreshSession.js', () => ({
   rotateRefreshSession: vi.fn(),
 }))
 

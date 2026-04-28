@@ -6,8 +6,8 @@
 
 import { NextResponse } from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
-import { createEntry, listEntries } from '@features/brag/server/entries.js'
-import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
+import { createEntry, listEntries } from '@brag/server/entries.js'
+import { consumeDistributedRateLimit } from '@auth/server/distributedRateLimit.js'
 
 export async function GET(request) {
   const { userId, error: authError } = await requireActiveAuth(request)

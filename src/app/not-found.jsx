@@ -1,4 +1,4 @@
-import NotFoundScreen from '@features/landing/NotFoundScreen'
+import NotFoundScreen from '@landing/NotFoundScreen'
 
 export default function NotFound() {
   return <NotFoundScreen />

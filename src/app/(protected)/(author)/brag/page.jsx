@@ -1,6 +1,6 @@
-import { getServerAuth } from '@features/auth/server/serverSession.js'
-import BragEmployeeScreen from '@features/brag/BragEmployeeScreen'
-import { listEntries } from '@features/brag/server/entries.js'
+import { getServerAuth } from '@auth/server/serverSession.js'
+import BragEmployeeScreen from '@brag/BragEmployeeScreen'
+import { listEntries } from '@brag/server/entries.js'
 
 export default async function Page() {
   const auth = await getServerAuth()

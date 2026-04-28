@@ -6,8 +6,8 @@
 
 import { NextResponse } from 'next/server'
 import { resolveClientIp } from '@api/_lib/network.js'
-import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
-import { sendOtpCode } from '@features/auth/server/sendOtpCode.js'
+import { consumeDistributedRateLimit } from '@auth/server/distributedRateLimit.js'
+import { sendOtpCode } from '@auth/server/sendOtpCode.js'
 import { validateEmail } from '@shared/utils/emailValidation'
 
 export async function POST(request) {

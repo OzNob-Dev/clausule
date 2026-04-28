@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
-import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
-import { listAppFeedback, sendAppFeedback } from '@features/brag/server/appFeedback.js'
+import { consumeDistributedRateLimit } from '@auth/server/distributedRateLimit.js'
+import { listAppFeedback, sendAppFeedback } from '@brag/server/appFeedback.js'
 
 export async function GET(request) {
   const auth = await requireActiveAuth(request)

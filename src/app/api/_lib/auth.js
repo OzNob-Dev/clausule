@@ -14,7 +14,7 @@ import { NextResponse }                        from 'next/server'
 import { verifyAccessToken, ACCESS_TOKEN_TTL_S,
          REFRESH_TOKEN_TTL_S }                 from './jwt.js'
 import { select } from './supabase.js'
-import { hasActiveSubscription } from '@features/auth/server/accountRepository.js'
+import { hasActiveSubscription } from '@auth/server/accountRepository.js'
 import { authTestBypassUser, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 const IS_PROD = process.env.NODE_ENV === 'production'

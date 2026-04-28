@@ -20,9 +20,9 @@ import { NextResponse }                    from 'next/server'
 import { getRefreshToken,
          clearAuthCookies }                from '@api/_lib/auth.js'
 import { hashRefreshToken }                from '@api/_lib/jwt.js'
-import { beginBackendOperation }          from '@features/auth/server/backendOperation.js'
-import { rotateRefreshSession }            from '@features/auth/server/refreshSession.js'
-import { issueRecoverableSession }         from '@features/auth/server/recoverableSession.js'
+import { beginBackendOperation }          from '@auth/server/backendOperation.js'
+import { rotateRefreshSession }            from '@auth/server/refreshSession.js'
+import { issueRecoverableSession }         from '@auth/server/recoverableSession.js'
 
 export async function POST(request) {
   const rawToken = getRefreshToken(request)

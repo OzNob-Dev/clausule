@@ -11,9 +11,9 @@ function safeDestination(destination, fallback = '/') {
   const path = String(destination ?? '')
   return /^\/[^/\\]/.test(path) || path === '/' ? path : fallback
 }
-import { beginBackendOperation } from '@features/auth/server/backendOperation.js'
-import { resolveSsoCallback } from '@features/auth/server/ssoCallback.js'
-import { issueRecoverableSession } from '@features/auth/server/recoverableSession.js'
+import { beginBackendOperation } from '@auth/server/backendOperation.js'
+import { resolveSsoCallback } from '@auth/server/ssoCallback.js'
+import { issueRecoverableSession } from '@auth/server/recoverableSession.js'
 
 export async function GET(request, { params }) {
   const { provider } = await params

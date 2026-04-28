@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createPasskeyAuthenticationOptions } from '@features/auth/server/passkeyAuthentication.js'
+import { createPasskeyAuthenticationOptions } from '@auth/server/passkeyAuthentication.js'
 import { POST } from './route.js'
 
-vi.mock('@features/auth/server/passkeyAuthentication.js', () => ({
+vi.mock('@auth/server/passkeyAuthentication.js', () => ({
   createPasskeyAuthenticationOptions: vi.fn(),
 }))
 

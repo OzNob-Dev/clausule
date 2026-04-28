@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPersistentSession } from '@api/_lib/session.js'
-import { authAttemptOperationKey, beginBackendOperation, completeBackendOperation } from '@features/auth/server/backendOperation.js'
-import { verifyEmailOtpLogin } from '@features/auth/server/loginVerification.js'
+import { authAttemptOperationKey, beginBackendOperation, completeBackendOperation } from '@auth/server/backendOperation.js'
+import { verifyEmailOtpLogin } from '@auth/server/loginVerification.js'
 import { POST } from './route.js'
 
-vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+vi.mock('@auth/server/distributedRateLimit.js', () => ({
   consumeDistributedRateLimit: vi.fn(async () => ({ allowed: true, retryAfterMs: 0, error: null })),
 }))
 
@@ -13,11 +13,11 @@ vi.mock('@api/_lib/session.js', () => ({
   appendSessionCookies: vi.fn((response) => response),
 }))
 
-vi.mock('@features/auth/server/loginVerification.js', () => ({
+vi.mock('@auth/server/loginVerification.js', () => ({
   verifyEmailOtpLogin: vi.fn(),
 }))
 
-vi.mock('@features/auth/server/backendOperation.js', () => ({
+vi.mock('@auth/server/backendOperation.js', () => ({
   authAttemptOperationKey: vi.fn(),
   beginBackendOperation: vi.fn(),
   completeBackendOperation: vi.fn(),

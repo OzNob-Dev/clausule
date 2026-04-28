@@ -6,7 +6,7 @@
 
 import { NextResponse } from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
-import { verifyPasskeyRegistration } from '@features/auth/server/passkeyRegistration.js'
+import { verifyPasskeyRegistration } from '@auth/server/passkeyRegistration.js'
 
   export async function POST(request) {
   try {

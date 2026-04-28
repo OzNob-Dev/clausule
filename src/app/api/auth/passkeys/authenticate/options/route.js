@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createPasskeyAuthenticationOptions } from '@features/auth/server/passkeyAuthentication.js'
+import { createPasskeyAuthenticationOptions } from '@auth/server/passkeyAuthentication.js'
 
 export async function POST(request) {
   const result = await createPasskeyAuthenticationOptions({ request })

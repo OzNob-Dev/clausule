@@ -1,6 +1,6 @@
-import { getServerAuth } from '@features/auth/server/serverSession.js'
-import LinkedInImportScreen from '@features/brag/LinkedInImportScreen'
-import { getLatestLinkedInImport } from '@features/brag/server/linkedinImports.js'
+import { getServerAuth } from '@auth/server/serverSession.js'
+import LinkedInImportScreen from '@brag/LinkedInImportScreen'
+import { getLatestLinkedInImport } from '@brag/server/linkedinImports.js'
 
 export default async function Page() {
   const auth = await getServerAuth()

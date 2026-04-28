@@ -1,7 +1,7 @@
 'use client'
 
-import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
-import '@features/brag/styles/brag-shell.css'
+import BragIdentitySidebar from '@brag/components/BragIdentitySidebar'
+import '@brag/styles/brag-shell.css'
 
 export default function AuthorLayout({ children }) {
   return (

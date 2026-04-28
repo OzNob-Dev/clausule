@@ -1,4 +1,4 @@
-import FeedbackScreen from '@features/brag/FeedbackScreen'
+import FeedbackScreen from '@brag/FeedbackScreen'
 
 export default function Page() {
   return <FeedbackScreen view="compose" />

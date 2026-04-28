@@ -19,10 +19,10 @@
 
 import { NextResponse }                    from 'next/server'
 import { resolveClientIp }                 from '@api/_lib/network.js'
-import { authAttemptOperationKey, beginBackendOperation } from '@features/auth/server/backendOperation.js'
-import { consumeDistributedRateLimit }     from '@features/auth/server/distributedRateLimit.js'
-import { verifyEmailOtpLogin }             from '@features/auth/server/loginVerification.js'
-import { issueRecoverableSession }         from '@features/auth/server/recoverableSession.js'
+import { authAttemptOperationKey, beginBackendOperation } from '@auth/server/backendOperation.js'
+import { consumeDistributedRateLimit }     from '@auth/server/distributedRateLimit.js'
+import { verifyEmailOtpLogin }             from '@auth/server/loginVerification.js'
+import { issueRecoverableSession }         from '@auth/server/recoverableSession.js'
 
 export async function POST(request) {
   const body  = await request.json().catch(() => ({}))

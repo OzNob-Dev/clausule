@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createSsoStart } from '@features/auth/server/ssoStart.js'
+import { createSsoStart } from '@auth/server/ssoStart.js'
 
 export async function GET(request, { params }) {
   const { provider } = await params

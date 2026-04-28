@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import SignupDoneScreen from '@features/signup/SignupDoneScreen'
+import SignupDoneScreen from '@signup/SignupDoneScreen'
 
 export default async function Page({ searchParams }) {
   const { email = '' } = await searchParams

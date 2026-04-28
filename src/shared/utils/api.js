@@ -52,6 +52,6 @@ export function jsonRequest(body, init = {}) {
  * @returns {Promise<string>} summary text
  */
 export async function draftSummary(employeeName, entries) {
-  const data = await apiJson('/api/ai/draft-summary', jsonRequest({ employeeName, entries }, { method: 'POST' }))
-  return data.text
+  return draftSummaryAction(employeeName, entries)
 }
+import { draftSummaryAction } from '@actions/ai-actions'

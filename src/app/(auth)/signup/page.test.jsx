@@ -15,11 +15,11 @@ vi.mock('next/navigation', () => ({
   redirect,
 }))
 
-vi.mock('@features/auth/server/serverSession.js', () => ({
+vi.mock('@auth/server/serverSession.js', () => ({
   getServerAuth: vi.fn(async () => auth),
 }))
 
-vi.mock('@features/signup/SignupScreen', () => ({
+vi.mock('@signup/SignupScreen', () => ({
   default: () => <div>Signup screen</div>,
 }))
 

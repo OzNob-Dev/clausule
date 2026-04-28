@@ -1,8 +1,8 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import BragIdentitySidebar from '@features/brag/components/BragIdentitySidebar'
-import '@features/brag/styles/brag-shell.css'
+import BragIdentitySidebar from '@brag/components/BragIdentitySidebar'
+import '@brag/styles/brag-shell.css'
 
 const PAGE_CONFIG = {
   '/brag': { activePage: 'brag', eyebrow: 'Clausule' },

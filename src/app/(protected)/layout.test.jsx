@@ -24,11 +24,11 @@ vi.mock('next/headers', () => ({
   headers: async () => ({ get: (key) => (key === 'x-clausule-pathname' ? pathname : null) }),
 }))
 
-vi.mock('@features/auth/context/AuthContext', () => ({
+vi.mock('@auth/context/AuthContext', () => ({
   AuthProvider: ({ children }) => <>{children}</>,
 }))
 
-vi.mock('@features/auth/server/serverSession.js', () => ({
+vi.mock('@auth/server/serverSession.js', () => ({
   getServerBootstrapSession: vi.fn(async () => session),
 }))
 
@@ -46,22 +46,22 @@ describe('ProtectedLayout MFA lock', () => {
   it('redirects unauthenticated users to sign in', async () => {
     session = null
 
-    await expect(ProtectedLayout({ children: <div>Blocked app</div> })).rejects.toThrow('redirect:/')
-    expect(redirect).toHaveBeenCalledWith('/')
+    await expect(ProtectedLayout({ children: <div>Blocked app</div> })).rejects.toThrow('redirect:/login')
+    expect(redirect).toHaveBeenCalledWith('/login')
   })
 
-  it('redirects protected routes to brag settings until MFA is configured', async () => {
+  it('redirects protected routes to settings until MFA is configured', async () => {
     session = {
       ...session,
       security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false },
     }
 
-    await expect(ProtectedLayout({ children: <div>Blocked app</div> })).rejects.toThrow('redirect:/brag/settings')
-    expect(redirect).toHaveBeenCalledWith('/brag/settings')
+    await expect(ProtectedLayout({ children: <div>Blocked app</div> })).rejects.toThrow('redirect:/settings')
+    expect(redirect).toHaveBeenCalledWith('/settings')
   })
 
-  it('allows brag settings while MFA setup is incomplete', async () => {
-    pathname = '/brag/settings'
+  it('allows settings while MFA setup is incomplete', async () => {
+    pathname = '/settings'
     session = {
       ...session,
       security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false },

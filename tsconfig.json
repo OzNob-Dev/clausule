@@ -25,8 +25,32 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@features/*": [
-        "./src/features/*"
+      "@auth/*": [
+        "./src/auth/*"
+      ],
+      "@account/*": [
+        "./src/account/*"
+      ],
+      "@actions/*": [
+        "./src/actions/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@brag/*": [
+        "./src/app/(protected)/(author)/brag/*"
+      ],
+      "@component-library/*": [
+        "./src/component-library/*"
+      ],
+      "@landing/*": [
+        "./src/app/(public)/landing/*"
+      ],
+      "@mfa/*": [
+        "./src/app/(auth)/mfa/*"
+      ],
+      "@signup/*": [
+        "./src/app/(auth)/signup/*"
       ],
       "@shared/*": [
         "./src/shared/*"

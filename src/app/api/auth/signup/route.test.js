@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
-import { createSignupUser } from '@features/auth/server/createSignupUser.js'
+import { consumeDistributedRateLimit } from '@auth/server/distributedRateLimit.js'
+import { createSignupUser } from '@auth/server/createSignupUser.js'
 import { POST } from './route.js'
 
-vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+vi.mock('@auth/server/distributedRateLimit.js', () => ({
   consumeDistributedRateLimit: vi.fn(),
 }))
 
-vi.mock('@features/auth/server/createSignupUser.js', () => ({
+vi.mock('@auth/server/createSignupUser.js', () => ({
   createSignupUser: vi.fn(),
 }))
 

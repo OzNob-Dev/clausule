@@ -6,8 +6,8 @@
 
 import { NextResponse } from 'next/server'
 import { resolveClientIp } from '@api/_lib/network.js'
-import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
-import { createSignupUser } from '@features/auth/server/createSignupUser.js'
+import { consumeDistributedRateLimit } from '@auth/server/distributedRateLimit.js'
+import { createSignupUser } from '@auth/server/createSignupUser.js'
 
 export async function POST(request) {
   const ip = resolveClientIp(request)

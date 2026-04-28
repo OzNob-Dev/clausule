@@ -11,7 +11,7 @@
 import { NextResponse }              from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
 import { fetchWithTimeout } from '@api/_lib/network.js'
-import { consumeDistributedRateLimit } from '@features/auth/server/distributedRateLimit.js'
+import { consumeDistributedRateLimit } from '@auth/server/distributedRateLimit.js'
 const MAX_EMPLOYEE_NAME_LENGTH = 120
 const MAX_ENTRIES = 30
 const MAX_FIELD_LENGTH = 1000

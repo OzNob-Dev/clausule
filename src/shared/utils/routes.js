@@ -1,4 +1,8 @@
 export const ROUTES = {
+  home: '/',
+  login: '/login',
+  register: '/register',
+  pricing: '/pricing',
   components: '/components',
   brag: '/brag',
   bragResume: '/brag/resume',
@@ -6,6 +10,7 @@ export const ROUTES = {
   bragFeedback: '/brag/feedback',
   bragFeedbackHistory: '/brag/feedback/history',
   bragSettings: '/brag/settings',
+  settings: '/settings',
   profile: '/profile',
   dashboard: '/dashboard',
   entries: '/entries',

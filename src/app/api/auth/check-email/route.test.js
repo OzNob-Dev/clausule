@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { POST } from './route.js'
 
-vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+vi.mock('@auth/server/distributedRateLimit.js', () => ({
   consumeDistributedRateLimit: vi.fn(async () => ({ allowed: true, retryAfterMs: 0, error: null })),
 }))
 

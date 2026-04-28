@@ -15,7 +15,7 @@
 
 import { NextResponse }               from 'next/server'
 import { authErrorResponse, requireActiveAuth }  from '@api/_lib/auth.js'
-import { createTotpSetup, saveTotpSetup } from '@features/auth/server/totpSetup.js'
+import { createTotpSetup, saveTotpSetup } from '@auth/server/totpSetup.js'
 
 // ── Route handlers ────────────────────────────────────────────────────────────
 

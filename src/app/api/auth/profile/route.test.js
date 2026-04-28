@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { requireActiveAuth } from '@api/_lib/auth.js'
 import { getAuthUser, select, update, updateAuthUser } from '@api/_lib/supabase.js'
-import { findProfileById } from '@features/auth/server/accountRepository.js'
-import { verifyEmailOtpCode } from '@features/auth/server/emailOtpVerification.js'
+import { findProfileById } from '@auth/server/accountRepository.js'
+import { verifyEmailOtpCode } from '@auth/server/emailOtpVerification.js'
 import { GET, PATCH } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
@@ -17,11 +17,11 @@ vi.mock('@api/_lib/supabase.js', () => ({
   updateAuthUser: vi.fn(),
 }))
 
-vi.mock('@features/auth/server/accountRepository.js', () => ({
+vi.mock('@auth/server/accountRepository.js', () => ({
   findProfileById: vi.fn(),
 }))
 
-vi.mock('@features/auth/server/emailOtpVerification.js', () => ({
+vi.mock('@auth/server/emailOtpVerification.js', () => ({
   verifyEmailOtpCode: vi.fn(),
 }))
 

@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { totpCode } from '@api/_lib/totp.js'
 import { createPersistentSession } from '@api/_lib/session.js'
 import { rpc, select } from '@api/_lib/supabase.js'
-import { authAttemptOperationKey } from '@features/auth/server/backendOperation.js'
+import { authAttemptOperationKey } from '@auth/server/backendOperation.js'
 import { POST } from './route.js'
 
-vi.mock('@features/auth/server/distributedRateLimit.js', () => ({
+vi.mock('@auth/server/distributedRateLimit.js', () => ({
   consumeDistributedRateLimit: vi.fn(async () => ({ allowed: true, retryAfterMs: 0, error: null })),
 }))
 
@@ -19,7 +19,7 @@ vi.mock('@api/_lib/session.js', () => ({
   appendSessionCookies: vi.fn((response) => response),
 }))
 
-vi.mock('@features/auth/server/backendOperation.js', async (importOriginal) => {
+vi.mock('@auth/server/backendOperation.js', async (importOriginal) => {
   const actual = await importOriginal()
   return {
     ...actual,

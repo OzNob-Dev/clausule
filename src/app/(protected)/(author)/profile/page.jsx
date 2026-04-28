@@ -1,4 +1,4 @@
-import ProfileScreen from '@features/account/ProfileScreen'
+import ProfileScreen from '@account/ProfileScreen'
 
 export default function Page() {
   return <ProfileScreen />

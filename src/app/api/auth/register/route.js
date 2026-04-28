@@ -14,9 +14,9 @@
  */
 
 import { NextResponse }                     from 'next/server'
-import { registerOperationKey, registerOperationType } from '@features/auth/server/backendOperation.js'
-import { issueRecoverableSession }          from '@features/auth/server/recoverableSession.js'
-import { registerAccount }                  from '@features/signup/server/registerAccount.js'
+import { registerOperationKey, registerOperationType } from '@auth/server/backendOperation.js'
+import { issueRecoverableSession }          from '@auth/server/recoverableSession.js'
+import { registerAccount }                  from '@signup/server/registerAccount.js'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))

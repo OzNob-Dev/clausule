@@ -1,6 +1,6 @@
 import AuthBrandPanel from '@shared/components/ui/AuthBrandPanel'
-import '@features/signup/styles/signup-theme.css'
-import '@features/signup/styles/signup-form.css'
+import '@signup/styles/signup-theme.css'
+import '@signup/styles/signup-form.css'
 
 export default function AuthLayout({ children }) {
   return (

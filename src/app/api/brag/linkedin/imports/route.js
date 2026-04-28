@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
-import { createLinkedInImport, getLatestLinkedInImport } from '@features/brag/server/linkedinImports.js'
+import { createLinkedInImport, getLatestLinkedInImport } from '@brag/server/linkedinImports.js'
 
 export async function GET(request) {
   const { userId, error: authError } = await requireActiveAuth(request)

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import SignupPlanScreen from '@features/signup/SignupPlanScreen'
-import { getServerAuth } from '@features/auth/server/serverSession.js'
+import SignupPlanScreen from '@signup/SignupPlanScreen'
+import { getServerAuth } from '@auth/server/serverSession.js'
 import { homePathForRole } from '@shared/utils/routes'
 
 export default async function Page({ searchParams }) {

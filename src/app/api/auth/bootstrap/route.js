@@ -7,7 +7,7 @@
 
 import { NextResponse } from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
-import { bootstrapSession } from '@features/auth/server/bootstrapSession.js'
+import { bootstrapSession } from '@auth/server/bootstrapSession.js'
 import { authTestBypassBootstrap, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 export async function GET(request) {

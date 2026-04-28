@@ -11,7 +11,7 @@
 import { NextResponse }            from 'next/server'
 import { getRefreshToken,
          clearAuthCookies }        from '@api/_lib/auth.js'
-import { revokeRefreshSession }    from '@features/auth/server/refreshSession.js'
+import { revokeRefreshSession }    from '@auth/server/refreshSession.js'
 
 export async function POST(request) {
   const rawToken = getRefreshToken(request)

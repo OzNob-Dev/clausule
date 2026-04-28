@@ -2,10 +2,10 @@
 
 import { usePathname } from 'next/navigation'
 import SignInBrandPanel from './SignInBrandPanel'
-import SignupPanelSummary from '@features/signup/components/SignupPanelSummary'
-import SignupPlanPanelContent from '@features/signup/components/SignupPlanPanelContent'
-import SignupProgress from '@features/signup/components/SignupProgress'
-import panelConfig from '@features/auth/brand-panel-config.json'
+import SignupPanelSummary from '@signup/components/SignupPanelSummary'
+import SignupPlanPanelContent from '@signup/components/SignupPlanPanelContent'
+import SignupProgress from '@signup/components/SignupProgress'
+import panelConfig from '@auth/brand-panel-config.json'
 
 export default function AuthBrandPanel({ brandHref }) {
   const pathname = usePathname()

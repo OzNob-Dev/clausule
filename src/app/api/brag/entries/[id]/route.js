@@ -6,7 +6,7 @@
 
 import { NextResponse } from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
-import { deleteEntry, getEntry, updateEntry } from '@features/brag/server/entries.js'
+import { deleteEntry, getEntry, updateEntry } from '@brag/server/entries.js'
 
 export async function GET(request, { params }) {
   const { userId, error: authError } = await requireActiveAuth(request)

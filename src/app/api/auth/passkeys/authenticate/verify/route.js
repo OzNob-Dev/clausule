@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { beginBackendOperation, passkeyAttemptOperationKey } from '@features/auth/server/backendOperation.js'
-import { verifyPasskeyAuthentication } from '@features/auth/server/passkeyAuthentication.js'
-import { issueRecoverableSession } from '@features/auth/server/recoverableSession.js'
+import { beginBackendOperation, passkeyAttemptOperationKey } from '@auth/server/backendOperation.js'
+import { verifyPasskeyAuthentication } from '@auth/server/passkeyAuthentication.js'
+import { issueRecoverableSession } from '@auth/server/recoverableSession.js'
 
 export async function POST(request) {
   try {

@@ -1,19 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { beginBackendOperation, passkeyAttemptOperationKey } from '@features/auth/server/backendOperation.js'
-import { issueRecoverableSession } from '@features/auth/server/recoverableSession.js'
-import { verifyPasskeyAuthentication } from '@features/auth/server/passkeyAuthentication.js'
+import { beginBackendOperation, passkeyAttemptOperationKey } from '@auth/server/backendOperation.js'
+import { issueRecoverableSession } from '@auth/server/recoverableSession.js'
+import { verifyPasskeyAuthentication } from '@auth/server/passkeyAuthentication.js'
 import { POST } from './route.js'
 
-vi.mock('@features/auth/server/backendOperation.js', () => ({
+vi.mock('@auth/server/backendOperation.js', () => ({
   beginBackendOperation: vi.fn(),
   passkeyAttemptOperationKey: vi.fn(),
 }))
 
-vi.mock('@features/auth/server/passkeyAuthentication.js', () => ({
+vi.mock('@auth/server/passkeyAuthentication.js', () => ({
   verifyPasskeyAuthentication: vi.fn(),
 }))
 
-vi.mock('@features/auth/server/recoverableSession.js', () => ({
+vi.mock('@auth/server/recoverableSession.js', () => ({
   issueRecoverableSession: vi.fn(),
 }))
 

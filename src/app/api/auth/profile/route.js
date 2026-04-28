@@ -9,9 +9,9 @@ import { NextResponse }              from 'next/server'
 import { authErrorResponse, requireActiveAuth } from '@api/_lib/auth.js'
 import { getAuthUser, select, update, updateAuthUser } from '@api/_lib/supabase.js'
 import { validateEmail }             from '@shared/utils/emailValidation'
-import { findProfileById }           from '@features/auth/server/accountRepository.js'
-import { verifyEmailOtpCode }        from '@features/auth/server/emailOtpVerification.js'
-import { reconcileProfileEmail } from '@features/auth/server/reconcileProfileEmail.js'
+import { findProfileById }           from '@auth/server/accountRepository.js'
+import { verifyEmailOtpCode }        from '@auth/server/emailOtpVerification.js'
+import { reconcileProfileEmail } from '@auth/server/reconcileProfileEmail.js'
 
 function authMetaName(user, key) {
   return user?.user_metadata?.[key] ?? user?.raw_user_meta_data?.[key] ?? ''
