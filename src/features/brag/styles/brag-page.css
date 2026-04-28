@@ -2513,8 +2513,9 @@
 
 .be-doc-entry-footer {
   display: flex;
-  align-items: center;
-  gap: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .be-doc-strength-indicator {
@@ -2567,6 +2568,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-left: 60px;
 }
 
 .be-doc-evidence-tag {
