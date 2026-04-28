@@ -4,20 +4,20 @@ import { apiJson, jsonRequest } from '@shared/utils/api'
 import { EvidenceTypeGroup, EvidenceUploadNotice } from './EntryComposerParts'
 
 export default function EntryComposer({ onSave, onClose }) {
-  const [title, setTitle]         = useState('')
-  const [body, setBody]           = useState('')
-  const [evTypes, setEvTypes]     = useState(new Set())
-  const [error, setError]         = useState('')
+  const [title, setTitle] = useState('')
+  const [body, setBody] = useState('')
+  const [evTypes, setEvTypes] = useState(new Set())
+  const [error, setError] = useState('')
 
   const saveEntryMutation = useMutation({
     mutationFn: () =>
       apiJson('/api/brag/entries', jsonRequest({
-          title: title.trim(),
-          body: body.trim(),
-          entry_date: new Date().toISOString().slice(0, 10),
-          evidence_types: [...evTypes],
-          visible_to_manager: false,
-        }, { method: 'POST' })),
+        title: title.trim(),
+        body: body.trim(),
+        entry_date: new Date().toISOString().slice(0, 10),
+        evidence_types: [...evTypes],
+        visible_to_manager: false,
+      }, { method: 'POST' })),
   })
 
   const toggleEvType = (type) => {
@@ -48,46 +48,53 @@ export default function EntryComposer({ onSave, onClose }) {
   const saving = saveEntryMutation.isPending
 
   return (
-    <div className="be-composer-stage">
+    <div className="be-entry-composer-stage">
       <form
-        className="be-composer"
+        className="be-entry-composer"
         aria-label="Add a new entry"
         onSubmit={(event) => {
           event.preventDefault()
           void handleSave()
         }}
       >
-        <label className="be-comp-ev-label" htmlFor="be-entry-title">Entry title</label>
-        <input
-          id="be-entry-title"
-          type="text"
-          className="be-comp-title"
-          placeholder="What did you achieve?"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          autoFocus
-        />
-        <label className="be-comp-ev-label" htmlFor="be-entry-body">Impact and evidence</label>
-        <textarea
-          id="be-entry-body"
-          className="be-comp-body"
-          rows={4}
-          placeholder="Describe what you did, what the impact was, and how you know it worked."
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-        />
+        <section className="be-entry-section">
+          <label className="be-entry-label" htmlFor="be-entry-title">Entry title</label>
+          <input
+            id="be-entry-title"
+            type="text"
+            className="be-entry-title"
+            placeholder="What did you achieve?"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            autoFocus
+          />
+        </section>
+
+        <div className="be-entry-divider" aria-hidden="true" />
+
+        <section className="be-entry-section">
+          <label className="be-entry-label" htmlFor="be-entry-body">Impact and evidence</label>
+          <textarea
+            id="be-entry-body"
+            className="be-entry-body"
+            rows={4}
+            placeholder="Describe what you did, what the impact was, and how you know it worked."
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+          />
+        </section>
+
         <EvidenceTypeGroup selectedTypes={evTypes} onToggle={toggleEvType} />
         <EvidenceUploadNotice />
-        <div className="be-comp-footer">
-          <div />
-          <div className="be-comp-btns">
-            <button type="button" onClick={onClose} className="be-comp-cancel" disabled={saving}>Cancel</button>
-            <button type="submit" className="be-comp-save" disabled={saving || !title.trim()}>
-              {saving ? 'Saving...' : 'Save entry'}
-            </button>
-          </div>
+
+        <div className="be-entry-actions">
+          <button type="button" onClick={onClose} className="be-entry-btn be-entry-btn--secondary" disabled={saving}>Cancel</button>
+          <button type="submit" className="be-entry-btn be-entry-btn--primary" disabled={saving || !title.trim()}>
+            {saving ? 'Saving...' : 'Save entry'}
+          </button>
         </div>
-        {error && <p className="be-comp-error" role="alert">{error}</p>}
+
+        {error && <p className="be-entry-error" role="alert">{error}</p>}
       </form>
     </div>
   )
