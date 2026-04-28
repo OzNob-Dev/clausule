@@ -396,17 +396,20 @@
   width: 100%;
 }
 
-.be-feedback-tabs {
+.be-feedback-tabs,
+.be-tabs {
   display: inline-flex;
   width: fit-content;
   gap: 4px;
   padding: 5px;
   border: 1px solid rgba(60, 45, 35, 0.12);
   border-radius: 999px;
+  margin-bottom: 24px;
   background: #EEE5DA;
 }
 
-.be-feedback-tab {
+.be-feedback-tab,
+.be-tab {
   min-height: 40px;
   padding: 0 16px;
   border: 0;
@@ -420,12 +423,18 @@
   transition: background 0.15s, box-shadow 0.15s, color 0.15s;
 }
 
-.be-feedback-tab-active {
-  background: #FAF7F3;
-  color: #2A221A;
+.be-feedback-tab:hover,
+.be-tab:hover { color: #3A2E28; }
+
+.be-feedback-tab-active,
+.be-tab--active {
+  background: #2A221A;
+  color: #FFF8EF;
+  box-shadow: 0 10px 24px rgba(42, 34, 26, 0.18);
 }
 
-.be-feedback-tab:focus-visible {
+.be-feedback-tab:focus-visible,
+.be-tab:focus-visible {
   outline: 3px solid rgba(201, 79, 42, 0.34);
   outline-offset: 2px;
 }
