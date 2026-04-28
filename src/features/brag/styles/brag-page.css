@@ -2227,6 +2227,276 @@
   color: #9E1F1F;
 }
 
+.be-doc-screen {
+  --be-doc-cream: #FAF8F5;
+  --be-doc-taupe: #E8E3DB;
+  --be-doc-ink: #3D3229;
+  --be-doc-clay: #C46B4A;
+  --be-doc-clay-deep: #A85A3D;
+  --be-doc-shadow-soft: rgba(61, 50, 41, 0.08);
+  --be-doc-shadow-med: rgba(61, 50, 41, 0.12);
+  --be-doc-shadow-strong: rgba(61, 50, 41, 0.16);
+  background: linear-gradient(165deg, #FAF8F5 0%, #F0EBE3 100%);
+}
+
+.be-doc-screen .be-inner {
+  max-width: 1100px;
+  padding: 56px 32px 104px;
+}
+
+.be-doc-inner {
+  width: 100%;
+}
+
+.be-doc-header {
+  max-width: 760px;
+  margin-bottom: 56px;
+  animation: be-doc-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.be-doc-eyebrow {
+  display: block;
+  margin-bottom: 20px;
+  color: var(--be-doc-clay);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.be-doc-header h1 {
+  margin: 0;
+  color: var(--be-doc-ink);
+  font-family: var(--be-serif);
+  font-size: clamp(2.5rem, 5vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.be-doc-timeline {
+  display: grid;
+  gap: 72px;
+}
+
+.be-doc-year-group {
+  animation: be-doc-group-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.be-doc-year-group:nth-child(1) { animation-delay: 0.1s; }
+.be-doc-year-group:nth-child(2) { animation-delay: 0.2s; }
+.be-doc-year-group:nth-child(3) { animation-delay: 0.3s; }
+
+.be-doc-year-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.be-doc-year-badge {
+  margin: 0;
+  padding: 12px 24px;
+  border: 2px solid var(--be-doc-taupe);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px var(--be-doc-shadow-soft);
+  color: var(--be-doc-ink);
+  font-family: var(--be-serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.be-doc-year-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--be-doc-taupe) 0%, transparent 100%);
+}
+
+.be-doc-company-group {
+  margin-bottom: 48px;
+}
+
+.be-doc-company-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-left: 24px;
+}
+
+.be-doc-company-name {
+  margin: 0;
+  color: var(--be-doc-clay);
+  font-family: var(--be-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.be-doc-company-role {
+  margin: 0;
+  color: rgba(61, 50, 41, 0.6);
+  font-size: 16px;
+}
+
+.be-doc-entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.be-doc-entry-card {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-left: 4px solid var(--be-doc-clay);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px var(--be-doc-shadow-soft), 0 16px 48px var(--be-doc-shadow-med);
+  backdrop-filter: blur(20px);
+  padding: 40px 48px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.be-doc-entry-card:hover {
+  box-shadow: 0 4px 12px var(--be-doc-shadow-soft), 0 20px 56px var(--be-doc-shadow-med);
+  transform: translateX(4px);
+}
+
+.be-doc-entry-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.be-doc-entry-title {
+  margin: 0;
+  color: var(--be-doc-ink);
+  font-family: var(--be-serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.be-doc-entry-date {
+  flex-shrink: 0;
+  color: rgba(61, 50, 41, 0.6);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.be-doc-entry-body {
+  margin: 0 0 24px;
+  color: rgba(61, 50, 41, 0.8);
+  font-family: var(--be-serif);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+}
+
+.be-doc-entry-footer {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.be-doc-strength-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.be-doc-strength-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(196, 107, 74, 0.2);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(196, 107, 74, 0.1) 0%, rgba(196, 107, 74, 0.05) 100%);
+  flex-shrink: 0;
+}
+
+.be-doc-strength-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--be-doc-clay);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.be-doc-strength-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.be-doc-strength-label {
+  margin-bottom: 4px;
+  color: var(--be-doc-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.be-doc-strength-description {
+  color: rgba(61, 50, 41, 0.6);
+  font-size: 14px;
+}
+
+.be-doc-evidence-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.be-doc-evidence-tag {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(196, 107, 74, 0.2);
+  background: rgba(196, 107, 74, 0.08);
+  color: var(--be-doc-clay);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.be-doc-evidence-tag .be-ev-pill-dot {
+  width: 5px;
+  height: 5px;
+}
+
+@keyframes be-doc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes be-doc-group-rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .be-panel-swap {
   will-change: opacity, transform;
 }
@@ -2649,6 +2919,49 @@
   .be-entry-tag {
     padding: 12px 20px;
     font-size: 0.9375rem;
+  }
+
+  .be-doc-screen .be-inner {
+    padding: 32px 20px 88px;
+  }
+
+  .be-doc-header {
+    margin-bottom: 36px;
+  }
+
+  .be-doc-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .be-doc-year-badge {
+    font-size: 24px;
+  }
+
+  .be-doc-company-name {
+    font-size: 20px;
+  }
+
+  .be-doc-entry-card {
+    padding: 32px 24px;
+  }
+
+  .be-doc-entry-title {
+    font-size: 24px;
+  }
+
+  .be-doc-entry-body {
+    font-size: 17px;
+  }
+
+  .be-doc-entry-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .be-doc-entry-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
   }
 
   .be-entry-dropzone {
