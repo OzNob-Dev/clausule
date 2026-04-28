@@ -1,4 +1,6 @@
 /* ── Brag doc page content ────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap');
+
 :root {
   --be-motion-clay: #C94F2A;
   --be-motion-gold: #F8D37B;
@@ -684,6 +686,7 @@
   justify-content: center;
   min-height: min(640px, calc(100vh - 160px));
   padding: 48px 24px;
+  background: linear-gradient(165deg, #FAF8F5 0%, #F0EBE3 100%);
 }
 
 .be-entry-composer {
@@ -700,20 +703,19 @@
 
 .be-entry-section {
   display: grid;
-  gap: 24px;
+  gap: 16px;
 }
 
 .be-entry-label {
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 0;
   color: var(--acc);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.be-entry-title,
 .be-entry-body {
   width: 100%;
   border: 2px solid rgba(231, 224, 216, 0.96);
@@ -725,20 +727,29 @@
 }
 
 .be-entry-title {
-  padding: 22px 26px;
+  display: block;
+  min-height: 0;
+  padding: 0;
   margin: 0;
-  font-family: var(--font-serif);
-  font-size: clamp(1.25rem, 1.08rem + 0.9vw, 1.75rem);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: rgba(61, 50, 41, 0.5);
+  font-family: 'Fraunces', var(--font-serif), Georgia, serif;
+  font-size: clamp(1.5rem, 1.25rem + 1vw, 1.75rem);
   font-weight: 400;
   letter-spacing: -0.01em;
+  line-height: 1.2;
+  outline: none;
 }
 
 .be-entry-body {
   min-height: 200px;
   padding: 22px 26px;
   resize: vertical;
-  font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 0.98rem + 0.45vw, 1.25rem);
+  font-family: 'Fraunces', var(--font-serif), Georgia, serif;
+  font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.25rem);
   line-height: 1.5;
   letter-spacing: -0.01em;
 }
@@ -747,6 +758,10 @@
 .be-entry-body::placeholder {
   color: rgba(61, 50, 41, 0.4);
   font-weight: 300;
+}
+
+.be-entry-title::placeholder {
+  color: rgba(61, 50, 41, 0.5);
 }
 
 .be-entry-title:hover,
@@ -760,6 +775,18 @@
   outline: none;
   border-color: rgba(196, 107, 74, 1);
   box-shadow: 0 4px 16px rgba(61, 50, 41, 0.12), 0 0 0 4px rgba(196, 107, 74, 0.1);
+}
+
+.be-entry-title:hover,
+.be-entry-title:focus {
+  transform: none;
+  box-shadow: none;
+}
+
+.be-entry-title::-webkit-inner-spin-button,
+.be-entry-title::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
 }
 
 .be-entry-divider {
@@ -823,8 +850,8 @@
 
 .be-entry-dropzone-title {
   color: #3D3229;
-  font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-family: 'Fraunces', var(--font-serif), Georgia, serif;
+  font-size: clamp(1.125rem, 1rem + 0.45vw, 1.25rem);
   font-weight: 500;
   letter-spacing: -0.01em;
 }
