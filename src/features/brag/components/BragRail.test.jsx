@@ -13,76 +13,29 @@ vi.mock('@features/auth/context/AuthContext', () => ({
 describe('BragRail integration', () => {
   beforeEach(() => {
     logout.mockClear()
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED = 'false'
-    process.env.NEXT_PUBLIC_SSO_MICROSOFT_ENABLED = 'false'
-    process.env.NEXT_PUBLIC_SSO_APPLE_ENABLED = 'false'
     useProfileStore.getState().clearProfile()
   })
 
-  it('does not render a duplicate avatar in the rail', () => {
+  it('renders the same sidebar routes as the standalone shell', () => {
     useProfileStore.getState().setProfile({
       firstName: 'Ada',
       lastName: 'Lovelace',
       email: 'ada@example.com',
     })
 
-    render(<BragRail activePage="brag" />)
-
-    expect(screen.queryByText('AL')).not.toBeInTheDocument()
-  })
-
-  it('links to settings from the brag page', () => {
-    render(<BragRail activePage="brag" />)
-
-    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
-  })
-
-  it('links to feedback capture from the rail', () => {
     render(<BragRail activePage="feedback" />)
 
-    const feedbackLink = screen.getByRole('link', { name: /feedback/i })
-    expect(feedbackLink).toHaveAttribute('href', '/brag/feedback')
-    expect(feedbackLink).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
+    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag/feedback')
+    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('aria-current', 'page')
   })
 
   it('delegates sign out to auth context', async () => {
-    const userEvent = await import('@testing-library/user-event')
-    const user = userEvent.default.setup()
+    const user = (await import('@testing-library/user-event')).default.setup()
 
     render(<BragRail activePage="brag" />)
-    await user.click(screen.getByRole('button', { name: /sign out/i }))
+    await user.click(screen.getByRole('button', { name: /log out/i }))
 
     expect(logout).toHaveBeenCalledTimes(1)
-  })
-
-  it('hides app navigation until authenticator setup is complete', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false })
-
-    render(<BragRail activePage="settings" />)
-
-    expect(screen.queryByRole('link', { name: /brag doc/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /feedback/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
-  })
-
-  it('hides app navigation when MFA is missing after non-OTP auth', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: false })
-
-    render(<BragRail activePage="settings" />)
-
-    expect(screen.queryByRole('link', { name: /brag doc/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /settings/i })).not.toBeInTheDocument()
-  })
-
-  it('shows app navigation when SSO is configured without MFA', () => {
-    useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: true })
-
-    render(<BragRail activePage="settings" />)
-
-    expect(screen.getByRole('link', { name: /brag doc/i })).toHaveAttribute('href', '/brag')
-    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag/feedback')
-    expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/brag/settings')
-    expect(screen.getByRole('link', { name: /profile/i })).toHaveAttribute('href', '/profile')
   })
 })

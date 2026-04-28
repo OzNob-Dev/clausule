@@ -1,31 +1,41 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useProfileStore } from '@features/auth/store/useProfileStore'
 import BragIdentitySidebar from './BragIdentitySidebar'
 
-describe('BragIdentitySidebar', () => {
-  it('renders profile, note, and overview sections from data', () => {
-    render(
-      <BragIdentitySidebar
-        ariaLabel="Feedback guidance"
-        eyebrow="Clausule · Feedback"
-        avatarInitials="AL"
-        displayName="Ada Lovelace"
-        email="ada@example.com"
-        noteLabel="Why this matters"
-        note="Your note goes straight to the Clausule team."
-        overviewLabel="What helps most"
-        status="Private"
-        statusSub="Seen by app owners only"
-        legendTitle="A useful note usually includes"
-        legendItems={[{ label: 'What happened', color: 'red' }]}
-      />
-    )
+const logout = vi.fn()
 
-    expect(screen.getByRole('complementary', { name: /feedback guidance/i })).toBeInTheDocument()
+vi.mock('@features/auth/context/AuthContext', () => ({
+  useAuth: () => ({ logout }),
+}))
+
+describe('BragIdentitySidebar', () => {
+  beforeEach(() => {
+    logout.mockClear()
+    useProfileStore.getState().clearProfile()
+  })
+
+  it('renders the standalone sidebar navigation for real routes only', async () => {
+    useProfileStore.getState().setProfile({
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      email: 'ada@example.com',
+    })
+
+    render(<BragIdentitySidebar activePage="profile" eyebrow="Clausule · Profile" ariaLabel="Sidebar navigation" />)
+
+    expect(screen.getByRole('complementary', { name: /sidebar navigation/i })).toBeInTheDocument()
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
-    expect(screen.getByText('Your note goes straight to the Clausule team.')).toBeInTheDocument()
-    expect(screen.getByText('Private')).toBeInTheDocument()
-    expect(screen.getByText('What happened')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
+    expect(screen.getByRole('link', { name: /security/i })).toHaveAttribute('href', '/brag/settings')
+    expect(screen.getByRole('link', { name: /your entries/i })).toHaveAttribute('href', '/brag')
+    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag/feedback')
+    expect(screen.queryByText(/templates/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/help center/i)).not.toBeInTheDocument()
+
+    const user = (await import('@testing-library/user-event')).default.setup()
+    await user.click(screen.getByRole('button', { name: /log out/i }))
+    expect(logout).toHaveBeenCalledTimes(1)
   })
 })
