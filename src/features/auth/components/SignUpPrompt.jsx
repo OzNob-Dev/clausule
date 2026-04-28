@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@shared/components/ui/Link'
 
 export default function SignUpPrompt() {
   return (

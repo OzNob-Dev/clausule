@@ -8,13 +8,24 @@ const EXCLUDED_FILE_RE = /\.(test|spec)\.[jt]sx?$/
 const LAYER_ORDER = ['atoms', 'molecules', 'organisms', 'templates', 'pages']
 
 const FILE_OVERRIDES = new Map([
+  ['src/shared/components/ui/Card.jsx', new Map([
+    ['Card', { layer: 'molecules', previewKind: 'card' }],
+  ])],
+  ['src/shared/components/ui/Field.jsx', new Map([
+    ['Field', { layer: 'molecules', previewKind: 'field' }],
+    ['FieldHint', { layer: 'atoms', previewKind: 'field' }],
+    ['FieldInput', { layer: 'atoms', previewKind: 'field' }],
+    ['FieldLabel', { layer: 'atoms', previewKind: 'field' }],
+  ])],
+  ['src/shared/components/ui/Link.jsx', new Map([
+    ['Link', { layer: 'atoms', previewKind: 'link' }],
+  ])],
   ['src/features/signup/components/SignupButtons.jsx', new Map([
     ['CtaBtn', { layer: 'atoms', previewKind: 'button' }],
     ['BackBtn', { layer: 'atoms', previewKind: 'button' }],
   ])],
   ['src/features/signup/components/SignupFormField.jsx', new Map([
-    ['FieldLabel', { layer: 'atoms', previewKind: 'field' }],
-    ['FieldInput', { layer: 'atoms', previewKind: 'field' }],
+    ['SignupFormField', { layer: 'molecules', previewKind: 'field' }],
   ])],
   ['src/features/signup/components/SignupIcons.jsx', new Map([
     ['CheckIcon', { layer: 'atoms', previewKind: 'icon' }],
@@ -53,6 +64,7 @@ const ENTRY_OVERRIDES = new Map([
   ['FeedbackCenter', { layer: 'organisms', previewKind: 'panel' }],
   ['FeedbackComposer', { layer: 'organisms', previewKind: 'composer' }],
   ['FieldInput', { layer: 'atoms', previewKind: 'field' }],
+  ['FieldHint', { layer: 'atoms', previewKind: 'field' }],
   ['FieldLabel', { layer: 'atoms', previewKind: 'field' }],
   ['MfaLoginAppStep', { layer: 'organisms', previewKind: 'otp' }],
   ['MfaLoginEmailStep', { layer: 'organisms', previewKind: 'otp' }],

@@ -1,4 +1,5 @@
 import { cn } from '@shared/utils/cn'
+import { FieldHint, FieldInput, FieldLabel } from '@shared/components/ui/Field'
 
 export default function SignInEmailForm({
   email,
@@ -32,8 +33,8 @@ export default function SignInEmailForm({
 
       <form className="w-full" onSubmit={onSubmit} noValidate>
         <div className="su-field">
-          <label className="su-field-label" htmlFor="si-email">Email</label>
-          <input
+          <FieldLabel htmlFor="si-email">Email</FieldLabel>
+          <FieldInput
             id="si-email"
             type="email"
             placeholder="you@email.com"
@@ -44,29 +45,26 @@ export default function SignInEmailForm({
             autoFocus
             autoComplete="email"
             required
+            error={showFeedback && !!result.error}
             aria-invalid={showFeedback && !result.valid && !result.suggestion}
             aria-describedby="si-email-hint"
-            className={cn(
-              'su-input',
-              showFeedback && result.error && 'su-input--error',
-              showFeedback && result.suggestion && 'su-input--warn'
-            )}
+            className={cn(showFeedback && result.suggestion && 'su-input--warn')}
           />
 
           <div id="si-email-hint" aria-live="polite">
             {showFeedback && result.error && (
-              <p className="su-field-hint su-field-hint--error" role="alert">
+              <FieldHint error role="alert">
                 {result.error}
-              </p>
+              </FieldHint>
             )}
             {showFeedback && result.suggestion && (
-              <p className="su-field-hint su-field-hint--suggest" role="alert">
+              <FieldHint className="su-field-hint--suggest" role="alert">
                 Did you mean{' '}
                 <button type="button" className="su-suggest-btn" onClick={onAcceptSuggestion}>
                   {result.suggestion}
                 </button>
                 ?
-              </p>
+              </FieldHint>
             )}
           </div>
         </div>

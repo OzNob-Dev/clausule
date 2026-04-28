@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useReducer } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { apiJson, jsonRequest } from '@shared/utils/api'
@@ -9,8 +8,9 @@ import { getActiveSsoProviders, ssoConfigFromEnv } from '@shared/utils/sso'
 import { SsoProviderButton } from '@features/auth/components/SsoProviderButton'
 import { ROUTES } from '@shared/utils/routes'
 import { CtaBtn } from './SignupButtons'
-import { FieldInput, FieldLabel } from './SignupFormField'
+import { FieldInput, FieldLabel } from '@shared/components/ui/Field'
 import { ArrowIcon } from './SignupIcons'
+import { Link } from '@shared/components/ui/Link'
 
 function createState(initialData) {
   return {
@@ -58,15 +58,12 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
   const activeSsoProviders = hideSso ? [] : getActiveSsoProviders(ssoConfigFromEnv)
   const hasSso = activeSsoProviders.length > 0
 
-
   const emailResult = validateEmail(state.email)
   const showEmailFeedback = state.emailDirty && state.email.trim().length > 0
-  const normalizedEmail = (emailResult.suggestion ?? state.email.trim()).toLowerCase()
 
   const acceptSuggestion = () => {
     dispatch({ type: 'accept_suggestion', value: emailResult.suggestion })
   }
-
 
   const handleContinue = () => {
     const noName = !state.firstName.trim()
@@ -83,7 +80,6 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
       email: emailResult.suggestion ?? state.email.trim(),
     })
   }
-
 
   const handleEmailChange = (event) => {
     if (emailLocked) return

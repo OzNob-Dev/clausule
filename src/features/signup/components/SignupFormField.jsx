@@ -1,17 +1,11 @@
-'use client'
+import { Field, FieldHint, FieldInput, FieldLabel } from '@shared/components/ui/Field'
 
-export function FieldLabel({ children, htmlFor }) {
-  return <label className="su-field-label" htmlFor={htmlFor}>{children}</label>
-}
-
-export function FieldInput({ error, onBlur, className = '', ...props }) {
+export function SignupFormField({ label, hint, error, children, className = '', htmlFor, inputProps, ...props }) {
   return (
-    <input
-      {...props}
-      className={`su-input${error ? ' su-input--error' : ''}${className ? ` ${className}` : ''}`}
-      onBlur={(event) => {
-        onBlur?.(event)
-      }}
-    />
+    <Field className={className} {...props}>
+      <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>
+      {children ?? (htmlFor ? <FieldInput id={htmlFor} error={error} {...inputProps} /> : null)}
+      {hint && <FieldHint error={error}>{hint}</FieldHint>}
+    </Field>
   )
 }

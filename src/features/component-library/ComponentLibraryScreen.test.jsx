@@ -62,21 +62,60 @@ describe('ComponentLibraryScreen', () => {
     expect(screen.getByText('AL')).toHaveClass('h-12', 'w-12')
   })
 
-  it('smokes link, card, icon, and page surfaces', () => {
+  it('renders the shared link preview', async () => {
+    const user = userEvent.setup()
+    render(<ComponentLibraryScreen entries={pick('src/shared/components/ui/Link.jsx#Link')} />)
+
+    await user.click(screen.getByRole('button', { name: 'Link' }))
+
+    expect(screen.getByRole('link', { name: 'Continue with email' })).toHaveAttribute('href', '/signup')
+    expect(screen.getByRole('link', { name: 'View library' })).toHaveAttribute('href', '/components')
+  })
+
+  it('renders the shared card preview', async () => {
+    const user = userEvent.setup()
+    render(<ComponentLibraryScreen entries={pick('src/shared/components/ui/Card.jsx#Card')} />)
+
+    await user.click(screen.getByRole('button', { name: 'Card' }))
+
+    expect(screen.getByText('Reusable card surface')).toBeInTheDocument()
+  })
+
+  it('renders the shared field preview', async () => {
+    const user = userEvent.setup()
+    render(<ComponentLibraryScreen entries={pick('src/shared/components/ui/Field.jsx#Field')} />)
+
+    await user.click(screen.getByRole('button', { name: 'Field' }))
+
+    expect(screen.getByLabelText('Email address')).toHaveValue('ada@example.com')
+    expect(screen.getByText('Enter a valid email address.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /^Toggle error$/ }))
+
+    expect(screen.getByText('Field primitives stay composable.')).toBeInTheDocument()
+  })
+
+  it('smokes icon, shell, and page surfaces', async () => {
+    const user = userEvent.setup()
     render(
       <ComponentLibraryScreen
         entries={pick(
-          'src/features/auth/components/SsoProviderButton.jsx#SsoProviderButton',
-          'src/features/brag/components/EntryCard.jsx#EntryCard',
           'src/features/auth/components/SignInBrandPanel.jsx#BrandBugIcon',
+          'src/shared/components/layout/AppShell.jsx#AppShell',
           'src/app/(protected)/components/page.jsx#Page'
         )}
       />
     )
 
-    expect(screen.getByRole('button', { name: 'SsoProviderButton' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'EntryCard' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'BrandBugIcon' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'AppShell' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Page' })).toBeInTheDocument()
+    expect(screen.getByText('Icon-only primitives need contrast, sizing, and context to stay readable.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'AppShell' }))
+    expect(screen.getByText('This route runs inside the shared app shell.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Page' }))
+    expect(screen.getAllByText('/components').length).toBeGreaterThan(0)
   })
 })

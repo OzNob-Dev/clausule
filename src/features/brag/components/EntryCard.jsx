@@ -1,9 +1,10 @@
 import EntryRings from './EntryRings'
 import { relativeTime } from '@shared/utils/relativeTime'
+import { Card } from '@shared/components/ui/Card'
 
 export default function EntryCard({ entry }) {
   return (
-    <article className="be-entry-card">
+    <Card as="article" className="be-entry-card">
       <div className="be-entry-head">
         <div className="be-entry-title">{entry.title}</div>
         <div className="be-entry-date">
@@ -26,6 +27,6 @@ export default function EntryCard({ entry }) {
           </div>
         </div>
       </div>
-    </article>
+    </Card>
   )
 }

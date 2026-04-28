@@ -4,8 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
+import { Card } from './Card'
 import { CategoryDot, CategoryPill } from './CategoryPill'
 import { CodeEmail } from './CodeEmail'
+import { Field, FieldHint, FieldInput, FieldLabel } from './Field'
+import { Link } from './Link'
 import { Modal } from './Modal'
 import { ThinkingDots } from './ThinkingDots'
 
@@ -15,6 +18,15 @@ describe('UI components', () => {
       <>
         <Avatar initials="AL" bg="#111" color="#fff" />
         <Button>Save</Button>
+        <Link href="/components">Library</Link>
+        <Card as="section">
+          <h2>Card title</h2>
+        </Card>
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <FieldInput id="email" defaultValue="ada@example.com" />
+          <FieldHint>We will never share it.</FieldHint>
+        </Field>
         <CategoryPill cat="conduct" showDot />
         <CodeEmail to="ada@example.com" />
         <ThinkingDots />
@@ -23,6 +35,9 @@ describe('UI components', () => {
 
     expect(screen.getByText('AL')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Library' })).toHaveAttribute('href', '/components')
+    expect(screen.getByText('Card title')).toBeInTheDocument()
+    expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
     expect(screen.getByText('Conduct')).toBeInTheDocument()
     expect(screen.getByText(/To:/)).toHaveTextContent('ada@example.com')
     expect(screen.getByLabelText('Demo verification email')).toBeInTheDocument()
