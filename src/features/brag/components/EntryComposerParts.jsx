@@ -1,3 +1,5 @@
+import { Button } from '@shared/components/ui/Button'
+
 const EVIDENCE_TYPES = ['Work artefact', 'Metrics / data', 'Peer recognition', 'External link']
 
 export function EvidenceTypeGroup({ selectedTypes, onToggle }) {
@@ -6,15 +8,16 @@ export function EvidenceTypeGroup({ selectedTypes, onToggle }) {
       <span className="be-entry-label">Evidence types - tick all that apply</span>
       <div className="be-entry-tags" role="group" aria-label="Evidence types">
         {EVIDENCE_TYPES.map((type) => (
-          <button
+          <Button
             key={type}
             type="button"
             onClick={() => onToggle(type)}
             aria-pressed={selectedTypes.has(type)}
             className={selectedTypes.has(type) ? 'be-entry-tag be-entry-tag--selected' : 'be-entry-tag'}
+            variant="ghost"
           >
             {type}
-          </button>
+          </Button>
         ))}
       </div>
     </section>

@@ -42,7 +42,7 @@ describe('component registry', () => {
 
     expect(counts.get('src/features/signup/components/SignupButtons.jsx')).toBe(2)
     expect(counts.get('src/shared/components/ui/Card.jsx')).toBe(1)
-    expect(counts.get('src/shared/components/ui/Field.jsx')).toBe(4)
+    expect(counts.get('src/shared/components/ui/Field.jsx')).toBe(7)
     expect(counts.get('src/shared/components/ui/Link.jsx')).toBe(1)
     expect(counts.get('src/features/signup/components/SignupIcons.jsx')).toBe(3)
     expect(counts.get('src/features/auth/components/SignInBrandPanel.jsx')).toBe(2)

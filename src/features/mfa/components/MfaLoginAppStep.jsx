@@ -1,4 +1,5 @@
 import DigitRow from './DigitRow'
+import { Button } from '@shared/components/ui/Button'
 import { maskEmail } from '@features/mfa/utils/maskEmail'
 
 export default function MfaLoginAppStep({
@@ -56,12 +57,12 @@ export default function MfaLoginAppStep({
         </section>
 
         <section className="mfa-app-right">
-          <button type="button" className="mfa-app-back" onClick={onBack} aria-label="Back to sign in">
+          <Button type="button" variant="ghost" className="mfa-app-back" onClick={onBack} aria-label="Back to sign in">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
               <polyline points="10 4 6 8 10 12" />
             </svg>
             Back
-          </button>
+          </Button>
 
           <div className="mfa-app-sec-row" role="status" aria-label={`Signing in as ${maskEmail(email)}`}>
             <div className="mfa-app-sec-icon" aria-hidden="true">
@@ -94,8 +95,9 @@ export default function MfaLoginAppStep({
             <p className="mfa-error" role="alert">{errorMessage || 'Incorrect code — try again'}</p>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="primary"
             className="mfa-app-btn"
             onClick={onVerify}
             disabled={!codeReady || otpState === 'checking' || otpState === 'done'}
@@ -105,12 +107,12 @@ export default function MfaLoginAppStep({
               <polyline points="3 8 7 12 13 4" />
             </svg>
             Verify identity
-          </button>
+          </Button>
 
           {onUseRecovery && (
             <p className="mfa-app-footer">
               Can't access your app?{' '}
-              <button type="button" className="mfa-app-link" onClick={onUseRecovery}>Use a recovery code</button>
+              <Button type="button" variant="ghost" className="mfa-app-link" onClick={onUseRecovery}>Use a recovery code</Button>
             </p>
           )}
 

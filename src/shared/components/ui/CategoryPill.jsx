@@ -1,4 +1,5 @@
 import { cn } from '@shared/utils/cn'
+import { Button } from './Button'
 
 const catConfig = {
   perf:    { label: 'Performance', mod: 'perf'    },
@@ -43,12 +44,13 @@ export function CategoryDot({ cat, size = 8, className = '', onClick }) {
   )
 
   return onClick ? (
-    <button
+    <Button
       type="button"
       className={dot}
       onClick={onClick}
       title={`Filter by ${cfg.label}`}
       aria-label={`Filter by ${cfg.label}`}
+      variant="ghost"
     />
   ) : (
     <span className={dot} title={cfg.label} aria-hidden="true" />

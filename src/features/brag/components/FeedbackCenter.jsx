@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { Button } from '@shared/components/ui/Button'
 import FeedbackComposer from '@features/brag/components/FeedbackComposer'
 import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 
@@ -59,7 +60,7 @@ export default function FeedbackCenter({ userEmail, onClose }) {
   return (
     <section className="be-feedback-center" aria-label="Feedback centre">
       <div className="be-feedback-tabs" role="tablist" aria-label="Feedback sections">
-        <button
+        <Button
           type="button"
           id="feedback-compose-tab"
           className={activeTab === 'compose' ? 'be-feedback-tab be-feedback-tab-active' : 'be-feedback-tab'}
@@ -71,8 +72,8 @@ export default function FeedbackCenter({ userEmail, onClose }) {
           onKeyDown={handleTabKeyDown}
         >
           Send feedback
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           id="feedback-centre-tab"
           className={activeTab === 'centre' ? 'be-feedback-tab be-feedback-tab-active' : 'be-feedback-tab'}
@@ -84,7 +85,7 @@ export default function FeedbackCenter({ userEmail, onClose }) {
           onKeyDown={handleTabKeyDown}
         >
           Feedback centre
-        </button>
+        </Button>
       </div>
 
       <div

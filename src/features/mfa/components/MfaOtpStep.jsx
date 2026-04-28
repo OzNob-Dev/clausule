@@ -1,4 +1,5 @@
 import { CodeEmail } from '@shared/components/ui/CodeEmail'
+import { Button } from '@shared/components/ui/Button'
 import DigitRow from './DigitRow'
 
 export default function MfaOtpStep({
@@ -38,7 +39,7 @@ export default function MfaOtpStep({
         {resendTimer > 0 ? (
           <span>Resend in {resendTimer}s</span>
         ) : (
-          <button className="mfa-resend-btn" onClick={onResend}>Resend code</button>
+          <Button type="button" variant="ghost" className="mfa-resend-btn" onClick={onResend}>Resend code</Button>
         )}
       </p>
     </div>

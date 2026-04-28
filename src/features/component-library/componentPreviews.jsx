@@ -6,7 +6,7 @@ import { Button } from '@shared/components/ui/Button'
 import { Card } from '@shared/components/ui/Card'
 import { CategoryDot, CategoryPill } from '@shared/components/ui/CategoryPill'
 import { CodeEmail } from '@shared/components/ui/CodeEmail'
-import { Field, FieldHint, FieldInput, FieldLabel } from '@shared/components/ui/Field'
+import { Field, FieldCheckbox, FieldHint, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'
 import { Link } from '@shared/components/ui/Link'
 import { Modal } from '@shared/components/ui/Modal'
 import PageLoader from '@shared/components/ui/PageLoader'
@@ -77,9 +77,24 @@ export function FieldPreview() {
             <FieldInput id="component-library-field" defaultValue="ada@example.com" error={error} />
             <FieldHint error={error}>{error ? 'Enter a valid email address.' : 'Field primitives stay composable.'}</FieldHint>
           </Field>
-          <button type="button" className="w-fit text-sm font-semibold text-acc underline underline-offset-4" onClick={() => setError((value) => !value)}>
+          <Button type="button" variant="ghost" size="sm" className="w-fit" onClick={() => setError((value) => !value)}>
             Toggle error
-          </button>
+          </Button>
+          <Field>
+            <FieldLabel htmlFor="component-library-select">Select</FieldLabel>
+            <FieldSelect id="component-library-select" defaultValue="one">
+              <option value="one">One</option>
+              <option value="two">Two</option>
+            </FieldSelect>
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="component-library-textarea">Textarea</FieldLabel>
+            <FieldTextarea id="component-library-textarea" defaultValue="Shared textarea control" rows={3} />
+          </Field>
+          <label className="inline-flex items-center gap-2 text-sm text-ts">
+            <FieldCheckbox defaultChecked />
+            Checkbox control
+          </label>
         </div>
       </Card>
       <p className="text-sm text-ts">Field primitives should stay composable, labeled, and keyboard-safe.</p>
@@ -128,15 +143,15 @@ export function ButtonPreview() {
       <div className="flex flex-wrap gap-3">
         <label className="grid gap-1 text-sm text-ts">
           <span className="text-[11px] uppercase tracking-[0.24em]">Variant</span>
-          <select value={variant} onChange={(e) => setVariant(e.target.value)} className="rounded-xl border border-rule bg-card px-3 py-2 text-sm text-tp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc">
+          <FieldSelect value={variant} onChange={(e) => setVariant(e.target.value)}>
             {buttonVariants.map((option) => <option key={option} value={option}>{option}</option>)}
-          </select>
+          </FieldSelect>
         </label>
         <label className="grid gap-1 text-sm text-ts">
           <span className="text-[11px] uppercase tracking-[0.24em]">Size</span>
-          <select value={size} onChange={(e) => setSize(e.target.value)} className="rounded-xl border border-rule bg-card px-3 py-2 text-sm text-tp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc">
+          <FieldSelect value={size} onChange={(e) => setSize(e.target.value)}>
             {buttonSizes.map((option) => <option key={option} value={option}>{option}</option>)}
-          </select>
+          </FieldSelect>
         </label>
       </div>
       <div className="flex flex-wrap gap-3">
@@ -156,16 +171,16 @@ export function AvatarPreview() {
     <div className="grid gap-5">
       <div className="flex flex-wrap gap-2">
         {avatarSizes.map((option) => (
-          <button key={option} type="button" className={controlClass(size === option)} onClick={() => setSize(option)}>
+          <Button key={option} type="button" variant="ghost" size="sm" className={controlClass(size === option)} onClick={() => setSize(option)}>
             {option}
-          </button>
+          </Button>
         ))}
       </div>
       <div className="flex flex-wrap gap-2">
         {avatarPalettes.map((option, index) => (
-          <button key={option.label} type="button" className={controlClass(palette === index)} onClick={() => setPalette(index)}>
+          <Button key={option.label} type="button" variant="ghost" size="sm" className={controlClass(palette === index)} onClick={() => setPalette(index)}>
             {option.label}
-          </button>
+          </Button>
         ))}
       </div>
       <Avatar initials="AL" size={size} bg={swatch.bg} color={swatch.fg} />
@@ -214,13 +229,13 @@ export function CategoryPreview() {
     <div className="grid gap-5">
       <div className="flex flex-wrap gap-2">
         {categoryOptions.map((option) => (
-          <button key={option} type="button" className={controlClass(cat === option)} onClick={() => setCat(option)}>
+          <Button key={option} type="button" variant="ghost" size="sm" className={controlClass(cat === option)} onClick={() => setCat(option)}>
             {option}
-          </button>
+          </Button>
         ))}
       </div>
       <label className="inline-flex items-center gap-2 text-sm text-ts">
-        <input type="checkbox" checked={showDot} onChange={(e) => setShowDot(e.target.checked)} className="h-4 w-4 rounded border-rule text-acc focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc" />
+        <FieldCheckbox checked={showDot} onChange={(e) => setShowDot(e.target.checked)} />
         Show dot
       </label>
       <div className="flex flex-wrap items-center gap-3">
@@ -238,9 +253,9 @@ export function ProviderIconPreview() {
     <div className="grid gap-5">
       <div className="flex flex-wrap gap-2">
         {providerOptions.map((option) => (
-          <button key={option} type="button" className={controlClass(provider === option)} onClick={() => setProvider(option)}>
+          <Button key={option} type="button" variant="ghost" size="sm" className={controlClass(provider === option)} onClick={() => setProvider(option)}>
             {option}
-          </button>
+          </Button>
         ))}
       </div>
       <Card as="span" padding="sm" className="p-0 inline-flex h-16 w-16 items-center justify-center">
@@ -311,9 +326,9 @@ export function LoaderPreview() {
     <div className="grid gap-4">
       <label className="grid gap-1 text-sm text-ts">
         <span className="text-[11px] uppercase tracking-[0.24em]">Variant</span>
-        <select value={variant} onChange={(e) => setVariant(e.target.value)} className="rounded-xl border border-rule bg-card px-3 py-2 text-sm text-tp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc">
+        <FieldSelect value={variant} onChange={(e) => setVariant(e.target.value)}>
           {pageLoaderVariants.map((option) => <option key={option} value={option}>{option}</option>)}
-        </select>
+        </FieldSelect>
       </label>
       <Card padding="lg">
         <PageLoader variant={variant} />
@@ -350,7 +365,7 @@ export function FormPreview() {
             <FieldLabel htmlFor="library-form-email">Email</FieldLabel>
             <FieldInput id="library-form-email" defaultValue="ada@example.com" />
           </Field>
-          <button type="button" className="inline-flex w-fit items-center rounded-full bg-acc px-4 py-2 text-sm font-semibold text-canvas">Send code</button>
+          <Button type="button" className="inline-flex w-fit items-center rounded-full bg-acc px-4 py-2 text-sm font-semibold text-canvas">Send code</Button>
         </form>
       </Card>
       <p className="text-sm text-ts">Forms should pair labels, feedback, and actions in one readable unit.</p>

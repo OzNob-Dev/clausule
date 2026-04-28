@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { Button } from '@shared/components/ui/Button'
+import { FieldCheckbox } from '@shared/components/ui/Field'
 import { apiJson, jsonRequest } from '@shared/utils/api'
 import { ROUTES } from '@shared/utils/routes'
 import '@features/brag/styles/linkedin-import.css'
@@ -45,8 +47,7 @@ function ImportCard({ item, onToggle, disabled, updating }) {
   return (
     <label className="li-item-card">
       <span className="li-item-card__check">
-        <input
-          type="checkbox"
+        <FieldCheckbox
           checked={item.selected}
           onChange={() => onToggle(item)}
           disabled={disabled}
@@ -192,8 +193,8 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
                 </p>
               </div>
               <div className="li-success__actions">
-                <button type="button" className="li-btn li-btn--secondary" onClick={() => router.push(ROUTES.bragResume)}>Open resume</button>
-                <button type="button" className="li-btn li-btn--primary" onClick={() => router.push(ROUTES.brag)}>Back to brag doc</button>
+                <Button type="button" variant="ghost" className="li-btn li-btn--secondary" onClick={() => router.push(ROUTES.bragResume)}>Open resume</Button>
+                <Button type="button" variant="primary" className="li-btn li-btn--primary" onClick={() => router.push(ROUTES.brag)}>Back to brag doc</Button>
               </div>
             </div>
           ) : (
@@ -219,10 +220,10 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
                     <h3>Authorize LinkedIn access</h3>
                     <p>Connect to LinkedIn to seed a private preview of your work history and social proof.</p>
                   </div>
-                  <button type="button" className="li-btn li-btn--linkedin" onClick={handleConnect} disabled={connectMutation.isPending || publishMutation.isPending || Boolean(session)}>
+                  <Button type="button" variant="primary" className="li-btn li-btn--linkedin" onClick={handleConnect} disabled={connectMutation.isPending || publishMutation.isPending || Boolean(session)}>
                     <LinkedInMark />
                     {session ? 'Connected' : 'Connect with LinkedIn'}
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="li-info">
@@ -258,10 +259,10 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
           )}
 
           <div className="li-actions">
-            <button type="button" className="li-btn li-btn--secondary" onClick={handleSkip} disabled={isBusy}>Skip for now</button>
-            <button type="button" className="li-btn li-btn--primary" onClick={session ? handlePublish : handleConnect} disabled={isBusy || (!session && connectMutation.isPending)}>
+            <Button type="button" variant="ghost" className="li-btn li-btn--secondary" onClick={handleSkip} disabled={isBusy}>Skip for now</Button>
+            <Button type="button" variant="primary" className="li-btn li-btn--primary" onClick={session ? handlePublish : handleConnect} disabled={isBusy || (!session && connectMutation.isPending)}>
               {session ? 'Publish to brag doc' : actionLabel}
-            </button>
+            </Button>
           </div>
 
           {error ? <p className="li-error" role="alert">{error}</p> : null}

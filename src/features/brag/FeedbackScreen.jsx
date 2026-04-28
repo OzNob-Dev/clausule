@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { fieldClass, areaClass } from '@shared/constants/classNames'
+import { Button } from '@shared/components/ui/Button'
+import { Field, FieldCheckbox, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import { ROUTES } from '@shared/utils/routes'
 import { apiJson, jsonRequest } from '@shared/utils/api'
@@ -121,7 +122,7 @@ function FeedbackForm({ userEmail, onSent }) {
               {' '}
               so you know it made it through.
             </p>
-            <button type="button" className="be-comp-save" onClick={() => router.push(ROUTES.brag)}>Back to brag doc</button>
+            <Button type="button" variant="primary" className="be-comp-save" onClick={() => router.push(ROUTES.brag)}>Back to brag doc</Button>
           </div>
         ) : (
           <form
@@ -133,50 +134,46 @@ function FeedbackForm({ userEmail, onSent }) {
             }}
           >
             <div className="be-feedback-grid">
-              <label className="be-feedback-field">
-                <span>What is this about?</span>
-                <div className="be-feedback-select-wrap">
-                  <select className={fieldClass} value={category} onChange={(event) => setCategory(event.target.value)} autoFocus>
-                    {CATEGORIES.map((value) => <option key={value}>{value}</option>)}
-                  </select>
-                </div>
-              </label>
+              <Field className="be-feedback-field">
+                <FieldLabel>What is this about?</FieldLabel>
+                <FieldSelect value={category} onChange={(event) => setCategory(event.target.value)} autoFocus>
+                  {CATEGORIES.map((value) => <option key={value}>{value}</option>)}
+                </FieldSelect>
+              </Field>
 
-              <label className="be-feedback-field">
-                <span>How does it feel?</span>
-                <div className="be-feedback-select-wrap">
-                  <select className={fieldClass} value={feeling} onChange={(event) => setFeeling(event.target.value)}>
-                    {FEELINGS.map((value) => <option key={value}>{value}</option>)}
-                  </select>
-                </div>
-              </label>
+              <Field className="be-feedback-field">
+                <FieldLabel>How does it feel?</FieldLabel>
+                <FieldSelect value={feeling} onChange={(event) => setFeeling(event.target.value)}>
+                  {FEELINGS.map((value) => <option key={value}>{value}</option>)}
+                </FieldSelect>
+              </Field>
 
-              <label className="be-feedback-field be-feedback-field--wide">
-                <span>Short summary</span>
-                <input className={fieldClass} value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="What should we know?" />
-              </label>
+              <Field className="be-feedback-field be-feedback-field--wide">
+                <FieldLabel>Short summary</FieldLabel>
+                <FieldInput value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="What should we know?" />
+              </Field>
 
-              <label className="be-feedback-field be-feedback-field--wide">
-                <span>Feedback for the app owners</span>
-                <textarea className={areaClass} value={message} onChange={(event) => setMessage(event.target.value)} rows={6} placeholder="Tell us what happened, what felt good, or what got in your way." />
-              </label>
+              <Field className="be-feedback-field be-feedback-field--wide">
+                <FieldLabel>Feedback for the app owners</FieldLabel>
+                <FieldTextarea value={message} onChange={(event) => setMessage(event.target.value)} rows={6} placeholder="Tell us what happened, what felt good, or what got in your way." />
+              </Field>
 
-              <label className="be-feedback-field be-feedback-field--wide">
-                <span>What would make it better?</span>
-                <textarea className={areaClass} value={improvement} onChange={(event) => setImprovement(event.target.value)} rows={5} placeholder="A workflow, design, feature, or rough idea is perfect." />
-              </label>
+              <Field className="be-feedback-field be-feedback-field--wide">
+                <FieldLabel>What would make it better?</FieldLabel>
+                <FieldTextarea value={improvement} onChange={(event) => setImprovement(event.target.value)} rows={5} placeholder="A workflow, design, feature, or rough idea is perfect." />
+              </Field>
             </div>
 
             <label className="be-feedback-check">
-              <input type="checkbox" checked={contactOk} onChange={(event) => setContactOk(event.target.checked)} />
+              <FieldCheckbox checked={contactOk} onChange={(event) => setContactOk(event.target.checked)} />
               <span>The Clausule team may contact me about this feedback.</span>
             </label>
 
             <p className="be-feedback-note">Sent privately to the app owners. This will not appear in your brag doc.</p>
 
             <div className="be-feedback-actions">
-              <button type="button" className="be-comp-cancel" onClick={() => router.push(ROUTES.brag)}>Cancel</button>
-              <button type="submit" className="be-comp-save" disabled={!canSend}>Send feedback</button>
+              <Button type="button" variant="ghost" className="be-comp-cancel" onClick={() => router.push(ROUTES.brag)}>Cancel</Button>
+              <Button type="submit" variant="primary" className="be-comp-save" disabled={!canSend}>Send feedback</Button>
             </div>
 
             {error && <p className="be-comp-error" role="alert">{error}</p>}

@@ -1,10 +1,10 @@
+import { FieldInput, FieldTextarea } from '@shared/components/ui/Field'
+
 function EditableField({ ariaLabel, className, disabled, field, multiline = false, onChange, value }) {
-  const Component = multiline ? 'textarea' : 'input'
+  const Component = multiline ? FieldTextarea : FieldInput
 
   return (
     <Component
-      type={multiline ? undefined : 'text'}
-      rows={multiline ? 2 : undefined}
       value={value}
       onChange={disabled ? undefined : onChange(field)}
       className={`${className} be-cv-editable`}
@@ -12,6 +12,8 @@ function EditableField({ ariaLabel, className, disabled, field, multiline = fals
       aria-disabled={disabled || undefined}
       aria-multiline={multiline || undefined}
       disabled={disabled}
+      rows={multiline ? 2 : undefined}
+      type={multiline ? undefined : 'text'}
     />
   )
 }
@@ -36,7 +38,7 @@ export default function ResumeDocument({ cvData, disabled = false, onBulletChang
           {cvData.bullets.map((bullet, index) => (
             <li key={index} className="be-cv-bullet-li">
               <span className="be-cv-bullet-marker" aria-hidden="true">·</span>
-              <textarea
+              <FieldTextarea
                 rows={2}
                 value={bullet}
                 onChange={disabled ? undefined : onBulletChange(index)}

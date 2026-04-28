@@ -1,3 +1,4 @@
+import { Button } from '@shared/components/ui/Button'
 import { useTotpSetup } from '@features/mfa/hooks/useTotpSetup'
 import DigitRow from '@features/mfa/components/DigitRow'
 import TotpSecretBlock from '@features/mfa/components/TotpSecretBlock'
@@ -20,7 +21,7 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
         <div className="bss-error" role="alert">
           We couldn&apos;t generate your authenticator setup right now.
           <div className="bss-totp-actions">
-            <button type="button" className="bss-mfa-reconfig-btn" onClick={() => totpSetup.retry()}>Try again</button>
+            <Button type="button" variant="ghost" className="bss-mfa-reconfig-btn" onClick={() => totpSetup.retry()}>Try again</Button>
           </div>
         </div>
       ) : (
@@ -53,7 +54,7 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
       )}
 
       <div className="bss-totp-actions">
-        <button type="button" className="bss-totp-cancel" onClick={onCancel}>Cancel</button>
+        <Button type="button" variant="ghost" className="bss-totp-cancel" onClick={onCancel}>Cancel</Button>
       </div>
     </div>
   )

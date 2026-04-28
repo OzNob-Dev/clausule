@@ -12,6 +12,7 @@ const push = vi.fn()
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
+  usePathname: () => '/signup',
 }))
 
 describe('Signup component integration', () => {

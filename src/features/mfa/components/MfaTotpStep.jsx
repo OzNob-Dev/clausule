@@ -1,3 +1,4 @@
+import { Button } from '@shared/components/ui/Button'
 import DigitRow from './DigitRow'
 import TotpSecretBlock from './TotpSecretBlock'
 
@@ -77,12 +78,12 @@ export default function MfaTotpStep({
 
       {totpDone && (
         <div className="mfa-factor-actions">
-          <button className="mfa-enter-btn" onClick={onContinue}>
+          <Button className="mfa-enter-btn" onClick={onContinue}>
             Continue
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
-          </button>
+          </Button>
         </div>
       )}
     </div>

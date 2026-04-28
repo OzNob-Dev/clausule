@@ -1,4 +1,5 @@
 import { cn } from '@shared/utils/cn'
+import { Button } from '@shared/components/ui/Button'
 import { FieldHint, FieldInput, FieldLabel } from '@shared/components/ui/Field'
 
 export default function SignInEmailForm({
@@ -60,18 +61,18 @@ export default function SignInEmailForm({
             {showFeedback && result.suggestion && (
               <FieldHint className="su-field-hint--suggest" role="alert">
                 Did you mean{' '}
-                <button type="button" className="su-suggest-btn" onClick={onAcceptSuggestion}>
+                <Button type="button" variant="ghost" size="sm" className="su-suggest-btn" onClick={onAcceptSuggestion}>
                   {result.suggestion}
-                </button>
+                </Button>
                 ?
               </FieldHint>
             )}
           </div>
         </div>
 
-        <button type="submit" className="su-cta-btn" disabled={!email.trim() || isChecking} aria-busy={isChecking}>
+        <Button type="submit" className="su-cta-btn" disabled={!email.trim() || isChecking} aria-busy={isChecking}>
           {btnLabel}
-        </button>
+        </Button>
       </form>
     </>
   )

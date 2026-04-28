@@ -1,6 +1,8 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { Button } from '@shared/components/ui/Button'
+import { FieldInput } from '@shared/components/ui/Field'
 import { Modal } from '@shared/components/ui/Modal'
 import { cn } from '@shared/utils/cn'
 import { useDeleteAccount } from '@features/account/hooks/useDeleteAccount'
@@ -94,7 +96,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
           <label className="mb-2 block text-[11px] font-medium uppercase tracking-[0.08em] text-[#5D493C]" htmlFor="delete-confirm-input">
             Type DELETE to confirm
           </label>
-          <input
+          <FieldInput
             id="delete-confirm-input"
             ref={inputRef}
             type="text"
@@ -110,15 +112,16 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
         {deleteError && <p className="mx-8 mb-4 mt-[-0.5rem] rounded-lg border border-[rgba(180,60,40,0.22)] bg-[rgba(180,60,40,0.08)] px-3.5 py-3 text-[12px] font-medium text-[#7A1F12] max-sm:mx-5" role="alert">{deleteError}</p>}
 
         <div className="flex gap-2.5 px-8 pb-7 max-sm:flex-col-reverse max-sm:px-5">
-          <button
+          <Button
             type="button"
             className="flex-1 rounded-lg border border-[rgba(180,150,110,0.45)] bg-transparent px-4 py-[11px] text-[14px] font-medium text-[#4A3728] transition-colors duration-150 hover:border-[#4A3728] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4A3728] disabled:cursor-default"
             onClick={handleClose}
             disabled={deleting}
+            variant="ghost"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={handleConfirm}
             disabled={!confirmReady || deleting}
@@ -126,9 +129,10 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
               'flex-1 rounded-lg border px-4 py-[11px] text-[14px] font-medium transition-[background,border-color,color] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7A1F12] disabled:cursor-not-allowed',
               confirmReady ? 'border-[#842817] bg-[#842817] text-[#F4EFE6]' : 'border-[rgba(180,150,110,0.22)] bg-[#E7DED1] text-[#8D7D70]'
             )}
+            variant="ghost"
           >
             {deleting ? 'Deleting account...' : 'Delete account'}
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>

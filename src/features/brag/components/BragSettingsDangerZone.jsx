@@ -1,3 +1,5 @@
+import { Button } from '@shared/components/ui/Button'
+
 export default function BragSettingsDangerZone({ onDelete }) {
   return (
     <div className="bss-danger-section">
@@ -10,9 +12,9 @@ export default function BragSettingsDangerZone({ onDelete }) {
               Permanently removes your account and all brag doc entries, files, and records. This cannot be undone.
             </div>
           </div>
-          <button type="button" className="bss-btn-delete" onClick={onDelete}>
+          <Button type="button" variant="danger" className="bss-btn-delete" onClick={onDelete}>
             Delete account
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -8,7 +8,8 @@ import { getActiveSsoProviders, ssoConfigFromEnv } from '@shared/utils/sso'
 import { SsoProviderButton } from '@features/auth/components/SsoProviderButton'
 import { ROUTES } from '@shared/utils/routes'
 import { CtaBtn } from './SignupButtons'
-import { FieldInput, FieldLabel } from '@shared/components/ui/Field'
+import { Field, FieldCheckbox, FieldInput, FieldLabel } from '@shared/components/ui/Field'
+import { Button } from '@shared/components/ui/Button'
 import { ArrowIcon } from './SignupIcons'
 import { Link } from '@shared/components/ui/Link'
 
@@ -114,7 +115,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
       )}
 
       <div className="su-name-row">
-        <div className="su-name-col">
+        <Field className="su-name-col">
           <FieldLabel htmlFor="su-first-name">First name</FieldLabel>
           <FieldInput
             id="su-first-name"
@@ -124,8 +125,8 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             onChange={(event) => dispatch({ type: 'set_first_name', value: event.target.value })}
             error={state.nameError}
           />
-        </div>
-        <div className="su-name-col">
+        </Field>
+        <Field className="su-name-col">
           <FieldLabel htmlFor="su-last-name">Last name</FieldLabel>
           <FieldInput
             id="su-last-name"
@@ -134,10 +135,10 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             value={state.lastName}
             onChange={(event) => dispatch({ type: 'set_last_name', value: event.target.value })}
           />
-        </div>
+        </Field>
       </div>
 
-      <div className="su-field">
+      <Field className="su-field">
         <FieldLabel htmlFor="su-email">Email</FieldLabel>
         <FieldInput
           id="su-email"
@@ -156,11 +157,11 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
           {showEmailFeedback && emailResult.error ? (
             <span className="su-field-hint su-field-hint--error" role="alert">{emailResult.error}</span>
           ) : showEmailFeedback && emailResult.suggestion ? (
-            <span className="su-field-hint su-field-hint--suggest" role="alert">
+              <span className="su-field-hint su-field-hint--suggest" role="alert">
               Did you mean{' '}
-              <button type="button" className="su-suggest-btn" onClick={acceptSuggestion}>
+              <Button type="button" variant="ghost" size="sm" className="su-suggest-btn" onClick={acceptSuggestion}>
                 {emailResult.suggestion}
-              </button>
+              </Button>
               ?
             </span>
           ) : (
@@ -169,13 +170,12 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             </span>
           )}
         </div>
-      </div>
+      </Field>
 
 
       <div className="su-terms">
         <label className="su-terms-label">
-          <input
-            type="checkbox"
+          <FieldCheckbox
             checked={state.agreed}
             onChange={(event) => {
               dispatch({ type: 'set_agreed', value: event.target.checked })

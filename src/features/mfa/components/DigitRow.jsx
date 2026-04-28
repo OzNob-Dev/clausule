@@ -1,3 +1,5 @@
+import { FieldInput } from '@shared/components/ui/Field'
+
 const VARIANTS = {
   mfa: {
     row: 'mfa-otp-row',
@@ -28,7 +30,7 @@ export default function DigitRow({ digits, inputRefs, inputState, onChange, onKe
       aria-label={ariaLabel}
     >
       {digits.map((digit, index) => (
-        <input
+        <FieldInput
           key={index}
           ref={(element) => { inputRefs.current[index] = element }}
           type="text"

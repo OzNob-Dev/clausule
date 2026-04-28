@@ -13,9 +13,12 @@ const FILE_OVERRIDES = new Map([
   ])],
   ['src/shared/components/ui/Field.jsx', new Map([
     ['Field', { layer: 'molecules', previewKind: 'field' }],
+    ['FieldCheckbox', { layer: 'atoms', previewKind: 'field' }],
     ['FieldHint', { layer: 'atoms', previewKind: 'field' }],
     ['FieldInput', { layer: 'atoms', previewKind: 'field' }],
     ['FieldLabel', { layer: 'atoms', previewKind: 'field' }],
+    ['FieldSelect', { layer: 'atoms', previewKind: 'field' }],
+    ['FieldTextarea', { layer: 'atoms', previewKind: 'field' }],
   ])],
   ['src/shared/components/ui/Link.jsx', new Map([
     ['Link', { layer: 'atoms', previewKind: 'link' }],
@@ -66,6 +69,9 @@ const ENTRY_OVERRIDES = new Map([
   ['FieldInput', { layer: 'atoms', previewKind: 'field' }],
   ['FieldHint', { layer: 'atoms', previewKind: 'field' }],
   ['FieldLabel', { layer: 'atoms', previewKind: 'field' }],
+  ['FieldCheckbox', { layer: 'atoms', previewKind: 'field' }],
+  ['FieldSelect', { layer: 'atoms', previewKind: 'field' }],
+  ['FieldTextarea', { layer: 'atoms', previewKind: 'field' }],
   ['MfaLoginAppStep', { layer: 'organisms', previewKind: 'otp' }],
   ['MfaLoginEmailStep', { layer: 'organisms', previewKind: 'otp' }],
   ['MfaOtpStep', { layer: 'organisms', previewKind: 'otp' }],

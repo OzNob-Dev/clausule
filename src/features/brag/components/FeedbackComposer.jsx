@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { fieldClass, areaClass } from '@shared/constants/classNames'
+import { Button } from '@shared/components/ui/Button'
+import { Field, FieldCheckbox, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'
 import { apiJson, jsonRequest } from '@shared/utils/api'
 
 const CATEGORIES = ['Bug', 'Idea', 'Usability', 'Other']
@@ -87,7 +88,7 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
             {' '}
             so you know it made it through.
           </p>
-          <button type="button" className="be-comp-save" onClick={onClose}>Back to brag doc</button>
+          <Button type="button" variant="primary" className="be-comp-save" onClick={onClose}>Back to brag doc</Button>
         </div>
       ) : (
         <>
@@ -105,44 +106,44 @@ export default function FeedbackComposer({ userEmail, onClose, onSent }) {
             </div>
 
             <div className="be-feedback-grid">
-              <label>
-                <span>What is this about?</span>
-                <select className={fieldClass} value={category} onChange={(e) => setCategory(e.target.value)} autoFocus>
+              <Field>
+                <FieldLabel>What is this about?</FieldLabel>
+                <FieldSelect value={category} onChange={(e) => setCategory(e.target.value)} autoFocus>
                   {CATEGORIES.map((value) => <option key={value}>{value}</option>)}
-                </select>
-              </label>
-              <label>
-                <span>How does it feel?</span>
-                <select className={fieldClass} value={feeling} onChange={(e) => setFeeling(e.target.value)}>
+                </FieldSelect>
+              </Field>
+              <Field>
+                <FieldLabel>How does it feel?</FieldLabel>
+                <FieldSelect value={feeling} onChange={(e) => setFeeling(e.target.value)}>
                   {FEELINGS.map((value) => <option key={value}>{value}</option>)}
-                </select>
-              </label>
-              <label className="be-feedback-grid-wide">
-                <span>Short summary</span>
-                <input className={fieldClass} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What should we know?" />
-              </label>
+                </FieldSelect>
+              </Field>
+              <Field className="be-feedback-grid-wide">
+                <FieldLabel>Short summary</FieldLabel>
+                <FieldInput value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What should we know?" />
+              </Field>
             </div>
 
-            <label className="be-feedback-wide">
-              <span>Feedback for the app owners</span>
-              <textarea className={areaClass} value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder="Tell us what happened, what felt good, or what got in your way." />
-            </label>
+            <Field className="be-feedback-wide">
+              <FieldLabel>Feedback for the app owners</FieldLabel>
+              <FieldTextarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder="Tell us what happened, what felt good, or what got in your way." />
+            </Field>
 
-            <label className="be-feedback-wide">
-              <span>What would make it better?</span>
-              <textarea className={areaClass} value={improvement} onChange={(e) => setImprovement(e.target.value)} rows={3} placeholder="A workflow, design, feature, or rough idea is perfect." />
-            </label>
+            <Field className="be-feedback-wide">
+              <FieldLabel>What would make it better?</FieldLabel>
+              <FieldTextarea value={improvement} onChange={(e) => setImprovement(e.target.value)} rows={3} placeholder="A workflow, design, feature, or rough idea is perfect." />
+            </Field>
 
             <label className="be-feedback-check">
-              <input className="h-4 w-4 shrink-0 accent-acc" type="checkbox" checked={contactOk} onChange={(e) => setContactOk(e.target.checked)} />
+              <FieldCheckbox checked={contactOk} onChange={(e) => setContactOk(e.target.checked)} />
               <span>The Clausule team may contact me about this feedback.</span>
             </label>
 
             <div className="be-feedback-footer">
               <p>Sent privately to the app owners. This will not appear in your brag doc.</p>
               <div className="be-feedback-actions">
-                <button type="button" className="be-comp-cancel" onClick={onClose}>Cancel</button>
-                <button type="submit" className="be-comp-save" disabled={!canSend}>Send feedback</button>
+                <Button type="button" variant="ghost" className="be-comp-cancel" onClick={onClose}>Cancel</Button>
+                <Button type="submit" variant="primary" className="be-comp-save" disabled={!canSend}>Send feedback</Button>
               </div>
             </div>
 

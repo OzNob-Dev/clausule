@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@shared/utils/cn'
+import { Button } from './Button'
 
 const FOCUSABLE_SELECTOR =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
@@ -122,16 +123,17 @@ export function Modal({
         {title && (
           <div className="flex items-center justify-between border-b border-rule px-6 py-4">
             <h3 id={titleId} className="text-[15px] font-bold text-tp">{title}</h3>
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="flex h-7 w-7 items-center justify-center rounded-[var(--r)] border-none bg-transparent text-tm cursor-pointer transition-colors duration-150 hover:text-ts"
               aria-label="Close modal"
+              variant="ghost"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                 <line x1="3" y1="3" x2="13" y2="13" /><line x1="13" y1="3" x2="3" y2="13" />
               </svg>
-            </button>
+            </Button>
           </div>
         )}
         <div className="px-6 py-5">{children}</div>

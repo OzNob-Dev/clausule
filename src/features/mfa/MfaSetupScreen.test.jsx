@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { Button } from '@shared/components/ui/Button'
 import MfaSetupScreen from './MfaSetupScreen'
 
 const handleResend = vi.fn()
@@ -24,7 +25,7 @@ vi.mock('@features/mfa/hooks/useMfaSetupFlow', () => ({
 }))
 
 vi.mock('@features/mfa/components/MfaOtpStep', () => ({
-  default: ({ onResend }) => <button type="button" onClick={onResend}>Resend code</button>,
+  default: ({ onResend }) => <Button type="button" onClick={onResend}>Resend code</Button>,
 }))
 
 vi.mock('@features/mfa/components/MfaSuccessStep', () => ({

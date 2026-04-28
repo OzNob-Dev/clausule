@@ -14,18 +14,24 @@ const sizeStyles = {
   lg: 'px-5 py-3 text-sm',
 }
 
-export function Button({ children, variant = 'primary', size = 'md', className, type = 'button', ...props }) {
+export function Button({ children, variant = 'primary', size = 'md', className, as: As = 'button', href, type = 'button', ...props }) {
+  const classes = cn(
+    'inline-flex items-center justify-center font-sans font-bold transition-opacity duration-150 cursor-pointer border-none rounded-[var(--r)]',
+    variantStyles[variant],
+    sizeStyles[size],
+    className
+  )
+
+  if (As === 'a') {
+    return (
+      <a href={href} className={classes} {...props}>
+        {children}
+      </a>
+    )
+  }
+
   return (
-    <button
-      type={type}
-      className={cn(
-        'inline-flex items-center justify-center font-sans font-bold transition-opacity duration-150 cursor-pointer border-none rounded-[var(--r)]',
-        variantStyles[variant],
-        sizeStyles[size],
-        className
-      )}
-      {...props}
-    >
+    <button type={type} className={classes} {...props}>
       {children}
     </button>
   )

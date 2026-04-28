@@ -1,3 +1,5 @@
+import { Button } from '@shared/components/ui/Button'
+
 export default function MfaSuccessStep({ onEnterApp }) {
   return (
     <div className="mfa-pane mfa-pane--center" key="success">
@@ -11,12 +13,12 @@ export default function MfaSuccessStep({ onEnterApp }) {
         Your account is secured with multi-factor authentication.
         You'll verify your identity each time you sign in.
       </p>
-      <button className="mfa-enter-btn" onClick={onEnterApp}>
+      <Button className="mfa-enter-btn" onClick={onEnterApp}>
         Enter Clausule
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
           <path d="M3 8h10M9 4l4 4-4 4" />
         </svg>
-      </button>
+      </Button>
     </div>
   )
 }

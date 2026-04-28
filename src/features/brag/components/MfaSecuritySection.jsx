@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import { Button } from '@shared/components/ui/Button'
 
 const TotpSetupPanel = dynamic(() => import('@features/brag/components/TotpSetupPanel'), {
   loading: () => <div className="bss-loading-state" aria-busy="true">Loading authenticator setup…</div>,
@@ -52,15 +53,16 @@ export default function MfaSecuritySection({
           {authenticatorAppConfigured ? (
             <span className="bss-mfa-status bss-mfa-status--on" aria-label="Authenticator app is active">Active</span>
           ) : hasSecuritySnapshot && (
-            <button
+            <Button
               type="button"
               className="bss-mfa-reconfig-btn"
               onClick={onToggleTotp}
               aria-expanded={totpExpanded}
               aria-controls="totp-setup"
+              variant="ghost"
             >
               {totpExpanded ? 'Cancel' : 'Set up'}
-            </button>
+            </Button>
           )}
         </div>
 

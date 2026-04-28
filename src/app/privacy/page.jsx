@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Link } from '@shared/components/ui/Link'
 import { ROUTES } from '@shared/utils/routes'
 
 export default function Page() {
@@ -16,7 +17,7 @@ export default function Page() {
         <p>We collect profile details, sign-in metadata, brag entries, and product feedback that you submit through the app.</p>
         <p>We use that data to provide the service, protect accounts, respond to support requests, and improve the product.</p>
         <p>Access is limited to the people and systems that need it to run Clausule. Product feedback is kept separate from your brag document and routed only to the app owners.</p>
-        <p>You can request account deletion from the protected settings area or contact <a className="font-semibold text-[#1A1510]" href="mailto:help@clausule.com">help@clausule.com</a> for privacy questions.</p>
+        <p>You can request account deletion from the protected settings area or contact <Link href="mailto:help@clausule.com" className="font-semibold text-[#1A1510]">help@clausule.com</Link> for privacy questions.</p>
       </section>
       <footer className="pt-4 text-sm text-[#5B4E42]">
         Read the companion <Link href={ROUTES.terms} className="font-semibold text-[#1A1510]">Terms of Service</Link>.

@@ -1,6 +1,8 @@
 'use client'
 
+import { Button } from '@shared/components/ui/Button'
 import { Modal } from '@shared/components/ui/Modal'
+import { Field, FieldCheckbox, FieldHint, FieldInput, FieldLabel } from '@shared/components/ui/Field'
 import { useVerification } from '@features/account/context/VerificationContext'
 import '@features/account/styles/profile.css'
 
@@ -31,12 +33,12 @@ export function VerifyChangesModal({ open, onClose, onSubmit }) {
       title="Verify changes"
       footer={
         <>
-          <button type="button" className="profile-btn profile-btn--ghost" onClick={onClose} disabled={saving}>
+          <Button type="button" variant="ghost" className="profile-btn profile-btn--ghost" onClick={onClose} disabled={saving}>
             Cancel
-          </button>
-          <button type="button" className="profile-btn profile-btn--primary" onClick={onSubmit} disabled={saving || !finalReady}>
+          </Button>
+          <Button type="button" variant="primary" className="profile-btn profile-btn--primary" onClick={onSubmit} disabled={saving || !finalReady}>
             Save changes
-          </button>
+          </Button>
         </>
       }
     >
@@ -64,16 +66,18 @@ export function VerifyChangesModal({ open, onClose, onSubmit }) {
             <p className="profile-modal-copy" id={emailCodeHintId}>
               A code was sent to {current.email}. Enter it here to confirm the new sign-in email.
             </p>
-            <label className="profile-label" htmlFor="profile-email-verification-code">Verification code</label>
-            <input
-              id="profile-email-verification-code"
-              className="profile-input"
-              inputMode="numeric"
-              value={emailCode}
-              aria-describedby={emailCodeHintId}
-              onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="6-digit code"
-            />
+            <Field>
+              <FieldLabel htmlFor="profile-email-verification-code">Verification code</FieldLabel>
+              <FieldInput
+                id="profile-email-verification-code"
+                className="profile-input"
+                inputMode="numeric"
+                value={emailCode}
+                aria-describedby={emailCodeHintId}
+                onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="6-digit code"
+              />
+            </Field>
             <div className="profile-verify-meta">
               {emailCodeState === 'sending' && 'Sending code...'}
               {emailCodeState === 'sent'    && 'Code sent'}
@@ -91,19 +95,21 @@ export function VerifyChangesModal({ open, onClose, onSubmit }) {
                 : 'This can affect your 2FA and recovery path if you did not sign in with SSO.'}
             </p>
             <label className="profile-check">
-              <input type="checkbox" checked={mobileAck} onChange={(e) => setMobileAck(e.target.checked)} />
+              <FieldCheckbox checked={mobileAck} onChange={(e) => setMobileAck(e.target.checked)} />
               I understand and want to continue
             </label>
-            <label className="profile-label" htmlFor="profile-mobile-confirmation">Re-enter the new mobile number</label>
-            <input
-              id="profile-mobile-confirmation"
-              className="profile-input"
-              value={mobileCheck}
-              aria-describedby={mobileCheckHintId}
-              onChange={(e) => setMobileCheck(e.target.value)}
-              placeholder="Re-enter the new mobile number"
-            />
-            <p className="profile-help" id={mobileCheckHintId}>Type the new mobile number exactly as it should be saved.</p>
+            <Field>
+              <FieldLabel htmlFor="profile-mobile-confirmation">Re-enter the new mobile number</FieldLabel>
+              <FieldInput
+                id="profile-mobile-confirmation"
+                className="profile-input"
+                value={mobileCheck}
+                aria-describedby={mobileCheckHintId}
+                onChange={(e) => setMobileCheck(e.target.value)}
+                placeholder="Re-enter the new mobile number"
+              />
+              <FieldHint className="profile-help" id={mobileCheckHintId}>Type the new mobile number exactly as it should be saved.</FieldHint>
+            </Field>
           </div>
         )}
       </div>

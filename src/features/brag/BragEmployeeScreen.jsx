@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useMemo, useState } from 'react'
+import { Button } from '@shared/components/ui/Button'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import BragEmptyState from '@features/brag/components/BragEmptyState'
 import EntryComposer from '@features/brag/components/EntryComposer'
@@ -145,7 +146,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
             {!composerOpen ? (
               <>
                 <div className="be-doc-cta-wrap">
-                  <button type="button" className="be-doc-add-button" onClick={() => setComposerOpen(true)}>
+                  <Button type="button" variant="primary" className="be-doc-add-button" onClick={() => setComposerOpen(true)}>
                     <span className="be-doc-add-icon" aria-hidden="true">
                       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <line x1="8" y1="3" x2="8" y2="13" />
@@ -156,7 +157,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
                       <span className="be-doc-add-label">Add a win</span>
                       <span className="be-doc-add-description">Capture a fresh entry for your brag doc</span>
                     </span>
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="be-doc-timeline">

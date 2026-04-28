@@ -1,4 +1,5 @@
 import { SsoProviderIcon } from '@shared/components/SsoProviderIcon'
+import { Link } from '@shared/components/ui/Link'
 import { ssoAuthPath } from '@shared/utils/sso'
 
 function SsoArrow() {
@@ -13,10 +14,10 @@ function SsoArrow() {
 
 export function SsoProviderButton({ provider }) {
   return (
-    <a href={ssoAuthPath(provider.id)} className="su-sso-provider">
+    <Link href={ssoAuthPath(provider.id)} variant="button" className="su-sso-provider">
       <span className="su-sso-logo"><SsoProviderIcon provider={provider.id} /></span>
       <span className="su-sso-label">{provider.ctaLabel}</span>
       <SsoArrow />
-    </a>
+    </Link>
   )
 }

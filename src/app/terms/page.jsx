@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Link } from '@shared/components/ui/Link'
 import { ROUTES } from '@shared/utils/routes'
 
 export default function Page() {
@@ -16,7 +17,7 @@ export default function Page() {
         <p>You are responsible for the accuracy of the information you store, for keeping your sign-in methods secure, and for using the product lawfully.</p>
         <p>Clausule may suspend or remove access if the product is misused, if security is threatened, or if the service is used to store unlawful material.</p>
         <p>Subscription and billing terms for paid plans will be shown in-product before payment collection is enabled. Until then, signup copy in the app must state clearly when checkout is unavailable.</p>
-        <p>Questions about these terms can be sent to <a className="font-semibold text-[#1A1510]" href="mailto:help@clausule.com">help@clausule.com</a>.</p>
+        <p>Questions about these terms can be sent to <Link href="mailto:help@clausule.com" className="font-semibold text-[#1A1510]">help@clausule.com</Link>.</p>
       </section>
       <footer className="pt-4 text-sm text-[#5B4E42]">
         Read the companion <Link href={ROUTES.privacy} className="font-semibold text-[#1A1510]">Privacy Policy</Link>.

@@ -1,7 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Button } from '@shared/components/ui/Button'
+import { Link } from '@shared/components/ui/Link'
 import '@features/landing/styles/not-found.css'
 
 const FLOATS = [
@@ -83,13 +84,14 @@ export default function NotFound() {
         </p>
 
         <div className="nf-actions">
-          <button
+          <Button
             type="button"
             className="nf-btn-secondary"
             onClick={() => router.back()}
+            variant="ghost"
           >
             Go back
-          </button>
+          </Button>
         </div>
       </main>
     </div>

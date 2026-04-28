@@ -1,9 +1,10 @@
 'use client'
 
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ROUTES } from '@shared/utils/routes'
 import { cn } from '@shared/utils/cn'
+import { Button } from '@shared/components/ui/Button'
+import { Link } from '@shared/components/ui/Link'
 
 const componentsIcon = (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
@@ -114,17 +115,18 @@ export function RailNav({ items = navItems, locked = false, onLogout, userInitia
           {userInitials}
         </div>
 
-        <button
+        <Button
           onClick={onLogout}
           title="Sign out"
           aria-label="Sign out"
           className="flex h-[28px] w-[28px] items-center justify-center border-none bg-transparent text-tc cursor-pointer transition-colors duration-150 hover:text-ts"
+          variant="ghost"
         >
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-[15px] w-[15px]">
             <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/>
             <polyline points="11 11 14 8 11 5"/><line x1="14" y1="8" x2="6" y2="8"/>
           </svg>
-        </button>
+        </Button>
       </div>
     </aside>
   )

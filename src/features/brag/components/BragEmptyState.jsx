@@ -1,3 +1,5 @@
+import { Button } from '@shared/components/ui/Button'
+
 const PROMPTS = [
   {
     title: 'Log a recent win',
@@ -63,12 +65,12 @@ export default function BragEmptyState({ onAddEntry }) {
         ))}
       </div>
 
-      <button type="button" className="be-empty-cta" onClick={onAddEntry}>
+      <Button type="button" variant="primary" className="be-empty-cta" onClick={onAddEntry}>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
           <path d="M8 3v10M3 8h10" />
         </svg>
         Add your first entry
-      </button>
+      </Button>
       <p className="be-empty-note">Takes 30 seconds. Future-you will be grateful.</p>
     </section>
   )

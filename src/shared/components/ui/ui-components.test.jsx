@@ -7,7 +7,7 @@ import { Button } from './Button'
 import { Card } from './Card'
 import { CategoryDot, CategoryPill } from './CategoryPill'
 import { CodeEmail } from './CodeEmail'
-import { Field, FieldHint, FieldInput, FieldLabel } from './Field'
+import { Field, FieldCheckbox, FieldHint, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from './Field'
 import { Link } from './Link'
 import { Modal } from './Modal'
 import { ThinkingDots } from './ThinkingDots'
@@ -16,15 +16,23 @@ describe('UI components', () => {
   it('renders base display components with accessible text', () => {
     render(
       <>
-        <Avatar initials="AL" bg="#111" color="#fff" />
-        <Button>Save</Button>
-        <Link href="/components">Library</Link>
+      <Avatar initials="AL" bg="#111" color="#fff" />
+      <Button>Save</Button>
+      <Link href="/components">Library</Link>
         <Card as="section">
           <h2>Card title</h2>
         </Card>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <FieldInput id="email" defaultValue="ada@example.com" />
+          <FieldSelect aria-label="Role" defaultValue="engineer">
+            <option value="engineer">Engineer</option>
+          </FieldSelect>
+          <FieldTextarea aria-label="Notes" defaultValue="Hello" />
+          <label>
+            <FieldCheckbox defaultChecked />
+            Accept
+          </label>
           <FieldHint>We will never share it.</FieldHint>
         </Field>
         <CategoryPill cat="conduct" showDot />
@@ -38,6 +46,9 @@ describe('UI components', () => {
     expect(screen.getByRole('link', { name: 'Library' })).toHaveAttribute('href', '/components')
     expect(screen.getByText('Card title')).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
+    expect(screen.getByRole('combobox', { name: 'Role' })).toHaveValue('engineer')
+    expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveValue('Hello')
+    expect(screen.getByRole('checkbox', { name: /Accept/ })).toBeChecked()
     expect(screen.getByText('Conduct')).toBeInTheDocument()
     expect(screen.getByText(/To:/)).toHaveTextContent('ada@example.com')
     expect(screen.getByLabelText('Demo verification email')).toBeInTheDocument()
@@ -68,9 +79,9 @@ describe('UI components', () => {
       const [open, setOpen] = React.useState(false)
       return (
         <>
-          <button type="button" onClick={() => setOpen(true)}>Open modal</button>
-          <Modal open={open} onClose={() => setOpen(false)} title="Confirm" footer={<button type="button">Done</button>}>
-            <input aria-label="Confirmation name" autoFocus />
+          <Button type="button" onClick={() => setOpen(true)}>Open modal</Button>
+          <Modal open={open} onClose={() => setOpen(false)} title="Confirm" footer={<Button type="button">Done</Button>}>
+            <FieldInput aria-label="Confirmation name" autoFocus />
           </Modal>
         </>
       )

@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import { Button } from '@shared/components/ui/Button'
 
 // QRCodeSVG is only needed during MFA setup — lazy-load to keep the main
 // bundle free of the qrcode.react dependency (~45KB gzipped).
@@ -45,9 +46,9 @@ export default function TotpSecretBlock({
       )}
       <div className={secretRowClassName}>
         <code className={secretClassName}>{secret}</code>
-        <button className={copyClassName} onClick={onCopy} aria-label="Copy secret key">
+        <Button type="button" variant="ghost" className={copyClassName} onClick={onCopy} aria-label="Copy secret key">
           <CopyIcon copied={copied} />
-        </button>
+        </Button>
       </div>
     </>
   )

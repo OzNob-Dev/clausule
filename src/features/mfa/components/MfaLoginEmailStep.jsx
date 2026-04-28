@@ -1,4 +1,5 @@
 import DigitRow from './DigitRow'
+import { Button } from '@shared/components/ui/Button'
 import { maskEmail } from '@features/mfa/utils/maskEmail'
 
 export default function MfaLoginEmailStep({
@@ -55,12 +56,12 @@ export default function MfaLoginEmailStep({
         </section>
 
         <section className="mfa-email-right">
-          <button type="button" className="mfa-email-back" onClick={onBack} aria-label="Back to sign in">
+          <Button type="button" variant="ghost" className="mfa-email-back" onClick={onBack} aria-label="Back to sign in">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
               <polyline points="10 4 6 8 10 12" />
             </svg>
             Back
-          </button>
+          </Button>
 
           <h2 className="mfa-email-title">Verify your code</h2>
           <p className="mfa-email-sub">
@@ -119,8 +120,9 @@ export default function MfaLoginEmailStep({
             <p className="mfa-error" role="alert">{errorMessage || 'Incorrect code — try again'}</p>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="primary"
             className="mfa-email-verify"
             onClick={onVerify}
             disabled={!codeReady || otpState === 'checking' || otpState === 'done' || expirySeconds <= 0}
@@ -130,7 +132,7 @@ export default function MfaLoginEmailStep({
               <polyline points="3 8 7 12 13 4" />
             </svg>
             Verify code
-          </button>
+          </Button>
 
           <div className="mfa-email-footer">
             <p>
@@ -138,13 +140,13 @@ export default function MfaLoginEmailStep({
               {resendTimer > 0 ? (
                 <span>Resend in {resendTimer}s</span>
               ) : (
-                <button type="button" className="mfa-email-resend" onClick={onResend}>Resend code</button>
+                <Button type="button" variant="ghost" className="mfa-email-resend" onClick={onResend}>Resend code</Button>
               )}
             </p>
             {onSetupApp && (
               <p>
                 Want more security?{' '}
-                <button type="button" className="mfa-email-resend" onClick={onSetupApp}>Set up an authenticator app</button>
+                <Button type="button" variant="ghost" className="mfa-email-resend" onClick={onSetupApp}>Set up an authenticator app</Button>
               </p>
             )}
           </div>

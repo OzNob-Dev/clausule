@@ -3,6 +3,7 @@
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@shared/utils/routes'
+import { Link } from '@shared/components/ui/Link'
 import { CtaBtn } from './SignupButtons'
 import { ArrowIcon, CheckIcon } from './SignupIcons'
 
@@ -51,7 +52,7 @@ export default function SignupStepDone({ email }) {
         {isPending ? 'Loading…' : 'Set up multi-factor authentication'} <ArrowIcon />
       </CtaBtn>
       <div className="su-questions-note">
-        Questions? <a href="mailto:help@clausule.com">help@clausule.com</a>
+        Questions? <Link href="mailto:help@clausule.com">help@clausule.com</Link>
       </div>
     </div>
   )

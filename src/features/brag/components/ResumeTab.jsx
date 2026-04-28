@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { Button } from '@shared/components/ui/Button'
 import { profileDisplayName } from '@shared/utils/profile'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
 import ResumeDocument from './ResumeDocument'
@@ -38,7 +39,7 @@ function buildInitialCv(profile, entries = []) {
 
 function GenerateButton({ disabled, generating, visible, onClick }) {
   return (
-    <button type="button" onClick={onClick} disabled={disabled || generating} className="be-btn-generate">
+    <Button type="button" onClick={onClick} disabled={disabled || generating} className="be-btn-generate">
       {generating ? (
         <>
           <ThinkingDots />
@@ -52,27 +53,27 @@ function GenerateButton({ disabled, generating, visible, onClick }) {
           {visible ? 'Regenerate' : 'Generate resume'}
         </>
       )}
-    </button>
+    </Button>
   )
 }
 
 function ResumeActions({ copied, onCopy, onDownload }) {
   return (
     <div className="be-cv-actions">
-      <button type="button" onClick={onCopy} className="be-cv-copy-btn">
+      <Button type="button" onClick={onCopy} className="be-cv-copy-btn" variant="ghost">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <rect x="5" y="5" width="9" height="9" rx="1"/>
           <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
         </svg>
         Copy text
-      </button>
-      <button type="button" onClick={onDownload} className="be-cv-dl-btn">
+      </Button>
+      <Button type="button" onClick={onDownload} className="be-cv-dl-btn" variant="ghost">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <path d="M8 2v8M5 7l3 3 3-3"/>
           <line x1="2" y1="13" x2="14" y2="13"/>
         </svg>
         Download .txt
-      </button>
+      </Button>
       <span className={`be-cv-copied${copied ? ' be-cv-copied--show' : ''}`} aria-live="polite">Copied</span>
     </div>
   )

@@ -1,6 +1,8 @@
 'use client'
 
 import { useDeferredValue, useEffect, useMemo, useState, useTransition } from 'react'
+import { Button } from '@shared/components/ui/Button'
+import { FieldInput } from '@shared/components/ui/Field'
 import { cn } from '@shared/utils/cn'
 import { LAYER_ORDER } from './componentRegistry'
 import { ComponentPreview } from './componentPreviews'
@@ -32,7 +34,7 @@ function MetaRow({ label, value }) {
 
 function EntryButton({ entry, selected, onSelect }) {
   return (
-    <button
+    <Button
       type="button"
       onClick={() => onSelect(entry.id)}
       aria-pressed={selected}
@@ -41,6 +43,7 @@ function EntryButton({ entry, selected, onSelect }) {
         'w-full rounded-2xl border px-4 py-3 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc motion-safe:hover:-translate-y-0.5',
         selected ? 'border-acc bg-acc-bg shadow-[0_8px_24px_rgba(127,53,31,0.08)]' : 'border-rule bg-card hover:border-rule-em hover:bg-white/65'
       )}
+      variant="ghost"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
@@ -52,7 +55,7 @@ function EntryButton({ entry, selected, onSelect }) {
       </div>
       <p className="mt-3 line-clamp-2 text-sm leading-6 text-ts">{entry.note}</p>
       <p className="mt-3 break-words text-[11px] text-tc">{entry.sourcePath}</p>
-    </button>
+    </Button>
   )
 }
 
@@ -115,7 +118,7 @@ export function ComponentLibraryScreen({ entries }) {
         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           <section className="rounded-[1.75rem] border border-rule bg-card/95 p-4 shadow-[0_12px_32px_rgba(45,34,26,0.05)]">
             <label htmlFor="component-library-search" className="text-sm font-semibold text-tp">Search components</label>
-            <input
+            <FieldInput
               id="component-library-search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -123,11 +126,11 @@ export function ComponentLibraryScreen({ entries }) {
               className="mt-2 w-full rounded-2xl border border-rule bg-canvas px-4 py-3 text-sm text-tp placeholder:text-tc focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc"
             />
             <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by atomic layer">
-              <button type="button" onClick={() => startTransition(() => setLayer('all'))} className={controlClass(layer === 'all')}>{layerLabels.all}</button>
+              <Button type="button" onClick={() => startTransition(() => setLayer('all'))} className={controlClass(layer === 'all')} variant="ghost" size="sm">{layerLabels.all}</Button>
               {LAYER_ORDER.map((value) => (
-                <button key={value} type="button" onClick={() => startTransition(() => setLayer(value))} className={controlClass(layer === value)}>
+                <Button key={value} type="button" onClick={() => startTransition(() => setLayer(value))} className={controlClass(layer === value)} variant="ghost" size="sm">
                   {layerLabels[value]}
-                </button>
+                </Button>
               ))}
             </div>
             <p className="mt-4 text-xs leading-6 text-tc">

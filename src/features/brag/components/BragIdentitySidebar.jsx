@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@features/auth/context/AuthContext'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
+import { Button } from '@shared/components/ui/Button'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import { ROUTES } from '@shared/utils/routes'
 import { cn } from '@shared/utils/cn'
@@ -141,14 +142,14 @@ export default function BragIdentitySidebar({
 
       {showSignOut && (
         <div className="be-sidebar-foot">
-          <button type="button" className="be-sidebar-signout" onClick={logout}>
+          <Button type="button" variant="ghost" className="be-sidebar-signout" onClick={logout}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
             Log out
-          </button>
+          </Button>
         </div>
       )}
     </aside>
