@@ -1,29 +1,12 @@
-import { headers } from 'next/headers'
-import SignInBrandPanel from '@features/auth/components/SignInBrandPanel'
-import SignupPanelSummary from '@features/signup/components/SignupPanelSummary'
-import SignupPlanPanelContent from '@features/signup/components/SignupPlanPanelContent'
-import panelConfig from '@features/auth/brand-panel-config.json'
+import AuthBrandPanel from '@features/auth/components/AuthBrandPanel'
 import '@features/signup/styles/signup-theme.css'
 import '@features/signup/styles/signup-form.css'
 
-export default async function AuthLayout({ children }) {
-  const headersList = await headers()
-  const pathname = headersList.get('x-clausule-pathname') ?? '/'
-  const config = panelConfig[pathname] ?? panelConfig['/']
-  const isSignupStep1 = pathname === '/signup'
-  const isSignupPlan  = pathname === '/signup/plan'
-
+export default function AuthLayout({ children }) {
   return (
     <div className="su-shell-wrap su-page">
       <div className="su-shell">
-        <SignInBrandPanel
-          brandHref="/"
-          headline={config.headline}
-          subtext={config.subtext}
-        >
-          {isSignupStep1 && <SignupPanelSummary />}
-          {isSignupPlan  && <SignupPlanPanelContent />}
-        </SignInBrandPanel>
+        <AuthBrandPanel brandHref="/" />
         <div className="su-shell-right su-page flex-col justify-start">
           {children}
         </div>
