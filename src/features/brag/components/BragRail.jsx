@@ -48,6 +48,12 @@ export default function BragRail({ activePage }) {
               aria-current={activePage === page ? 'page' : undefined}
             >
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                {icon === 'profile' && (
+                  <>
+                    <circle cx="8" cy="5.5" r="2.25" />
+                    <path d="M3 13c.8-2.5 3-4 5-4s4.2 1.5 5 4" />
+                  </>
+                )}
                 {icon === 'brag' && (
                   <>
                     <path d="M8 2l1 2.5L11.5 5l-2 2 .5 3L8 8.5 5.5 10l.5-3-2-2L6.5 4.5z" />
@@ -64,12 +70,6 @@ export default function BragRail({ activePage }) {
                   <>
                     <circle cx="8" cy="8" r="2.5" />
                     <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M12.8 3.2l-1.1 1.1M4.3 11.7l-1.1 1.1" />
-                  </>
-                )}
-                {icon === 'profile' && (
-                  <>
-                    <circle cx="8" cy="5.5" r="2.25" />
-                    <path d="M3 13c.8-2.5 3-4 5-4s4.2 1.5 5 4" />
                   </>
                 )}
               </svg>
