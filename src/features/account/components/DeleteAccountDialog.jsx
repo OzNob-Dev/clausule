@@ -124,7 +124,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
             disabled={!confirmReady || deleting}
             className={cn(
               'flex-1 rounded-lg border px-4 py-[11px] text-[14px] font-medium transition-[background,border-color,color] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7A1F12] disabled:cursor-not-allowed',
-              confirmReady ? 'border-[#842817] bg-[#842817] text-[#F4EFE6]' : 'border-[rgba(180,150,110,0.32)] bg-transparent text-[#5D493C]'
+              confirmReady ? 'border-[#842817] bg-[#842817] text-[#F4EFE6]' : 'border-[rgba(180,150,110,0.22)] bg-[#E7DED1] text-[#8D7D70]'
             )}
           >
             {deleting ? 'Deleting account...' : 'Delete account'}
