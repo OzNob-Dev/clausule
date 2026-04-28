@@ -2236,7 +2236,11 @@
   --be-doc-shadow-soft: rgba(61, 50, 41, 0.08);
   --be-doc-shadow-med: rgba(61, 50, 41, 0.12);
   --be-doc-shadow-strong: rgba(61, 50, 41, 0.16);
+  --be-serif: 'Fraunces', Georgia, serif;
+  --be-sans: 'DM Sans', var(--font-sans), system-ui, sans-serif;
   background: linear-gradient(165deg, #FAF8F5 0%, #F0EBE3 100%);
+  color: var(--be-doc-ink);
+  font-family: var(--be-sans);
 }
 
 .be-doc-screen .be-inner {
@@ -2297,9 +2301,10 @@
   background: linear-gradient(135deg, var(--be-doc-clay) 0%, var(--be-doc-clay-deep) 100%);
   box-shadow: 0 4px 16px rgba(196, 107, 74, 0.25), 0 12px 40px rgba(196, 107, 74, 0.15);
   color: #fff;
-  cursor: default;
+  cursor: pointer;
   overflow: hidden;
   text-align: left;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .be-doc-add-button::before {
@@ -2309,6 +2314,19 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
   opacity: 0.9;
   pointer-events: none;
+}
+
+.be-doc-add-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(196, 107, 74, 0.35), 0 20px 56px rgba(196, 107, 74, 0.2);
+}
+
+.be-doc-add-button:hover::before {
+  opacity: 1;
+}
+
+.be-doc-add-button:active {
+  transform: translateY(-1px);
 }
 
 .be-doc-add-icon {
@@ -2321,6 +2339,12 @@
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 4px 16px rgba(61, 50, 41, 0.15);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.be-doc-add-button:hover .be-doc-add-icon {
+  transform: scale(1.05) rotate(90deg);
+  box-shadow: 0 6px 20px rgba(61, 50, 41, 0.2);
 }
 
 .be-doc-add-icon svg {
@@ -2402,14 +2426,20 @@
 
 .be-doc-company-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 16px;
   margin-bottom: 24px;
   padding-left: 24px;
 }
 
+.be-doc-company-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
+}
+
 .be-doc-company-name {
-  margin: 0;
   color: var(--be-doc-clay);
   font-family: var(--be-serif);
   font-size: 22px;
@@ -2552,6 +2582,92 @@
 .be-doc-evidence-tag .be-ev-pill-dot {
   width: 5px;
   height: 5px;
+}
+
+.be-doc-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 0 0;
+  animation: be-doc-group-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+}
+
+.be-doc-pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--be-doc-taupe);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px var(--be-doc-shadow-soft);
+  color: var(--be-doc-ink);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.be-doc-pagination-btn:hover:not(:disabled) {
+  border-color: var(--be-doc-clay);
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--be-doc-shadow-med);
+}
+
+.be-doc-pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.be-doc-pagination-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.be-doc-pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px;
+}
+
+.be-doc-pagination-text {
+  color: rgba(61, 50, 41, 0.6);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.be-doc-pagination-divider {
+  width: 1.5px;
+  height: 24px;
+  background: var(--be-doc-taupe);
+}
+
+.be-doc-pagination-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.be-doc-pagination-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--be-doc-taupe);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.be-doc-pagination-dot.is-active {
+  width: 32px;
+  border-radius: 5px;
+  background: var(--be-doc-clay);
 }
 
 @keyframes be-doc-rise {
@@ -3032,12 +3148,32 @@
     font-size: 15px;
   }
 
+  .be-doc-pagination {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .be-doc-pagination-info {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .be-doc-pagination-dots {
+    order: 2;
+  }
+
   .be-doc-year-badge {
     font-size: 24px;
   }
 
   .be-doc-company-name {
     font-size: 20px;
+  }
+
+  .be-doc-company-role {
+    font-size: 15px;
   }
 
   .be-doc-entry-card {
