@@ -27,7 +27,7 @@ describe('BragEmployeeScreen', () => {
   })
 
   it('renders the read-only timeline in newest-first order', () => {
-    const { container } = render(<BragEmployeeScreen initialEntries={[
+    const { container } = render(<BragEmployeeScreen view="brag" initialEntries={[
       {
         id: 'old',
         title: 'Older win',
@@ -51,21 +51,35 @@ describe('BragEmployeeScreen', () => {
     ]} />)
 
     expect(screen.getByRole('heading', { name: /your entries/i })).toBeInTheDocument()
-    expect(screen.getByRole('tablist', { name: /brag document views/i })).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '2025' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '2024' })).toBeInTheDocument()
     expect(screen.getAllByText('Anthropic')).toHaveLength(2)
     expect(screen.getAllByText('Senior Product Designer')).toHaveLength(2)
     expect(screen.getByRole('button', { name: /add a win/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /previous year/i })).toBeDisabled()
-    expect(screen.getByRole('button', { name: /next year/i })).toBeInTheDocument()
-    expect(screen.getByText(/2024 – 2025/)).toBeInTheDocument()
-    expect(screen.getByText(/2 entries/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /previous year/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /next year/i })).not.toBeInTheDocument()
     expect(container.querySelectorAll('.be-doc-entry-card')[0]).toHaveTextContent('Newest win')
   })
 
+  it('shows the resume view without tabs', () => {
+    render(<BragEmployeeScreen view="resume" initialEntries={[{
+      id: 'new',
+      title: 'Newest win',
+      body: 'A fresh result.',
+      entry_date: '2025-12-01',
+      created_at: '2025-12-01T01:00:00Z',
+      strength: 'Solid',
+      strength_hint: 'Add a third evidence type to reach Strong',
+      brag_entry_evidence: [{ type: 'Metrics / data' }],
+    }]} />)
+
+    expect(screen.getByRole('heading', { name: /resume/i })).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+  })
+
   it('keeps the listing read only', () => {
-    render(<BragEmployeeScreen initialEntries={[{
+    render(<BragEmployeeScreen view="brag" initialEntries={[{
       id: 'new',
       title: 'Newest win',
       body: 'A fresh result.',
@@ -85,7 +99,7 @@ describe('BragEmployeeScreen', () => {
     const { default: userEvent } = await import('@testing-library/user-event')
     const user = userEvent.setup()
 
-    render(<BragEmployeeScreen initialEntries={[{
+    render(<BragEmployeeScreen view="brag" initialEntries={[{
       id: 'new',
       title: 'Newest win',
       body: 'A fresh result.',
@@ -105,7 +119,7 @@ describe('BragEmployeeScreen', () => {
       useProfileStore.getState().clearProfile()
     })
 
-    render(<BragEmployeeScreen initialEntries={[{
+    render(<BragEmployeeScreen view="brag" initialEntries={[{
       id: 'new',
       title: 'Newest win',
       body: 'A fresh result.',
@@ -120,41 +134,15 @@ describe('BragEmployeeScreen', () => {
     expect(screen.getByText('Current role title')).toBeInTheDocument()
   })
 
-  it('supports arrow key tab navigation when entries are present', async () => {
-    const { default: userEvent } = await import('@testing-library/user-event')
-    const user = userEvent.setup()
-
-    render(<BragEmployeeScreen initialEntries={[{
-      id: 'new',
-      title: 'Newest win',
-      body: 'A fresh result.',
-      entry_date: '2025-12-01',
-      created_at: '2025-12-01T01:00:00Z',
-      strength: 'Solid',
-      strength_hint: 'Add a third evidence type to reach Strong',
-      brag_entry_evidence: [{ type: 'Metrics / data' }],
-    }]} />)
-
-    const bragTab = screen.getByRole('tab', { name: /brag doc/i })
-    const resumeTab = screen.getByRole('tab', { name: /resume/i })
-
-    bragTab.focus()
-    await user.keyboard('{ArrowRight}')
-
-    expect(resumeTab).toHaveFocus()
-    expect(resumeTab).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('tabpanel', { name: /resume/i })).toBeVisible()
-  })
-
   it('falls back to the empty state when there are no entries', async () => {
-    render(<BragEmployeeScreen />)
+    render(<BragEmployeeScreen view="brag" />)
 
     expect(await screen.findByRole('heading', { name: /you've done great things/i })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: /your entries/i })).not.toBeInTheDocument()
   })
 
   it('shows a helpful load error when entries cannot be retrieved', async () => {
-    render(<BragEmployeeScreen initialEntriesError="Could not load entries. Please refresh and try again." />)
+    render(<BragEmployeeScreen view="brag" initialEntriesError="Could not load entries. Please refresh and try again." />)
 
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(/could not load entries/i))
   })

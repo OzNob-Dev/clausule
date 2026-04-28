@@ -18,8 +18,20 @@ const NAV_SECTIONS = [
   {
     title: 'Brag doc',
     items: [
-      { page: 'brag', href: '/brag', label: 'Your entries', icon: 'brag' },
-      { page: 'feedback', href: ROUTES.bragFeedback, label: 'Feedback', icon: 'feedback' },
+      {
+        page: 'brag',
+        href: ROUTES.brag,
+        label: 'Your entries',
+        icon: 'brag',
+        children: [{ page: 'resume', href: ROUTES.bragResume, label: 'Resume' }],
+      },
+      {
+        page: 'feedback',
+        href: ROUTES.bragFeedback,
+        label: 'Feedback',
+        icon: 'feedback',
+        children: [{ page: 'feedback-history', href: ROUTES.bragFeedbackHistory, label: 'Feedback history' }],
+      },
     ],
   },
 ]
@@ -61,6 +73,7 @@ export default function BragIdentitySidebar({
   ariaLabel = 'Sidebar navigation',
   eyebrow = 'Clausule',
   activePage,
+  activeChildPage,
   showSignOut = true,
 }) {
   const { logout } = useAuth()
@@ -90,14 +103,32 @@ export default function BragIdentitySidebar({
                 <li key={item.page} className="be-sidebar-item">
                   <Link
                     href={item.href}
-                    className={cn('be-sidebar-link', activePage === item.page && 'be-sidebar-link-active')}
-                    aria-current={activePage === item.page ? 'page' : undefined}
+                    className={cn(
+                      'be-sidebar-link',
+                      (activePage === item.page || item.children?.some((child) => activeChildPage === child.page)) && 'be-sidebar-link-active'
+                    )}
+                    aria-current={activePage === item.page || item.children?.some((child) => activeChildPage === child.page) ? 'page' : undefined}
                   >
                     <span className="be-sidebar-icon" aria-hidden="true">
                       <SidebarIcon icon={item.icon} />
                     </span>
                     <span>{item.label}</span>
                   </Link>
+                  {item.children?.length ? (
+                    <ul className="be-sidebar-sublist" aria-label={`${item.label} child pages`}>
+                      {item.children.map((child) => (
+                        <li key={child.page} className="be-sidebar-subitem">
+                          <Link
+                            href={child.href}
+                            className={cn('be-sidebar-sublink', activeChildPage === child.page && 'be-sidebar-sublink-active')}
+                            aria-current={activeChildPage === child.page ? 'page' : undefined}
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </li>
               ))}
             </ul>

@@ -23,11 +23,11 @@ describe('BragRail integration', () => {
       email: 'ada@example.com',
     })
 
-    render(<BragRail activePage="feedback" />)
+    render(<BragRail activePage="brag" activeChildPage="resume" />)
 
     expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
-    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag/feedback')
-    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('href', '/brag/resume')
+    expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('aria-current', 'page')
   })
 
   it('delegates sign out to auth context', async () => {

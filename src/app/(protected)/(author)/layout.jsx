@@ -6,7 +6,9 @@ import '@features/brag/styles/brag-shell.css'
 
 const PAGE_CONFIG = {
   '/brag': { activePage: 'brag', eyebrow: 'Clausule' },
+  '/brag/resume': { activePage: 'brag', activeChildPage: 'resume', eyebrow: 'Clausule · Brag doc' },
   '/brag/feedback': { activePage: 'feedback', eyebrow: 'Clausule · Feedback' },
+  '/brag/feedback/history': { activePage: 'feedback', activeChildPage: 'feedback-history', eyebrow: 'Clausule · Feedback' },
   '/profile': { activePage: 'profile', eyebrow: 'Clausule · Profile' },
 }
 
@@ -16,7 +18,12 @@ export default function AuthorLayout({ children }) {
 
   return (
     <div className="be-page">
-      <BragIdentitySidebar activePage={pageConfig.activePage} eyebrow={pageConfig.eyebrow} ariaLabel="Sidebar navigation" />
+      <BragIdentitySidebar
+        activePage={pageConfig.activePage}
+        activeChildPage={pageConfig.activeChildPage}
+        eyebrow={pageConfig.eyebrow}
+        ariaLabel="Sidebar navigation"
+      />
       {children}
     </div>
   )

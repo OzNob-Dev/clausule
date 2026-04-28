@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useMemo, useState, useTransition } from 'react'
+import { useMemo, useState } from 'react'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
 import BragEmptyState from '@features/brag/components/BragEmptyState'
 import EntryComposer from '@features/brag/components/EntryComposer'
@@ -35,10 +35,8 @@ function dateLabel(entryDate) {
   const now = new Date()
   const dayMs = 24 * 60 * 60 * 1000
   const diff = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(then.getFullYear(), then.getMonth(), then.getDate())) / dayMs)
-
   if (diff === 0) return 'Today'
   if (diff === 1) return 'Yesterday'
-
   return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(then)
 }
 
@@ -103,41 +101,31 @@ function EntryDocCard({ entry }) {
   )
 }
 
-export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '' }) {
+export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '', view = 'brag' }) {
   const profile = useProfileStore((state) => state.profile)
-  const [, startPanelTransition] = useTransition()
-  const [tab, setTab] = useState('brag')
   const [composerOpen, setComposerOpen] = useState(false)
   const groupedEntries = useMemo(() => groupEntries(initialEntries ?? [], profile), [initialEntries, profile.department, profile.jobTitle])
-  const tabOrder = ['brag', 'cv']
   const hasEntries = groupedEntries.length > 0
 
-  const moveTab = (direction) => {
-    const currentIndex = tabOrder.indexOf(tab)
-    const nextIndex = direction === 'start'
-      ? 0
-      : direction === 'end'
-        ? tabOrder.length - 1
-        : (currentIndex + direction + tabOrder.length) % tabOrder.length
-    const nextTab = tabOrder[nextIndex]
-    startPanelTransition(() => setTab(nextTab))
-    document.getElementById(`tab-${nextTab}`)?.focus()
-  }
-
-  const handleTabKeyDown = (event) => {
-    if (event.key === 'ArrowRight') {
-      event.preventDefault()
-      moveTab(1)
-    } else if (event.key === 'ArrowLeft') {
-      event.preventDefault()
-      moveTab(-1)
-    } else if (event.key === 'Home') {
-      event.preventDefault()
-      moveTab('start')
-    } else if (event.key === 'End') {
-      event.preventDefault()
-      moveTab('end')
-    }
+  if (view === 'resume') {
+    return (
+      <main className="be-main be-doc-screen page-enter" aria-labelledby="brag-page-title">
+        <div className="be-inner be-doc-inner">
+          <h1 id="brag-page-title" className="sr-only">Brag document</h1>
+          {initialEntriesError ? (
+            <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
+          ) : (
+            <section aria-labelledby="resume-page-title">
+              <header className="be-doc-header">
+                <span className="be-doc-eyebrow">Your achievements</span>
+                <h1 id="resume-page-title" className="be-doc-title">Resume</h1>
+              </header>
+              <ResumeTab entries={initialEntries} />
+            </section>
+          )}
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -154,112 +142,55 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
               <h1 className="be-doc-title">Your entries</h1>
             </header>
 
-            <div className="be-doc-tabs-row">
-              <div className="be-tabs" role="tablist" aria-label="Brag document views">
-                {[['brag', 'Brag doc'], ['cv', 'Resume']].map(([key, label]) => (
-                  <button
-                    key={key}
-                    id={`tab-${key}`}
-                    type="button"
-                    role="tab"
-                    aria-selected={tab === key}
-                    aria-controls={`panel-${key}`}
-                    tabIndex={tab === key ? 0 : -1}
-                    onClick={() => startPanelTransition(() => setTab(key))}
-                    onKeyDown={handleTabKeyDown}
-                    className={`be-tab${tab === key ? ' be-tab--active' : ''}`}
-                  >
-                    {label}
+            {!composerOpen ? (
+              <>
+                <div className="be-doc-cta-wrap">
+                  <button type="button" className="be-doc-add-button" onClick={() => setComposerOpen(true)}>
+                    <span className="be-doc-add-icon" aria-hidden="true">
+                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <line x1="8" y1="3" x2="8" y2="13" />
+                        <line x1="3" y1="8" x2="13" y2="8" />
+                      </svg>
+                    </span>
+                    <span className="be-doc-add-copy">
+                      <span className="be-doc-add-label">Add a win</span>
+                      <span className="be-doc-add-description">Capture a fresh entry for your brag doc</span>
+                    </span>
                   </button>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            <section
-              id="panel-brag"
-              role="tabpanel"
-              aria-labelledby="tab-brag"
-              hidden={tab !== 'brag'}
-            >
-              {!composerOpen ? (
-                <>
-                  <div className="be-doc-cta-wrap">
-                    <button type="button" className="be-doc-add-button" onClick={() => setComposerOpen(true)}>
-                      <span className="be-doc-add-icon" aria-hidden="true">
-                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <line x1="8" y1="3" x2="8" y2="13" />
-                          <line x1="3" y1="8" x2="13" y2="8" />
-                        </svg>
-                      </span>
-                      <span className="be-doc-add-copy">
-                        <span className="be-doc-add-label">Add a win</span>
-                        <span className="be-doc-add-description">Capture a fresh entry for your brag doc</span>
-                      </span>
-                    </button>
-                  </div>
+                <div className="be-doc-timeline">
+                  {groupedEntries.map(({ year, groups }) => (
+                    <section key={year} className="be-doc-year-group" aria-labelledby={`be-doc-year-${year}`}>
+                      <div className="be-doc-year-header">
+                        <h2 className="be-doc-year-badge" id={`be-doc-year-${year}`}>{year}</h2>
+                        <div className="be-doc-year-line" aria-hidden="true" />
+                      </div>
 
-                  <div className="be-doc-timeline">
-                    {groupedEntries.map(({ year, groups }) => (
-                      <section key={year} className="be-doc-year-group" aria-labelledby={`be-doc-year-${year}`}>
-                        <div className="be-doc-year-header">
-                          <h2 className="be-doc-year-badge" id={`be-doc-year-${year}`}>{year}</h2>
-                          <div className="be-doc-year-line" aria-hidden="true" />
-                        </div>
+                      {groups.map((group) => (
+                        <div key={group.key} className="be-doc-company-group">
+                          <header className="be-doc-company-header">
+                            <span className="be-doc-company-name">{group.company}</span>
+                            <span className="be-doc-company-role">{group.role}</span>
+                          </header>
 
-                        {groups.map((group) => (
-                          <div key={group.key} className="be-doc-company-group">
-                            <header className="be-doc-company-header">
-                              <span className="be-doc-company-name">{group.company}</span>
-                              <span className="be-doc-company-role">{group.role}</span>
-                            </header>
-
-                            <div className="be-doc-entries-list">
-                              {group.entries.map((entry) => (
-                                <EntryDocCard key={entry.id} entry={entry} />
-                              ))}
-                            </div>
+                          <div className="be-doc-entries-list">
+                            {group.entries.map((entry) => (
+                              <EntryDocCard key={entry.id} entry={entry} />
+                            ))}
                           </div>
-                        ))}
-                      </section>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
-              )}
-            </section>
-
-            <section id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" hidden={tab !== 'cv'}>
-              <ResumeTab entries={initialEntries} />
-            </section>
-
-            <footer className="be-doc-pagination" aria-label="Brag pagination">
-              <button type="button" className="be-doc-pagination-btn" aria-label="Previous year" disabled>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <div className="be-doc-pagination-info">
-                <span className="be-doc-pagination-text">
-                  {groupedEntries.length ? `${Math.min(...groupedEntries.map(({ year }) => year))} – ${Math.max(...groupedEntries.map(({ year }) => year))}` : '—'}
-                </span>
-                <div className="be-doc-pagination-divider" aria-hidden="true" />
-                <span className="be-doc-pagination-text">{initialEntries.length} entries</span>
-              </div>
-              <div className="be-doc-pagination-dots" aria-hidden="true">
-                {groupedEntries.map((_, i) => (
-                  <span key={i} className={`be-doc-pagination-dot${i === 0 ? ' is-active' : ''}`} />
-                ))}
-              </div>
-              <button type="button" className="be-doc-pagination-btn" aria-label="Next year">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </footer>
+                        </div>
+                      ))}
+                    </section>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
+            )}
           </>
         ) : (
-          <BragEmptyState onAddEntry={() => {}} />
+          <BragEmptyState />
         )}
       </div>
     </main>

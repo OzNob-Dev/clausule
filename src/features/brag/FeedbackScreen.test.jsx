@@ -36,17 +36,16 @@ describe('FeedbackScreen', () => {
     useProfileStore.getState().setProfile({ email: 'ada@example.com' })
   })
 
-  it('renders the feedback tabs and composer', () => {
-    renderWithQueryClient(<FeedbackScreen />)
+  it('renders the feedback composer without tabs', () => {
+    renderWithQueryClient(<FeedbackScreen view="compose" />)
 
     expect(screen.getByRole('heading', { name: /tell the clausule team what would make this better/i })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /send feedback/i })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /feedback history/i })).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
     expect(screen.getByLabelText(/what is this about/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/how does it feel/i)).toBeInTheDocument()
   })
 
-  it('sends feedback from the composer tab', async () => {
+  it('sends feedback from the composer view', async () => {
     const user = userEvent.setup()
     const fetchMock = mockFeedbackFetch({
       getBody: { feedback: [] },
@@ -66,7 +65,7 @@ describe('FeedbackScreen', () => {
       },
     })
 
-    renderWithQueryClient(<FeedbackScreen />)
+    renderWithQueryClient(<FeedbackScreen view="compose" />)
 
     await user.selectOptions(screen.getByLabelText(/what is this about/i), 'Bug')
     await user.selectOptions(screen.getByLabelText(/how does it feel/i), 'Blocking work')
@@ -80,8 +79,7 @@ describe('FeedbackScreen', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/feedback', expect.objectContaining({ method: 'POST', credentials: 'same-origin' }))
   })
 
-  it('shows the feedback history tab', async () => {
-    const user = userEvent.setup()
+  it('renders feedback history without tabs', async () => {
     mockFeedbackFetch({
       getBody: {
         feedback: [{
@@ -103,12 +101,11 @@ describe('FeedbackScreen', () => {
       postBody: { ok: true, feedback: null },
     })
 
-    renderWithQueryClient(<FeedbackScreen />)
+    renderWithQueryClient(<FeedbackScreen view="history" />)
 
-    await user.click(screen.getByRole('tab', { name: /feedback history/i }))
-
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
     expect(await screen.findByRole('heading', { name: /back and forth with the clausule team/i })).toBeInTheDocument()
-    expect(screen.getByText('jj')).toBeInTheDocument()
+    expect(await screen.findByText('jj')).toBeInTheDocument()
     expect(screen.getByText('bnv')).toBeInTheDocument()
     expect(screen.getByText('Thanks for the note.')).toBeInTheDocument()
   })

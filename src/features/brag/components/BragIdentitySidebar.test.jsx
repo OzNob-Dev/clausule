@@ -16,23 +16,24 @@ describe('BragIdentitySidebar', () => {
     useProfileStore.getState().clearProfile()
   })
 
-  it('renders the standalone sidebar navigation for real routes only', async () => {
+  it('renders child menus for resume and feedback history', async () => {
     useProfileStore.getState().setProfile({
       firstName: 'Ada',
       lastName: 'Lovelace',
       email: 'ada@example.com',
     })
 
-    render(<BragIdentitySidebar activePage="profile" eyebrow="Clausule · Profile" ariaLabel="Sidebar navigation" />)
+    render(<BragIdentitySidebar activePage="feedback" activeChildPage="feedback-history" eyebrow="Clausule · Feedback" ariaLabel="Sidebar navigation" />)
 
     expect(screen.getByRole('complementary', { name: /sidebar navigation/i })).toBeInTheDocument()
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
     expect(screen.getByRole('link', { name: /security/i })).toHaveAttribute('href', '/brag/settings')
     expect(screen.getByRole('link', { name: /your entries/i })).toHaveAttribute('href', '/brag')
-    expect(screen.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/brag/feedback')
-    expect(screen.queryByText(/templates/i)).not.toBeInTheDocument()
-    expect(screen.queryByText(/help center/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('href', '/brag/resume')
+    expect(screen.getByRole('link', { name: /^feedback$/i })).toHaveAttribute('href', '/brag/feedback')
+    expect(screen.getByRole('link', { name: /feedback history/i })).toHaveAttribute('href', '/brag/feedback/history')
+    expect(screen.getByRole('link', { name: /feedback history/i })).toHaveAttribute('aria-current', 'page')
 
     const user = (await import('@testing-library/user-event')).default.setup()
     await user.click(screen.getByRole('button', { name: /log out/i }))

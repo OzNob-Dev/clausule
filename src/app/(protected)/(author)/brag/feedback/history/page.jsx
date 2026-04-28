@@ -1,5 +1,5 @@
 import FeedbackScreen from '@features/brag/FeedbackScreen'
 
 export default function Page() {
-  return <FeedbackScreen view="compose" />
+  return <FeedbackScreen view="history" />
 }

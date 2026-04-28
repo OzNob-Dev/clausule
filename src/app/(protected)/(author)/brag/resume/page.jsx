@@ -10,7 +10,7 @@ export default async function Page() {
 
   return (
     <BragEmployeeScreen
-      view="brag"
+      view="resume"
       initialEntries={result.status === 200 ? result.body.entries ?? [] : []}
       initialEntriesError={result.status === 200 ? '' : 'Could not load entries. Please refresh and try again.'}
     />
