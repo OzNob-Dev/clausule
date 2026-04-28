@@ -9,6 +9,7 @@ const DEFAULT_DESCRIPTION =
   'This will permanently delete your account and remove the records connected to it from our servers. This action cannot be undone.'
 
 export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCRIPTION }) {
+  console.log('[DeleteAccountDialog] render — open:', open)
   const inputRef = useRef(null)
   const { deleteAccount, deleting } = useDeleteAccount()
   const [confirmText, setConfirmText] = useState('')

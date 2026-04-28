@@ -65,6 +65,8 @@ export default function BragSettings() {
   const displayName    = profileDisplayName(profile)
   const avatarInitials = profileInitials(profile)
 
+  console.log('[BragSettings] render — deleteModal:', deleteModal)
+
   return (
     <>
     <main className="be-main page-enter" aria-labelledby="brag-settings-title">
@@ -92,7 +94,7 @@ export default function BragSettings() {
             />
           )}
 
-          <BragSettingsDangerZone onDelete={() => setDeleteModal(true)} />
+          <BragSettingsDangerZone onDelete={() => { console.log('[BragSettings] onDelete called, setting deleteModal=true'); setDeleteModal(true) }} />
         </div>
     </main>
       <DeleteAccountDialog

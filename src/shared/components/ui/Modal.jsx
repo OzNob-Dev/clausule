@@ -102,7 +102,10 @@ export function Modal({
     }
   }, [open, onClose, portalNode])
 
-  if (!open || !portalNode) return null
+  if (!open || !portalNode) {
+    console.log('[Modal] bailing — open:', open, 'portalNode:', portalNode)
+    return null
+  }
 
   return createPortal(
     <div
