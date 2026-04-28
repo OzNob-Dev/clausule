@@ -59,8 +59,8 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
       labelledBy="delete-account-dialog-title"
       describedBy="delete-account-dialog-description"
     >
-      <div className={cn('w-full max-w-[34rem] rounded-[var(--r2)] border border-rule-em bg-card p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)]')}>
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-red/20 bg-red-bg text-red" aria-hidden="true">
+      <div className={cn('w-full max-w-[34rem] rounded-[var(--r2)] border border-[rgba(60,45,35,0.28)] bg-white p-6 shadow-[0_32px_96px_rgba(0,0,0,0.26)]')}>
+        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border-2 border-red/50 bg-red/20 text-red" aria-hidden="true">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-[18px] w-[18px]">
             <polyline points="3 6 5 6 17 6" />
             <path d="M8 6V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2" />
@@ -88,7 +88,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
             onChange={(event) => setConfirmText(event.target.value)}
             placeholder="DELETE"
             autoFocus
-            className="block box-border min-w-0 w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-red"
+            className="block box-border min-w-0 w-full rounded-[var(--r)] border-[1.5px] border-rule-em bg-canvas px-[13px] py-[11px] font-sans text-[15px] font-medium text-tp outline-none transition-colors duration-200 placeholder:text-tm focus:border-red focus:ring-2 focus:ring-red/20"
           />
         </div>
 
@@ -98,7 +98,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
             onClick={handleConfirm}
             disabled={deleting}
             className={cn(
-              'rounded-[var(--r)] border-none px-4 py-3 text-[14px] font-bold text-[#FAF7F3] transition-opacity duration-150 disabled:cursor-default disabled:opacity-60',
+              'rounded-[var(--r)] border-none px-4 py-3 text-[14px] font-bold text-white transition-opacity duration-150 disabled:cursor-default disabled:opacity-60',
               confirmReady ? 'bg-red cursor-pointer' : 'bg-red/70 cursor-pointer'
             )}
           >
