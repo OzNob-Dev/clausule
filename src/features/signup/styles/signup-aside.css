@@ -126,3 +126,6 @@
   color: var(--su-tx4);
   line-height: 1.4;
 }
+
+.su-panel-tx1 { color: #FBF7F2; }
+.su-panel-tx2 { color: #B8B2AC; }
