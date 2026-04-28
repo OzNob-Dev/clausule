@@ -245,19 +245,48 @@
 
 .su-step-connector--done { background: var(--su-tx1); }
 
-/* Sidebar (dark panel) variant — vertical, overrides CSS vars for dark bg */
+/* Sidebar (dark panel) variant — matches MFA email step indicator style */
 .su-progress--sidebar {
-  --su-canvas:    #2A221A;
-  --su-panel:     #3A2E24;
-  --su-tx1:       #FBF7F2;
-  --su-tx2:       #FBF7F2;
-  --su-tx3:       #B8B2AC;
-  --su-tx4:       #786B5F;
-  --su-border-em: rgba(251, 247, 242, 0.15);
-  --su-acc:       #D05A34;
   padding: 0;
   margin-top: 24px;
 }
+
+.su-progress--sidebar .su-progress-inner { gap: 10px; }
+
+.su-progress--sidebar .su-step-connector { display: none; }
+
+.su-progress--sidebar .su-step-circle {
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  font-weight: 800;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #B8B2AC;
+}
+
+.su-progress--sidebar .su-step-circle--done {
+  background: rgba(201, 79, 42, 0.25);
+  color: #C94F2A;
+}
+
+.su-progress--sidebar .su-step-circle--active {
+  background: #C94F2A;
+  color: #FFFFFF;
+}
+
+.su-progress--sidebar .su-step-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #786B5F;
+}
+
+.su-progress--sidebar .su-step-label--active {
+  color: #B8B2AC;
+  font-weight: 600;
+}
+
+.su-progress--sidebar .su-step-label--done { color: #786B5F; }
 
 @media (max-width: 640px) {
   .su-progress--sidebar { display: none; }

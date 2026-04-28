@@ -219,6 +219,10 @@ export function useSignInFlow() {
     dispatch({ type: 'begin_submit' })
     try {
       const data = await sendCodeMutation.mutateAsync(resolved)
+      if (data?.nextStep === 'signup') {
+        router.push(`/signup?email=${encodeURIComponent(resolved)}`)
+        return
+      }
       if (data?.mfaRequired) {
         dispatch({ type: 'set_email', value: resolved })
         code.setState('idle')
