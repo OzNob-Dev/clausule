@@ -23,7 +23,10 @@ const NAV_SECTIONS = [
         href: ROUTES.brag,
         label: 'Your entries',
         icon: 'brag',
-        children: [{ page: 'resume', href: ROUTES.bragResume, label: 'Resume' }],
+        children: [
+          { page: 'resume', href: ROUTES.bragResume, label: 'Resume' },
+          { page: 'linkedin', href: ROUTES.bragLinkedin, label: 'LinkedIn' },
+        ],
       },
       {
         page: 'feedback',

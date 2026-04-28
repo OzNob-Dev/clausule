@@ -7,6 +7,7 @@ import '@features/brag/styles/brag-shell.css'
 const PAGE_CONFIG = {
   '/brag': { activePage: 'brag', eyebrow: 'Clausule' },
   '/brag/resume': { activePage: 'brag', activeChildPage: 'resume', eyebrow: 'Clausule · Brag doc' },
+  '/brag/linkedin': { activePage: 'brag', activeChildPage: 'linkedin', eyebrow: 'Clausule · Brag doc' },
   '/brag/feedback': { activePage: 'feedback', eyebrow: 'Clausule · Feedback' },
   '/brag/feedback/history': { activePage: 'feedback', activeChildPage: 'feedback-history', eyebrow: 'Clausule · Feedback' },
   '/profile': { activePage: 'profile', eyebrow: 'Clausule · Profile' },

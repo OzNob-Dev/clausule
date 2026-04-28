@@ -51,6 +51,37 @@ export interface SavedBragEntry {
   files?: Array<{ id: string, name: string, size: number, type: string }>
 }
 
+export type LinkedInImportStatus = 'draft' | 'ready' | 'published' | 'skipped'
+export type LinkedInImportKind = 'experience' | 'achievement' | 'recommendation' | 'skill'
+
+export interface LinkedInImportItem {
+  id: string
+  kind: LinkedInImportKind
+  title: string
+  body: string | null
+  organization: string | null
+  entry_date: string | null
+  evidence_type: string
+  selected: boolean
+  sort_order: number
+  brag_entry_id?: string | null
+  created_at?: string | null
+}
+
+export interface LinkedInImportSession {
+  id: string
+  user_id: string
+  profile_name: string
+  headline: string | null
+  linkedin_url: string | null
+  status: LinkedInImportStatus
+  source_snapshot: Record<string, unknown>
+  published_at?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+  linkedin_import_items?: LinkedInImportItem[]
+}
+
 export interface FeedbackReply {
   id: string
   author_name?: string | null

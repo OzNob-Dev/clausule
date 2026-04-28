@@ -1,6 +1,7 @@
 export const ROUTES = {
   brag: '/brag',
   bragResume: '/brag/resume',
+  bragLinkedin: '/brag/linkedin',
   bragFeedback: '/brag/feedback',
   bragFeedbackHistory: '/brag/feedback/history',
   bragSettings: '/brag/settings',
