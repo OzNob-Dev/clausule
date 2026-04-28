@@ -31,7 +31,7 @@ export default function SignupPlanScreen({ accountData }) {
 
   return (
     <>
-      <SignupProgress />
+      <SignupProgress mobile />
       <div className="su-narrow page-enter">
         <SignupStepPayment
           accountData={accountData}

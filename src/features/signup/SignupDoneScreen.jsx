@@ -11,7 +11,7 @@ import '@features/signup/styles/signup-success.css'
 export default function SignupDoneScreen({ email }) {
   return (
     <>
-      <SignupProgress />
+      <SignupProgress mobile />
       <div className="su-narrow page-enter">
         <SignupStepDone email={email} />
       </div>

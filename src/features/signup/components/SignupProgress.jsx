@@ -4,12 +4,12 @@ import { usePathname } from 'next/navigation'
 
 const STEPS = ['Account', 'Plan', 'Done']
 
-export default function SignupProgress() {
+export default function SignupProgress({ mobile = false }) {
   const p = usePathname()
   const step = p.endsWith('/done') ? 3 : p.endsWith('/plan') ? 2 : 1
 
   return (
-    <nav className="su-progress" aria-label="Signup progress">
+    <nav className={`su-progress${mobile ? ' su-progress--mobile' : ' su-progress--sidebar'}`} aria-label="Signup progress">
       <ol className="su-progress-inner">
         {STEPS.map((label, index) => {
           const stepNumber = index + 1

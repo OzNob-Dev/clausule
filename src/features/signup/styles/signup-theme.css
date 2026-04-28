@@ -245,6 +245,65 @@
 
 .su-step-connector--done { background: var(--su-tx1); }
 
+/* Sidebar (dark panel) variant — vertical, overrides CSS vars for dark bg */
+.su-progress--sidebar {
+  --su-canvas:    #2A221A;
+  --su-panel:     #3A2E24;
+  --su-tx1:       #FBF7F2;
+  --su-tx2:       #FBF7F2;
+  --su-tx3:       #B8B2AC;
+  --su-tx4:       #786B5F;
+  --su-border-em: rgba(251, 247, 242, 0.15);
+  --su-acc:       #D05A34;
+  padding: 0;
+  margin-top: 24px;
+}
+
+@media (max-width: 640px) {
+  .su-progress--sidebar { display: none; }
+}
+
+/* Mobile (content area) variant — horizontal, hidden on desktop */
+.su-progress--mobile { display: none; }
+
+@media (max-width: 640px) {
+  .su-progress--mobile {
+    display: flex;
+    justify-content: center;
+    padding: 0 0 20px;
+  }
+
+  .su-progress--mobile .su-progress-inner {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+  }
+
+  .su-progress--mobile .su-step-wrap { display: contents; }
+
+  .su-progress--mobile .su-step-item {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .su-progress--mobile .su-step-connector {
+    width: auto;
+    height: 1.5px;
+    flex: 1;
+    margin: 0 8px 18px;
+  }
+
+  .su-progress--mobile .su-step-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .su-progress--mobile .su-step-label--active { font-weight: 700; }
+}
+
 .su-main {
   position: relative;
   z-index: 1;

@@ -36,7 +36,7 @@ function SignUpInner() {
 
   return (
     <>
-      <SignupProgress />
+      <SignupProgress mobile />
       <div className="su-narrow">
         <SignupStepAccount
           emailLocked={redirectedFromSignIn}
