@@ -102,16 +102,10 @@ export function Modal({
     }
   }, [open, onClose, portalNode])
 
-  if (!open || !portalNode) {
-    console.log('[Modal] bailing — open:', open, 'portalNode:', portalNode)
-    return null
-  }
-
-  console.log('[Modal] rendering portal — portalNode:', portalNode)
+  if (!open || !portalNode) return null
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      style={{ position: 'fixed', inset: 0, zIndex: 99999, background: 'red', display: 'flex' }}
+      className="modal-overlay"
       onClick={onClose}
       role="presentation"
     >
