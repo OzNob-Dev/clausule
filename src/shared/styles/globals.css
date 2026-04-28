@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../../";
 
 :root {
   --canvas: #F5F0EA;
@@ -10,8 +9,9 @@
   --ts: #4D4035;
   --tm: #54483F;
   --tc: #584B42;
-  --rule: rgba(60, 45, 35, 0.10);
-  --border: rgba(60, 45, 35, 0.10);
+  --rule:    rgba(60, 45, 35, 0.10);
+  --rule-em: rgba(60, 45, 35, 0.16);
+  --border:  rgba(60, 45, 35, 0.10);
   --acc: #7F351F;
   --acc-text: #F5F0EA;
   --acc-tint: rgba(208, 90, 52, 0.14);
