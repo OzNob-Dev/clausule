@@ -20,7 +20,7 @@ export default function BragIdentitySidebar({
       <div className="be-sidebar-body">
         <div>
           <div className="be-sidebar-avatar be-avatar-pop" aria-hidden="true">
-            {avatarInitials}
+            <span className="be-sidebar-avatar-text">{avatarInitials}</span>
           </div>
           <div className="be-sidebar-name">{displayName}</div>
           <div className="be-sidebar-role">{email}</div>

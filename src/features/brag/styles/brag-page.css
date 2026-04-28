@@ -2268,7 +2268,7 @@
   text-transform: uppercase;
 }
 
-.be-doc-header h1 {
+.be-doc-title {
   margin: 0;
   color: var(--be-doc-ink);
   font-family: var(--be-serif);

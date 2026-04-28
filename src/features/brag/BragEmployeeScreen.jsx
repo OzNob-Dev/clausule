@@ -151,7 +151,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
           <>
             <header className="be-doc-header">
               <span className="be-doc-eyebrow">Your achievements</span>
-              <h1>Your entries</h1>
+              <h1 className="be-doc-title">Your entries</h1>
             </header>
 
             <div className="be-doc-tabs-row">
