@@ -36,7 +36,6 @@ export default function SignInBrandPanel({
         <p className="su-shell-subtext">{subtext}</p>
       </div>
       {children}
-      <div className="su-shell-footer">Built for teams who care</div>
     </div>
   )
 }

@@ -291,7 +291,7 @@
     width: auto;
     height: 1.5px;
     flex: 1;
-    margin: 0 8px 18px;
+    margin: 0 8px;
   }
 
   .su-progress--mobile .su-step-label {
