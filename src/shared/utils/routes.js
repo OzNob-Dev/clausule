@@ -1,4 +1,5 @@
 export const ROUTES = {
+  components: '/components',
   brag: '/brag',
   bragResume: '/brag/resume',
   bragLinkedin: '/brag/linkedin',

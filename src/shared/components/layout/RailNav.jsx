@@ -5,6 +5,15 @@ import { usePathname } from 'next/navigation'
 import { ROUTES } from '@shared/utils/routes'
 import { cn } from '@shared/utils/cn'
 
+const componentsIcon = (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
+    <rect x="2" y="2" width="4" height="4" rx="1"/>
+    <rect x="10" y="2" width="4" height="4" rx="1"/>
+    <rect x="2" y="10" width="4" height="4" rx="1"/>
+    <rect x="10" y="10" width="4" height="4" rx="1"/>
+  </svg>
+)
+
 const settingsIcon = (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
     <circle cx="8" cy="8" r="2.5"/>
@@ -13,6 +22,11 @@ const settingsIcon = (
 )
 
 const navItems = [
+  {
+    to: ROUTES.components,
+    tip: 'Component library',
+    icon: componentsIcon,
+  },
   {
     to: '/dashboard',
     tip: 'Dashboard',
@@ -53,7 +67,7 @@ const navItems = [
     ),
   },
   {
-    to: '/settings',
+    to: ROUTES.bragSettings,
     tip: 'Settings',
     icon: settingsIcon,
   },
@@ -73,13 +87,14 @@ export function RailNav({ items = navItems, locked = false, onLogout, userInitia
 
       <nav className="flex flex-1 flex-col items-center gap-[2px] max-sm:flex-none max-sm:w-full max-sm:flex-row max-sm:justify-around max-sm:gap-0" aria-label="Primary">
         {visibleItems.map(({ to, tip, icon, badge }) => {
-          const isActive = pathname === to
+          const isActive = pathname === to || pathname.startsWith(`${to}/`)
           return (
             <Link
               key={to}
               href={to}
               title={tip}
               aria-label={tip}
+              aria-current={isActive ? 'page' : undefined}
               className={cn(
                 'relative flex h-[36px] w-[36px] items-center justify-center rounded-[var(--r)] text-tc no-underline transition-all duration-150 max-sm:h-[44px] max-sm:w-[44px]',
                 isActive ? 'bg-acc-bg text-acc-text' : 'hover:bg-white/5 hover:text-ts'
