@@ -1,5 +1,6 @@
 'use client'
 
+import SignupProgress from '@features/signup/components/SignupProgress'
 import SignupStepDone from '@features/signup/components/SignupStepDone'
 import '@features/signup/styles/signup-theme.css'
 import '@features/signup/styles/signup-success.css'
@@ -9,8 +10,11 @@ import '@features/signup/styles/signup-success.css'
  */
 export default function SignupDoneScreen({ email }) {
   return (
-    <div className="su-narrow page-enter">
-      <SignupStepDone email={email} />
-    </div>
+    <>
+      <SignupProgress />
+      <div className="su-narrow page-enter">
+        <SignupStepDone email={email} />
+      </div>
+    </>
   )
 }

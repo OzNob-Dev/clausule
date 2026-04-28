@@ -170,28 +170,27 @@
 .su-progress {
   padding: 0 0 24px;
   flex-shrink: 0;
-  display: flex;
-  justify-content: center;
 }
 
 .su-progress-inner {
   display: flex;
-  align-items: center;
-  width: 100%;
+  flex-direction: column;
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.su-progress-inner--wide { max-width: 900px; }
-.su-progress-inner--narrow { max-width: 900px; }
-.su-step-wrap { display: contents; }
+.su-step-wrap {
+  display: flex;
+  flex-direction: column;
+}
 
 .su-step-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 }
 
 .su-step-circle {
@@ -223,22 +222,24 @@
 }
 
 .su-step-label {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--su-tx4);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
   white-space: nowrap;
 }
 
-.su-step-label--active { color: var(--su-tx2); }
-.su-step-label--done { color: var(--su-tx3); }
+.su-step-label--active {
+  color: var(--su-tx2);
+  font-weight: 700;
+}
+
+.su-step-label--done { color: var(--su-tx4); }
 
 .su-step-connector {
-  flex: 1;
-  height: 1.5px;
+  width: 1.5px;
+  height: 14px;
   background: var(--su-border-em);
-  margin: 0 8px 18px;
+  margin: 2px 0 2px 13px;
   transition: background 0.3s;
 }
 

@@ -10,7 +10,7 @@ export default function SignupProgress() {
 
   return (
     <nav className="su-progress" aria-label="Signup progress">
-      <ol className={`su-progress-inner${step === 1 ? ' su-progress-inner--wide' : ' su-progress-inner--narrow'}`}>
+      <ol className="su-progress-inner">
         {STEPS.map((label, index) => {
           const stepNumber = index + 1
           const done = stepNumber < step
