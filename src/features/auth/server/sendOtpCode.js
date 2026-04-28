@@ -31,8 +31,11 @@ export async function sendOtpCode(body) {
 
   if (!validateEmail(email).valid) return { body: { error: 'Invalid email address' }, status: 400 }
 
-  const { profile } = await findProfileByEmail(email, 'totp_secret')
-  if (profile?.totp_secret) {
+  const { profile } = await findProfileByEmail(email, 'totp_secret,is_deleted')
+  if (!profile || profile.is_deleted) {
+    return { body: { nextStep: 'signup' }, status: 200 }
+  }
+  if (profile.totp_secret) {
     return { body: { mfaRequired: true }, status: 200 }
   }
 
