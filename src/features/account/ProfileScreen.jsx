@@ -43,14 +43,17 @@ export default function ProfileScreen() {
 
   return (
     <main className="be-main page-enter" aria-labelledby="profile-page-title">
-        <div className="be-inner">
-          <h1 id="profile-page-title" className="bss-heading">Personal details</h1>
-          <p className="bss-subheading">Manage the identity, contact, and work details connected to your account.</p>
-          <div className="bss-divider" />
+        <div className="be-inner profile-page">
+          <header className="profile-header">
+            <h1 id="profile-page-title" className="profile-heading">Personal details</h1>
+            <p className="profile-subheading">Manage the identity, contact, and work details connected to your account.</p>
+          </header>
+
+          <div className="profile-divider" aria-hidden="true" />
 
           <form className="profile-card" onSubmit={onSubmit}>
-            <div className="profile-section">
-              <div className="profile-section-title">Identity</div>
+            <section className="profile-section" aria-labelledby="profile-identity-title">
+              <h2 id="profile-identity-title" className="profile-section-title">Identity</h2>
               <div className="profile-fields">
                 <div className="profile-field">
                   <label className="profile-label" htmlFor="firstName">First name</label>
@@ -63,11 +66,13 @@ export default function ProfileScreen() {
                     onChange={(e) => setForm((s) => ({ ...s, lastName: e.target.value }))} />
                 </div>
               </div>
-            </div>
+            </section>
 
-            <div className="profile-section">
-              <div className="profile-section-title">Contact</div>
-              <div className="profile-fields">
+            <div className="profile-section-divider" aria-hidden="true" />
+
+            <section className="profile-section" aria-labelledby="profile-contact-title">
+              <h2 id="profile-contact-title" className="profile-section-title">Contact</h2>
+              <div className="profile-fields profile-fields--stacked">
                 <div className="profile-field profile-field--full">
                   <label className="profile-label" htmlFor="email">Email</label>
                   <input id="email" className="profile-input" type="email" value={form.email} autoComplete="email"
@@ -81,10 +86,12 @@ export default function ProfileScreen() {
                   <p className="profile-help">Use the number you want tied to account recovery and contact updates.</p>
                 </div>
               </div>
-            </div>
+            </section>
 
-            <div className="profile-section">
-              <div className="profile-section-title">Work profile</div>
+            <div className="profile-section-divider" aria-hidden="true" />
+
+            <section className="profile-section" aria-labelledby="profile-work-title">
+              <h2 id="profile-work-title" className="profile-section-title">Work profile</h2>
               <div className="profile-fields">
                 <div className="profile-field">
                   <label className="profile-label" htmlFor="jobTitle">Job title</label>
@@ -97,7 +104,7 @@ export default function ProfileScreen() {
                     onChange={(e) => setForm((s) => ({ ...s, department: e.target.value }))} />
                 </div>
               </div>
-            </div>
+            </section>
 
             {error   && <div className="profile-alert profile-alert--error"   role="alert">{error}</div>}
             {success && <div className="profile-alert profile-alert--success" role="status">{success}</div>}
