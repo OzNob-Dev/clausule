@@ -5,17 +5,39 @@ describe('component registry', () => {
   it('covers every discoverable component and page source', () => {
     const sources = discoverComponentSources()
     const entries = getComponentLibraryEntries()
+    const entrySources = [...new Set(entries.map((entry) => entry.sourcePath))].sort()
 
-    expect(entries.map((entry) => entry.sourcePath).sort()).toEqual(sources)
+    expect(entrySources).toEqual(sources)
     expect(entries.every((entry) => ['atoms', 'molecules', 'organisms', 'templates', 'pages'].includes(entry.layer))).toBe(true)
   })
 
-  it('includes the expected shared and route surfaces', () => {
+  it('keeps multi-export files split into separate catalog entries', () => {
     const entries = getComponentLibraryEntries()
-    const paths = new Set(entries.map((entry) => entry.sourcePath))
+    const ids = new Set(entries.map((entry) => entry.id))
+    const counts = entries.reduce((acc, entry) => acc.set(entry.sourcePath, (acc.get(entry.sourcePath) ?? 0) + 1), new Map())
 
-    expect(paths.has('src/shared/components/ui/Button.jsx')).toBe(true)
-    expect(paths.has('src/shared/components/layout/AppShell.jsx')).toBe(true)
-    expect(paths.has('src/app/(protected)/components/page.jsx')).toBe(true)
+    for (const id of [
+      'src/features/signup/components/SignupButtons.jsx#CtaBtn',
+      'src/features/signup/components/SignupButtons.jsx#BackBtn',
+      'src/features/signup/components/SignupFormField.jsx#FieldLabel',
+      'src/features/signup/components/SignupFormField.jsx#FieldInput',
+      'src/features/signup/components/SignupIcons.jsx#CheckIcon',
+      'src/features/signup/components/SignupIcons.jsx#ArrowIcon',
+      'src/features/signup/components/SignupIcons.jsx#BackIcon',
+      'src/features/auth/components/SignInBrandPanel.jsx#BrandBugIcon',
+      'src/features/auth/components/SignInBrandPanel.jsx#SignInBrandPanel',
+      'src/features/auth/components/SsoProviderButton.jsx#SsoProviderButton',
+      'src/features/brag/components/EntryCard.jsx#EntryCard',
+      'src/features/account/components/DeleteAccountDialog.jsx#DeleteAccountDialog',
+      'src/features/account/components/VerifyChangesModal.jsx#VerifyChangesModal',
+      'src/app/(protected)/components/page.jsx#Page',
+    ]) {
+      expect(ids.has(id)).toBe(true)
+    }
+
+    expect(counts.get('src/features/signup/components/SignupButtons.jsx')).toBe(2)
+    expect(counts.get('src/features/signup/components/SignupFormField.jsx')).toBe(2)
+    expect(counts.get('src/features/signup/components/SignupIcons.jsx')).toBe(3)
+    expect(counts.get('src/features/auth/components/SignInBrandPanel.jsx')).toBe(2)
   })
 })

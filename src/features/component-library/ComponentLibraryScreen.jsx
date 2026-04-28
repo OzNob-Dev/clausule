@@ -53,7 +53,7 @@ function GenericPreview({ entry }) {
   return (
     <div className="rounded-[1.75rem] border border-dashed border-rule bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(255,255,255,0.35))] p-6">
       <p className="text-xs uppercase tracking-[0.3em] text-tc">{entry.layer}</p>
-      <h3 className="mt-3 font-serif text-2xl text-tp">{entry.label}</h3>
+      <h3 className="mt-3 font-serif text-2xl text-tp">{entry.displayName}</h3>
       <p className="mt-2 max-w-xl text-sm leading-6 text-ts">{entry.note}</p>
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <div className="rounded-2xl border border-rule bg-card p-4">
@@ -65,6 +65,72 @@ function GenericPreview({ entry }) {
           <p className="mt-2 text-sm text-tp">Generic card used when no bespoke playground control is needed.</p>
         </div>
       </div>
+    </div>
+  )
+}
+
+function LinkPreview() {
+  return (
+    <div className="grid gap-4">
+      <div className="rounded-[1.75rem] border border-rule bg-card p-5">
+        <div className="flex flex-wrap items-center gap-3">
+          <a href="/signup" className="rounded-full border border-acc bg-acc px-4 py-2 text-sm font-semibold text-canvas no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc">
+            Continue with email
+          </a>
+          <a href="/components" className="text-sm font-semibold text-acc underline underline-offset-4">
+            View library
+          </a>
+        </div>
+      </div>
+      <p className="text-sm text-ts">Link-like control used for navigation, SSO, and conversion prompts.</p>
+    </div>
+  )
+}
+
+function FieldPreview() {
+  return (
+    <div className="grid gap-4">
+      <div className="grid gap-2">
+        <label htmlFor="component-library-field" className="text-sm font-semibold text-tp">Email address</label>
+        <input
+          id="component-library-field"
+          defaultValue="ada@example.com"
+          className="rounded-2xl border border-rule bg-card px-4 py-3 text-sm text-tp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc"
+        />
+      </div>
+      <p className="text-sm text-ts">Field primitives should stay composable, labeled, and keyboard-safe.</p>
+    </div>
+  )
+}
+
+function CardPreview({ entry }) {
+  return (
+    <div className="grid gap-4">
+      <div className="rounded-[1.75rem] border border-rule bg-card p-5 shadow-[0_12px_30px_rgba(45,34,26,0.05)]">
+        <p className="text-[11px] uppercase tracking-[0.24em] text-tc">{entry.displayName}</p>
+        <h3 className="mt-2 font-serif text-2xl text-tp">Reusable card surface</h3>
+        <p className="mt-2 text-sm leading-6 text-ts">Cards should group content, not hide intent.</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="rounded-full bg-acc-bg px-3 py-1 text-[11px] font-semibold text-acc">Primary</span>
+          <span className="rounded-full bg-white/70 px-3 py-1 text-[11px] font-semibold text-tc">Secondary</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function IconPreview() {
+  return (
+    <div className="grid gap-4">
+      <div className="flex flex-wrap gap-3">
+        <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-rule bg-card text-tp">
+          <SsoProviderIcon provider="google" />
+        </div>
+        <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-rule bg-card text-tp">
+          <SsoProviderIcon provider="apple" />
+        </div>
+      </div>
+      <p className="text-sm text-ts">Icon-only primitives need contrast, sizing, and context to stay readable.</p>
     </div>
   )
 }
@@ -152,24 +218,6 @@ function CodeEmailPreview() {
         <span className="text-sm text-ts">Toggle email digits without changing layout.</span>
       </div>
       <CodeEmail to="ada@example.com" code="246810" revealed={revealed} />
-    </div>
-  )
-}
-
-function PageLoaderPreview() {
-  const [variant, setVariant] = useState('brag')
-
-  return (
-    <div className="grid gap-5">
-      <label className="grid gap-1 text-sm text-ts">
-        <span className="text-[11px] uppercase tracking-[0.24em]">Variant</span>
-        <select value={variant} onChange={(e) => setVariant(e.target.value)} className="rounded-xl border border-rule bg-card px-3 py-2 text-sm text-tp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc">
-          {pageLoaderVariants.map((option) => <option key={option} value={option}>{option}</option>)}
-        </select>
-      </label>
-      <div className="rounded-[1.75rem] border border-rule bg-card p-4">
-        <PageLoader variant={variant} />
-      </div>
     </div>
   )
 }
@@ -268,12 +316,70 @@ function RailNavPreview() {
   )
 }
 
+function ShellPreview() {
+  return <AppShellPreview />
+}
+
+function LoaderPreview() {
+  const [variant, setVariant] = useState('brag')
+
+  return (
+    <div className="grid gap-4">
+      <label className="grid gap-1 text-sm text-ts">
+        <span className="text-[11px] uppercase tracking-[0.24em]">Variant</span>
+        <select value={variant} onChange={(e) => setVariant(e.target.value)} className="rounded-xl border border-rule bg-card px-3 py-2 text-sm text-tp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc">
+          {pageLoaderVariants.map((option) => <option key={option} value={option}>{option}</option>)}
+        </select>
+      </label>
+      <div className="rounded-[1.75rem] border border-rule bg-card p-5">
+        <PageLoader variant={variant} />
+      </div>
+      <p className="text-sm text-ts">Busy states need visible text alongside motion.</p>
+    </div>
+  )
+}
+
+function OtpPreview() {
+  return (
+    <div className="grid gap-4">
+      <div className="rounded-[1.75rem] border border-rule bg-card p-5">
+        <div className="grid gap-3">
+          <label className="text-sm font-semibold text-tp">One-time code</label>
+          <div className="grid grid-cols-6 gap-2">
+            {['2', '4', '6', '8', '1', '0'].map((digit) => (
+              <div key={digit} className="flex h-11 items-center justify-center rounded-xl border border-rule bg-canvas text-sm font-semibold text-tp">{digit}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <p className="text-sm text-ts">OTP rows, secrets, and TOTP setup should preserve keyboard flow.</p>
+    </div>
+  )
+}
+
+function FormPreview() {
+  return (
+    <div className="grid gap-4">
+      <div className="rounded-[1.75rem] border border-rule bg-card p-5">
+        <form className="grid gap-4">
+          <label className="grid gap-2 text-sm font-semibold text-tp">
+            Email
+            <input defaultValue="ada@example.com" className="rounded-2xl border border-rule bg-canvas px-4 py-3 text-sm text-tp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc" />
+          </label>
+          <button type="button" className="inline-flex w-fit items-center rounded-full bg-acc px-4 py-2 text-sm font-semibold text-canvas">Send code</button>
+        </form>
+      </div>
+      <p className="text-sm text-ts">Forms should pair labels, feedback, and actions in one readable unit.</p>
+    </div>
+  )
+}
+
 function PagePreview({ entry }) {
   return (
     <div className="grid gap-4 rounded-[1.75rem] border border-rule bg-card p-5">
       <div className="rounded-2xl border border-rule bg-[linear-gradient(135deg,rgba(201,79,42,0.08),rgba(34,95,61,0.06))] p-4">
         <p className="text-xs uppercase tracking-[0.28em] text-tc">{entry.route}</p>
-        <h3 className="mt-2 font-serif text-2xl text-tp">{entry.label}</h3>
+        <h3 className="mt-2 font-serif text-2xl text-tp">{entry.displayName}</h3>
         <p className="mt-2 text-sm leading-6 text-ts">{entry.note}</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -293,7 +399,7 @@ function PagePreview({ entry }) {
 function ComponentPreview({ entry }) {
   switch (entry.previewKind) {
     case 'app-shell':
-      return <AppShellPreview />
+      return <ShellPreview />
     case 'avatar':
       return <AvatarPreview />
     case 'button':
@@ -302,18 +408,42 @@ function ComponentPreview({ entry }) {
       return <CategoryPreview />
     case 'code-email':
       return <CodeEmailPreview />
+    case 'card':
+      return <CardPreview entry={entry} />
+    case 'dialog':
+      return <ModalPreview />
+    case 'email':
+      return <CodeEmailPreview />
+    case 'field':
+      return <FieldPreview />
+    case 'form':
+      return <FormPreview />
+    case 'group':
+      return <CardPreview entry={entry} />
+    case 'icon':
+      return <IconPreview />
+    case 'link':
+      return <LinkPreview />
+    case 'loader':
+      return <LoaderPreview />
     case 'modal':
       return <ModalPreview />
-    case 'page-loader':
-      return <PageLoaderPreview />
     case 'provider-icon':
       return <ProviderIconPreview />
-    case 'thinking-dots':
-      return <ThinkingDotsPreview />
     case 'rail-nav':
       return <RailNavPreview />
+    case 'notice':
+      return <CardPreview entry={entry} />
+    case 'otp':
+      return <OtpPreview />
+    case 'panel':
+      return <CardPreview entry={entry} />
     case 'page':
       return <PagePreview entry={entry} />
+    case 'shell':
+      return <ShellPreview />
+    case 'thinking-dots':
+      return <ThinkingDotsPreview />
     default:
       return <GenericPreview entry={entry} />
   }
@@ -325,7 +455,7 @@ function EntryButton({ entry, selected, onSelect }) {
       type="button"
       onClick={() => onSelect(entry.id)}
       aria-pressed={selected}
-      aria-label={entry.label}
+      aria-label={entry.exportName}
       className={cn(
         'w-full rounded-2xl border px-4 py-3 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc motion-safe:hover:-translate-y-0.5',
         selected ? 'border-acc bg-acc-bg shadow-[0_8px_24px_rgba(127,53,31,0.08)]' : 'border-rule bg-card hover:border-rule-em hover:bg-white/65'
@@ -333,7 +463,8 @@ function EntryButton({ entry, selected, onSelect }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="font-semibold text-tp">{entry.label}</p>
+          <p className="font-semibold text-tp">{entry.exportName}</p>
+          <p className="mt-1 text-xs uppercase tracking-[0.24em] text-tc">{entry.displayName}</p>
           <p className="mt-1 text-xs uppercase tracking-[0.24em] text-tc">{entry.owner}</p>
         </div>
         <span className="rounded-full border border-rule bg-card px-2 py-1 text-[10px] uppercase tracking-[0.24em] text-tc">{entry.layer}</span>
@@ -366,7 +497,7 @@ export function ComponentLibraryScreen({ entries }) {
   const visibleEntries = useMemo(() => {
     return entries.filter((entry) => {
       const matchesLayer = layer === 'all' || entry.layer === layer
-      const haystack = `${entry.label} ${entry.owner} ${entry.layer} ${entry.note} ${entry.sourcePath}`.toLowerCase()
+      const haystack = `${entry.exportName} ${entry.displayName} ${entry.owner} ${entry.layer} ${entry.note} ${entry.sourcePath}`.toLowerCase()
       return matchesLayer && haystack.includes(deferredQuery)
     })
   }, [deferredQuery, entries, layer])
@@ -447,7 +578,8 @@ export function ComponentLibraryScreen({ entries }) {
               <header className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-tc">{selectedEntry.layer}</p>
-                  <h2 className="mt-2 font-serif text-3xl text-tp">{selectedEntry.label}</h2>
+                  <h2 className="mt-2 font-serif text-3xl text-tp">{selectedEntry.exportName}</h2>
+                  <p className="mt-2 text-sm uppercase tracking-[0.24em] text-tc">{selectedEntry.displayName}</p>
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-ts">{selectedEntry.note}</p>
                 </div>
                 <div className="rounded-2xl border border-rule bg-card px-4 py-3 text-right">
@@ -465,10 +597,13 @@ export function ComponentLibraryScreen({ entries }) {
                 </section>
 
                 <section className="grid gap-3">
+                  <MetaRow label="Export name" value={selectedEntry.exportName} />
+                  <MetaRow label="Display name" value={selectedEntry.displayName} />
                   <MetaRow label="Source path" value={selectedEntry.sourcePath} />
                   <MetaRow label="Atomic layer" value={selectedEntry.layer} />
                   <MetaRow label="Owner" value={selectedEntry.owner} />
                   <MetaRow label="Preview mode" value={selectedEntry.previewKind} />
+                  <MetaRow label="Exports in file" value={selectedEntry.fileExportCount} />
                   {selectedEntry.route && <MetaRow label="Route" value={selectedEntry.route} />}
                 </section>
               </div>
