@@ -10,200 +10,236 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Signup: concentric rings drawing in ────────────────────────
-   Circumferences: r44=276.5, r30=188.5, r16=100.5
-   ─────────────────────────────────────────────────────────────── */
+/* ── Signup: morphing blob with orbiting dots ─────────────────── */
 
-@keyframes signup-ring-1 {
-  0%, 5%  { stroke-dashoffset: 276.5; opacity: 0.2; }
-  65%     { stroke-dashoffset: 0;     opacity: 1;   }
-  88%     { stroke-dashoffset: 0;     opacity: 1;   }
-  100%    { stroke-dashoffset: 276.5; opacity: 0.15; }
-}
-@keyframes signup-ring-2 {
-  0%, 5%  { stroke-dashoffset: 188.5; opacity: 0.2; }
-  65%     { stroke-dashoffset: 0;     opacity: 1;   }
-  88%     { stroke-dashoffset: 0;     opacity: 1;   }
-  100%    { stroke-dashoffset: 188.5; opacity: 0.15; }
-}
-@keyframes signup-ring-3 {
-  0%, 5%  { stroke-dashoffset: 100.5; opacity: 0.2; }
-  65%     { stroke-dashoffset: 0;     opacity: 1;   }
-  88%     { stroke-dashoffset: 0;     opacity: 1;   }
-  100%    { stroke-dashoffset: 100.5; opacity: 0.15; }
+@keyframes blob-morph {
+  0%   { d: path("M48,10 C65,10 86,25 86,48 C86,71 65,86 48,86 C31,86 10,71 10,48 C10,25 31,10 48,10 Z"); }
+  25%  { d: path("M48,8 C68,12 88,28 84,50 C80,72 62,90 42,86 C22,82 8,65 10,45 C12,25 28,4 48,8 Z"); }
+  50%  { d: path("M48,12 C70,8 90,30 88,52 C86,74 66,88 44,88 C22,88 6,72 8,50 C10,28 26,16 48,12 Z"); }
+  75%  { d: path("M50,8 C72,10 90,32 86,54 C82,76 60,92 38,86 C16,80 4,60 8,38 C12,16 28,6 50,8 Z"); }
+  100% { d: path("M48,10 C65,10 86,25 86,48 C86,71 65,86 48,86 C31,86 10,71 10,48 C10,25 31,10 48,10 Z"); }
 }
 
-/* Gentle sway to feel like it's arriving */
-@keyframes signup-drift {
-  from { transform: rotate(-6deg); }
-  to   { transform: rotate(6deg); }
+@keyframes blob-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-.pl-signup {
-  transform-origin: center;
-  animation: signup-drift 1.6s ease-in-out infinite alternate;
-}
-.pl-r1 {
-  filter: drop-shadow(0 0 5px rgba(201, 79, 42, 0.4));
-  animation: signup-ring-1 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-.pl-r2 { animation: signup-ring-2 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.22s infinite; }
-.pl-r3 { animation: signup-ring-3 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.44s infinite; }
-
-/* ── Sign in: breathing arc + pulsing dot ───────────────────────
-   Arc circumference r40 = 251; breathes 218→38 (contracted→expanded)
-   ─────────────────────────────────────────────────────────────── */
-
-@keyframes signin-arc-breathe {
-  0%, 100% { stroke-dashoffset: 218; }
-  50%      { stroke-dashoffset: 38;  }
-}
-@keyframes signin-dot-pulse {
-  0%, 100% { transform: scale(1);   opacity: 0.35; }
-  50%      { transform: scale(1.5); opacity: 1;    }
-}
-@keyframes signin-halo-fade {
-  0%, 100% { transform: scale(0.55); opacity: 0;    }
-  50%      { transform: scale(1);    opacity: 0.16; }
+@keyframes blob-inner-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-240deg); }
 }
 
-.pl-signin-arc {
-  animation: signin-arc-breathe 1.4s ease-in-out infinite;
+@keyframes blob-dot-orbit {
+  from { transform: rotate(0deg) translateX(26px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(26px) rotate(-360deg); }
 }
-.pl-signin-dot {
+
+@keyframes blob-dot2-orbit {
+  from { transform: rotate(120deg) translateX(26px) rotate(-120deg); }
+  to   { transform: rotate(480deg) translateX(26px) rotate(-480deg); }
+}
+
+@keyframes blob-dot3-orbit {
+  from { transform: rotate(240deg) translateX(26px) rotate(-240deg); }
+  to   { transform: rotate(600deg) translateX(26px) rotate(-600deg); }
+}
+
+.pl-blob-outer,
+.pl-blob-inner,
+.pl-blob-orbit {
+  transform-origin: 48px 48px;
+  transform-box: fill-box;
+}
+
+.pl-blob-outer {
+  animation: blob-rotate 6s linear infinite;
+}
+
+.pl-blob-inner {
+  animation: blob-inner-rotate 4s linear infinite;
+}
+
+.pl-blob-path {
+  animation: blob-morph 3s ease-in-out infinite;
+}
+
+.pl-blob-orbit-1 { animation: blob-dot-orbit 1.8s linear infinite; }
+.pl-blob-orbit-2 { animation: blob-dot2-orbit 1.8s linear infinite; }
+.pl-blob-orbit-3 { animation: blob-dot3-orbit 1.8s linear infinite; }
+
+/* ── Sign in: radar sweep with blip ───────────────────────────── */
+
+@keyframes radar-sweep {
+  from { transform: rotate(-90deg); }
+  to   { transform: rotate(270deg); }
+}
+
+@keyframes radar-ping-1 {
+  0%, 30% { r: 0; opacity: 0.8; }
+  100%    { r: 36; opacity: 0; }
+}
+
+@keyframes radar-ping-2 {
+  0%, 55% { r: 0; opacity: 0.6; }
+  100%    { r: 36; opacity: 0; }
+}
+
+@keyframes radar-blip {
+  0%, 48% { opacity: 0; transform: scale(0.5); }
+  50%     { opacity: 1; transform: scale(1.4); }
+  65%     { opacity: 0.8; transform: scale(1); }
+  80%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+.pl-radar-sweep {
+  transform-origin: 48px 48px;
+  animation: radar-sweep 1.6s linear infinite;
+}
+
+.pl-radar-ping {
   transform-box: fill-box;
   transform-origin: center;
-  animation: signin-dot-pulse 1.4s ease-in-out infinite;
-}
-.pl-signin-halo {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: signin-halo-fade 1.4s ease-in-out infinite;
 }
 
-/* ── Brag doc: lines writing left to right ─────────────────────── */
+.pl-radar-ping-1 { animation: radar-ping-1 1.6s ease-out infinite; }
+.pl-radar-ping-2 { animation: radar-ping-2 1.6s ease-out 0.3s infinite; }
+
+.pl-radar-blip {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: radar-blip 1.6s ease-out infinite;
+}
+
+/* ── Brag doc: typewriter lines ───────────────────────────────── */
 
 .pl-brag-lines {
-  width: 96px;
-  height: 80px;
+  width: 80px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10px;
+  gap: 8px;
 }
-.pl-brag-line {
-  height: 3px;
-  border-radius: 2px;
+
+.pl-brag-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 8px;
+  opacity: 0;
+}
+
+@keyframes line-appear {
+  0%   { opacity: 0; transform: translateY(4px); }
+  10%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.pl-brag-row-1 { animation: line-appear 0.01s 0s forwards; }
+.pl-brag-row-2 { animation: line-appear 0.01s 0.5s forwards; }
+.pl-brag-row-3 { animation: line-appear 0.01s 1s forwards; }
+.pl-brag-row-4 { animation: line-appear 0.01s 1.5s forwards; }
+.pl-brag-row-5 { animation: line-appear 0.01s 2s forwards; }
+
+.pl-brag-bar {
+  height: 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
   transform-origin: left;
 }
 
-@keyframes brag-line-write {
-  0%   { transform: scaleX(0); opacity: 0;    }
-  6%   { opacity: 0.45;                       }
-  65%  { transform: scaleX(1); opacity: 1;    }
+@keyframes type-line {
+  0%   { transform: scaleX(0); opacity: 0; }
+  6%   { opacity: 0.45; }
+  65%  { transform: scaleX(1); opacity: 1; }
   82%  { transform: scaleX(1); opacity: 0.85; }
-  96%  { transform: scaleX(1); opacity: 0;    }
-  100% { transform: scaleX(0); opacity: 0;    }
+  96%  { transform: scaleX(1); opacity: 0; }
+  100% { transform: scaleX(0); opacity: 0; }
 }
 
-.pl-bl1 { width: 85%; background: var(--ring-outer, #C94F2A); animation: brag-line-write 1.5s ease-out infinite;        }
-.pl-bl2 { width: 65%; background: var(--ring-inner, #225F3D); animation: brag-line-write 1.5s ease-out 0.20s infinite;  }
-.pl-bl3 { width: 92%; background: var(--ring-outer, #C94F2A); animation: brag-line-write 1.5s ease-out 0.40s infinite;  }
-.pl-bl4 { width: 50%; background: var(--ring-mid,   #B9824F); animation: brag-line-write 1.5s ease-out 0.60s infinite;  }
-.pl-bl5 { width: 75%; background: var(--ring-outer, #C94F2A); animation: brag-line-write 1.5s ease-out 0.80s infinite;  }
-
-/* ── Feedback: bouncing dots ────────────────────────────────────── */
-
-.pl-feedback-dots {
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  height: 52px;
-  padding: 0 8px;
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
-.pl-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+
+.pl-brag-cursor {
+  width: 2px;
+  height: 9px;
+  background: var(--ring-outer, #C94F2A);
   flex-shrink: 0;
+  animation: cursor-blink 0.6s step-end infinite;
 }
 
-@keyframes feedback-bounce {
-  0%, 100% { transform: translateY(0) scale(1);    opacity: 0.5;  }
-  40%      { transform: translateY(-28px) scale(1.18); opacity: 1;    filter: drop-shadow(0 5px 8px rgba(0,0,0,0.2)); }
-  60%      { transform: translateY(-26px) scale(1.1);  opacity: 1;    }
+.pl-brag-bar-1 { width: 52px; background: var(--ring-outer, #C94F2A); animation: type-line 0.4s ease-out 0s forwards; }
+.pl-brag-bar-2 { width: 38px; background: var(--ring-inner, #225F3D); animation: type-line 0.4s ease-out 0.5s forwards; }
+.pl-brag-bar-3 { width: 60px; background: var(--ring-outer, #C94F2A); animation: type-line 0.4s ease-out 1s forwards; }
+.pl-brag-bar-4 { width: 28px; background: var(--ring-mid, #B9824F); animation: type-line 0.4s ease-out 1.5s forwards; }
+.pl-brag-bar-5 { width: 44px; background: var(--ring-outer, #C94F2A); animation: type-line 0.4s ease-out 2s forwards; }
+
+/* ── Feedback: ink splash dots ────────────────────────────────── */
+
+@keyframes ink-splash {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  15%  { transform: scale(1.4) rotate(20deg); opacity: 1; }
+  35%  { transform: scale(0.9) rotate(-5deg); opacity: 1; }
+  60%  { transform: scale(1) rotate(0deg); opacity: 1; }
+  90%  { transform: scale(1) rotate(0deg); opacity: 0.7; }
+  100% { transform: scale(0) rotate(-10deg); opacity: 0; }
 }
 
-.pl-fd1 { background: var(--ring-outer, #C94F2A); animation: feedback-bounce 1.1s ease-in-out infinite;        }
-.pl-fd2 { background: var(--ring-inner, #225F3D); animation: feedback-bounce 1.1s ease-in-out 0.2s infinite;  }
-.pl-fd3 { background: var(--ring-mid,   #B9824F); animation: feedback-bounce 1.1s ease-in-out 0.4s infinite;  }
-
-/* ── Settings: counter-rotating gears ──────────────────────────── */
-
-@keyframes settings-gear-cw {
-  /* Mechanical hiccup at 40-50%: slight reverse then resume */
-  0%   { transform: rotate(0deg);   }
-  40%  { transform: rotate(144deg); }
-  50%  { transform: rotate(132deg); }
-  60%  { transform: rotate(144deg); }
-  100% { transform: rotate(360deg); }
-}
-@keyframes settings-gear-ccw {
-  from { transform: rotate(0deg);    }
-  to   { transform: rotate(-360deg); }
+@keyframes ink-ring-expand {
+  0%   { r: 6; opacity: 0.6; stroke-width: 3; }
+  100% { r: 24; opacity: 0; stroke-width: 0.5; }
 }
 
-/* transform-origin uses SVG coordinate system; gear centred at 48,48 */
-.pl-gear-outer {
-  transform-origin: 48px 48px;
-  animation: settings-gear-cw 4s linear infinite;
-}
-.pl-gear-inner {
-  transform-origin: 48px 48px;
-  animation: settings-gear-ccw 2.6s linear infinite;
+.pl-ink-dot {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-/* ── Profile: shimmer + double-ring pulse ───────────────────────── */
+.pl-ink-dot-1 { animation: ink-splash 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0s infinite; }
+.pl-ink-dot-2 { animation: ink-splash 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.25s infinite; }
+.pl-ink-dot-3 { animation: ink-splash 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.5s infinite; }
+.pl-ink-dot-4 { animation: ink-splash 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.75s infinite; }
+.pl-ink-ring { animation: ink-ring-expand 1.4s ease-out 0.3s infinite; }
 
-@keyframes profile-pulse {
-  /* Two simultaneous box-shadow layers create a double-ring breath */
-  0%   { box-shadow: 0 0 0 0 rgba(201, 79, 42, 0.45), 0 0 0 4px rgba(201, 79, 42, 0.2); }
-  50%  { box-shadow: 0 0 0 9px rgba(201, 79, 42, 0),  0 0 0 15px rgba(201, 79, 42, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(201, 79, 42, 0.45), 0 0 0 4px rgba(201, 79, 42, 0.2); }
-}
-@keyframes profile-shimmer {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(260%); }
+/* ── Settings: DNA helix ──────────────────────────────────────── */
+
+@keyframes helix-strand {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-32px); }
 }
 
-.pl-profile-ring {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  border: 2.5px solid var(--ring-outer, #C94F2A);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: profile-pulse 1.4s ease-out infinite;
-}
-.pl-profile-face {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--canvas, #F5F0EA);
+.pl-helix-svg {
   overflow: hidden;
-  position: relative;
 }
-.pl-profile-shimmer {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(201, 79, 42, 0.4) 50%,
-    transparent 100%
-  );
-  animation: profile-shimmer 1.6s ease-in-out infinite;
+
+.pl-helix-g {
+  animation: helix-strand 1.2s linear infinite;
+}
+
+/* ── Profile: film-strip reveal ───────────────────────────────── */
+
+@keyframes strip-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes frame-flash {
+  0%, 80%, 100% { opacity: 0; }
+  30%, 60%      { opacity: 0.9; }
+}
+
+.pl-profile-svg {
+  overflow: hidden;
+}
+
+.pl-strip-track {
+  animation: strip-scroll 2s linear infinite;
+}
+
+.pl-flash-overlay {
+  animation: frame-flash 2s ease-in-out infinite;
 }
 
 /* ── MFA: shield double-heartbeat ───────────────────────────────── */
@@ -271,7 +307,8 @@
   font-weight: 500;
   color: var(--tm, #54483F);
   margin: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* ── Page enter (content fades in after loader replaced) ─────── */
@@ -284,20 +321,21 @@
 
 @media (prefers-reduced-motion: reduce) {
   .page-loader,
-  .pl-signup, .pl-r1, .pl-r2, .pl-r3,
-  .pl-signin-arc, .pl-signin-dot, .pl-signin-halo,
-  .pl-brag-line,
-  .pl-dot,
-  .pl-gear-outer, .pl-gear-inner,
-  .pl-profile-ring, .pl-profile-shimmer,
+  .pl-blob-outer, .pl-blob-inner, .pl-blob-orbit, .pl-blob-path,
+  .pl-radar-sweep, .pl-radar-ping, .pl-radar-blip,
+  .pl-brag-row, .pl-brag-bar, .pl-brag-cursor,
+  .pl-ink-dot, .pl-ink-ring,
+  .pl-helix-g,
+  .pl-strip-track, .pl-flash-overlay,
   .pl-mfa,
   .page-enter {
     animation: none !important;
     opacity: 1 !important;
   }
 
-  /* Static states for reduced-motion */
-  .pl-r1, .pl-r2, .pl-r3 { stroke-dashoffset: 0; }
-  .pl-brag-line           { transform: scaleX(1); }
-  .pl-profile-ring        { box-shadow: none; }
+  .pl-brag-row { transform: translateY(0); }
+  .pl-brag-bar { transform: scaleX(1); opacity: 1; }
+  .pl-brag-cursor { opacity: 0; }
+  .pl-radar-ping { r: 34; opacity: 0.35; }
+  .pl-flash-overlay { opacity: 0; }
 }
