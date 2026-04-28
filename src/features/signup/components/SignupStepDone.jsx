@@ -4,8 +4,8 @@ import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@shared/utils/routes'
 import { Link } from '@shared/components/ui/Link'
-import { CtaBtn } from './SignupButtons'
-import { ArrowIcon, CheckIcon } from './SignupIcons'
+import { CtaBtn } from '@shared/components/ui/SignupButtons'
+import { ArrowIcon, CheckIcon } from '@shared/components/ui/SignupIcons'
 
 const NEXT_STEPS = [
   { label: 'Set up MFA', desc: '- ensure your account is secure.' },

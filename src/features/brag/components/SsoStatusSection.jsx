@@ -1,6 +1,6 @@
 'use client'
 
-import { SsoProviderIcon } from '@shared/components/SsoProviderIcon'
+import { SsoProviderIcon } from '@shared/components/ui/SsoProviderIcon'
 import { getActiveSsoProviders } from '@shared/utils/sso'
 
 export default function SsoStatusSection({ displayName, email, avatarInitials, config }) {

@@ -10,7 +10,7 @@ describe('ComponentLibraryScreen', () => {
 
   it('lets the user switch button variants', async () => {
     const user = userEvent.setup()
-    render(<ComponentLibraryScreen entries={pick('src/features/signup/components/SignupButtons.jsx#CtaBtn')} />)
+    render(<ComponentLibraryScreen entries={pick('src/shared/components/ui/SignupButtons.jsx#CtaBtn')} />)
 
     await user.click(screen.getByRole('button', { name: 'CtaBtn' }))
     await user.selectOptions(screen.getByLabelText('Variant'), 'ghost')
@@ -100,7 +100,8 @@ describe('ComponentLibraryScreen', () => {
     render(
       <ComponentLibraryScreen
         entries={pick(
-          'src/features/auth/components/SignInBrandPanel.jsx#BrandBugIcon',
+          'src/shared/components/ui/BrandBugIcon.jsx#BrandBugIcon',
+          'src/shared/components/ui/AuthBrandPanel.jsx#AuthBrandPanel',
           'src/shared/components/layout/AppShell.jsx#AppShell',
           'src/app/(protected)/components/page.jsx#Page'
         )}

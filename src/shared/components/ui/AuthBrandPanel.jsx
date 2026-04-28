@@ -13,11 +13,7 @@ export default function AuthBrandPanel({ brandHref }) {
   const isSignup = pathname.startsWith('/signup')
 
   return (
-    <SignInBrandPanel
-      brandHref={brandHref}
-      headline={config.headline}
-      subtext={config.subtext}
-    >
+    <SignInBrandPanel brandHref={brandHref} headline={config.headline} subtext={config.subtext}>
       {pathname === '/signup' && <SignupPanelSummary />}
       {pathname === '/signup/plan' && <SignupPlanPanelContent />}
       {isSignup && <SignupProgress />}

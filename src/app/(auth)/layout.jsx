@@ -1,4 +1,4 @@
-import AuthBrandPanel from '@features/auth/components/AuthBrandPanel'
+import AuthBrandPanel from '@shared/components/ui/AuthBrandPanel'
 import '@features/signup/styles/signup-theme.css'
 import '@features/signup/styles/signup-form.css'
 

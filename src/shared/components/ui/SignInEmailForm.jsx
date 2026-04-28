@@ -1,6 +1,6 @@
 import { cn } from '@shared/utils/cn'
-import { Button } from '@shared/components/ui/Button'
-import { FieldHint, FieldInput, FieldLabel } from '@shared/components/ui/Field'
+import { Button } from './Button'
+import { FieldHint, FieldInput, FieldLabel } from './Field'
 
 export default function SignInEmailForm({
   email,
@@ -21,16 +21,8 @@ export default function SignInEmailForm({
       <div className="su-step-heading">Welcome back</div>
       <div className="su-step-sub">We'll send a verification code to your email.</div>
 
-      {ssoError && (
-        <p className="su-field-hint su-field-hint--error" role="alert">
-          {ssoError}
-        </p>
-      )}
-      {submitError && (
-        <p className="su-field-hint su-field-hint--error" role="alert">
-          {submitError}
-        </p>
-      )}
+      {ssoError && <p className="su-field-hint su-field-hint--error" role="alert">{ssoError}</p>}
+      {submitError && <p className="su-field-hint su-field-hint--error" role="alert">{submitError}</p>}
 
       <form className="w-full" onSubmit={onSubmit} noValidate>
         <div className="su-field">
@@ -53,11 +45,7 @@ export default function SignInEmailForm({
           />
 
           <div id="si-email-hint" aria-live="polite">
-            {showFeedback && result.error && (
-              <FieldHint error role="alert">
-                {result.error}
-              </FieldHint>
-            )}
+            {showFeedback && result.error && <FieldHint error role="alert">{result.error}</FieldHint>}
             {showFeedback && result.suggestion && (
               <FieldHint className="su-field-hint--suggest" role="alert">
                 Did you mean{' '}

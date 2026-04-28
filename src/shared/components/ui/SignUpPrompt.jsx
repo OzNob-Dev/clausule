@@ -1,4 +1,4 @@
-import { Link } from '@shared/components/ui/Link'
+import { Link } from './Link'
 
 export default function SignUpPrompt() {
   return (

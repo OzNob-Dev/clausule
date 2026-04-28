@@ -9,9 +9,9 @@ import { CodeEmail } from '@shared/components/ui/CodeEmail'
 import { Field, FieldCheckbox, FieldHint, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'
 import { Link } from '@shared/components/ui/Link'
 import { Modal } from '@shared/components/ui/Modal'
+import { SsoProviderIcon } from '@shared/components/ui/SsoProviderIcon'
 import PageLoader from '@shared/components/ui/PageLoader'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
-import { SsoProviderIcon } from '@shared/components/SsoProviderIcon'
 
 const buttonVariants = ['primary', 'ghost', 'danger', 'confirm']
 const buttonSizes = ['sm', 'md', 'lg']

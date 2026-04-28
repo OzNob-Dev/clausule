@@ -24,19 +24,15 @@ vi.mock('@features/auth/hooks/useSignInFlow', () => ({
   }),
 }))
 
-vi.mock('@features/auth/components/SignInBrandPanel', () => ({
-  default: () => <div>Brand</div>,
-}))
-
-vi.mock('@features/auth/components/SignInEmailForm', () => ({
+vi.mock('@shared/components/ui/SignInEmailForm', () => ({
   default: () => <div>Form</div>,
 }))
 
-vi.mock('@features/auth/components/SignUpPrompt', () => ({
+vi.mock('@shared/components/ui/SignUpPrompt', () => ({
   default: () => <div>Prompt</div>,
 }))
 
-vi.mock('@features/auth/components/SsoButtons', () => ({
+vi.mock('@shared/components/ui/SsoButtons', () => ({
   default: () => <div>SSO</div>,
 }))
 
@@ -59,7 +55,6 @@ describe('SignInScreen', () => {
   it('renders the email sign-in flow when no MFA step is active', () => {
     render(<SignInScreen />)
 
-    expect(screen.getByText('Brand')).toBeInTheDocument()
     expect(screen.getByText('Form')).toBeInTheDocument()
     expect(screen.getByText('SSO')).toBeInTheDocument()
   })

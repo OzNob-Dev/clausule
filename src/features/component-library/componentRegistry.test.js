@@ -24,14 +24,19 @@ describe('component registry', () => {
       'src/shared/components/ui/Field.jsx#FieldLabel',
       'src/shared/components/ui/Link.jsx#Link',
       'src/features/signup/components/SignupFormField.jsx#SignupFormField',
-      'src/features/signup/components/SignupButtons.jsx#CtaBtn',
-      'src/features/signup/components/SignupButtons.jsx#BackBtn',
-      'src/features/signup/components/SignupIcons.jsx#CheckIcon',
-      'src/features/signup/components/SignupIcons.jsx#ArrowIcon',
-      'src/features/signup/components/SignupIcons.jsx#BackIcon',
-      'src/features/auth/components/SignInBrandPanel.jsx#BrandBugIcon',
-      'src/features/auth/components/SignInBrandPanel.jsx#SignInBrandPanel',
-      'src/features/auth/components/SsoProviderButton.jsx#SsoProviderButton',
+      'src/shared/components/ui/SignupButtons.jsx#CtaBtn',
+      'src/shared/components/ui/SignupButtons.jsx#BackBtn',
+      'src/shared/components/ui/SignupIcons.jsx#CheckIcon',
+      'src/shared/components/ui/SignupIcons.jsx#ArrowIcon',
+      'src/shared/components/ui/SignupIcons.jsx#BackIcon',
+      'src/shared/components/ui/BrandBugIcon.jsx#BrandBugIcon',
+      'src/shared/components/ui/AuthBrandPanel.jsx#AuthBrandPanel',
+      'src/shared/components/ui/SignInBrandPanel.jsx#SignInBrandPanel',
+      'src/shared/components/ui/SignInEmailForm.jsx#SignInEmailForm',
+      'src/shared/components/ui/SignUpPrompt.jsx#SignUpPrompt',
+      'src/shared/components/ui/SsoButtons.jsx#SsoButtons',
+      'src/shared/components/ui/SsoProviderButton.jsx#SsoProviderButton',
+      'src/shared/components/ui/SsoProviderIcon.jsx#SsoProviderIcon',
       'src/features/brag/components/EntryCard.jsx#EntryCard',
       'src/features/account/components/DeleteAccountDialog.jsx#DeleteAccountDialog',
       'src/features/account/components/VerifyChangesModal.jsx#VerifyChangesModal',
@@ -40,12 +45,19 @@ describe('component registry', () => {
       expect(ids.has(id)).toBe(true)
     }
 
-    expect(counts.get('src/features/signup/components/SignupButtons.jsx')).toBe(2)
+    expect(counts.get('src/shared/components/ui/SignupButtons.jsx')).toBe(2)
     expect(counts.get('src/shared/components/ui/Card.jsx')).toBe(1)
     expect(counts.get('src/shared/components/ui/Field.jsx')).toBe(7)
     expect(counts.get('src/shared/components/ui/Link.jsx')).toBe(1)
-    expect(counts.get('src/features/signup/components/SignupIcons.jsx')).toBe(3)
-    expect(counts.get('src/features/auth/components/SignInBrandPanel.jsx')).toBe(2)
+    expect(counts.get('src/shared/components/ui/SignupIcons.jsx')).toBe(3)
+    expect(counts.get('src/shared/components/ui/BrandBugIcon.jsx')).toBe(1)
+    expect(counts.get('src/shared/components/ui/AuthBrandPanel.jsx')).toBe(1)
+    expect(counts.get('src/shared/components/ui/SignInBrandPanel.jsx')).toBe(1)
+    expect(counts.get('src/shared/components/ui/SignInEmailForm.jsx')).toBe(1)
+    expect(counts.get('src/shared/components/ui/SignUpPrompt.jsx')).toBe(1)
+    expect(counts.get('src/shared/components/ui/SsoButtons.jsx')).toBe(1)
+    expect(counts.get('src/shared/components/ui/SsoProviderButton.jsx')).toBe(1)
+    expect(counts.get('src/shared/components/ui/SsoProviderIcon.jsx')).toBe(1)
     expect(counts.get('src/features/signup/components/SignupFormField.jsx')).toBe(1)
   })
 })

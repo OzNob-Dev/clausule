@@ -1,9 +1,9 @@
 'use client'
 
 import { ssoConfigFromEnv } from '@shared/utils/sso'
-import SignInEmailForm from '@features/auth/components/SignInEmailForm'
-import SignUpPrompt from '@features/auth/components/SignUpPrompt'
-import SsoButtons from '@features/auth/components/SsoButtons'
+import SignInEmailForm from '@shared/components/ui/SignInEmailForm'
+import SignUpPrompt from '@shared/components/ui/SignUpPrompt'
+import SsoButtons from '@shared/components/ui/SsoButtons'
 import { useSignInFlow } from '@features/auth/hooks/useSignInFlow'
 import MfaLoginEmailStep from '@features/mfa/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@features/mfa/components/MfaLoginAppStep'

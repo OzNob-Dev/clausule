@@ -23,27 +23,12 @@ const FILE_OVERRIDES = new Map([
   ['src/shared/components/ui/Link.jsx', new Map([
     ['Link', { layer: 'atoms', previewKind: 'link' }],
   ])],
-  ['src/features/signup/components/SignupButtons.jsx', new Map([
-    ['CtaBtn', { layer: 'atoms', previewKind: 'button' }],
-    ['BackBtn', { layer: 'atoms', previewKind: 'button' }],
-  ])],
-  ['src/features/signup/components/SignupFormField.jsx', new Map([
-    ['SignupFormField', { layer: 'molecules', previewKind: 'field' }],
-  ])],
-  ['src/features/signup/components/SignupIcons.jsx', new Map([
-    ['CheckIcon', { layer: 'atoms', previewKind: 'icon' }],
-    ['ArrowIcon', { layer: 'atoms', previewKind: 'icon' }],
-    ['BackIcon', { layer: 'atoms', previewKind: 'icon' }],
-  ])],
-  ['src/features/auth/components/SignInBrandPanel.jsx', new Map([
-    ['BrandBugIcon', { layer: 'atoms', previewKind: 'icon' }],
-    ['SignInBrandPanel', { layer: 'organisms', previewKind: 'panel' }],
-  ])],
 ])
 
 const ENTRY_OVERRIDES = new Map([
   ['AppShell', { layer: 'templates', previewKind: 'shell' }],
   ['Avatar', { layer: 'atoms', previewKind: 'avatar' }],
+  ['AuthBrandPanel', { layer: 'organisms', previewKind: 'panel' }],
   ['BackBtn', { layer: 'atoms', previewKind: 'button' }],
   ['BrandBugIcon', { layer: 'atoms', previewKind: 'icon' }],
   ['Button', { layer: 'atoms', previewKind: 'button' }],
@@ -88,7 +73,6 @@ const ENTRY_OVERRIDES = new Map([
   ['SignInEmailForm', { layer: 'organisms', previewKind: 'form' }],
   ['SignUpPrompt', { layer: 'molecules', previewKind: 'link' }],
   ['SignupAside', { layer: 'templates', previewKind: 'panel' }],
-  ['SignupButtons', { layer: 'molecules', previewKind: 'group' }],
   ['SignupDoneScreen', { layer: 'pages', previewKind: 'page' }],
   ['SignupFormField', { layer: 'molecules', previewKind: 'field' }],
   ['SignupPanelSummary', { layer: 'molecules', previewKind: 'card' }],
