@@ -1,7 +1,7 @@
 export default function BragSettingsDangerZone({ onDelete }) {
   return (
     <div className="bss-danger-section">
-      <div className="bss-danger-label">Danger zone</div>
+      <div className="bss-danger-label">Danger Zone</div>
       <div className="bss-danger-card">
         <div className="bss-danger-row">
           <div>

@@ -4,52 +4,28 @@ import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import BragSettingsDangerZone from '@features/brag/components/BragSettingsDangerZone'
 import MfaSecuritySection from '@features/brag/components/MfaSecuritySection'
-import SsoStatusSection from '@features/brag/components/SsoStatusSection'
 import { DeleteAccountDialog } from '@features/account/components/DeleteAccountDialog'
 import { useProfileStore } from '@features/auth/store/useProfileStore'
-import { useProfileQuery, useTotpStatusQuery } from '@shared/queries/useProfileQuery'
-import { profileDisplayName, profileInitials } from '@shared/utils/profile'
+import { useTotpStatusQuery } from '@shared/queries/useProfileQuery'
 import '@features/brag/styles/brag-settings-core.css'
 import '@features/brag/styles/brag-settings-totp.css'
 import '@shared/styles/page-loader.css'
 
 export default function BragSettings() {
   const {
-    profile,
-    setProfile,
     setSecurity,
     authenticatorAppConfigured,
-    ssoConfigured,
     hasSecuritySnapshot,
   } = useProfileStore(useShallow((state) => ({
-    profile: state.profile,
-    setProfile: state.setProfile,
     setSecurity: state.setSecurity,
     authenticatorAppConfigured: state.security.authenticatorAppConfigured,
-    ssoConfigured: state.security.ssoConfigured,
     hasSecuritySnapshot: state.hasSecuritySnapshot,
   })))
-  const showMfaSection = !ssoConfigured
-  const mfaRestrictionEnabled = showMfaSection && hasSecuritySnapshot && !authenticatorAppConfigured
+  const mfaRestrictionEnabled = hasSecuritySnapshot && !authenticatorAppConfigured
 
-  const [totpExpanded, setTotpExpanded]           = useState(false)
-  const [deleteModal, setDeleteModal]               = useState(false)
-
-  const profileQuery = useProfileQuery()
+  const [totpExpanded, setTotpExpanded] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const totpStatusQuery = useTotpStatusQuery()
-
-  useEffect(() => {
-    const data = profileQuery.data
-    const profileData = {
-      firstName: typeof data?.firstName === 'string' ? data.firstName : undefined,
-      lastName: typeof data?.lastName === 'string' ? data.lastName : undefined,
-      email: typeof data?.email === 'string' ? data.email : undefined,
-      mobile: typeof data?.mobile === 'string' ? data.mobile : undefined,
-      jobTitle: typeof data?.jobTitle === 'string' ? data.jobTitle : undefined,
-      department: typeof data?.department === 'string' ? data.department : undefined,
-    }
-    if (Object.values(profileData).some((value) => value !== undefined)) setProfile(profileData)
-  }, [profileQuery.data, setProfile])
 
   useEffect(() => {
     if (typeof totpStatusQuery.data?.configured === 'boolean') {
@@ -61,40 +37,26 @@ export default function BragSettings() {
     setSecurity({ authenticatorAppConfigured: true })
     setTotpExpanded(false)
   }
-
-  const displayName    = profileDisplayName(profile)
-  const avatarInitials = profileInitials(profile)
-
   return (
     <>
-    <main className="be-main page-enter" aria-labelledby="brag-settings-title">
-        <div className="be-inner">
-          <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
-          <p className="bss-subheading">Manage how you sign in to Clausule.</p>
+      <main className="be-main page-enter bss-screen" aria-labelledby="brag-settings-title">
+        <div className="be-inner bss-page">
+          <header className="bss-header">
+            <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
+            <p className="bss-subheading">Manage how you sign in to Clausule.</p>
+          </header>
           <div className="bss-divider" />
-
-          {ssoConfigured && (
-            <SsoStatusSection
-              avatarInitials={avatarInitials}
-              displayName={displayName}
-              email={profile.email}
-            />
-          )}
-
-          {showMfaSection && (
-            <MfaSecuritySection
-              authenticatorAppConfigured={authenticatorAppConfigured}
-              hasSecuritySnapshot={hasSecuritySnapshot}
-              mfaRestrictionEnabled={mfaRestrictionEnabled}
-              totpExpanded={totpExpanded}
-              onTotpDone={handleTotpDone}
-              onToggleTotp={() => setTotpExpanded((v) => !v)}
-            />
-          )}
-
+          <MfaSecuritySection
+            authenticatorAppConfigured={authenticatorAppConfigured}
+            hasSecuritySnapshot={hasSecuritySnapshot}
+            mfaRestrictionEnabled={mfaRestrictionEnabled}
+            totpExpanded={totpExpanded}
+            onTotpDone={handleTotpDone}
+            onToggleTotp={() => setTotpExpanded((v) => !v)}
+          />
           <BragSettingsDangerZone onDelete={() => setDeleteModal(true)} />
         </div>
-    </main>
+      </main>
       <DeleteAccountDialog
         open={deleteModal}
         onClose={() => setDeleteModal(false)}

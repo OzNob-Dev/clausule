@@ -1,52 +1,63 @@
-/* ── BragSettings page — light main surface ───────────────────── */
-:root {
-  --be-motion-clay: #C94F2A;
-  --be-motion-gold: #F8D37B;
-  --be-motion-green: #2F6F5E;
-  --be-motion-blue: #1F5E8C;
+.bss-screen {
+  background: linear-gradient(165deg, #FAF8F5 0%, #F0EBE3 100%);
 }
 
-/* Page heading */
+.be-inner.bss-page {
+  max-width: 920px;
+  padding-top: 56px;
+}
+
+.bss-header {
+  margin-bottom: 48px;
+  animation: bss-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .bss-heading {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  color: #2A221A;
-  margin-bottom: 6px;
+  margin: 0 0 16px;
+  color: #3D3229;
+  font-family: 'Fraunces', var(--font-serif), Georgia, serif;
+  font-size: clamp(2.5rem, 4.6vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .bss-subheading {
-  font-size: 13px;
-  color: var(--tm);
-  margin-bottom: 28px;
+  margin: 0;
+  color: rgba(61, 50, 41, 0.72);
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  line-height: 1.6;
 }
 
 .bss-divider {
-  height: 1px;
-  background: linear-gradient(90deg, var(--be-motion-clay), var(--be-motion-gold), var(--be-motion-green), var(--be-motion-blue), rgba(60, 45, 35, 0.08));
-  margin-bottom: 24px;
+  height: 2px;
+  margin-bottom: 56px;
+  background: linear-gradient(90deg, #C46B4A 0%, transparent 100%);
+  transform-origin: left;
+  animation: bss-expand 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Section label */
 .bss-section-label {
-  font-size: 9px;
+  display: block;
+  margin-bottom: 32px;
+  color: #C46B4A;
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 13px;
   font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
-  color: var(--tm);
-  margin-bottom: 12px;
 }
 
-/* Card */
 .bss-card {
-  background: #FAF7F3;
-  border: 1px solid rgba(60, 45, 35, 0.1);
-  border-radius: var(--r2);
-  padding: 16px 18px;
-  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(61, 50, 41, 0.08), 0 16px 48px rgba(61, 50, 41, 0.12);
+  backdrop-filter: blur(20px);
 }
 
-/* SSO status */
 .bss-sso-card {
   display: flex;
   flex-direction: column;
@@ -119,12 +130,35 @@
 .bss-sso-status {
   flex-shrink: 0;
   border-radius: 999px;
-  background: #E8F5EE;
-  color: #225F3D;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 3px 9px;
+  background: rgba(13, 122, 110, 0.1);
+  border: 1px solid rgba(13, 122, 110, 0.2);
+  color: #0D7A6E;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 24px;
   white-space: nowrap;
+}
+
+@keyframes bss-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bss-expand {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
 
 /* Spinner inside button */
@@ -150,204 +184,173 @@
   background: rgba(184, 50, 50, 0.06);
 }
 
-/* Reminder preferences */
-.bss-reminders {
-  padding-top: 28px;
-  border-top: 1px solid rgba(60, 45, 35, 0.1);
-}
-
-.bss-reminder-card {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.bss-reminder-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.bss-reminder-title {
-  font-size: 14px;
-  font-weight: 800;
-  color: #2A221A;
-  margin-bottom: 4px;
-}
-
-.bss-reminder-desc,
-.bss-reminder-option-desc {
-  color: var(--tm);
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.bss-reminder-summary {
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: rgba(47, 111, 94, 0.1);
-  color: #225F3D;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.6px;
-  padding: 5px 10px;
-  text-transform: uppercase;
-}
-
-.bss-reminder-group {
-  border: 0;
-  margin: 0;
-  padding: 0;
-}
-
-.bss-reminder-legend {
-  color: var(--tm);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
-.bss-reminder-grid {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.bss-reminder-option,
-.bss-frequency-option {
-  align-items: center;
-  background: rgba(255, 255, 255, 0.42);
-  border: 1.5px solid rgba(60, 45, 35, 0.12);
-  border-radius: var(--r);
-  cursor: pointer;
-  display: flex;
-  gap: 10px;
-  padding: 12px;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-}
-
-.bss-reminder-option--active,
-.bss-frequency-option--active {
-  background: rgba(47, 111, 94, 0.08);
-  border-color: rgba(47, 111, 94, 0.55);
-}
-
-.bss-reminder-option:focus-within,
-.bss-frequency-option:focus-within {
-  box-shadow: 0 0 0 3px rgba(47, 111, 94, 0.2);
-}
-
-.bss-reminder-input {
-  accent-color: #2F6F5E;
-  flex-shrink: 0;
-}
-
-.bss-reminder-option-body {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.bss-reminder-option-title,
-.bss-frequency-text {
-  color: #2A221A;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.bss-frequency-grid {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.bss-frequency-option {
-  justify-content: center;
-  padding: 10px;
-}
-
-/* Identity sidebar note */
-.bss-identity-note {
-  font-size: 12px;
-  color: var(--tm);
-  line-height: 1.7;
-  margin: 0;
-}
-
 /* Danger zone */
 .bss-danger-section {
-  padding-top: 28px;
-  border-top: 1px solid rgba(60, 45, 35, 0.1);
+  margin-top: 56px;
 }
 
 .bss-danger-label {
-  font-size: 9px;
+  display: block;
+  margin-bottom: 32px;
+  color: #B83A3A;
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 13px;
   font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #B83232;
-  margin-bottom: 12px;
 }
 
 .bss-danger-card {
-  background: #FAF7F3;
-  border: 1px solid rgba(184, 50, 50, 0.2);
-  border-radius: var(--r2);
-  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 48px;
+  border: 2px solid rgba(184, 58, 58, 0.15);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(61, 50, 41, 0.08), 0 16px 48px rgba(61, 50, 41, 0.12);
+  backdrop-filter: blur(20px);
 }
 
 .bss-danger-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
+  width: 100%;
 }
 
 .bss-danger-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #2A221A;
-  margin-bottom: 4px;
+  margin-bottom: 12px;
+  color: #3D3229;
+  font-family: 'Fraunces', var(--font-serif), Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
 
 .bss-danger-desc {
-  font-size: 12px;
-  color: var(--tm);
+  color: rgba(61, 50, 41, 0.72);
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 17px;
   line-height: 1.6;
 }
 
 .bss-btn-delete {
   flex-shrink: 0;
-  padding: 8px 16px;
+  padding: 16px 36px;
+  border: 2.5px solid #B83A3A;
+  border-radius: 12px;
   background: transparent;
-  border: 1.5px solid #B83232;
-  border-radius: var(--r);
-  font-size: 12px;
-  font-weight: 700;
-  color: #B83232;
+  color: #B83A3A;
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  font-family: var(--font-sans);
-  transition: background 0.15s, color 0.15s;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.bss-btn-delete:hover { background: #B83232; color: #FAF7F3; }
+.bss-btn-delete:hover {
+  background: #B83A3A;
+  color: #FAF8F5;
+  box-shadow: 0 8px 24px rgba(184, 58, 58, 0.25);
+  transform: translateY(-2px);
+}
 
-@media (max-width: 720px) {
-  .bss-reminder-head,
-  .bss-reminder-grid,
-  .bss-frequency-grid {
-    grid-template-columns: 1fr;
+.bss-btn-delete:active { transform: translateY(0); }
+
+@media (max-width: 768px) {
+  .be-inner.bss-page {
+    padding: 32px 20px 72px;
   }
 
-  .bss-reminder-head {
-    align-items: stretch;
+  .bss-header {
+    margin-bottom: 32px;
+  }
+
+  .bss-heading {
+    font-size: clamp(2.1rem, 8vw, 2.5rem);
+  }
+
+  .bss-subheading {
+    font-size: 1rem;
+  }
+
+  .bss-divider {
+    margin-bottom: 32px;
+  }
+
+  .bss-section-label,
+  .bss-danger-label {
+    margin-bottom: 20px;
+  }
+
+  .bss-mfa-row {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 32px 24px;
   }
 
-  .bss-reminder-summary { width: fit-content; }
+  .bss-mfa-divider {
+    margin: 0 24px;
+  }
+
+  .bss-mfa-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  .bss-mfa-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bss-mfa-title {
+    font-size: 22px;
+  }
+
+  .bss-mfa-sub {
+    font-size: 15px;
+  }
+
+  .bss-mfa-status,
+  .bss-mfa-reconfig-btn {
+    align-self: flex-start;
+  }
+
+  .bss-danger-section {
+    margin-top: 32px;
+  }
+
+  .bss-danger-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 32px 24px;
+  }
+
+  .bss-danger-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .bss-danger-title {
+    font-size: 24px;
+  }
+
+  .bss-danger-desc {
+    font-size: 16px;
+  }
+
+  .bss-btn-delete {
+    width: 100%;
+  }
 }
 
 /* ── Modals ────────────────────────────────────────────────────── */

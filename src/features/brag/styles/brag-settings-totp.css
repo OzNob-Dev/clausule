@@ -2,89 +2,89 @@
 .bss-mfa-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.bss-mfa-row--needs-setup {
-  margin: -8px -10px;
-  padding: 12px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(60, 45, 35, 0.1);
-  background: #FAF7F3;
+  gap: 28px;
+  padding: 40px 48px;
+  transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bss-mfa-divider {
-  height: 1px;
-  background: rgba(60, 45, 35, 0.08);
-  margin: 14px 0;
+  height: 1.5px;
+  margin: 0 48px;
+  background: rgba(60, 45, 35, 0.1);
 }
 
 .bss-mfa-icon {
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
-  border-radius: 9px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(60, 45, 35, 0.07);
-  color: var(--tm);
+  background: linear-gradient(135deg, rgba(196, 107, 74, 0.1) 0%, rgba(196, 107, 74, 0.05) 100%);
+  color: #C46B4A;
 }
 
 .bss-mfa-icon--on {
-  background: rgba(201, 79, 42, 0.09);
-  color: var(--be-motion-clay, var(--acc));
+  background: linear-gradient(135deg, rgba(196, 107, 74, 0.1) 0%, rgba(196, 107, 74, 0.05) 100%);
+  color: #C46B4A;
 }
 
-.bss-mfa-icon svg { width: 16px; height: 16px; }
+.bss-mfa-icon svg { width: 28px; height: 28px; }
 
 .bss-mfa-info { flex: 1; min-width: 0; }
 
 .bss-mfa-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #2A221A;
+  color: #3D3229;
+  font-family: 'Fraunces', var(--font-serif), Georgia, serif;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
 
 .bss-mfa-sub {
-  font-size: 11px;
-  color: var(--tm);
-  margin-top: 2px;
+  margin-top: 8px;
+  color: rgba(61, 50, 41, 0.72);
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .bss-mfa-status {
   flex-shrink: 0;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  background: rgba(60, 45, 35, 0.07);
-  color: var(--tm);
+  border-radius: 999px;
+  background: rgba(13, 122, 110, 0.1);
+  border: 1px solid rgba(13, 122, 110, 0.2);
+  color: #0D7A6E;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 24px;
 }
 
 .bss-mfa-status--on {
-  background: rgba(47, 111, 94, 0.12);
-  color: var(--be-motion-green, #2D8C68);
+  background: rgba(13, 122, 110, 0.1);
+  color: #0D7A6E;
 }
 
 .bss-mfa-reconfig-btn {
   flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 600;
-  font-family: var(--font-sans);
-  padding: 5px 12px;
-  border-radius: 5px;
-  border: 1px solid rgba(60, 45, 35, 0.16);
+  padding: 10px 22px;
+  border: 2px solid #C46B4A;
+  border-radius: 12px;
   background: transparent;
-  color: var(--tm);
+  color: #C46B4A;
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bss-mfa-reconfig-btn:hover {
-  background: rgba(201, 79, 42, 0.07);
-  color: var(--be-motion-clay, var(--acc));
-  border-color: rgba(201, 79, 42, 0.22);
+  background: #C46B4A;
+  color: #FAF8F5;
+  transform: translateY(-2px);
 }
 
 .bss-loading-state {
@@ -92,15 +92,16 @@
   align-items: center;
   gap: 8px;
   margin-top: 14px;
-  font-size: 11px;
-  color: var(--tm);
+  color: rgba(61, 50, 41, 0.72);
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 13px;
 }
 
 .bss-loading-state__dot {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: var(--be-motion-clay, rgba(208, 90, 52, 0.55));
+  background: #C46B4A;
   box-shadow:
     12px 0 0 rgba(248, 211, 123, 0.75),
     24px 0 0 rgba(47, 111, 94, 0.45);
@@ -148,16 +149,15 @@
 
 /* TOTP expanded body */
 .bss-totp-body {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(60, 45, 35, 0.08);
+  padding: 0 48px 48px;
 }
 
 .bss-totp-instruction {
-  font-size: 12px;
-  color: var(--tm);
+  margin: 0 0 14px;
+  color: rgba(61, 50, 41, 0.72);
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-size: 14px;
   line-height: 1.6;
-  margin-bottom: 14px;
 }
 
 .bss-qr-wrap {
@@ -281,10 +281,10 @@
 }
 
 .bss-totp-cancel {
+  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
-  font-family: var(--font-sans);
-  color: var(--tm);
+  color: rgba(61, 50, 41, 0.72);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -294,8 +294,52 @@
 
 .bss-totp-cancel:hover { color: #2A221A; }
 
-/* ── Responsive ────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .bss-danger-row   { flex-direction: column; gap: 14px; }
-  .bss-btn-delete   { width: 100%; text-align: center; }
+@media (max-width: 768px) {
+  .bss-mfa-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 32px 24px;
+  }
+
+  .bss-mfa-divider {
+    margin: 0 24px;
+  }
+
+  .bss-mfa-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .bss-mfa-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bss-mfa-title {
+    font-size: 22px;
+  }
+
+  .bss-mfa-sub {
+    font-size: 15px;
+  }
+
+  .bss-mfa-status,
+  .bss-mfa-reconfig-btn {
+    align-self: flex-start;
+  }
+
+  .bss-totp-body {
+    padding: 0 24px 32px;
+  }
+
+  .bss-danger-row {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .bss-btn-delete {
+    width: 100%;
+    text-align: center;
+  }
 }

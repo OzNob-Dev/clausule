@@ -14,7 +14,7 @@ export default function MfaSecuritySection({
 }) {
   return (
     <>
-      <div className="bss-section-label">Two-factor authentication</div>
+      <div className="bss-section-label">Two-Factor Authentication</div>
       <div className="bss-card">
         <div className="bss-mfa-row">
           <div className="bss-mfa-icon bss-mfa-icon--on" aria-hidden="true">
