@@ -45,7 +45,7 @@ describe('FeedbackCenter', () => {
     expect(screen.getByRole('tab', { name: /send feedback/i })).toHaveAttribute('aria-selected', 'true')
     await user.click(screen.getByRole('tab', { name: /feedback centre/i }))
 
-    expect(await screen.findByRole('heading', { name: /back and forth with the clausule team/i })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: /feedback history/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /all/i })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByText('1')).toBeInTheDocument()
     expect(screen.getByText('threads')).toBeInTheDocument()
