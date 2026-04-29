@@ -15,13 +15,6 @@ export default function Page() {
       return
     }
 
-    const params = new URLSearchParams(window.location.search)
-
-    if (params.get('bypaxxx') === 'true') {
-      localStorage.setItem('clausule_dev_accexx', 'granted')
-      window.history.replaceState(null, '', window.location.pathname)
-    }
-
     if (localStorage.getItem('clausule_dev_accexx') === 'granted') {
       router.replace(ROUTES.login)
       return

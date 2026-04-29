@@ -23,4 +23,13 @@ describe('DevAccessGate', () => {
 
     await waitFor(() => expect(screen.getByText('Unlocked app')).toBeInTheDocument())
   })
+
+  it('grants access from the bypaxxx query param', async () => {
+    window.history.pushState({}, '', '/?bypaxxx=true')
+
+    render(<DevAccessGate><div>Unlocked app</div></DevAccessGate>)
+
+    await waitFor(() => expect(screen.getByText('Unlocked app')).toBeInTheDocument())
+    expect(localStorage.getItem('clausule_dev_accexx')).toBe('granted')
+  })
 })
