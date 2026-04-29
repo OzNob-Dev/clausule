@@ -40,7 +40,7 @@
   --cl-surface-muted-21: #EAE4DA;
 
   --cl-accent: #D05A34;
-  --cl-accent-strong: #C94F2A;
+  --cl-accent-strong: var(--cl-ring-outer);
   --cl-accent-deep: #C46B4A;
   --cl-accent-deeper: #A85A3D;
   --cl-accent-muted: #A75743;
@@ -56,15 +56,15 @@
   --cl-accent-soft-10: rgba(196, 107, 74, 0.04);
   --cl-accent-soft-11: rgba(196, 107, 74, 0.05);
   --cl-accent-soft-12: rgba(196, 107, 74, 0.08);
-  --cl-accent-soft-13: rgba(196, 107, 74, 0.1);
+  --cl-accent-soft-13: var(--cl-accent-alpha-10);
   --cl-accent-soft-14: rgba(196, 107, 74, 0.12);
   --cl-accent-soft-15: rgba(196, 107, 74, 0.14);
-  --cl-accent-soft-16: rgba(196, 107, 74, 0.15);
-  --cl-accent-soft-17: rgba(196, 107, 74, 0.16);
+  --cl-accent-soft-16: var(--cl-accent-alpha-15);
+  --cl-accent-soft-17: var(--cl-accent-alpha-16);
   --cl-accent-soft-18: rgba(196, 107, 74, 0.18);
-  --cl-accent-soft-19: rgba(196, 107, 74, 0.2);
+  --cl-accent-soft-19: var(--cl-accent-alpha-20);
   --cl-accent-soft-20: rgba(196, 107, 74, 0.26);
-  --cl-accent-soft-21: rgba(196, 107, 74, 0.28);
+  --cl-accent-soft-21: var(--cl-accent-alpha-28);
 
   --cl-rule: rgba(60, 45, 35, 0.10);
   --cl-rule-2: rgba(60, 45, 35, 0.12);
@@ -81,16 +81,16 @@
   --cl-rule-dark-6: rgba(26, 21, 16, 0.12);
   --cl-rule-dark-7: rgba(26, 21, 16, 0.18);
 
-  --cl-border: rgba(60, 45, 35, 0.10);
-  --cl-border-2: rgba(60, 45, 35, 0.12);
-  --cl-border-3: rgba(60, 45, 35, 0.13);
-  --cl-border-4: rgba(60, 45, 35, 0.15);
-  --cl-border-5: rgba(60, 45, 35, 0.16);
-  --cl-border-6: rgba(60, 45, 35, 0.18);
-  --cl-border-dark: rgba(26, 21, 16, 0.1);
-  --cl-border-dark-2: rgba(26, 21, 16, 0.12);
+  --cl-border: var(--cl-rule);
+  --cl-border-2: var(--cl-rule-2);
+  --cl-border-3: var(--cl-rule-3);
+  --cl-border-4: var(--cl-rule-5);
+  --cl-border-5: var(--cl-rule-6);
+  --cl-border-6: var(--cl-rule-7);
+  --cl-border-dark: var(--cl-rule-dark-5);
+  --cl-border-dark-2: var(--cl-rule-dark-6);
   --cl-border-dark-3: rgba(26, 21, 16, 0.15);
-  --cl-border-dark-4: rgba(26, 21, 16, 0.18);
+  --cl-border-dark-4: var(--cl-rule-dark-7);
   --cl-border-dark-5: rgba(26, 21, 16, 0.2);
 
   --cl-white-4: rgba(255, 255, 255, 0.04);
@@ -117,7 +117,7 @@
   --cl-white-96: rgba(255, 255, 255, 0.96);
   --cl-black-18: rgba(0, 0, 0, 0.18);
   --cl-black-20: rgba(0, 0, 0, 0.2);
-  --cl-black-30: rgba(0, 0, 0, 0.3);
+  --cl-black-30: var(--cl-dialog-shadow);
   --cl-black-22: rgba(0, 0, 0, 0.22);
   --cl-black-50: rgba(0, 0, 0, 0.5);
   --cl-black-55: rgba(0, 0, 0, 0.55);
@@ -183,7 +183,7 @@
   --cl-gold-alpha-34: rgba(248, 211, 123, 0.34);
   --cl-red-alpha-14: rgba(240, 149, 149, 0.14);
   --cl-red-soft-alpha-18: rgba(240, 149, 149, 0.18);
-  --cl-red-alpha-18: rgba(184, 50, 50, 0.18);
+  --cl-red-alpha-18: var(--cl-danger-alpha-18);
   --cl-danger-alpha-28: rgba(158, 31, 31, 0.28);
   --cl-red-alpha-25: rgba(240, 149, 149, 0.25);
   --cl-accent-alpha-10: rgba(196, 107, 74, 0.1);
@@ -208,24 +208,24 @@
   --cl-accent-strong-alpha-07: rgba(208, 90, 52, 0.07);
   --cl-accent-strong-alpha-15: rgba(208, 90, 52, 0.15);
   --cl-accent-alpha-85: rgba(208, 90, 52, 0.85);
-  --cl-success-alpha-06: rgba(93, 202, 165, 0.06);
+  --cl-success-alpha-06: var(--cl-success-soft-2);
   --cl-success-alpha-10: rgba(93, 202, 165, 0.1);
-  --cl-success-alpha-14: rgba(93, 202, 165, 0.14);
-  --cl-success-alpha-18: rgba(93, 202, 165, 0.18);
+  --cl-success-alpha-14: var(--cl-success-soft-3);
+  --cl-success-alpha-18: var(--cl-success-soft-4);
   --cl-success-alpha-20: rgba(93, 202, 165, 0.2);
   --cl-success-alpha-35: rgba(93, 202, 165, 0.35);
   --cl-success-alpha-45: rgba(47, 111, 94, 0.45);
-  --cl-danger-alpha-05: rgba(184, 50, 50, 0.05);
+  --cl-danger-alpha-05: var(--cl-danger-soft);
   --cl-danger-alpha-06: rgba(184, 50, 50, 0.06);
-  --cl-danger-alpha-08: rgba(184, 50, 50, 0.08);
+  --cl-danger-alpha-08: var(--cl-danger-soft-2);
   --cl-danger-alpha-13: rgba(184, 58, 58, 0.13);
   --cl-danger-alpha-14: rgba(184, 50, 50, 0.14);
   --cl-danger-alpha-18: rgba(184, 50, 50, 0.18);
-  --cl-danger-alpha-22: rgba(180, 60, 40, 0.22);
+  --cl-danger-alpha-22: var(--cl-dialog-red-border-2);
   --cl-danger-alpha-24: rgba(184, 58, 58, 0.24);
   --cl-danger-alpha-25: rgba(184, 58, 58, 0.25);
   --cl-danger-alt-alpha-13: rgba(192, 57, 43, 0.13);
-  --cl-danger-alpha-42: rgba(220, 80, 50, 0.42);
+  --cl-danger-alpha-42: var(--cl-dialog-red-border);
   --cl-window-red: #FF5F57;
   --cl-window-amber: #FEBC2E;
   --cl-window-green: #28C840;
@@ -252,30 +252,30 @@
   --cl-dialog-red-soft-2: rgba(180, 60, 40, 0.08);
   --cl-dialog-shadow: rgba(0, 0, 0, 0.3);
 
-  --cl-ink: #2A221A;
+  --cl-ink: var(--cl-surface-ink);
   --cl-ink-2: #3D3228;
   --cl-ink-3: #3D3229;
   --cl-ink-4: #3B2F28;
   --cl-ink-5: #3D3220;
   --cl-ink-6: #35261F;
   --cl-ink-7: #1A1A1A;
-  --cl-ink-8: #1C1A17;
-  --cl-ink-9: #1A1510;
-  --cl-ink-10: #2A211A;
+  --cl-ink-8: var(--cl-surface-ink-2);
+  --cl-ink-9: var(--cl-surface-ink-3);
+  --cl-ink-10: var(--cl-surface-ink-5);
 
-  --cl-muted: #5C4E42;
-  --cl-muted-3: #5C5048;
-  --cl-muted-4: #6B5E4E;
-  --cl-muted-5: #786B5F;
+  --cl-muted: var(--cl-surface-muted-6);
+  --cl-muted-3: var(--cl-surface-muted-5);
+  --cl-muted-4: var(--cl-surface-muted-7);
+  --cl-muted-5: var(--cl-surface-muted-8);
   --cl-muted-6: #8A7E76;
-  --cl-muted-7: #8B7B6B;
-  --cl-muted-8: #A89882;
+  --cl-muted-7: var(--cl-surface-muted-9);
+  --cl-muted-8: var(--cl-surface-muted-10);
   --cl-muted-9: #B5A898;
-  --cl-muted-10: #B8B2AC;
-  --cl-muted-11: #C8BDB4;
-  --cl-muted-12: #E8E3DB;
-  --cl-muted-13: #EDE8E0;
-  --cl-muted-14: #E8E0D5;
+  --cl-muted-10: var(--cl-surface-muted-11);
+  --cl-muted-11: var(--cl-surface-muted-12);
+  --cl-muted-12: var(--cl-surface-muted-18);
+  --cl-muted-13: var(--cl-surface-muted-17);
+  --cl-muted-14: var(--cl-surface-muted-14);
   --cl-muted-15: #9A8E84;
   --cl-muted-16: #C4C0BA;
   --cl-muted-17: #AAA29A;
@@ -314,18 +314,18 @@
   --cl-blue: #1F5E8C;
   --cl-blue-2: #356EB8;
   --cl-blue-3: #4A86D9;
-  --cl-green: #225F3D;
+  --cl-green: var(--cl-ring-inner);
   --cl-green-2: #2F6F5E;
-  --cl-brown: #3D3228;
-  --cl-brown-2: #3D2F22;
+  --cl-brown: var(--cl-ink-2);
+  --cl-brown-2: var(--cl-surface-ink-8);
   --cl-brown-3: #3A2E28;
   --cl-accent-brown: #5C2C1A;
 
-  --cl-grid: rgba(26, 21, 16, 0.028);
+  --cl-grid: var(--cl-rule-dark);
   --cl-grid-2: rgba(0, 0, 0, 0.038);
   --cl-grid-3: rgba(0, 0, 0, 0.09);
 
-  --cl-white: #FFFFFF;
+  --cl-white: var(--cl-surface-white);
   --cl-black: #000000;
 
   --cl-shadow-soft: 0 2px 8px rgba(61, 50, 41, 0.08);
