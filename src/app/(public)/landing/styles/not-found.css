@@ -185,24 +185,6 @@
   justify-content: center;
 }
 
-.nf-btn-primary {
-  background: #1A1510;
-  color: #F5F0EA;
-  border: none;
-  border-radius: var(--r, 10px);
-  font-size: 14px;
-  font-weight: 700;
-  padding: 13px 24px;
-  cursor: pointer;
-  font-family: var(--font-sans, 'DM Sans', sans-serif);
-  letter-spacing: -0.2px;
-  transition: opacity 0.15s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.nf-btn-primary:hover { opacity: 0.85; }
-
 .nf-btn-secondary {
   background: transparent;
   border: 1.5px solid rgba(26,21,16,0.18);
