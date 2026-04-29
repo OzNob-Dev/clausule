@@ -54,7 +54,7 @@ function FeedbackHistoryEmptyState() {
       <p className="be-feedback-empty-state__eyebrow">Feedback history</p>
       <h2 id="feedback-empty-title" className="be-feedback-empty-state__title">The conversation<br />hasn't started <em>yet.</em></h2>
       <p id="feedback-empty-copy" className="be-feedback-empty-state__copy">Send your first note and this centre will start keeping the conversation cozy.</p>
-      <button type="button" className="be-feedback-empty-state__cta" onClick={() => router.push('/brag/feedback')}>
+      <button type="button" className="be-cta" onClick={() => router.push('/brag/feedback')}>
         <span className="be-feedback-empty-state__cta-icon" aria-hidden="true">
           <svg viewBox="0 0 12 12" fill="none">
             <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
