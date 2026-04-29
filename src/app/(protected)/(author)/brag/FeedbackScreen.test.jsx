@@ -32,7 +32,7 @@ describe('FeedbackScreen', () => {
   it('renders the feedback composer without tabs', () => {
     renderWithQueryClient(<FeedbackScreen view="compose" />)
 
-    expect(screen.getByRole('heading', { name: /tell the clausule team what would make this better/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /feedback for clausule/i })).toBeInTheDocument()
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
     expect(screen.getByText(/your feedback/i)).toBeInTheDocument()
     expect(screen.getAllByRole('combobox')).toHaveLength(2)
@@ -91,5 +91,19 @@ describe('FeedbackScreen', () => {
     expect(await screen.findByText('jj')).toBeInTheDocument()
     expect(screen.getByText('bnv')).toBeInTheDocument()
     expect(screen.getByText('Thanks for the note.')).toBeInTheDocument()
+  })
+
+  it('renders the empty history mockup when there is no feedback yet', async () => {
+    const user = userEvent.setup()
+    listFeedbackThreadsAction.mockResolvedValueOnce([])
+
+    renderWithQueryClient(<FeedbackScreen view="history" />)
+
+    expect(await screen.findByRole('heading', { name: /the conversation/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /send your first note/i })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: /feedback history/i })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /send your first note/i }))
+    expect(push).toHaveBeenCalledWith('/brag/feedback')
   })
 })
