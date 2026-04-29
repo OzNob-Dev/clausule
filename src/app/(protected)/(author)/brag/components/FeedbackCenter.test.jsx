@@ -54,6 +54,19 @@ describe('FeedbackCenter', () => {
     expect(screen.getByText('Tiny keyboard goblin assigned.')).toBeInTheDocument()
   })
 
+  it('shows the empty state when no history exists', async () => {
+    const user = userEvent.setup()
+    listFeedbackThreadsAction.mockResolvedValueOnce([])
+
+    renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
+
+    await user.click(screen.getByRole('tab', { name: /feedback centre/i }))
+
+    expect(await screen.findByRole('heading', { name: /the conversation/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /send your first note/i })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: /feedback history/i })).not.toBeInTheDocument()
+  })
+
   it('filters threads by replied status', async () => {
     const user = userEvent.setup()
     listFeedbackThreadsAction.mockResolvedValueOnce([
@@ -108,7 +121,7 @@ describe('FeedbackCenter', () => {
 
     expect(centreTab).toHaveFocus()
     expect(centreTab).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('tabpanel', { name: /feedback centre/i })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: /the conversation/i })).toBeInTheDocument()
   })
 
   it('waits to fetch threads until the feedback-centre tab is opened', async () => {
