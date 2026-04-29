@@ -1,13 +1,13 @@
 /* ── Brag shell + sidebar ─────────────────────────────────────── */
 .be-page {
   --be-sidebar-bg: var(--cl-surface-ink-5);
-  --be-sidebar-bg-soft: rgba(255, 255, 255, 0.05);
+  --be-sidebar-bg-soft: var(--cl-white-05);
   --be-sidebar-bg-hover: var(--cl-accent-soft-15);
   --be-sidebar-border: var(--cl-border-dark-4);
   --be-sidebar-border-strong: var(--cl-border-dark-5);
-  --be-sidebar-text: rgba(255, 255, 255, 0.74);
-  --be-sidebar-text-strong: rgba(255, 255, 255, 0.96);
-  --be-sidebar-text-muted: rgba(255, 255, 255, 0.5);
+  --be-sidebar-text: var(--cl-white-74);
+  --be-sidebar-text-strong: var(--cl-white-96);
+  --be-sidebar-text-muted: var(--cl-white-50);
   --be-sidebar-accent: var(--cl-accent-deep);
   --be-sidebar-accent-soft: var(--cl-accent-soft-18);
   --be-sidebar-focus: var(--cl-gold);
@@ -27,7 +27,7 @@
   height: 100vh;
   overflow-y: auto;
   background: var(--be-sidebar-bg);
-  border-right: 1.5px solid rgba(0, 0, 0, 0.2);
+  border-right: 1.5px solid var(--cl-black-20);
   color: var(--be-sidebar-text);
 }
 
@@ -41,7 +41,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--cl-white-42);
   margin-bottom: 22px;
 }
 
@@ -59,7 +59,7 @@
 .be-sidebar-profile:hover {
   transform: translateX(2px);
   border-color: var(--be-sidebar-accent);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--cl-white-8);
 }
 
 .be-sidebar-avatar {
@@ -74,7 +74,7 @@
   font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--cl-ink-6);
-  background: linear-gradient(135deg, #E8D5C4 0%, #D4B5A0 100%);
+  background: linear-gradient(135deg, var(--cl-surface-muted-14) 0%, var(--cl-surface-muted-10) 100%);
   border: 1px solid var(--cl-border-2);
   box-shadow: var(--cl-shadow-ink);
   position: relative;
@@ -85,7 +85,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, transparent 55%);
+  background: linear-gradient(180deg, var(--cl-white-24) 0%, transparent 55%);
 }
 
 .be-sidebar-profile-text {
@@ -201,7 +201,7 @@
 
 .be-sidebar-sublink:hover {
   color: var(--be-sidebar-text-strong);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--cl-white-4);
 }
 
 .be-sidebar-sublink-active {
@@ -259,7 +259,7 @@
   flex: 1;
   min-width: 0;
   overflow-y: auto;
-  background: linear-gradient(165deg, #F9F6F2 0%, #EFE8DF 100%);
+  background: linear-gradient(165deg, var(--cl-surface-muted-19) 0%, var(--cl-surface-muted-20) 100%);
 }
 
 .be-inner {

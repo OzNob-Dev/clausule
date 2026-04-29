@@ -24,12 +24,12 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.18);
+  background: var(--cl-black-18);
 }
 
-.ce-chrome-dot:nth-child(1) { background: #ff5f57; }
-.ce-chrome-dot:nth-child(2) { background: #febc2e; }
-.ce-chrome-dot:nth-child(3) { background: #28c840; }
+.ce-chrome-dot:nth-child(1) { background: var(--cl-window-red); }
+.ce-chrome-dot:nth-child(2) { background: var(--cl-window-amber); }
+.ce-chrome-dot:nth-child(3) { background: var(--cl-window-green); }
 
 .ce-chrome-label {
   margin-left: 6px;
@@ -52,7 +52,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: rgba(208, 90, 52, 0.85);
+  background: var(--cl-accent-alpha-85);
   color: var(--cl-surface-white);
   font-size: 13px;
   font-weight: 700;
@@ -134,7 +134,7 @@
   border-radius: var(--cl-radius-sm);
   font-size: 16px;
   font-weight: 800;
-  color: #C0532A;
+  color: var(--cl-accent-code);
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
@@ -150,7 +150,7 @@
 .ce-digit--hidden::after {
   content: '•';
   position: absolute;
-  color: #C0532A;
+  color: var(--cl-accent-code);
   font-size: 18px;
   line-height: 1;
 }

@@ -56,7 +56,7 @@
 .mfa-factor-badge svg { width: 12px; height: 12px; }
 
 .mfa-factor-badge--done   { background: var(--cl-success-2); }
-.mfa-factor-badge--locked { background: rgba(60, 45, 35, 0.2); color: var(--cl-surface-muted-6); }
+.mfa-factor-badge--locked { background: var(--cl-brown-alpha-20); color: var(--cl-surface-muted-6); }
 
 .mfa-factor-title {
   font-size: 13px;

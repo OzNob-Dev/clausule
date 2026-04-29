@@ -5,6 +5,16 @@ import { withTimeout } from '@api/_lib/network.js'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { findProfileByEmail } from '@auth/server/accountRepository.js'
 
+const EMAIL = {
+  bg: 'var(--cl-surface-paper)',
+  panel: 'var(--cl-surface-white)',
+  text: 'var(--cl-surface-ink-3)',
+  body: 'var(--cl-ink-2)',
+  muted: 'var(--cl-muted)',
+  accent: 'var(--cl-accent-code)',
+  border: 'var(--cl-accent-alpha-35)',
+}
+
 function generateOtp() {
   return String(crypto.randomInt(0, 1_000_000)).padStart(6, '0')
 }
@@ -19,9 +29,9 @@ function digitBoxes(code) {
     .map(
       (d) =>
         `<span style="display:inline-flex;align-items:center;justify-content:center;` +
-        `width:44px;height:52px;border-radius:8px;background:#fff;` +
-        `border:1.5px solid rgba(208,90,52,0.35);font-size:22px;font-weight:800;` +
-        `color:#C0532A;font-family:monospace;">${d}</span>`
+        `width:44px;height:52px;border-radius:8px;background:${EMAIL.panel};` +
+        `border:1.5px solid ${EMAIL.border};font-size:22px;font-weight:800;` +
+        `color:${EMAIL.accent};font-family:monospace;">${d}</span>`
     )
     .join('')
 }
@@ -64,13 +74,13 @@ export async function sendOtpCode(body) {
         to: [{ email }],
         htmlContent: `
           <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;
-                      background:#FAF7F3;border-radius:12px;">
-            <h2 style="margin:0 0 8px;font-size:20px;color:#2A221A;">Your sign-in code</h2>
-            <p style="color:#5C5048;margin:0 0 24px;">
+                      background:${EMAIL.bg};border-radius:12px;">
+            <h2 style="margin:0 0 8px;font-size:20px;color:${EMAIL.text};">Your sign-in code</h2>
+            <p style="color:${EMAIL.muted};margin:0 0 24px;">
               Use the code below to sign in to Clausule. It expires in 10 minutes.
             </p>
             <div style="display:flex;gap:8px;margin-bottom:24px;">${digitBoxes(code)}</div>
-            <p style="color:#8A7E76;font-size:13px;margin:0;">
+            <p style="color:${EMAIL.muted};font-size:13px;margin:0;">
               If you didn't request this, you can safely ignore this email.
             </p>
           </div>

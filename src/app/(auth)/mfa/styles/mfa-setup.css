@@ -228,7 +228,7 @@
 }
 
 .mfa-passkey-btn--done {
-  background: #3A9E7E;
+  background: var(--cl-success-2);
   opacity: 1 !important;
   cursor: default;
 }
@@ -238,7 +238,7 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(250, 247, 243, 0.3);
+  border: 2px solid var(--cl-white-30);
   border-top-color: var(--cl-surface-paper);
   border-radius: 50%;
   animation: mfa-spin 0.65s linear infinite;
@@ -262,7 +262,7 @@
   transition: color 0.15s;
 }
 
-.mfa-skip-btn:hover { color: #5C5048; }
+.mfa-skip-btn:hover { color: var(--cl-muted-3); }
 
 /* ── No-passkey badge ────────────────────────────────────────────── */
 .mfa-no-passkey-badge {
@@ -271,9 +271,9 @@
   gap: 8px;
   font-size: 12px;
   font-weight: 700;
-  color: #5C5048;
-  background: rgba(60, 45, 35, 0.06);
-  border: 1px solid rgba(60, 45, 35, 0.12);
+  color: var(--cl-muted-3);
+  background: var(--cl-brown-alpha-06);
+  border: 1px solid var(--cl-brown-alpha-12);
   border-radius: 10px;
   padding: 8px 16px;
   margin-bottom: 20px;
@@ -291,9 +291,9 @@
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: rgba(93, 202, 165, 0.1);
-  border: 2px solid rgba(93, 202, 165, 0.35);
-  color: #3A9E7E;
+  background: var(--cl-success-alpha-10);
+  border: 2px solid var(--cl-success-alpha-35);
+  color: var(--cl-success-2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -319,8 +319,8 @@
   gap: 8px;
   width: 100%;
   padding: 15px 20px;
-  background: #2A221A;
-  color: #FAF7F3;
+  background: var(--cl-ink);
+  color: var(--cl-surface-paper);
   border: none;
   border-radius: 12px;
   font-size: 14px;
@@ -346,7 +346,7 @@
   gap: 5px;
   font-size: 12px;
   font-weight: 700;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   background: none;
   border: none;
   cursor: pointer;
@@ -361,7 +361,7 @@
   height: 13px;
 }
 
-.mfa-back-btn:hover { color: #2A221A; }
+.mfa-back-btn:hover { color: var(--cl-ink); }
 
 /* ── Login-flow pane ─────────────────────────────────────────────── */
 .mfa-login-pane {
@@ -383,20 +383,18 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  background: rgba(60, 45, 35, 0.06);
+  background: var(--cl-brown-alpha-06);
   border-radius: 10px;
   margin-bottom: 28px;
 }
 
-.mfa-sec-row--accent {
-  background: rgba(208, 90, 52, 0.07);
-}
+.mfa-sec-row--accent { background: var(--cl-accent-strong-alpha-07); }
 
 .mfa-sec-icon {
   width: 34px;
   height: 34px;
   border-radius: 9px;
-  background: rgba(60, 45, 35, 0.07);
+  background: var(--cl-brown-alpha-08);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -408,19 +406,17 @@
   height: 16px;
 }
 
-.mfa-sec-icon--accent {
-  background: rgba(208, 90, 52, 0.15);
-}
+.mfa-sec-icon--accent { background: var(--cl-accent-strong-alpha-15); }
 
 .mfa-sec-text {
   font-size: 12px;
   font-weight: 600;
-  color: #5B4E42;
+  color: var(--cl-muted);
   line-height: 1.45;
 }
 
 .mfa-sec-text strong {
-  color: #2A221A;
+  color: var(--cl-ink);
   font-weight: 700;
 }
 
@@ -428,17 +424,17 @@
 .mfa-expiry-note {
   font-size: 11px;
   font-weight: 600;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   margin-bottom: 28px;
 }
 
 .mfa-expiry-expired {
-  color: #D94040;
+  color: var(--cl-danger-3);
 }
 
 .mfa-expiry-bar {
   height: 3px;
-  background: rgba(60, 45, 35, 0.14);
+  background: var(--cl-brown-alpha-14);
   border-radius: 2px;
   margin-top: 7px;
   overflow: hidden;
@@ -446,7 +442,7 @@
 
 .mfa-expiry-fill {
   height: 100%;
-  background: #2A221A;
+  background: var(--cl-ink);
   border-radius: 2px;
   transition: width 1s linear;
 }

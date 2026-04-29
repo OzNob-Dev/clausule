@@ -1,8 +1,11 @@
 .profile-screen {
   display: flex;
   flex-direction: column;
+  width: 100%;
   min-height: 100%;
   overflow: hidden;
+  max-width: none;
+  padding: 0;
 }
 
 .profile-rail {
@@ -111,7 +114,7 @@
 .profile-rail-link:hover,
 .profile-rail-link.is-active {
   color: var(--cl-surface-muted-14);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--cl-white-4);
 }
 
 .profile-rail-link.is-active {
@@ -219,15 +222,15 @@
 
 .main-body::-webkit-scrollbar-thumb {
   border-radius: 2px;
-  background: #e0d9ce;
+  background: var(--cl-surface-muted-13);
 }
 
 .form-card {
   max-width: 860px;
   overflow: hidden;
-  border: 0.5px solid rgba(28, 26, 23, 0.1);
+  border: 0.5px solid var(--cl-ink-alpha-10);
   border-radius: 16px;
-  background: #fff;
+  background: var(--cl-white);
 }
 
 .form-card-head {
@@ -235,11 +238,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px 40px;
-  background: #2a211a;
+  background: var(--cl-surface-ink-5);
 }
 
 .form-card-title {
-  color: #f0e8df;
+  color: var(--cl-surface-muted-15);
   font-family: var(--font-serif);
   font-size: 28px;
   font-weight: 400;
@@ -247,7 +250,7 @@
 }
 
 .form-card-meta {
-  color: #6b5e4e;
+  color: var(--cl-surface-muted-7);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -265,7 +268,7 @@
 .section-rule {
   height: 0.5px;
   margin: 28px 0;
-  background: rgba(28, 26, 23, 0.1);
+  background: var(--cl-ink-alpha-10);
 }
 
 .section-label {
@@ -273,7 +276,7 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 22px;
-  color: #c46b4a;
+  color: var(--cl-accent-deep);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -284,7 +287,7 @@
   content: '';
   flex: 1;
   height: 0.5px;
-  background: rgba(196, 107, 74, 0.22);
+  background: var(--cl-accent-alpha-22);
 }
 
 .field-row {
@@ -314,7 +317,7 @@
 }
 
 .field-label {
-  color: #8b7b6b;
+  color: var(--cl-surface-muted-9);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -325,9 +328,9 @@
   width: 100%;
   padding: 8px 0 11px;
   border: 0;
-  border-bottom: 1.5px solid rgba(28, 26, 23, 0.18);
+  border-bottom: 1.5px solid var(--cl-ink-alpha-18);
   background: transparent;
-  color: #1c1a17;
+  color: var(--cl-surface-ink-2);
   font-family: var(--font-serif);
   font-size: 20px;
   letter-spacing: -0.2px;
@@ -336,7 +339,7 @@
 }
 
 .field-input::placeholder {
-  color: #c8bdb4;
+  color: var(--cl-surface-muted-12);
   font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 400;
@@ -344,12 +347,12 @@
 }
 
 .field-input:focus {
-  border-color: #c46b4a;
+  border-color: var(--cl-accent-deep);
 }
 
 .field-input[readonly],
 .field-input.is-readonly {
-  color: #5c4e42;
+  color: var(--cl-muted);
   background: transparent;
   cursor: default;
   opacity: 0.8;
@@ -357,7 +360,7 @@
 
 .field-hint {
   margin: -4px 0 24px;
-  color: #8b7b6b;
+  color: var(--cl-surface-muted-9);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -371,10 +374,10 @@
 
 .btn-reset {
   padding: 11px 22px;
-  border: 1.5px solid rgba(28, 26, 23, 0.15);
+  border: 1.5px solid var(--cl-ink-alpha-15);
   border-radius: 8px;
   background: transparent;
-  color: #8b7b6b;
+  color: var(--cl-surface-muted-9);
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 600;
@@ -383,8 +386,8 @@
 }
 
 .btn-reset:hover:not(:disabled) {
-  background: #f7f3ee;
-  color: #5c4e42;
+  background: var(--cl-surface-muted-16);
+  color: var(--cl-muted);
 }
 
 .btn-reset:focus-visible,
@@ -392,7 +395,7 @@
 .profile-rail-link:focus-visible,
 .profile-rail-sublink:focus-visible,
 .profile-rail-logout:focus-visible {
-  outline: 2px solid #c46b4a;
+  outline: 2px solid var(--cl-accent-deep);
   outline-offset: 2px;
 }
 
@@ -403,8 +406,8 @@
   padding: 11px 24px;
   border: 0;
   border-radius: 8px;
-  background: #2a211a;
-  color: #f7f3ee;
+  background: var(--cl-surface-ink-5);
+  color: var(--cl-surface-muted-16);
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 700;
@@ -413,14 +416,14 @@
 }
 
 .btn-save:hover:not(:disabled) {
-  background: #1c1510;
+  background: var(--cl-surface-ink-6);
 }
 
 .btn-save svg {
   width: 13px;
   height: 13px;
   fill: none;
-  stroke: #f7f3ee;
+  stroke: var(--cl-surface-muted-16);
   stroke-width: 2.5;
 }
 
@@ -431,11 +434,11 @@
 }
 
 .profile-status--error {
-  color: #9e2d2d;
+  color: var(--cl-danger-4);
 }
 
 .profile-status--success {
-  color: #2f6f43;
+  color: var(--cl-success);
 }
 
 @media (max-width: 1080px) {

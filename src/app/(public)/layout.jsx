@@ -9,7 +9,7 @@ const navItems = [
 
 export default function PublicLayout({ children }) {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(208,90,52,0.14),transparent_28%),linear-gradient(180deg,#fbf7f2_0%,#f5f0ea_100%)] text-tp">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,var(--cl-accent-soft-4),transparent_28%),linear-gradient(180deg,var(--cl-surface-paper-2)_0%,var(--cl-surface-warm)_100%)] text-tp">
       {children}
     </div>
   )

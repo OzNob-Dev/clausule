@@ -98,8 +98,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--cl-white-4);
+  border: 1px solid var(--cl-white-7);
   border-radius: var(--cl-radius-md);
   padding: 14px;
 }
@@ -126,7 +126,7 @@
   justify-content: center;
   flex-shrink: 0;
   color: var(--cl-accent-strong);
-  background: rgba(201, 79, 42, 0.2);
+  background: var(--cl-accent-alpha-20);
   border-radius: var(--cl-radius-sm);
   margin-top: 1px;
 }
@@ -192,7 +192,7 @@
   height: 20px;
   border-radius: 50%;
   color: var(--cl-surface-warm);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--cl-white-10);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -204,7 +204,7 @@
 .mfa-app-sec-text {
   font-size: 11px;
   font-weight: 700;
-  color: rgba(245, 240, 234, 0.85);
+  color: var(--cl-white-85);
   line-height: 1.45;
   margin: 0;
 }
@@ -224,7 +224,7 @@
 
 .mfa-app-sub {
   font-size: 13px;
-  color: #5B4E42;
+  color: var(--cl-muted);
   line-height: 1.65;
   margin: 0 0 26px;
 }
@@ -262,7 +262,7 @@
 
 .mfa-app-right .mfa-otp-box:focus {
   border-color: var(--cl-accent-strong);
-  box-shadow: 0 0 0 3px rgba(201, 79, 42, 0.13);
+  box-shadow: 0 0 0 3px var(--cl-accent-strong-alpha-13);
 }
 
 .mfa-app-right .mfa-otp-row--valid .mfa-otp-box {
@@ -271,8 +271,8 @@
 }
 
 .mfa-app-right .mfa-otp-row--error .mfa-otp-box {
-  border-color: #C0392B;
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.13);
+  border-color: var(--cl-danger-2);
+  box-shadow: 0 0 0 3px var(--cl-danger-alt-alpha-13);
 }
 
 .mfa-app-btn {
@@ -281,7 +281,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #FFFFFF;
+  color: var(--cl-white);
   background: var(--cl-accent-strong);
   border: 0;
   border-radius: 8px;
@@ -319,7 +319,7 @@
 }
 
 .mfa-app-link {
-  color: #3D3228;
+  color: var(--cl-ink-2);
   text-decoration: underline;
   background: transparent;
   border: 0;
@@ -338,7 +338,7 @@
   justify-content: center;
   gap: 14px;
   padding: 14px 0 0;
-  border-top: 1px solid rgba(26, 21, 16, 0.1);
+  border-top: 1px solid var(--cl-ink-alpha-10);
   margin-top: 4px;
 }
 

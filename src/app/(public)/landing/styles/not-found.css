@@ -160,7 +160,7 @@
 
 .nf-doc-line:nth-child(2) { width: 100%; }
 .nf-doc-line:nth-child(3) { width: 72%; }
-.nf-doc-line:nth-child(4) { width: 44%; background: var(--acc, #D05A34); }
+.nf-doc-line:nth-child(4) { width: 44%; background: var(--acc, var(--cl-accent)); }
 
 .nf-heading {
   font-size: 26px;
@@ -198,7 +198,7 @@
   transition: border-color 0.15s;
 }
 
-.nf-btn-secondary:hover { border-color: rgba(26,21,16,0.5); }
+.nf-btn-secondary:hover { border-color: var(--cl-ink-alpha-20); }
 
 @media (max-width: 480px) {
   .nf-num { font-size: 100px; letter-spacing: -5px; }

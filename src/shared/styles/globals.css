@@ -27,7 +27,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--cl-black-50);
 }
 
 .sr-only {
@@ -46,7 +46,7 @@ body {
   width: 148px;
   height: 148px;
   border-radius: 8px;
-  background: rgba(180, 140, 110, 0.08);
+  background: var(--cl-brown-alpha-08);
 }
 
 @keyframes think {
@@ -86,7 +86,7 @@ body {
   --bg-doc:  var(--cl-surface-warm);
   --bg-comp: var(--cl-surface-paper);
 
-  /* Text ramp (AAA ≥7:1 on #F5F0EA / #FAF7F3). */
+  /* Text ramp (AAA ≥7:1 on var(--cl-surface-warm) / var(--cl-surface-paper)). */
   --tp:  var(--cl-surface-ink);
   --ts:  var(--cl-surface-muted);
   --tm:  var(--cl-surface-muted-2);
@@ -104,7 +104,7 @@ body {
   --cb:      var(--cl-border);
 
   /* Accent tints — readable on the light surface */
-  --acc-tint:   rgba(208, 90, 52, 0.10);
+  --acc-tint:   var(--cl-accent-alpha-10);
   --acc-bg:     var(--cl-accent-soft);
   --acc-border: var(--cl-accent-soft-6);
   --acc-text:   var(--acc);   /* solid accent replaces light-on-dark variant */

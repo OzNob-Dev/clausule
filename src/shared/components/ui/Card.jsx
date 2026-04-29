@@ -2,7 +2,7 @@ import { cn } from '@shared/utils/cn'
 
 const toneStyles = {
   default: 'border-rule bg-card',
-  elevated: 'border-rule bg-card shadow-[0_12px_30px_rgba(45,34,26,0.05)]',
+  elevated: 'border-rule bg-card shadow-[var(--cl-shadow-card-soft)]',
   inset: 'border-rule bg-canvas',
 }
 

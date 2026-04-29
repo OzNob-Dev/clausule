@@ -45,7 +45,7 @@
 
 .bss-mfa-sub {
   margin-top: 8px;
-  color: rgba(61, 50, 41, 0.72);
+  color: var(--cl-brown-alpha-72);
   font-family: var(--cl-font-sans);
   font-size: 16px;
   line-height: 1.5;
@@ -54,8 +54,8 @@
 .bss-mfa-status {
   flex-shrink: 0;
   border-radius: 999px;
-  background: rgba(13, 122, 110, 0.1);
-  border: 1px solid rgba(13, 122, 110, 0.2);
+  background: var(--cl-success-alpha-10);
+  border: 1px solid var(--cl-success-alpha-20);
   color: var(--cl-teal);
   font-size: 15px;
   font-weight: 600;
@@ -63,7 +63,7 @@
 }
 
 .bss-mfa-status--on {
-  background: rgba(13, 122, 110, 0.1);
+  background: var(--cl-success-alpha-10);
   color: var(--cl-teal);
 }
 
@@ -92,7 +92,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 14px;
-  color: rgba(61, 50, 41, 0.72);
+  color: var(--cl-brown-alpha-72);
   font-family: var(--cl-font-sans);
   font-size: 13px;
 }
@@ -101,10 +101,10 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #C46B4A;
+  background: var(--cl-accent-deep);
   box-shadow:
-    12px 0 0 rgba(248, 211, 123, 0.75),
-    24px 0 0 rgba(47, 111, 94, 0.45);
+    12px 0 0 var(--cl-gold-alpha-75),
+    24px 0 0 var(--cl-success-alpha-45);
   animation: bss-pulse 0.9s ease-in-out infinite alternate;
 }
 
@@ -122,18 +122,18 @@
 }
 
 .bss-totp-empty--required {
-  border-color: rgba(47, 111, 94, 0.18);
-  background: #FAF7F3;
+  border-color: var(--cl-success-alpha-18);
+  background: var(--cl-surface-paper);
 }
 
 .bss-totp-empty-title {
   font-size: 12px;
   font-weight: 700;
-  color: #2A221A;
+  color: var(--cl-ink);
 }
 
 .bss-totp-empty--required .bss-totp-empty-title {
-  color: var(--be-motion-green, #225F3D);
+  color: var(--be-motion-green, var(--cl-green));
 }
 
 .bss-totp-empty-copy {
@@ -144,7 +144,7 @@
 }
 
 .bss-totp-empty--required .bss-totp-empty-copy {
-  color: #225F3D;
+  color: var(--cl-green);
 }
 
 /* TOTP expanded body */
@@ -154,7 +154,7 @@
 
 .bss-totp-instruction {
   margin: 0 0 14px;
-  color: rgba(61, 50, 41, 0.72);
+  color: var(--cl-brown-alpha-72);
   font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -179,7 +179,7 @@
   background: var(--cl-surface-paper-2);
   border-radius: 7px;
   padding: 9px 12px;
-  border: 1px solid rgba(60, 45, 35, 0.08);
+  border: 1px solid var(--cl-brown-alpha-08);
 }
 
 .bss-secret-code {
@@ -230,12 +230,12 @@
   width: 38px;
   height: 44px;
   border-radius: 7px;
-  border: 1.5px solid rgba(60, 45, 35, 0.18);
-  background: #FAF7F3;
+  border: 1.5px solid var(--cl-brown-alpha-18);
+  background: var(--cl-surface-paper);
   font-size: 18px;
   font-weight: 700;
   font-family: var(--font-sans);
-  color: #2A221A;
+  color: var(--cl-ink);
   text-align: center;
   outline: none;
   transition: border-color 0.15s;
@@ -245,13 +245,13 @@
 .bss-otp-box:focus { border-color: var(--acc); }
 
 .bss-otp-row--error .bss-otp-box {
-  border-color: #B83232;
+  border-color: var(--cl-danger);
   animation: bss-shake 0.35s ease;
 }
 
 .bss-otp-row--done .bss-otp-box {
-  border-color: var(--be-motion-green, #2D8C68);
-  background: rgba(47, 111, 94, 0.07);
+  border-color: var(--be-motion-green, var(--cl-green-2));
+  background: var(--cl-green-alpha-07);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -269,7 +269,7 @@
 
 .bss-otp-error {
   font-size: 11px;
-  color: #B83232;
+  color: var(--cl-danger);
   margin-top: 6px;
 }
 
@@ -284,7 +284,7 @@
   font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
-  color: rgba(61, 50, 41, 0.72);
+  color: var(--cl-brown-alpha-72);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -292,7 +292,7 @@
   transition: color 0.12s;
 }
 
-.bss-totp-cancel:hover { color: #2A221A; }
+.bss-totp-cancel:hover { color: var(--cl-ink); }
 
 @media (max-width: 768px) {
   .bss-mfa-row {

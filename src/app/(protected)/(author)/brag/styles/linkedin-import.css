@@ -55,21 +55,21 @@
 .li-item-copy {
   font-size: 1rem;
   line-height: 1.65;
-  color: rgba(61, 50, 41, 0.76);
+  color: var(--cl-brown-alpha-76);
   font-family: var(--cl-font-sans);
 }
 
 .li-divider {
   height: 2px;
   margin-bottom: 32px;
-  background: linear-gradient(90deg, var(--cl-accent-deep) 0%, rgba(196, 107, 74, 0) 100%);
+  background: linear-gradient(90deg, var(--cl-accent-deep) 0%, transparent 100%);
 }
 
 .li-card {
   border: 1px solid var(--cl-border-2);
   border-radius: 20px;
   padding: 40px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--cl-white-72);
   backdrop-filter: blur(20px);
   box-shadow: var(--cl-shadow-soft), var(--cl-shadow-med);
 }
@@ -190,7 +190,7 @@
 
 .li-btn--secondary {
   color: var(--cl-brown);
-  background: #f4efe7;
+  background: var(--cl-dialog-surface);
   border: 2px solid var(--cl-muted-12);
 }
 
@@ -247,7 +247,7 @@
   font-size: 0.9rem;
   font-weight: 700;
   color: var(--cl-linkedin);
-  background: rgba(10, 102, 194, 0.08);
+  background: var(--cl-linkedin-alpha-08);
 }
 
 .li-review__items {
@@ -263,9 +263,9 @@
   align-items: start;
   padding: 18px;
   border-radius: 14px;
-  border: 1px solid rgba(61, 50, 41, 0.1);
-  background: #fff;
-  box-shadow: 0 4px 18px rgba(61, 50, 41, 0.05);
+  border: 1px solid var(--cl-brown-alpha-10);
+  background: var(--cl-white);
+  box-shadow: 0 4px 18px var(--cl-brown-alpha-05);
 }
 
 .li-item-card__check {
@@ -275,7 +275,7 @@
 .li-item-card__check input {
   width: 18px;
   height: 18px;
-  accent-color: #0a66c2;
+  accent-color: var(--cl-linkedin);
 }
 
 .li-item-card__body {
@@ -303,18 +303,18 @@
 }
 
 .li-item-kind {
-  background: rgba(196, 107, 74, 0.12);
-  color: #a85a3d;
+  background: var(--cl-accent-soft-10);
+  color: var(--cl-accent-deeper);
 }
 
 .li-item-evidence {
-  background: rgba(10, 102, 194, 0.1);
-  color: #0a66c2;
+  background: var(--cl-linkedin-alpha-10);
+  color: var(--cl-linkedin);
 }
 
 .li-item-state {
-  background: rgba(59, 47, 40, 0.08);
-  color: rgba(59, 47, 40, 0.72);
+  background: var(--cl-brown-alpha-08);
+  color: var(--cl-brown-alpha-72-alt);
 }
 
 .li-item-title {
@@ -328,18 +328,18 @@
   gap: 16px;
   margin-top: 24px;
   padding-top: 22px;
-  border-top: 1.5px solid #e8e3db;
+  border-top: 1.5px solid var(--cl-muted-12);
 }
 
 .li-error {
   margin: 14px 0 0;
-  color: #8f2d1c;
+  color: var(--cl-danger-4);
 }
 
 .li-loading {
   padding: 32px;
   font-weight: 700;
-  color: #3b2f28;
+  color: var(--cl-ink-4);
 }
 
 .li-success {

@@ -262,18 +262,18 @@
   font-size: 10px;
   font-weight: 800;
   border: none;
-  background: rgba(255, 255, 255, 0.08);
-  color: #B8B2AC;
+  background: var(--cl-white-8);
+  color: var(--cl-muted-10);
 }
 
 .su-progress--sidebar .su-step-circle--done {
-  background: rgba(201, 79, 42, 0.25);
-  color: #C94F2A;
+  background: var(--cl-accent-alpha-25);
+  color: var(--cl-accent-strong);
 }
 
 .su-progress--sidebar .su-step-circle--active {
-  background: #C94F2A;
-  color: #FFFFFF;
+  background: var(--cl-accent-strong);
+  color: var(--cl-white);
 }
 
 .su-progress--sidebar .su-step-label {
@@ -283,7 +283,7 @@
 }
 
 .su-progress--sidebar .su-step-label--active {
-  color: var(--cl-surface-muted-11);
+  color: var(--cl-surface-muted-10);
   font-weight: 600;
 }
 

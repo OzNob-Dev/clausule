@@ -61,9 +61,9 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
       labelledBy="delete-account-dialog-title"
       describedBy="delete-account-dialog-description"
     >
-      <div className="mx-[-1.5rem] my-[-1.25rem] overflow-hidden rounded-xl border border-[rgba(180,150,110,0.32)] bg-[#F4EFE6] shadow-[0_32px_96px_rgba(0,0,0,0.3)]">
-        <div className="flex items-start gap-4 bg-[#2C1F12] px-8 pb-5 pt-6 max-sm:px-5">
-          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(220,80,50,0.42)] bg-[rgba(180,60,40,0.25)] text-[#E07055]" aria-hidden="true">
+      <div className="mx-[-1.5rem] my-[-1.25rem] overflow-hidden rounded-xl border border-[var(--cl-dialog-border)] bg-[var(--cl-dialog-surface)] shadow-[0_32px_96px_var(--cl-dialog-shadow)]">
+        <div className="flex items-start gap-4 bg-[var(--cl-dialog-ink)] px-8 pb-5 pt-6 max-sm:px-5">
+          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--cl-dialog-red-border)] bg-[var(--cl-dialog-red-soft)] text-[var(--cl-dialog-accent)]" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
               <polyline points="3 6 5 6 21 6" />
               <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
@@ -73,27 +73,27 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
             </svg>
           </div>
           <div>
-            <div className="text-[17px] font-medium leading-tight text-[#F4EFE6]" id="delete-account-dialog-title">Delete your account?</div>
-            <div className="mt-1 text-[13px] leading-6 text-[rgba(244,239,230,0.82)]" id="delete-account-dialog-description">
+            <div className="text-[17px] font-medium leading-tight text-[var(--cl-dialog-surface)]" id="delete-account-dialog-title">Delete your account?</div>
+            <div className="mt-1 text-[13px] leading-6 text-[var(--cl-white-82)]" id="delete-account-dialog-description">
               This action is permanent and cannot be undone.
             </div>
           </div>
         </div>
 
-        <div className="border-b border-[rgba(180,150,110,0.22)] px-8 py-6 max-sm:px-5">
-          <p className="m-0 text-[14px] leading-[1.65] text-[#4A3728]">{description}</p>
-          <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-[rgba(180,60,40,0.22)] bg-[rgba(180,60,40,0.08)] px-3.5 py-3">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-3.5 w-3.5 shrink-0 text-[#842817]" aria-hidden="true">
+        <div className="border-b border-[var(--cl-dialog-border-2)] px-8 py-6 max-sm:px-5">
+          <p className="m-0 text-[14px] leading-[1.65] text-[var(--cl-dialog-ink-2)]">{description}</p>
+          <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-[var(--cl-dialog-red-border-2)] bg-[var(--cl-dialog-red-soft-2)] px-3.5 py-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-3.5 w-3.5 shrink-0 text-[var(--cl-dialog-warning)]" aria-hidden="true">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            <p className="m-0 text-[12px] leading-[1.5] text-[#7A1F12]">You will lose all your data immediately. There is no recovery option.</p>
+            <p className="m-0 text-[12px] leading-[1.5] text-[var(--cl-dialog-warning-2)]">You will lose all your data immediately. There is no recovery option.</p>
           </div>
         </div>
 
         <div className="px-8 py-6 max-sm:px-5">
-          <label className="mb-2 block text-[11px] font-medium uppercase tracking-[0.08em] text-[#5D493C]" htmlFor="delete-confirm-input">
+          <label className="mb-2 block text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--cl-dialog-ink-3)]" htmlFor="delete-confirm-input">
             Type DELETE to confirm
           </label>
           <FieldInput
@@ -105,16 +105,16 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
             placeholder="DELETE"
             autoComplete="off"
             autoFocus
-            className="block box-border min-w-0 w-full rounded-lg border border-[rgba(180,150,110,0.42)] bg-[#FBF7F0] px-3.5 py-[11px] font-mono text-[14px] tracking-[0.05em] text-[#2C1F12] outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-[#5D493C]/70 focus:border-[#7A1F12] focus:ring-2 focus:ring-[#7A1F12]/25"
+            className="block box-border min-w-0 w-full rounded-lg border border-[var(--cl-dialog-border-3)] bg-[var(--cl-dialog-surface-2)] px-3.5 py-[11px] font-mono text-[14px] tracking-[0.05em] text-[var(--cl-dialog-ink)] outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-[var(--cl-dialog-ink-3-70)] focus:border-[var(--cl-dialog-warning-2)] focus:ring-2 focus:ring-[var(--cl-dialog-warning-2-25)]"
           />
         </div>
 
-        {deleteError && <p className="mx-8 mb-4 mt-[-0.5rem] rounded-lg border border-[rgba(180,60,40,0.22)] bg-[rgba(180,60,40,0.08)] px-3.5 py-3 text-[12px] font-medium text-[#7A1F12] max-sm:mx-5" role="alert">{deleteError}</p>}
+        {deleteError && <p className="mx-8 mb-4 mt-[-0.5rem] rounded-lg border border-[var(--cl-dialog-red-border-2)] bg-[var(--cl-dialog-red-soft-2)] px-3.5 py-3 text-[12px] font-medium text-[var(--cl-dialog-warning-2)] max-sm:mx-5" role="alert">{deleteError}</p>}
 
         <div className="flex gap-2.5 px-8 pb-7 max-sm:flex-col-reverse max-sm:px-5">
           <Button
             type="button"
-            className="flex-1 rounded-lg border border-[rgba(180,150,110,0.45)] bg-transparent px-4 py-[11px] text-[14px] font-medium text-[#4A3728] transition-colors duration-150 hover:border-[#4A3728] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4A3728] disabled:cursor-default"
+            className="flex-1 rounded-lg border border-[var(--cl-dialog-border-4)] bg-transparent px-4 py-[11px] text-[14px] font-medium text-[var(--cl-dialog-ink-2)] transition-colors duration-150 hover:border-[var(--cl-dialog-ink-2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--cl-dialog-ink-2)] disabled:cursor-default"
             onClick={handleClose}
             disabled={deleting}
             variant="ghost"
@@ -126,8 +126,8 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
             onClick={handleConfirm}
             disabled={!confirmReady || deleting}
             className={cn(
-              'flex-1 rounded-lg border px-4 py-[11px] text-[14px] font-medium transition-[background,border-color,color] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7A1F12] disabled:cursor-not-allowed',
-              confirmReady ? 'border-[#842817] bg-[#842817] text-[#F4EFE6]' : 'border-[rgba(180,150,110,0.22)] bg-[#E7DED1] text-[#8D7D70]'
+              'flex-1 rounded-lg border px-4 py-[11px] text-[14px] font-medium transition-[background,border-color,color] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--cl-dialog-warning-2)] disabled:cursor-not-allowed',
+              confirmReady ? 'border-[var(--cl-dialog-warning)] bg-[var(--cl-dialog-warning)] text-[var(--cl-dialog-surface)]' : 'border-[var(--cl-dialog-border-2)] bg-[var(--cl-dialog-muted-2)] text-[var(--cl-dialog-muted)]'
             )}
             variant="ghost"
           >

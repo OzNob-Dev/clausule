@@ -124,7 +124,7 @@
   justify-content: center;
   flex-shrink: 0;
   color: var(--cl-surface-muted-11);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--cl-white-8);
   border-radius: 50%;
   font-size: 10px;
   font-weight: 800;
@@ -132,11 +132,11 @@
 
 .mfa-email-step-num--done {
   color: var(--cl-accent-strong);
-  background: rgba(201, 79, 42, 0.25);
+  background: var(--cl-accent-alpha-25);
 }
 
 .mfa-email-step-num--active {
-  color: #FFFFFF;
+  color: var(--cl-white);
   background: var(--cl-accent-strong);
 }
 
@@ -150,7 +150,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: #FDFCFA;
+  background: var(--cl-surface-paper-2);
   padding: 36px 32px;
 }
 
@@ -262,7 +262,7 @@
 }
 
 .mfa-email-preview-time {
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   font-size: 9.5px;
   font-weight: 700;
   white-space: nowrap;
@@ -273,7 +273,7 @@
 }
 
 .mfa-email-preview-body p {
-  color: #5B4E42;
+  color: var(--cl-muted);
   font-size: 11px;
   font-weight: 500;
   line-height: 1.5;
@@ -285,8 +285,8 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: #FDFCFA;
-  border: 1.5px dashed rgba(26, 21, 16, 0.18);
+  background: var(--cl-surface-paper-2);
+  border: 1.5px dashed var(--cl-border-dark-4);
   border-radius: 8px;
   padding: 9px 10px;
   margin-bottom: 9px;
@@ -298,9 +298,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1A1510;
-  background: #FDFCFA;
-  border: 1px solid rgba(26, 21, 16, 0.18);
+  color: var(--cl-ink-9);
+  background: var(--cl-surface-paper-2);
+  border: 1px solid var(--cl-border-dark-4);
   border-radius: 5px;
   font-size: 14px;
   font-weight: 900;
@@ -309,20 +309,20 @@
 .mfa-email-code-separator {
   width: 7px;
   height: 2px;
-  background: rgba(26, 21, 16, 0.18);
+  background: var(--cl-border-dark-4);
   border-radius: 1px;
   margin: 0 1px;
 }
 
 .mfa-email-note {
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   font-size: 9.5px;
   line-height: 1.5;
   text-align: center;
 }
 
 .mfa-email-note strong {
-  color: #5B4E42;
+  color: var(--cl-muted);
 }
 
 .mfa-email-otp-meta {
@@ -332,7 +332,7 @@
   align-items: baseline;
   justify-content: space-between;
   align-self: center;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   font-size: 10px;
   font-weight: 700;
   margin-bottom: 7px;
@@ -340,11 +340,11 @@
 }
 
 .mfa-email-otp-meta strong {
-  color: #3D3228;
+  color: var(--cl-ink-2);
 }
 
 .mfa-email-expired {
-  color: #C0392B !important;
+  color: var(--cl-danger-2) !important;
 }
 
 .mfa-email-right .mfa-otp-row {
@@ -357,27 +357,27 @@
   width: 40px;
   height: 44px;
   flex: none;
-  color: #1A1510;
-  background: #F5F0EA;
-  border: 1.5px solid rgba(26, 21, 16, 0.18);
+  color: var(--cl-ink-9);
+  background: var(--cl-surface-warm);
+  border: 1.5px solid var(--cl-border-dark-4);
   border-radius: 8px;
   font-size: 20px;
   font-weight: 900;
 }
 
 .mfa-email-right .mfa-otp-box:focus {
-  border-color: #C94F2A;
-  box-shadow: 0 0 0 3px rgba(201, 79, 42, 0.13);
+  border-color: var(--cl-accent-strong);
+  box-shadow: 0 0 0 3px var(--cl-accent-strong-alpha-13);
 }
 
 .mfa-email-right .mfa-otp-row--valid .mfa-otp-box {
-  border-color: #1A1510;
-  background: #F5F0EA;
+  border-color: var(--cl-ink-9);
+  background: var(--cl-surface-warm);
 }
 
 .mfa-email-right .mfa-otp-row--error .mfa-otp-box {
-  border-color: #C0392B;
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.13);
+  border-color: var(--cl-danger-2);
+  box-shadow: 0 0 0 3px var(--cl-danger-alt-alpha-13);
 }
 
 .mfa-email-verify {
@@ -386,8 +386,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #FFFFFF;
-  background: #C94F2A;
+  color: var(--cl-white);
+  background: var(--cl-accent-strong);
   border: 0;
   border-radius: 8px;
   padding: 13px;
@@ -423,7 +423,7 @@
 }
 
 .mfa-email-footer p {
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   font-size: 12px;
   font-weight: 600;
   text-align: center;
@@ -431,7 +431,7 @@
 }
 
 .mfa-email-resend {
-  color: #3D3228;
+  color: var(--cl-ink-2);
   background: transparent;
   border: 0;
   border-radius: 2px;
@@ -445,7 +445,7 @@
 }
 
 .mfa-email-resend:hover {
-  color: #C94F2A;
+  color: var(--cl-accent-strong);
 }
 
 @media (max-width: 720px) {

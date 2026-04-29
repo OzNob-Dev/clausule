@@ -32,19 +32,19 @@ export default {
         'tx-4': 'var(--tx-4)',
 
         bl: 'var(--bl)',
-        blb: 'var(--blb, rgba(133,183,235,0.14))',
-        blt: 'var(--blt, #85B7EB)',
+        blb: 'var(--blb, var(--cl-blue-alpha-12))',
+        blt: 'var(--blt, var(--cl-blue))',
 
-        at: 'var(--at, #EF9F27)',
-        ab: 'var(--ab, rgba(239,159,39,0.14))',
+        at: 'var(--at, var(--cl-warning-2))',
+        ab: 'var(--ab, var(--cl-gold-alpha-14))',
 
-        gt: 'var(--gt, #5DCAA5)',
-        gb: 'var(--gb, rgba(93,202,165,0.14))',
+        gt: 'var(--gt, var(--cl-success-3))',
+        gb: 'var(--gb, var(--cl-green-alpha-12))',
 
-        rt: 'var(--rt, #F09595)',
-        rb: 'var(--rb, rgba(240,149,149,0.14))',
-        red: 'var(--red, #B83232)',
-        'red-bg': 'var(--red-bg, rgba(184,50,50,0.12))',
+        rt: 'var(--rt, var(--cl-red-soft-alpha-18))',
+        rb: 'var(--rb, var(--cl-red-alpha-14))',
+        red: 'var(--red, var(--cl-danger))',
+        'red-bg': 'var(--red-bg, var(--cl-danger-soft-3))',
 
         border: 'var(--border)',
         border2: 'var(--border2, var(--border))',

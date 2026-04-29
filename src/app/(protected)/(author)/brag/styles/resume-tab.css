@@ -57,7 +57,7 @@
   border: 1px solid var(--cl-accent-soft-6);
   border-radius: var(--cl-radius-md);
   background: var(--cl-accent-soft);
-  color: #7A2F1A;
+  color: var(--cl-accent-code);
   font-size: 12px;
   font-weight: 800;
 }
@@ -95,7 +95,7 @@
 }
 
 .be-cv-editable:focus {
-  outline: 2px solid rgba(208, 90, 52, 0.28);
+  outline: 2px solid var(--cl-accent-alpha-28);
   outline-offset: 4px;
 }
 
