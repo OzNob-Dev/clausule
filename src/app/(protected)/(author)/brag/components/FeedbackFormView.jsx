@@ -79,14 +79,14 @@ export default function FeedbackFormView({
   if (sent) return <SentState userEmail={userEmail} onClose={onCancel} />
 
   return (
-    <section className="be-feedback-stage" aria-label="Send app feedback">
+    <section className="bss-section" aria-label="Send app feedback">
       <SectionCard
         as="form"
-        className="be-feedback-card"
+        className="bss-card"
         headerClassName="be-feedback-card-head"
         titleClassName="be-feedback-card-title"
         metaClassName="be-feedback-card-meta"
-        bodyClassName="be-feedback-form"
+        bodyClassName="bss-form"
         title="Your feedback"
         meta="Sent privately"
         ariaLabel="Send app feedback"

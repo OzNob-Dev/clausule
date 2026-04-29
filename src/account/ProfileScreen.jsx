@@ -120,7 +120,7 @@ export default function ProfileScreen() {
 
           {error ? <p className="profile-status profile-status--error" role="alert">{error}</p> : null}
           {success ? <p className="profile-status profile-status--success" role="status">{success}</p> : null}
-          <div class="section-rule"></div>
+          <div className="section-rule" aria-hidden="true" />
           <ProfileActions onReset={resetForm} saving={saving} disabled={!dirty || saving} />
         </div>
       </SectionCard>

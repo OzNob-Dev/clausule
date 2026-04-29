@@ -24,6 +24,7 @@ function FeedbackHistoryScreen() {
         eyebrowClassName="bss-eyebrow"
         titleId="feedback-history-title"
         title="Back and forth with the Clausule team."
+        titleClassName="bss-heading"
         description="Track what you sent and any replies from the people shaping the product."
         descriptionClassName="bss-heading"
       />
@@ -41,6 +42,7 @@ function FeedbackComposeScreen({ userEmail }) {
         eyebrowClassName="bss-eyebrow"
         titleId="feedback-page-title"
         title="Feedback for Clausule"
+        titleClassName="bss-heading"
         description="Tell the Clausule team what would make this better."
         descriptionClassName="bss-subheading"
       />
