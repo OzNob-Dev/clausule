@@ -3,7 +3,6 @@ export const ROUTES = {
   login: '/login',
   register: '/register',
   pricing: '/pricing',
-  components: '/components',
   brag: '/brag',
   bragResume: '/brag/resume',
   bragLinkedin: '/brag/linkedin',

@@ -40,9 +40,6 @@
       "@brag/*": [
         "./src/app/(protected)/(author)/brag/*"
       ],
-      "@component-library/*": [
-        "./src/component-library/*"
-      ],
       "@landing/*": [
         "./src/app/(public)/landing/*"
       ],

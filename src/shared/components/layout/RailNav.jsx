@@ -24,11 +24,6 @@ const settingsIcon = (
 
 const navItems = [
   {
-    to: ROUTES.components,
-    tip: 'Component library',
-    icon: componentsIcon,
-  },
-  {
     to: '/dashboard',
     tip: 'Dashboard',
     icon: (

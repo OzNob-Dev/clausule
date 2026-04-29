@@ -21,7 +21,6 @@ export default defineConfig({
       '@actions': fileURLToPath(new URL('./src/actions', import.meta.url)),
       '@lib': fileURLToPath(new URL('./src/lib', import.meta.url)),
       '@brag': fileURLToPath(new URL('./src/app/(protected)/(author)/brag', import.meta.url)),
-      '@component-library': fileURLToPath(new URL('./src/component-library', import.meta.url)),
       '@landing': fileURLToPath(new URL('./src/app/(public)/landing', import.meta.url)),
       '@mfa': fileURLToPath(new URL('./src/app/(auth)/mfa', import.meta.url)),
       '@signup': fileURLToPath(new URL('./src/app/(auth)/signup', import.meta.url)),
