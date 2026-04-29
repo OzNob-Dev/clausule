@@ -22,11 +22,11 @@ describe('public page', () => {
     await waitFor(() => expect(screen.getByText(/The intelligence layer for your professional interactions/i)).toBeInTheDocument())
   })
 
-  it('redirects bypassed users to the dashboard', async () => {
+  it('redirects bypassed users to the login screen', async () => {
     localStorage.setItem('clausule_dev_accexx', 'granted')
 
     render(<Page />)
 
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/dashboard'))
+    await waitFor(() => expect(replace).toHaveBeenCalledWith('/login'))
   })
 })

@@ -23,7 +23,7 @@ export default function Page() {
     }
 
     if (localStorage.getItem('clausule_dev_accexx') === 'granted') {
-      router.replace(ROUTES.dashboard)
+      router.replace(ROUTES.login)
       return
     }
 
