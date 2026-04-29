@@ -56,7 +56,7 @@ describe('BragEmployeeScreen', () => {
     expect(screen.getByRole('heading', { name: '2024' })).toBeInTheDocument()
     expect(screen.getAllByText('Anthropic')).toHaveLength(2)
     expect(screen.getAllByText('Senior Product Designer')).toHaveLength(2)
-    expect(screen.getByRole('button', { name: /add a win/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /add a win/i })).toHaveClass('justify-start')
     expect(screen.queryByRole('button', { name: /previous year/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /next year/i })).not.toBeInTheDocument()
     expect(container.querySelectorAll('.be-doc-entry-card')[0]).toHaveTextContent('Newest win')
