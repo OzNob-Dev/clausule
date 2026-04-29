@@ -26,7 +26,7 @@ function FeedbackHistoryScreen() {
         title="Back and forth with the Clausule team."
         titleClassName="bss-heading"
         description="Track what you sent and any replies from the people shaping the product."
-        descriptionClassName="bss-heading"
+        descriptionClassName="bss-subheading"
       />
       <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} />
     </Layout>
