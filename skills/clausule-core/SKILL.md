@@ -28,7 +28,7 @@ Before any file modifications occur:
   2. **Update:** `UPDATE Tasks SET status = 'completed' WHERE description LIKE '%[feature]%';`
   3. **Summarize:** Write a 2-3 sentence technical summary of architectural impact.
   4. **Log:** Insert summary into `Messages` table using the SQL Template above.
-  5. **Notify:** Run `osascript -e 'display notification "Database updated and summary logged." with title "Clausule: pd Complete" sound name "Glass"'`
+  5. **Notify:** Run `pd`
 
 ## Repo Shape
 - Next.js App Router; feature-first organization (`src/app`, `src/features`, `src/shared`).

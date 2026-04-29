@@ -1,55 +1,23 @@
-const dateFmt = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' })
+import { useState } from 'react'
+import FeedbackHistoryHeader from '@brag/components/FeedbackHistoryHeader'
+import FeedbackHistoryToolbar from '@brag/components/FeedbackHistoryToolbar'
+import FeedbackHistoryThreadList from '@brag/components/FeedbackHistoryThreadList'
 
-function formatDate(value) {
-  return dateFmt.format(new Date(value))
-}
-
-function buildMessages(thread) {
-  return [
-    { id: `${thread.id}-user`, author: 'You', body: thread.message, created_at: thread.created_at, from_team: false },
-    ...(thread.replies ?? []),
-  ].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+function matchesFilter(thread, filter) {
+  if (filter === 'all') return true
+  if (filter === 'replied') return (thread.replies ?? []).length > 0
+  return thread.category?.toLowerCase() === filter
 }
 
 export default function FeedbackHistoryPanel({ threads = [], loading = false, error = '' }) {
-  const content = loading
-    ? <p className="be-feedback-thread-empty" role="status">Gathering the paper trail...</p>
-    : error
-      ? <p className="be-feedback-thread-empty" role="alert">{error}</p>
-      : threads.length
-        ? (
-          <div className="be-feedback-thread-list">
-            {threads.map((thread) => (
-              <article className="be-feedback-thread" key={thread.id}>
-                <header className="be-feedback-thread-head">
-                  <div>
-                    <p>{thread.category} · {thread.feeling}</p>
-                    <h3>{thread.subject}</h3>
-                  </div>
-                  <span>{formatDate(thread.created_at)}</span>
-                </header>
+  const [activeFilter, setActiveFilter] = useState('all')
+  const filteredThreads = threads.filter((thread) => matchesFilter(thread, activeFilter))
 
-                <div className="be-feedback-thread-flow">
-                  {buildMessages(thread).map((message) => (
-                    <div className={message.from_team ? 'be-feedback-message be-feedback-message--team' : 'be-feedback-message'} key={message.id}>
-                      <div>
-                        <strong>{message.from_team ? message.author_name || 'Clausule team' : 'You'}</strong>
-                        <span>{formatDate(message.created_at)}</span>
-                      </div>
-                      <p>{message.body}</p>
-                    </div>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        )
-        : (
-          <div className="be-feedback-thread-empty">
-            <p>No feedback threads yet.</p>
-            <span>Send the first note and this centre will start keeping the conversation cozy.</span>
-          </div>
-        )
-
-  return <section className="be-feedback-conversations" aria-label="Feedback history">{content}</section>
+  return (
+    <section className="be-feedback-history-view" aria-label="Feedback history">
+      <FeedbackHistoryHeader />
+      <FeedbackHistoryToolbar activeFilter={activeFilter} count={filteredThreads.length} onFilterChange={setActiveFilter} />
+      <FeedbackHistoryThreadList threads={filteredThreads} loading={loading} error={error} filter={activeFilter} />
+    </section>
+  )
 }
