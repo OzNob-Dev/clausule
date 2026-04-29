@@ -8,6 +8,7 @@ import { FieldCheckbox } from '@shared/components/ui/Field'
 import { ROUTES } from '@shared/utils/routes'
 import Layout from '@brag/components/layout'
 import { createLinkedInImportAction, publishLinkedInImportAction, updateLinkedInImportAction } from '@actions/brag-actions'
+import '@brag/styles/brag-settings-core.css'
 import '@brag/styles/linkedin-import.css'
 
 const IMPORT_STEPS = [
@@ -161,7 +162,7 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
   }
 
   return (
-    <Layout mainClassName="li-page page-enter" innerClassName="li-shell" ariaLabelledby="linkedin-import-title">
+    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="linkedin-import-title">
       <header className="li-header">
         <span className="li-eyebrow">Brag Doc Builder</span>
         <h1 id="linkedin-import-title">Import from LinkedIn</h1>

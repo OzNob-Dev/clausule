@@ -9,6 +9,7 @@ import Layout from '@brag/components/layout'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import PageHeader from '@shared/components/ui/PageHeader'
+import '@brag/styles/brag-settings-core.css'
 import '@brag/styles/brag-page.css'
 import '@brag/styles/resume-tab.css'
 import '@shared/styles/page-loader.css'
@@ -82,7 +83,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
 
   if (view === 'resume') {
     return (
-      <Layout mainClassName="be-doc-screen page-enter" innerClassName="be-doc-inner" ariaLabelledby="brag-page-title">
+      <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-page-title">
         <h1 id="brag-page-title" className="sr-only">Brag document</h1>
         {initialEntriesError ? (
           <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
@@ -104,7 +105,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
   }
 
   return (
-    <Layout mainClassName="be-doc-screen page-enter" innerClassName="be-doc-inner" ariaLabelledby="brag-page-title">
+    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-page-title">
       <h1 id="brag-page-title" className="sr-only">Brag document</h1>
 
       {initialEntriesError ? (

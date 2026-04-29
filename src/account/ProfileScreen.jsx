@@ -10,6 +10,7 @@ import { useShallow } from 'zustand/shallow'
 import { formatMobile } from '@account/utils/formatMobile'
 import { useProfileForm } from '@account/hooks/useProfileForm'
 import { useProfileSave } from '@account/hooks/useProfileSave'
+import '@brag/styles/brag-settings-core.css'
 import '@account/styles/profile.css'
 
 export default function ProfileScreen() {
@@ -24,7 +25,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <Layout mainClassName="page-enter" innerClassName="profile-screen" ariaLabelledby="profile-page-title">
+    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="profile-page-title">
       <PageHeader
         className="main-header"
         eyebrow="Account"

@@ -6,6 +6,7 @@ import Layout from '@brag/components/layout'
 import PageHeader from '@shared/components/ui/PageHeader'
 import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 import { useProfileStore } from '@auth/store/useProfileStore'
+import '@brag/styles/brag-settings-core.css'
 import '@brag/styles/brag-page.css'
 import '@shared/styles/page-loader.css'
 
@@ -16,7 +17,7 @@ function FeedbackHistoryScreen() {
   const loadError = feedbackQuery.error instanceof Error ? feedbackQuery.error.message : ''
 
   return (
-    <Layout mainClassName="page-enter" innerClassName="be-feedback-screen" ariaLabelledby="feedback-history-title">
+    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="feedback-history-title">
       <PageHeader
         className="be-feedback-hero"
         eyebrow="Feedback centre"
@@ -33,7 +34,7 @@ function FeedbackHistoryScreen() {
 
 function FeedbackComposeScreen({ userEmail }) {
   return (
-    <Layout mainClassName="page-enter" innerClassName="be-feedback-screen" ariaLabelledby="feedback-page-title">
+    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="feedback-page-title">
       <PageHeader
         className="be-feedback-hero"
         eyebrow="Product feedback"
