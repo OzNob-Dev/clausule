@@ -1,3 +1,5 @@
+type EmailValidationResult = { valid: boolean; error: string | null; suggestion: string | null }
+
 const COMMON_DOMAINS = [
   'gmail.com', 'googlemail.com',
   'yahoo.com', 'yahoo.co.uk', 'yahoo.com.au',
@@ -9,7 +11,7 @@ const COMMON_DOMAINS = [
   'hey.com', 'fastmail.com', 'fastmail.fm',
 ]
 
-function levenshtein(a, b) {
+function levenshtein(a: string, b: string) {
   const m = a.length, n = b.length
   const dp = Array.from({ length: m + 1 }, (_, i) => [i, ...Array(n).fill(0)])
   for (let j = 0; j <= n; j++) dp[0][j] = j
@@ -23,7 +25,7 @@ function levenshtein(a, b) {
   return dp[m][n]
 }
 
-function closestDomain(typed) {
+function closestDomain(typed: string) {
   const lower = typed.toLowerCase()
   if (COMMON_DOMAINS.includes(lower)) return null
 
@@ -48,7 +50,7 @@ function closestDomain(typed) {
  * error    — short human-readable problem string, or null
  * suggestion — corrected full email if a domain typo was detected, or null
  */
-export function validateEmail(raw) {
+export function validateEmail(raw: string) {
   const email = (raw || '').trim()
 
   if (!email) return { valid: false, error: "Pop your email address in here and we'll take it from there.", suggestion: null }

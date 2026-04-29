@@ -1,33 +1,57 @@
-// @ts-check
+'use client'
+
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@auth/context/AuthContext'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { apiFetch } from '@shared/utils/api'
+import type { Role } from '@shared/types/contracts'
 import { saveProfileAction } from '@actions/account-actions'
+import type { ProfileFormValues } from './useProfileForm'
 
-/** @param {{ current: Record<string, string>, emailChanged: boolean, commitBaseline: (next: Record<string, string>) => void }} props */
-export function useProfileSave({ current, emailChanged, commitBaseline }) {
-  const router         = useRouter()
-  const queryClient    = useQueryClient()
+type SaveProfileInput = {
+  emailVerificationCode?: string
+  mobileConfirmed?: boolean
+  mobileConfirmation?: string
+}
+
+type SaveProfileResponse = {
+  ok: true
+  user: {
+    id: string
+    email: string
+    role: Role
+  }
+  profile: ProfileFormValues
+}
+
+type UseProfileSaveProps = {
+  current: ProfileFormValues
+  emailChanged: boolean
+  commitBaseline: (next: ProfileFormValues) => void
+}
+
+export function useProfileSave({ current, emailChanged, commitBaseline }: UseProfileSaveProps) {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const { updateUser } = useAuth()
-  const setProfile     = useProfileStore((s) => s.setProfile)
-  const [error,   setError]   = useState('')
+  const setProfile = useProfileStore((s) => s.setProfile)
+  const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  const patchProfileMutation = useMutation({
-    mutationFn: (/** @type {{ emailVerificationCode?: string, mobileConfirmed?: boolean, mobileConfirmation?: string }} */ { emailVerificationCode, mobileConfirmed, mobileConfirmation }) =>
+  const patchProfileMutation = useMutation<SaveProfileResponse, Error, SaveProfileInput>({
+    mutationFn: async ({ emailVerificationCode, mobileConfirmed, mobileConfirmation }) =>
       saveProfileAction({
         ...current,
         emailVerificationCode,
         mobileConfirmed,
         mobileConfirmation,
-      }, current),
+      }, current) as Promise<SaveProfileResponse>,
     retry: false,
   })
 
-  const patchProfile = async (/** @type {{ emailVerificationCode?: string, mobileConfirmed?: boolean, mobileConfirmation?: string }} */ { emailVerificationCode, mobileConfirmed, mobileConfirmation }) => {
+  const patchProfile = async ({ emailVerificationCode, mobileConfirmed, mobileConfirmation }: SaveProfileInput) => {
     setError('')
     setSuccess('')
     try {

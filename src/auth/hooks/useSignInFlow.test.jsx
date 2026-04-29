@@ -1,7 +1,7 @@
 import React from 'react'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useSignInFlow } from './useSignInFlow.js'
+import { useSignInFlow } from './useSignInFlow'
 
 const push = vi.hoisted(() => vi.fn())
 const replace = vi.hoisted(() => vi.fn())

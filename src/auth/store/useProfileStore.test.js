@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { useProfileStore } from './useProfileStore.js'
+import { useProfileStore } from './useProfileStore'
 
 describe('useProfileStore', () => {
   beforeEach(() => {

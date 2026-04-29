@@ -1,14 +1,9 @@
 'use client'
-// @ts-check
 
 import { create } from 'zustand'
+import type { AuthUser, Profile, SecuritySnapshot } from '@shared/types/contracts'
 
-/** @typedef {import('@shared/types/contracts').AuthUser} AuthUser */
-/** @typedef {import('@shared/types/contracts').Profile} Profile */
-/** @typedef {import('@shared/types/contracts').SecuritySnapshot} SecuritySnapshot */
-
-/** @type {Profile} */
-const EMPTY_PROFILE = {
+const EMPTY_PROFILE: Profile = {
   firstName: '',
   lastName: '',
   email: '',
@@ -17,8 +12,7 @@ const EMPTY_PROFILE = {
   department: '',
 }
 
-/** @type {SecuritySnapshot} */
-const EMPTY_SECURITY = {
+const EMPTY_SECURITY: SecuritySnapshot = {
   authenticatorAppConfigured: false,
   authenticatedWithOtp: false,
   ssoConfigured: false,
@@ -28,22 +22,19 @@ const EMPTY_META = {
   hasSecuritySnapshot: false,
 }
 
-/**
- * @typedef {{
- *   user: AuthUser | null,
- *   profile: Profile,
- *   security: SecuritySnapshot,
- *   hasSecuritySnapshot: boolean,
- *   setUser: (user: AuthUser | null) => void,
- *   updateUser: (patch: Partial<AuthUser>) => void,
- *   setProfile: (nextProfile: Partial<Profile>) => void,
- *   setSecurity: (nextSecurity: Partial<SecuritySnapshot>) => void,
- *   clearProfile: () => void,
- * }} ProfileStoreState
- */
+type ProfileStoreState = {
+  user: AuthUser | null
+  profile: Profile
+  security: SecuritySnapshot
+  hasSecuritySnapshot: boolean
+  setUser: (user: AuthUser | null) => void
+  updateUser: (patch: Partial<AuthUser>) => void
+  setProfile: (nextProfile: Partial<Profile>) => void
+  setSecurity: (nextSecurity: Partial<SecuritySnapshot>) => void
+  clearProfile: () => void
+}
 
-/** @type {import('zustand').UseBoundStore<import('zustand').StoreApi<ProfileStoreState>>} */
-export const useProfileStore = create((set) => ({
+export const useProfileStore = create<ProfileStoreState>()((set) => ({
   user: null,
   profile: EMPTY_PROFILE,
   security: EMPTY_SECURITY,

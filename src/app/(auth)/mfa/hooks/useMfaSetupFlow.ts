@@ -1,5 +1,4 @@
 'use client'
-// @ts-check
 
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -12,11 +11,26 @@ import { useSixDigitCode } from '@mfa/hooks/useSixDigitCode'
 import { useTotpSetup } from '@mfa/hooks/useTotpSetup'
 import { sendCodeEmail } from '@auth/api-client/sendCodeEmail'
 
-/** @typedef {1 | 2 | 3} MfaSetupStep */
-/** @typedef {{ step: MfaSetupStep, email: string, hasMfaSetup: boolean, totpSecret: string, totpUri: string }} MfaSetupState */
+type MfaSetupStep = 1 | 2 | 3
+type MfaSetupState = {
+  step: MfaSetupStep
+  email: string
+  hasMfaSetup: boolean
+  totpSecret: string
+  totpUri: string
+}
+type MfaSetupAction =
+  | { type: 'bootstrap_loaded'; email: string; hasMfaSetup: boolean }
+  | { type: 'enter_totp_setup' }
+  | { type: 'totp_loaded'; secret: string; uri: string }
+  | { type: 'finish_setup' }
+type BootstrapData = {
+  profile?: { email?: string }
+  user?: { email?: string }
+  security?: { authenticatorAppConfigured?: boolean }
+}
 
-/** @type {MfaSetupState} */
-const INITIAL_STATE = {
+const INITIAL_STATE: MfaSetupState = {
   step: 1,
   email: 'your email',
   hasMfaSetup: false,
@@ -24,8 +38,7 @@ const INITIAL_STATE = {
   totpUri: '',
 }
 
-/** @param {MfaSetupState} state */
-function reducer(state, action) {
+function reducer(state: MfaSetupState, action: MfaSetupAction): MfaSetupState {
   switch (action.type) {
     case 'bootstrap_loaded':
       return {
@@ -52,16 +65,16 @@ export function useMfaSetupFlow() {
   const router = useRouter()
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const [resendTimer, , resetResendTimer] = useCountdown(30, state.step === 1)
-  const otpRefs = useRef([])
+  const otpRefs = useRef<HTMLInputElement[]>([])
   const scheduleTimeout = useTrackedTimeout()
   const otpCode = useSixDigitCode({ inputRefs: otpRefs, scheduleTimeout })
   const totpSetup = useTotpSetup({ enabled: state.step === 2 && !state.hasMfaSetup })
 
   const bootstrapQuery = useQuery({
     queryKey: ['auth', 'bootstrap', 'mfa-setup'],
-    queryFn: async () => {
+    queryFn: async (): Promise<BootstrapData | null> => {
       const response = await apiFetch('/api/auth/bootstrap')
-      return response.ok ? readJson(response, null) : null
+      return response.ok ? readJson(response, {} as BootstrapData) : null
     },
     retry: false,
   })
@@ -90,11 +103,11 @@ export function useMfaSetupFlow() {
   })
 
   const verifyOtpMutation = useMutation({
-    mutationFn: (digits) =>
+    mutationFn: (digits: string[]) =>
       apiJson('/api/auth/verify-code', jsonRequest({ email: state.email, code: digits.join('') }, { method: 'POST' }), { retryOnUnauthorized: false }),
   })
 
-  const verifyOtp = useCallback(async (digits) => {
+  const verifyOtp = useCallback(async (digits: string[]) => {
     otpCode.setState('checking')
     try {
       await verifyOtpMutation.mutateAsync(digits)

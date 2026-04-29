@@ -1,5 +1,4 @@
 'use client'
-// @ts-check
 
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
@@ -11,13 +10,39 @@ import { validateEmail } from '@shared/utils/emailValidation'
 import { useCountdown } from '@shared/hooks/useCountdown'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { homePathForRole } from '@shared/utils/routes'
+import type { ChangeEvent, ClipboardEvent, FormEvent } from 'react'
+import type { Role } from '@shared/types/contracts'
 
-/** @typedef {'email' | 'otp' | 'app'} SignInStep */
-/** @typedef {{ step: SignInStep, email: string, touched: boolean, submitAttempted: boolean, ssoError: string | null, submitError: string | null, verifyError: string | null }} SignInState */
+type SignInStep = 'email' | 'otp' | 'app'
+type SignInState = {
+  step: SignInStep
+  email: string
+  touched: boolean
+  submitAttempted: boolean
+  ssoError: string | null
+  submitError: string | null
+  verifyError: string | null
+}
+type SignInAction =
+  | { type: 'hydrate_sso_error'; value: string | null }
+  | { type: 'set_email'; value: string }
+  | { type: 'accept_suggestion'; value: string }
+  | { type: 'set_touched'; value: boolean }
+  | { type: 'enter_otp'; email: string }
+  | { type: 'begin_submit' }
+  | { type: 'show_submit_error'; value: string }
+  | { type: 'reset_code_step' }
+  | { type: 'show_verify_error'; value: string }
+  | { type: 'show_sso_message' }
+  | { type: 'enter_app_step' }
+  | { type: 'clear_verify_error' }
+
+type SendCodeResponse = { nextStep?: 'signup'; mfaRequired?: boolean }
+type VerifyCodeResponse = { nextStep?: 'signup' | 'sso' | 'mfa'; verificationToken?: string; role: Role }
 
 const OTP_TTL_SECONDS = 600
 const RESEND_COOLDOWN_SECONDS = 30
-const SSO_ERROR_LABELS = {
+const SSO_ERROR_LABELS: Record<string, string> = {
   not_configured: 'That sign-in method is not yet enabled.',
   state_mismatch: 'Sign-in session expired — please try again.',
   invalid_state: 'Sign-in session invalid — please try again.',
@@ -28,8 +53,7 @@ const SSO_ERROR_LABELS = {
   sso_denied: 'Sign-in was cancelled.',
 }
 
-/** @type {SignInState} */
-const INITIAL_STATE = {
+const INITIAL_STATE: SignInState = {
   step: 'email',
   email: '',
   touched: false,
@@ -39,8 +63,7 @@ const INITIAL_STATE = {
   verifyError: null,
 }
 
-/** @param {SignInState} state */
-function reducer(state, action) {
+function reducer(state: SignInState, action: SignInAction): SignInState {
   switch (action.type) {
     case 'hydrate_sso_error':
       return { ...state, ssoError: action.value }
@@ -116,24 +139,24 @@ function ssoErrorFromUrl() {
   return SSO_ERROR_LABELS[errorCode] ?? 'Sign-in failed — please try again.'
 }
 
-async function verifySignInRequest(endpoint, email, otp) {
+async function verifySignInRequest(endpoint: string, email: string, otp: string): Promise<VerifyCodeResponse> {
   return apiJson(endpoint, jsonRequest({ email, code: otp }, { method: 'POST' }), { retryOnUnauthorized: false })
 }
 
 export function useSignInFlow() {
   const router = useRouter()
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
-  const codeRefs = useRef([])
+  const codeRefs = useRef<HTMLInputElement[]>([])
   const scheduleTimeout = useTrackedTimeout()
   const code = useSixDigitCode({ inputRefs: codeRefs, scheduleTimeout })
   const [expirySeconds, , resetExpirySeconds] = useCountdown(OTP_TTL_SECONDS, state.step === 'otp')
   const [resendTimer, , resetResendTimer] = useCountdown(RESEND_COOLDOWN_SECONDS, state.step === 'otp')
 
-  const sendCodeMutation = useMutation({
+  const sendCodeMutation = useMutation<SendCodeResponse, Error, string>({
     mutationFn: sendCodeEmail,
   })
 
-  const verifyCodeMutation = useMutation({
+  const verifyCodeMutation = useMutation<VerifyCodeResponse, Error, { endpoint: string; digits: string[] }>({
     mutationFn: ({ endpoint, digits }) => verifySignInRequest(endpoint, state.email, digits.join('')),
   })
 
@@ -150,7 +173,7 @@ export function useSignInFlow() {
     dispatch({ type: 'reset_code_step' })
   }, [code])
 
-  const verifySignInCode = useCallback(async (endpoint, digits) => {
+  const verifySignInCode = useCallback(async (endpoint: string, digits: string[]) => {
     if (digits.join('').length !== 6) return
     code.setState('checking')
     dispatch({ type: 'clear_verify_error' })
@@ -174,6 +197,7 @@ export function useSignInFlow() {
         return
       }
 
+      if (!data.role) throw new Error('Missing sign-in role')
       code.setState('done')
       scheduleTimeout(() => router.replace(homePathForRole(data.role)), 400)
     } catch (error) {
@@ -185,8 +209,8 @@ export function useSignInFlow() {
     }
   }, [code, router, scheduleTimeout, state.email, verifyCodeMutation])
 
-  const verifyOtp = useCallback((digits) => verifySignInCode('/api/auth/verify-code', digits), [verifySignInCode])
-  const verifyApp = useCallback((digits) => verifySignInCode('/api/auth/totp/verify', digits), [verifySignInCode])
+  const verifyOtp = useCallback((digits: string[]) => verifySignInCode('/api/auth/verify-code', digits), [verifySignInCode])
+  const verifyApp = useCallback((digits: string[]) => verifySignInCode('/api/auth/totp/verify', digits), [verifySignInCode])
   const submitOtp = useCallback(() => verifyOtp(code.digits), [code.digits, verifyOtp])
   const submitApp = useCallback(() => verifyApp(code.digits), [code.digits, verifyApp])
 
@@ -201,15 +225,16 @@ export function useSignInFlow() {
   const result = validateEmail(state.email)
   const showFeedback = state.touched || state.submitAttempted
 
-  const handleEmailChange = useCallback((event) => {
+  const handleEmailChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: 'set_email', value: event.target.value })
   }, [])
 
   const acceptSuggestion = useCallback(() => {
+    if (!result.suggestion) return
     dispatch({ type: 'accept_suggestion', value: result.suggestion })
   }, [result.suggestion])
 
-  const submitEmail = useCallback(async (rawEmail) => {
+  const submitEmail = useCallback(async (rawEmail: string) => {
     const trimmed = rawEmail.trim()
     if (!trimmed) return
 
@@ -241,12 +266,12 @@ export function useSignInFlow() {
     }
   }, [code, resetExpirySeconds, resetResendTimer, sendCodeMutation])
 
-  const handleSubmit = useCallback((event) => {
+  const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     submitEmail(state.email)
   }, [state.email, submitEmail])
 
-  const handlePaste = useCallback((event) => {
+  const handlePaste = useCallback((event: ClipboardEvent<HTMLInputElement>) => {
     const pasted = event.clipboardData?.getData('text') ?? ''
     if (pasted.trim()) queueMicrotask(() => { void submitEmail(pasted) })
   }, [submitEmail])

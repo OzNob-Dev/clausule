@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { sendCodeEmail } from './sendCodeEmail.js'
+import { sendCodeEmail } from './sendCodeEmail'
 
 vi.mock('@shared/utils/api', () => ({
   apiJson: vi.fn(),

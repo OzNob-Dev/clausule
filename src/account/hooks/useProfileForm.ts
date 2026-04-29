@@ -1,9 +1,19 @@
-// @ts-check
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
 import { validateEmail } from '@shared/utils/emailValidation'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 
-const EMPTY_FORM = {
+export type ProfileFormValues = {
+  firstName: string
+  lastName: string
+  email: string
+  mobile: string
+  jobTitle: string
+  department: string
+}
+
+const EMPTY_FORM: ProfileFormValues = {
   firstName: '',
   lastName: '',
   email: '',
@@ -12,23 +22,22 @@ const EMPTY_FORM = {
   department: '',
 }
 
-/** @param {{ firstName: string, lastName: string, email: string, mobile: string, jobTitle: string, department: string }} form
- * @returns {Record<string, string>}
- */
-function normalize(form) {
+const FIELDS = ['firstName', 'lastName', 'email', 'mobile', 'jobTitle', 'department'] as const
+type ProfileField = typeof FIELDS[number]
+
+function normalize(form: ProfileFormValues): ProfileFormValues {
   return {
-    firstName:  form.firstName.trim(),
-    lastName:   form.lastName.trim(),
-    email:      form.email.trim().toLowerCase(),
-    mobile:     form.mobile.trim(),
-    jobTitle:   form.jobTitle.trim(),
+    firstName: form.firstName.trim(),
+    lastName: form.lastName.trim(),
+    email: form.email.trim().toLowerCase(),
+    mobile: form.mobile.trim(),
+    jobTitle: form.jobTitle.trim(),
     department: form.department.trim(),
   }
 }
 
-/** @param {{ firstName?: string, lastName?: string, email?: string, mobile?: string, jobTitle?: string, department?: string }} profile */
-export function useProfileForm(profile) {
-  const [form,     setForm]     = useState(EMPTY_FORM)
+export function useProfileForm(profile: Partial<ProfileFormValues> = {}) {
+  const [form, setForm] = useState<ProfileFormValues>(EMPTY_FORM)
   const [baseline, setBaseline] = useState(EMPTY_FORM)
 
   useEffect(() => {
@@ -43,8 +52,8 @@ export function useProfileForm(profile) {
     const normalizedNext = normalize(next)
     const normalizedBaseline = normalize(baseline)
     const normalizedForm = normalize(form)
-    const localEdits = Object.keys(normalizedForm).some((key) => normalizedForm[key] !== normalizedBaseline[key])
-    const alreadyHydrated = Object.keys(normalizedNext).every((key) => normalizedNext[key] === normalizedBaseline[key])
+    const localEdits = FIELDS.some((key) => normalizedForm[key] !== normalizedBaseline[key])
+    const alreadyHydrated = FIELDS.every((key) => normalizedNext[key] === normalizedBaseline[key])
 
     if (localEdits || alreadyHydrated) return
 
@@ -64,7 +73,7 @@ export function useProfileForm(profile) {
   const derived = useMemo(() => {
     const current = normalize(form)
     const initial = normalize(baseline)
-    const changed = Object.entries(current).filter(([key, value]) => value !== initial[key]).map(([key]) => key)
+    const changed: ProfileField[] = FIELDS.filter((key) => current[key] !== initial[key])
     const emailChanged = changed.includes('email')
 
     return {
@@ -84,10 +93,11 @@ export function useProfileForm(profile) {
   }, [baseline, form])
 
   return {
-    form, setForm,
+    form,
+    setForm,
     ...derived,
-    resetForm:      () => setForm(baseline),
-    commitBaseline: (/** @type {typeof EMPTY_FORM} */ next) => {
+    resetForm: () => setForm(baseline),
+    commitBaseline: (next: ProfileFormValues) => {
       setForm(next)
       setBaseline(next)
     },

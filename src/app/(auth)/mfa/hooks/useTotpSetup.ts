@@ -6,13 +6,16 @@ import { apiJson, jsonRequest } from '@shared/utils/api'
 import { useTrackedTimeout } from '@shared/hooks/useTrackedTimeout'
 import { useSixDigitCode } from '@mfa/hooks/useSixDigitCode'
 
-export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0 }: { enabled?: boolean, onVerified?: () => void, onVerifiedDelayMs?: number } = {}) {
+type TotpSetupData = { secret?: string; uri?: string }
+type UseTotpSetupOptions = { enabled?: boolean; onVerified?: () => void; onVerifiedDelayMs?: number }
+
+export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0 }: UseTotpSetupOptions = {}) {
   const [copied, setCopied] = useState(false)
-  const inputRefs = useRef([])
+  const inputRefs = useRef<HTMLInputElement[]>([])
   const scheduleTimeout = useTrackedTimeout()
   const totpCode = useSixDigitCode({ inputRefs, scheduleTimeout })
 
-  const setupQuery = useQuery({
+  const setupQuery = useQuery<TotpSetupData>({
     queryKey: ['auth', 'totp-setup'],
     queryFn: () => apiJson('/api/auth/totp/setup', {}, { retryOnUnauthorized: false }),
     enabled,

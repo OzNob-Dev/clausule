@@ -1,14 +1,18 @@
-// @ts-check
 'use client'
 
 import { useCallback, useState } from 'react'
+import type { ClipboardEvent, KeyboardEvent, MutableRefObject } from 'react'
 
-/**
- * @param {{ inputRefs: import('react').MutableRefObject<HTMLInputElement[]>, scheduleTimeout: (fn: () => void, delay: number) => void }} params
- */
-export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
-  const [digits, setDigits] = useState(['', '', '', '', '', ''])
-  const [state, setState] = useState('idle')
+export type SixDigitCodeState = 'idle' | 'checking' | 'done' | 'error'
+
+type UseSixDigitCodeParams = {
+  inputRefs: MutableRefObject<HTMLInputElement[]>
+  scheduleTimeout: (fn: () => void, delay: number) => void
+}
+
+export function useSixDigitCode({ inputRefs, scheduleTimeout }: UseSixDigitCodeParams) {
+  const [digits, setDigits] = useState<string[]>(['', '', '', '', '', ''])
+  const [state, setState] = useState<SixDigitCodeState>('idle')
 
   const reset = useCallback(() => {
     setDigits(['', '', '', '', '', ''])
@@ -20,7 +24,7 @@ export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
     scheduleTimeout(reset, 700)
   }, [reset, scheduleTimeout])
 
-  const handleChange = useCallback((/** @type {number} */ index, /** @type {string} */ value) => {
+  const handleChange = useCallback((index: number, value: string) => {
     const nextDigit = value.replace(/\D/g, '').slice(-1)
     setDigits((previous) => {
       const next = previous.map((digit, digitIndex) => (digitIndex === index ? nextDigit : digit))
@@ -33,7 +37,7 @@ export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
     })
   }, [inputRefs, scheduleTimeout])
 
-  const handleKeyDown = useCallback((/** @type {number} */ index, /** @type {KeyboardEvent} */ event) => {
+  const handleKeyDown = useCallback((index: number, event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Backspace') {
       setDigits((previous) => {
         if (previous[index]) {
@@ -58,7 +62,7 @@ export function useSixDigitCode({ inputRefs, scheduleTimeout }) {
     }
   }, [inputRefs, scheduleTimeout])
 
-  const handlePaste = useCallback((/** @type {ClipboardEvent} */ event) => {
+  const handlePaste = useCallback((event: ClipboardEvent<HTMLInputElement>) => {
     event.preventDefault()
     const text = (event.clipboardData?.getData('text') ?? '').replace(/\D/g, '').slice(0, 6)
     if (!text) return

@@ -1,9 +1,7 @@
-/**
- * Triggers server-side OTP generation and email delivery.
- * The code is generated server-side; the client never sees it.
- */
 import { apiJson, jsonRequest } from '@shared/utils/api'
 
-export async function sendCodeEmail(email) {
+type SendCodeEmailResponse = { nextStep?: 'signup'; mfaRequired?: boolean }
+
+export async function sendCodeEmail(email: string): Promise<SendCodeEmailResponse> {
   return apiJson('/api/auth/send-code', jsonRequest({ email }, { method: 'POST' }), { retryOnUnauthorized: false })
 }
