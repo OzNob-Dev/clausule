@@ -86,6 +86,7 @@ function FeedbackHistoryScreen() {
         description="Track what you sent and any replies from the people shaping the product."
         descriptionClassName="bss-subheading"
       />
+      <div className="bss-divider" />
       {loading || loadError || hasHistory ? <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} /> : <FeedbackHistoryEmptyState />}
     </Layout>
   )

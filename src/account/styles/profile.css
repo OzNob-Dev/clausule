@@ -6,6 +6,7 @@
   overflow: hidden;
   max-width: none;
   padding: 0;
+  background: linear-gradient(180deg, var(--cl-surface-muted-19) 0%, var(--cl-surface-paper) 100%);
 }
 
 .section-rule {
