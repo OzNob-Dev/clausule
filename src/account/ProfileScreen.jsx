@@ -5,6 +5,7 @@ import Layout from '@brag/components/layout'
 import { ProfileActions } from '@shared/components/ui/ProfileActions'
 import { ProfileField } from '@shared/components/ui/ProfileField'
 import { ProfileFormCard } from '@shared/components/ui/ProfileFormCard'
+import PageHeader from '@shared/components/ui/PageHeader'
 import { useShallow } from 'zustand/shallow'
 import { formatMobile } from '@account/utils/formatMobile'
 import { useProfileForm } from '@account/hooks/useProfileForm'
@@ -24,11 +25,17 @@ export default function ProfileScreen() {
 
   return (
     <Layout mainClassName="page-enter" innerClassName="profile-screen" ariaLabelledby="profile-page-title">
-      <header className="main-header">
-        <p className="eyebrow" aria-hidden="true">Account</p>
-        <h1 id="profile-page-title" className="page-title">Personal details</h1>
-        <p className="page-desc">Manage the identity, contact, and work details connected to your account.</p>
-      </header>
+      <PageHeader
+        className="main-header"
+        eyebrow="Account"
+        eyebrowAriaHidden
+        eyebrowClassName="eyebrow"
+        title="Personal details"
+        titleClassName="page-title"
+        titleId="profile-page-title"
+        description="Manage the identity, contact, and work details connected to your account."
+        descriptionClassName="page-desc"
+      />
 
       <div className="main-body">
         <ProfileFormCard onSubmit={onSubmit}>

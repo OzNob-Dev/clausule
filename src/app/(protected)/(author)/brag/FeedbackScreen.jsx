@@ -3,20 +3,11 @@
 import FeedbackComposer from '@brag/components/FeedbackComposer'
 import FeedbackHistoryPanel from '@brag/components/FeedbackHistoryPanel'
 import Layout from '@brag/components/layout'
+import PageHeader from '@shared/components/ui/PageHeader'
 import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import '@brag/styles/brag-page.css'
 import '@shared/styles/page-loader.css'
-
-function FeedbackHero({ id, title, eyebrow, description }) {
-  return (
-    <header className="be-feedback-hero">
-      <p className="be-feedback-eyebrow">{eyebrow}</p>
-      <h1 id={id}>{title}</h1>
-      {description ? <p className="be-feedback-hero-copy">{description}</p> : null}
-    </header>
-  )
-}
 
 function FeedbackHistoryScreen() {
   const feedbackQuery = useFeedbackThreadsQuery({ enabled: true })
@@ -26,11 +17,14 @@ function FeedbackHistoryScreen() {
 
   return (
     <Layout mainClassName="page-enter" innerClassName="be-feedback-screen" ariaLabelledby="feedback-history-title">
-      <FeedbackHero
-        id="feedback-history-title"
+      <PageHeader
+        className="be-feedback-hero"
         eyebrow="Feedback centre"
+        eyebrowClassName="be-feedback-eyebrow"
+        titleId="feedback-history-title"
         title="Back and forth with the Clausule team."
         description="Track what you sent and any replies from the people shaping the product."
+        descriptionClassName="be-feedback-hero-copy"
       />
       <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} />
     </Layout>
@@ -40,9 +34,11 @@ function FeedbackHistoryScreen() {
 function FeedbackComposeScreen({ userEmail }) {
   return (
     <Layout mainClassName="page-enter" innerClassName="be-feedback-screen" ariaLabelledby="feedback-page-title">
-      <FeedbackHero
-        id="feedback-page-title"
+      <PageHeader
+        className="be-feedback-hero"
         eyebrow="Product feedback"
+        eyebrowClassName="be-feedback-eyebrow"
+        titleId="feedback-page-title"
         title="Tell the Clausule team what would make this better."
       />
       <FeedbackComposer userEmail={userEmail} />

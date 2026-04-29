@@ -8,6 +8,7 @@ import EntryComposer from '@brag/components/EntryComposer'
 import Layout from '@brag/components/layout'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
+import PageHeader from '@shared/components/ui/PageHeader'
 import '@brag/styles/brag-page.css'
 import '@brag/styles/resume-tab.css'
 import '@shared/styles/page-loader.css'
@@ -87,10 +88,14 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
           <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
         ) : (
           <section aria-labelledby="resume-page-title">
-            <header className="be-doc-header">
-              <span className="be-doc-eyebrow">Your achievements</span>
-              <h1 id="resume-page-title" className="be-doc-title">Resume</h1>
-            </header>
+            <PageHeader
+              className="be-doc-header"
+              eyebrow="Your achievements"
+              eyebrowClassName="be-doc-eyebrow"
+              title="Resume"
+              titleClassName="be-doc-title"
+              titleId="resume-page-title"
+            />
             <ResumeTab entries={initialEntries} />
           </section>
         )}
@@ -106,10 +111,13 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
         <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
       ) : hasEntries ? (
         <>
-          <header className="be-doc-header">
-            <span className="be-doc-eyebrow">Your achievements</span>
-            <h1 className="be-doc-title">Your entries</h1>
-          </header>
+          <PageHeader
+            className="be-doc-header"
+            eyebrow="Your achievements"
+            eyebrowClassName="be-doc-eyebrow"
+            title="Your entries"
+            titleClassName="be-doc-title"
+          />
 
           {!composerOpen ? (
             <>
