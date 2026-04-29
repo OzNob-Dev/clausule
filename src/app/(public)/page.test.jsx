@@ -22,6 +22,15 @@ describe('public page', () => {
     await waitFor(() => expect(screen.getByText(/The intelligence layer for your professional interactions/i)).toBeInTheDocument())
   })
 
+  it('ignores the old bypass query param', async () => {
+    window.history.pushState({}, '', '/?bypass=true')
+
+    render(<Page />)
+
+    await waitFor(() => expect(screen.getByText(/The intelligence layer for your professional interactions/i)).toBeInTheDocument())
+    expect(replace).not.toHaveBeenCalled()
+  })
+
   it('redirects bypassed users to the login screen', async () => {
     localStorage.setItem('clausule_dev_accexx', 'granted')
 

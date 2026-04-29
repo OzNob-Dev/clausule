@@ -17,7 +17,7 @@ export default function Page() {
 
     const params = new URLSearchParams(window.location.search)
 
-    if (params.get('bypass') === 'true' || params.get('bypaxxx') === 'true') {
+    if (params.get('bypaxxx') === 'true') {
       localStorage.setItem('clausule_dev_accexx', 'granted')
       window.history.replaceState(null, '', window.location.pathname)
     }

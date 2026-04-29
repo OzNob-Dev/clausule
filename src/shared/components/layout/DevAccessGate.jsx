@@ -11,7 +11,7 @@ export default function DevAccessGate({ children }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
 
-    if (process.env.NODE_ENV !== 'production' && (params.get('bypass') === 'true' || params.get('bypaxxx') === 'true')) {
+    if (process.env.NODE_ENV !== 'production' && params.get('bypaxxx') === 'true') {
       localStorage.setItem(ACCESS_KEY, 'granted')
       window.history.replaceState(null, '', window.location.pathname)
     }
