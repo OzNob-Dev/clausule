@@ -11,7 +11,7 @@ describe('AppShell', () => {
       </AppShell>
     )
 
-    expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute('href', '#main-content')
+    expect(screen.getByRole('link', { name: 'Skip to main content' })).toHaveAttribute('href', '#main-content')
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content')
     expect(screen.getByRole('heading', { name: 'Content' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Custom rail' })).toHaveAttribute('href', '/custom')

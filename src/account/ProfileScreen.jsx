@@ -1,142 +1,122 @@
 'use client'
 
-import { useShallow } from 'zustand/shallow'
+import { useAuth } from '@auth/context/AuthContext'
 import { useProfileStore } from '@auth/store/useProfileStore'
+import { AppShell } from '@shared/components/layout/AppShell'
+import { ProfileActions } from '@shared/components/ui/ProfileActions'
+import { ProfileField } from '@shared/components/ui/ProfileField'
+import { ProfileFormCard } from '@shared/components/ui/ProfileFormCard'
+import { ProfileRail } from '@shared/components/ui/ProfileRail'
+import { useShallow } from 'zustand/shallow'
+import { formatMobile } from '@account/utils/formatMobile'
 import { useProfileForm } from '@account/hooks/useProfileForm'
 import { useProfileSave } from '@account/hooks/useProfileSave'
-import { useProfileVerification } from '@account/hooks/useProfileVerification'
-import { VerifyChangesModal } from '@account/components/VerifyChangesModal'
-import { VerificationProvider } from '@account/context/VerificationContext'
-import { formatMobile } from '@account/utils/formatMobile'
-import { Button } from '@shared/components/ui/Button'
-import { Field, FieldHint, FieldInput, FieldLabel } from '@shared/components/ui/Field'
-import '@brag/styles/brag-settings-core.css'
 import '@account/styles/profile.css'
-import '@shared/styles/page-loader.css'
 
 export default function ProfileScreen() {
-  const { profile, security } = useProfileStore(useShallow((state) => ({
-    profile: state.profile,
-    security: state.security,
-  })))
-
-  const {
-    form, setForm, current, initial,
-    dirty, emailChanged, mobileChanged,
-    baseReady, emailWarning,
-    resetForm, commitBaseline,
-  } = useProfileForm(profile)
-
-  const { saving, error, setError, success, patchProfile } = useProfileSave({
-    current, emailChanged, commitBaseline,
-  })
-
-  const verification = useProfileVerification({
-    current, emailChanged, mobileChanged,
-    patchProfile, setError,
-  })
+  const { logout } = useAuth()
+  const { profile } = useProfileStore(useShallow((state) => ({ profile: state.profile })))
+  const { form, setForm, current, dirty, resetForm, commitBaseline } = useProfileForm(profile)
+  const { saving, error, success, patchProfile } = useProfileSave({ current, emailChanged: false, commitBaseline })
 
   const onSubmit = (e) => {
     e.preventDefault()
-    if (!dirty) return
-    if (emailChanged || mobileChanged) { verification.openConfirm(); return }
-    void patchProfile({ emailVerificationCode: '', mobileConfirmed: true, mobileConfirmation: '' })
+    if (!dirty || saving) return
+    void patchProfile({ mobileConfirmed: true, mobileConfirmation: current.mobile })
   }
 
   return (
-    <main className="be-main page-enter" aria-labelledby="profile-page-title">
-        <div className="be-inner profile-page">
-          <header className="profile-header">
-            <h1 id="profile-page-title" className="profile-heading">Personal details</h1>
-            <p className="profile-subheading">Manage the identity, contact, and work details connected to your account.</p>
-          </header>
+    <AppShell rail={<ProfileRail profile={profile} onLogout={logout} />}>
+      <div className="profile-screen page-enter">
+        <header className="main-header">
+          <p className="eyebrow" aria-hidden="true">Account</p>
+          <h1 id="profile-page-title" className="page-title">Personal details</h1>
+          <p className="page-desc">Manage the identity, contact, and work details connected to your account.</p>
+        </header>
 
-          <div className="profile-divider" aria-hidden="true" />
-
-          <form className="profile-card" onSubmit={onSubmit}>
-            <section className="profile-section" aria-labelledby="profile-identity-title">
-              <h2 id="profile-identity-title" className="profile-section-title">Identity</h2>
-              <div className="profile-fields">
-                <Field className="profile-field">
-                  <FieldLabel htmlFor="firstName">First name</FieldLabel>
-                  <FieldInput id="firstName" className="profile-input" value={form.firstName} autoComplete="given-name"
-                    onChange={(e) => setForm((s) => ({ ...s, firstName: e.target.value }))} required />
-                </Field>
-                <Field className="profile-field">
-                  <FieldLabel htmlFor="lastName">Last name</FieldLabel>
-                  <FieldInput id="lastName" className="profile-input" value={form.lastName} autoComplete="family-name"
-                    onChange={(e) => setForm((s) => ({ ...s, lastName: e.target.value }))} />
-                </Field>
+        <div className="main-body">
+          <ProfileFormCard onSubmit={onSubmit}>
+            <section className="profile-section" aria-labelledby="section-identity">
+              <div className="section-label" id="section-identity">Identity</div>
+              <div className="field-row">
+                <ProfileField
+                  id="first-name"
+                  label="First name"
+                  value={form.firstName}
+                  autoComplete="given-name"
+                  required
+                  onChange={(e) => setForm((state) => ({ ...state, firstName: e.target.value }))}
+                />
+                <ProfileField
+                  id="last-name"
+                  label="Last name"
+                  value={form.lastName}
+                  autoComplete="family-name"
+                  onChange={(e) => setForm((state) => ({ ...state, lastName: e.target.value }))}
+                />
               </div>
             </section>
 
-            <div className="profile-section-divider" aria-hidden="true" />
+            <div className="section-rule" aria-hidden="true" />
 
-            <section className="profile-section" aria-labelledby="profile-contact-title">
-              <h2 id="profile-contact-title" className="profile-section-title">Contact</h2>
-              <div className="profile-fields profile-fields--stacked">
-                <Field className="profile-field profile-field--full">
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <FieldInput id="email" className="profile-input" type="email" value={form.email} autoComplete="email"
-                    onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))} required />
-                  <FieldHint className="profile-help">{emailWarning}</FieldHint>
-                </Field>
-                <Field className="profile-field profile-field--full">
-                  <FieldLabel htmlFor="mobile">Mobile</FieldLabel>
-                  <FieldInput id="mobile" className="profile-input" type="tel" value={form.mobile} autoComplete="tel"
-                    onChange={(e) => setForm((s) => ({ ...s, mobile: formatMobile(e.target.value) }))} required />
-                  <FieldHint className="profile-help">Use the number you want tied to account recovery and contact updates.</FieldHint>
-                </Field>
+            <section className="profile-section" aria-labelledby="section-contact">
+              <div className="section-label" id="section-contact">Contact</div>
+              <div className="field-row single field-row--compact">
+                <ProfileField
+                  id="email"
+                  label="Email"
+                  type="email"
+                  value={form.email}
+                  autoComplete="email"
+                  readOnly
+                  aria-describedby="email-hint"
+                />
+              </div>
+              <p className="field-hint" id="email-hint">Your sign-in email stays unchanged.</p>
+
+              <div className="field-row single field-row--compact">
+                <ProfileField
+                  id="mobile"
+                  label="Mobile"
+                  type="tel"
+                  value={form.mobile}
+                  autoComplete="tel"
+                  aria-describedby="mobile-hint"
+                  onChange={(e) => setForm((state) => ({ ...state, mobile: formatMobile(e.target.value) }))}
+                />
+              </div>
+              <p className="field-hint" id="mobile-hint">Use the number you want tied to account recovery and contact updates.</p>
+            </section>
+
+            <div className="section-rule" aria-hidden="true" />
+
+            <section className="profile-section" aria-labelledby="section-work">
+              <div className="section-label" id="section-work">Work profile</div>
+              <div className="field-row last">
+                <ProfileField
+                  id="job-title"
+                  label="Job title"
+                  value={form.jobTitle}
+                  autoComplete="organization-title"
+                  onChange={(e) => setForm((state) => ({ ...state, jobTitle: e.target.value }))}
+                />
+                <ProfileField
+                  id="department"
+                  label="Department"
+                  value={form.department}
+                  autoComplete="organization"
+                  onChange={(e) => setForm((state) => ({ ...state, department: e.target.value }))}
+                />
               </div>
             </section>
 
-            <div className="profile-section-divider" aria-hidden="true" />
+            {error ? <p className="profile-status profile-status--error" role="alert">{error}</p> : null}
+            {success ? <p className="profile-status profile-status--success" role="status">{success}</p> : null}
 
-            <section className="profile-section" aria-labelledby="profile-work-title">
-              <h2 id="profile-work-title" className="profile-section-title">Work profile</h2>
-              <div className="profile-fields">
-                <Field className="profile-field">
-                  <FieldLabel htmlFor="jobTitle">Job title</FieldLabel>
-                  <FieldInput id="jobTitle" className="profile-input" value={form.jobTitle} autoComplete="organization-title"
-                    onChange={(e) => setForm((s) => ({ ...s, jobTitle: e.target.value }))} />
-                </Field>
-                <Field className="profile-field">
-                  <FieldLabel htmlFor="department">Department</FieldLabel>
-                  <FieldInput id="department" className="profile-input" value={form.department} autoComplete="organization"
-                    onChange={(e) => setForm((s) => ({ ...s, department: e.target.value }))} />
-                </Field>
-              </div>
-            </section>
-
-            {error   && <div className="profile-alert profile-alert--error"   role="alert">{error}</div>}
-            {success && <div className="profile-alert profile-alert--success" role="status">{success}</div>}
-
-            <div className="profile-actions">
-              <Button type="button" variant="ghost" className="profile-btn profile-btn--ghost" onClick={resetForm} disabled={!dirty || saving}>
-                Reset
-              </Button>
-              <Button type="submit" variant="primary" className="profile-btn profile-btn--primary" disabled={!dirty || saving || !baseReady}>
-                {saving ? 'Saving...' : 'Save changes'}
-              </Button>
-            </div>
-          </form>
+            <ProfileActions onReset={resetForm} saving={saving} disabled={!dirty || saving} />
+          </ProfileFormCard>
         </div>
-
-        <VerificationProvider
-          verification={verification}
-          saving={saving}
-          emailChanged={emailChanged}
-          mobileChanged={mobileChanged}
-          initial={initial}
-          current={current}
-          security={security}
-        >
-          <VerifyChangesModal
-            open={verification.confirmOpen}
-            onClose={verification.resetVerification}
-            onSubmit={verification.submitConfirm}
-          />
-        </VerificationProvider>
-    </main>
+      </div>
+    </AppShell>
   )
 }
