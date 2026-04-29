@@ -27,28 +27,27 @@ export default function ProfileScreen() {
   return (
     <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="profile-page-title">
       <PageHeader
-        className="main-header"
+        className="bss-header"
         eyebrow="Account"
         eyebrowAriaHidden
-        eyebrowClassName="eyebrow"
+        eyebrowClassName="bss-eyebrow"
         title="Personal details"
-        titleClassName="page-title"
+        titleClassName="bss-card-head-title"
         titleId="profile-page-title"
         description="Manage the identity, contact, and work details connected to your account."
-        descriptionClassName="page-desc"
+        descriptionClassName="bss-subheading"
       />
-
+      <div className="bss-divider" />
       <div className="main-body">
         <SectionCard
           as="form"
           ariaLabel="Personal details form"
           title="Your profile"
           meta="Account settings"
-          className="form-card"
-          headerClassName="form-card-head"
-          titleClassName="form-card-title"
-          metaClassName="form-card-meta"
-          bodyClassName="form-body"
+          className="bss-card"
+          headerClassName="bss-card-head"
+          titleClassName="bss-card-head-title"
+          metaClassName="bss-card-head-meta"
           onSubmit={onSubmit}
         >
           <section className="profile-section" aria-labelledby="section-identity">
