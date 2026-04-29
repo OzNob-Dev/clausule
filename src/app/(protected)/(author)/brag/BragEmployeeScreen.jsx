@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@shared/components/ui/Button'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import BragEmptyState from '@brag/components/BragEmptyState'
@@ -17,8 +17,8 @@ const ResumeTab = dynamic(() => import('@brag/components/ResumeTab'), {
 function evidenceTypeToPill(type) {
   if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
   if (type === 'Work artefact') return { label: 'Work artefact', type: 'filled' }
-  if (type === 'Peer recognition') return { label: 'Peer recognition', type: 'filled' }
-  return { label: 'External link', type: 'filled' }
+  if (type === 'Peer recognition') return { label: 'Peer recognition', type: 'blue' }
+  return { label: 'External link', type: 'empty' }
 }
 
 function evidenceTypesFromEntry(entry) {
@@ -66,6 +66,10 @@ function yearSectionId(year) {
   return `be-doc-year-${year}`
 }
 
+function visibleEntriesByYear(groupedEntries, activeYear) {
+  return activeYear === 'All' ? groupedEntries : groupedEntries.filter(({ year }) => String(year) === String(activeYear))
+}
+
 function EntryDocCard({ entry }) {
   const evidenceTypes = evidenceTypesFromEntry(entry)
   const pills = evidenceTypes.slice(0, 4).map(evidenceTypeToPill)
@@ -95,7 +99,7 @@ function EntryDocCard({ entry }) {
         </div>
         <div className="be-doc-evidence-tags" role="list" aria-label="Evidence">
           {pills.map((pill, i) => (
-            <span key={`${pill.label}-${i}`} role="listitem" className={`be-ev-pill be-ev-pill--${pill.type} be-doc-evidence-tag`}>
+            <span key={`${pill.label}-${i}`} role="listitem" className={`be-ev-pill be-ev-pill--${pill.type} be-doc-evidence-tag be-doc-evidence-tag--${pill.type}`}>
               <span className="be-ev-pill-dot" aria-hidden="true" />
               {pill.label}
             </span>
@@ -109,19 +113,29 @@ function EntryDocCard({ entry }) {
 export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '', view = 'brag' }) {
   const profile = useProfileStore((state) => state.profile)
   const [composerOpen, setComposerOpen] = useState(false)
-  const [activeYear, setActiveYear] = useState(null)
+  const [activeYear, setActiveYear] = useState('All')
+  const yearInitRef = useRef(false)
   const groupedEntries = useMemo(() => groupEntries(initialEntries ?? [], profile), [initialEntries, profile.department, profile.jobTitle])
   const years = useMemo(() => groupedEntries.map(({ year }) => year), [groupedEntries])
+  const yearTabs = useMemo(() => [...years, 'All'], [years])
+  const visibleGroups = useMemo(() => visibleEntriesByYear(groupedEntries, activeYear), [activeYear, groupedEntries])
   const hasEntries = groupedEntries.length > 0
-  const entryCount = initialEntries?.length ?? 0
+  const entryCount = useMemo(() => visibleGroups.reduce((total, group) => total + group.groups.reduce((sum, item) => sum + item.entries.length, 0), 0), [visibleGroups])
 
   useEffect(() => {
-    setActiveYear((current) => (years.includes(current) ? current : years[0] ?? null))
+    setActiveYear((current) => {
+      if (!years.length) return 'All'
+      if (!yearInitRef.current) {
+        yearInitRef.current = true
+        return years[0]
+      }
+      return current === 'All' || years.includes(current) ? current : years[0]
+    })
   }, [years])
 
   const handleYearSelect = (year) => {
     setActiveYear(year)
-    document.getElementById(yearSectionId(year))?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+    if (year !== 'All') document.getElementById(yearSectionId(year))?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
   }
 
   if (view === 'resume') {
@@ -175,17 +189,17 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
                     </span>
                   </Button>
 
-                  {years.length ? (
+                  {yearTabs.length ? (
                     <section className="be-doc-year-nav" aria-label="Year navigation">
                       <span className="be-doc-year-nav-label">Year</span>
                       <div className="be-doc-year-nav-tabs" role="group" aria-label="Choose a year">
-                        {years.map((year) => (
+                        {yearTabs.map((year) => (
                           <button
                             key={year}
                             type="button"
                             className={`be-doc-year-tab${activeYear === year ? ' be-doc-year-tab--active' : ''}`}
                             aria-pressed={activeYear === year}
-                            aria-controls={yearSectionId(year)}
+                            aria-controls={year === 'All' ? undefined : yearSectionId(year)}
                             onClick={() => handleYearSelect(year)}
                           >
                             {year}
@@ -202,7 +216,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
                 </div>
 
                 <div className="be-doc-timeline">
-                  {groupedEntries.map(({ year, groups }) => (
+                  {visibleGroups.map(({ year, groups }) => (
                     <section key={year} id={yearSectionId(year)} className="be-doc-year-group" aria-labelledby={`${yearSectionId(year)}-label`}>
                       <div className="be-doc-year-header">
                         <h2 className="be-doc-year-badge" id={`${yearSectionId(year)}-label`}>{year}</h2>
