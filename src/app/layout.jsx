@@ -1,14 +1,5 @@
-import { DM_Sans } from 'next/font/google'
 import { QueryProvider } from '@shared/providers/QueryProvider'
 import '@shared/styles/globals.css'
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '700', '900'],
-  style: ['normal', 'italic'],
-  variable: '--font-sans',
-  display: 'swap',
-})
 
 export const metadata = {
   title: 'Clausule',
@@ -23,7 +14,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={dmSans.variable}>
+    <html lang="en">
       <body>
         <QueryProvider>{children}</QueryProvider>
       </body>
