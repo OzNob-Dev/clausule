@@ -32,6 +32,8 @@ export default function BragSecuritySetupPanel({ onDone, onCancel }) {
             copied={totpSetup.copied}
             copyClassName="bss-copy-btn"
             qrClassName="bss-qr-wrap"
+            contentClassName="bss-totp-content"
+            layoutClassName="bss-totp-layout"
             qrSize={140}
             secret={totpSetup.secretDisplay}
             secretAriaLabel="Manual entry key"
@@ -39,30 +41,30 @@ export default function BragSecuritySetupPanel({ onDone, onCancel }) {
             secretRowClassName="bss-secret-row"
             uri={totpSetup.uri}
             onCopy={totpSetup.copySecret}
-          />
+          >
+            <div className="bss-otp-block">
+              <label className="bss-otp-label">Enter 6-digit code to verify</label>
+              <DigitRow
+                ariaLabel="One-time password input"
+                digits={totpSetup.totpCode.digits}
+                inputRefs={totpSetup.inputRefs}
+                inputState={totpSetup.totpCode.state}
+                variant="bss"
+                onChange={totpSetup.totpCode.handleChange}
+                onKeyDown={totpSetup.totpCode.handleKeyDown}
+                onPaste={totpSetup.totpCode.handlePaste}
+              />
+            </div>
 
-          <div className="bss-otp-block">
-            <label className="bss-otp-label">Enter 6-digit code to verify</label>
-            <DigitRow
-              ariaLabel="One-time password input"
-              digits={totpSetup.totpCode.digits}
-              inputRefs={totpSetup.inputRefs}
-              inputState={totpSetup.totpCode.state}
-              variant="bss"
-              onChange={totpSetup.totpCode.handleChange}
-              onKeyDown={totpSetup.totpCode.handleKeyDown}
-              onPaste={totpSetup.totpCode.handlePaste}
-            />
-          </div>
-
-          <div className="bss-totp-actions">
-            <Button type="button" variant="ghost" className="bss-totp-cancel" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button type="button" className="bss-totp-verify" onClick={() => totpSetup.submitCode()}>
-              Verify and enable
-            </Button>
-          </div>
+            <div className="bss-totp-actions">
+              <Button type="button" variant="ghost" className="bss-totp-cancel" onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button type="button" className="bss-totp-verify" onClick={() => totpSetup.submitCode()}>
+                Verify and enable
+              </Button>
+            </div>
+          </TotpSecretBlock>
         </>
       )}
     </div>

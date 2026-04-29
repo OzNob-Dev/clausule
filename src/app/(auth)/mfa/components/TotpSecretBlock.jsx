@@ -29,6 +29,8 @@ function CopyIcon({ copied }) {
 export default function TotpSecretBlock({
   copied,
   copyClassName,
+  contentClassName = '',
+  layoutClassName = '',
   qrClassName,
   qrSize,
   secret,
@@ -37,20 +39,24 @@ export default function TotpSecretBlock({
   secretRowClassName,
   uri,
   onCopy,
+  children,
 }) {
   return (
-    <>
+    <div className={`tsb-layout ${layoutClassName}`.trim()}>
       {uri && (
         <div className={qrClassName} aria-label="QR code for authenticator app">
           <QRCodeSVG value={uri} size={qrSize} bgColor="#FAF7F3" fgColor="#2A221A" level="M" />
         </div>
       )}
-      <div className={secretRowClassName}>
-        <code className={secretClassName} role="textbox" aria-readonly="true" aria-label={secretAriaLabel}>{secret}</code>
-        <Button type="button" variant="ghost" className={copyClassName} onClick={onCopy} aria-label="Copy secret key">
-          <CopyIcon copied={copied} />
-        </Button>
+      <div className={contentClassName}>
+        <div className={secretRowClassName}>
+          <code className={secretClassName} role="textbox" aria-readonly="true" aria-label={secretAriaLabel}>{secret}</code>
+          <Button type="button" variant="ghost" className={copyClassName} onClick={onCopy} aria-label="Copy secret key">
+            <CopyIcon copied={copied} />
+          </Button>
+        </div>
+        {children}
       </div>
-    </>
+    </div>
   )
 }
