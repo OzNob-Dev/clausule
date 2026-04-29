@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "fix:auth-provider": "node scripts/fix-auth-provider.js",
     "verify:sso-rpc": "node scripts/verify-sso-rpc.js",
     "test": "vitest run",
     "test:watch": "vitest",

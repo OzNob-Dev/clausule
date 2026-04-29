@@ -21,6 +21,8 @@ describe('accountRepository', () => {
 
   it('derives auth providers and subscription status', async () => {
     expect(ssoProviderForAuthUser({ app_metadata: { provider: 'google' } })).toBe('google')
+    expect(ssoProviderForAuthUser({ app_metadata: { provider: 'email' }, identities: [{ provider: 'google' }] })).toBe('google')
+    expect(ssoProviderForAuthUser({ app_metadata: { provider: 'google' }, identities: [{ provider: 'microsoft' }] })).toBe('google')
     expect(accountActive({ is_active: false }, true)).toBe(true)
 
     select.mockResolvedValueOnce({ data: [{ id: 'user-1' }], error: null })
