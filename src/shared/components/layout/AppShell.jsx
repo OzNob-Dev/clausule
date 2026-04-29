@@ -1,6 +1,4 @@
-import { RailNav } from './RailNav'
-
-export function AppShell({ children, rail = <RailNav /> }) {
+export function AppShell({ children }) {
   return (
     <div className="app-shell">
       <a
@@ -9,7 +7,6 @@ export function AppShell({ children, rail = <RailNav /> }) {
       >
         Skip to main content
       </a>
-      {rail}
       <main id="main-content" className="app-main">{children}</main>
     </div>
   )
