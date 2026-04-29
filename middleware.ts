@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const PROTECTED_PREFIXES = ['/dashboard', '/settings', '/components', '/entries', '/profile', '/brag', '/mfa-setup']
 
-function isProtectedPath(pathname) {
+function isProtectedPath(pathname: string) {
   return PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 }
 
-export function middleware(request) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   if (!isProtectedPath(pathname)) return NextResponse.next()
   if (request.cookies.get('clausule_session')) return NextResponse.next()
