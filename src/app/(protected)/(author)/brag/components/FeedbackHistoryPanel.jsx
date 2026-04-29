@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import FeedbackHistoryHeader from '@brag/components/FeedbackHistoryHeader'
 import FeedbackHistoryToolbar from '@brag/components/FeedbackHistoryToolbar'
 import FeedbackHistoryThreadList from '@brag/components/FeedbackHistoryThreadList'
 
@@ -15,7 +14,6 @@ export default function FeedbackHistoryPanel({ threads = [], loading = false, er
 
   return (
     <section className="be-feedback-history-view" aria-label="Feedback history">
-      <FeedbackHistoryHeader />
       <FeedbackHistoryToolbar activeFilter={activeFilter} count={filteredThreads.length} onFilterChange={setActiveFilter} />
       <FeedbackHistoryThreadList threads={filteredThreads} loading={loading} error={error} filter={activeFilter} />
     </section>
