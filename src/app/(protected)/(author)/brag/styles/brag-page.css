@@ -2726,7 +2726,6 @@
   --be-doc-shadow-strong: rgba(28, 26, 23, 0.16);
   --be-serif: 'DM Serif Display', Georgia, serif;
   --be-sans: 'Source Sans 3', var(--font-sans), system-ui, sans-serif;
-  background: var(--be-doc-cream);
   color: var(--be-doc-ink);
   font-family: var(--be-sans);
 }
