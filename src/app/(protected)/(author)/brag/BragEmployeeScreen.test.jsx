@@ -145,6 +145,16 @@ describe('BragEmployeeScreen', () => {
     expect(screen.queryByRole('heading', { name: /your entries/i })).not.toBeInTheDocument()
   })
 
+  it('opens the composer from the empty state cta', async () => {
+    const { default: userEvent } = await import('@testing-library/user-event')
+    const user = userEvent.setup()
+
+    render(<BragEmployeeScreen view="brag" />)
+
+    await user.click(await screen.findByRole('button', { name: /add your first entry/i }))
+    expect(screen.getByRole('form', { name: /add a new entry/i })).toBeInTheDocument()
+  })
+
   it('shows a helpful load error when entries cannot be retrieved', async () => {
     render(<BragEmployeeScreen view="brag" initialEntriesError="Could not load entries. Please refresh and try again." />)
 

@@ -153,8 +153,10 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
               <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
             )}
           </>
+        ) : composerOpen ? (
+          <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
         ) : (
-          <BragEmptyState />
+          <BragEmptyState onAddEntry={() => setComposerOpen(true)} />
         )}
       </div>
     </main>
