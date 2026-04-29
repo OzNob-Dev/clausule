@@ -21,6 +21,7 @@
   - `skills/clausule-frontend/SKILL.md` for UI, React, hooks, CSS, accessibility, mobile, design, and frontend performance.
   - `skills/clausule-backend-security/SKILL.md` for API routes, server logic, auth, database, privacy, reliability, observability, security, and external integrations.
   - `skills/clausule-testing-release/SKILL.md` for tests, reviews, feature flags, verification, rollout, and release.
+  - `skills/clausule-test-writing/SKILL.md` for test-file placement, mocking patterns, and Clausule-specific test-writing conventions.
 - Use `docs/agent/*.md` only as routing stubs for older agents.
 
 ## Non-Negotiables

@@ -11,7 +11,7 @@
 ## Load Order
 1. **Always Load:** `skills/caveman/SKILL.md` (Compression) and `skills/clausule-core/SKILL.md` (Core Logic).
 2. **Implementation:** Always load `skills/clausule-frontend/SKILL.md` for UI/logic work.
-3. **Contextual:** Load matching area skills (`backend-security` or `testing-release`).
+3. **Contextual:** Load matching area skills (`backend-security`, `testing-release`, or `clausule-test-writing`).
 
 ## Role & Context
 - **Mandatory Start:** Your very first tool call in any session MUST be a `sqlite` query to `./context/context.db` to check for `in_progress` tasks. 

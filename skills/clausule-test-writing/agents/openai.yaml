@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clausule Test Writing"
+  short_description: "Sibling tests, mocks, route/page coverage"
+  default_prompt: "Use $clausule-test-writing when adding or reorganizing Clausule tests so coverage follows the repo's sibling-file and mocking conventions."
