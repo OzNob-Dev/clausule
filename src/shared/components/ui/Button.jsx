@@ -1,5 +1,5 @@
 import { cn } from '@shared/utils/cn'
-import '@Button.css'
+import './Button.css'
 const variantStyles = {
   primary: 'bg-acc text-[#FAF7F3] hover:opacity-90',
   employee: 'bg-acc text-[#FAF7F3] hover:opacity-90',
