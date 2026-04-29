@@ -3823,48 +3823,6 @@
   transform: translateX(3px);
 }
 
-.be-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 32px;
-  border: none;
-  border-radius: 10px;
-  background: var(--be-empty-accent);
-  color: var(--be-empty-canvas);
-  cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 700;
-  box-shadow: 0 4px 16px var(--cl-accent-alpha-25), 0 12px 40px var(--cl-accent-soft-16);
-  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
-}
-
-.be-cta:hover {
-  transform: translateY(-1px);
-  background: var(--cl-surface-ink-6);
-}
-
-.be-cta:focus-visible {
-  outline: 2px solid var(--be-empty-accent);
-  outline-offset: 3px;
-}
-
-.be-cta-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: var(--cl-white-12);
-}
-
-.be-cta-icon svg {
-  width: 14px;
-  height: 14px;
-}
-
 .be-empty-note {
   margin: 12px 0 0;
   color: var(--be-empty-soft);
@@ -3978,11 +3936,6 @@
 
   .be-empty-prompt-hint {
     font-size: 11px;
-  }
-
-  .be-cta {
-    width: 100%;
-    justify-content: center;
   }
 
   .be-entry-composer-stage {
@@ -4739,7 +4692,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .be-cta,
   .be-empty-prompt,
   .be-panel-swap,
   .be-composer-orbit-ring,
@@ -4773,10 +4725,6 @@
   .be-feedback-empty-state__dot,
   .be-feedback-empty-state__arrow {
     animation: none;
-    transform: none;
-  }
-
-  .be-cta:hover {
     transform: none;
   }
 
