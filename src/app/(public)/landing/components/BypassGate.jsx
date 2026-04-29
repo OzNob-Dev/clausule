@@ -13,7 +13,7 @@ export default function BypassGate({ children }) {
       return
     }
     const params = new URLSearchParams(window.location.search)
-    if (params.get('bypaxxx') === 'true') {
+    if (params.get('bypaxxx') === 'true' || params.get('bypaxxx') === 'true') {
       localStorage.setItem('clausule_dev_accexx', 'granted')
       window.history.replaceState(null, '', window.location.pathname)
     }

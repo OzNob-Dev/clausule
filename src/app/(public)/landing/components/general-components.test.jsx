@@ -19,4 +19,13 @@ describe('General components', () => {
 
     await waitFor(() => expect(screen.getByText('App content')).toBeInTheDocument())
   })
+
+  it('shows children after bypass is enabled from the query string', async () => {
+    localStorage.removeItem('clausule_dev_accexx')
+    window.history.pushState({}, '', '/?bypass=true')
+
+    render(<BypassGate><div>App content</div></BypassGate>)
+
+    await waitFor(() => expect(screen.getByText('App content')).toBeInTheDocument())
+  })
 })
