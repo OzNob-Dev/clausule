@@ -34,6 +34,7 @@ describe('FeedbackScreen', () => {
 
     expect(screen.getByRole('heading', { name: /tell the clausule team what would make this better/i })).toBeInTheDocument()
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.getByText(/your feedback/i)).toBeInTheDocument()
     expect(screen.getAllByRole('combobox')).toHaveLength(2)
   })
 
@@ -43,7 +44,7 @@ describe('FeedbackScreen', () => {
     sendFeedbackAction.mockResolvedValueOnce({
       id: 'feedback-1',
       category: 'Bug',
-      feeling: 'Blocking work',
+      feeling: 'Blocking me',
       subject: 'Export is stuck',
       message: 'The resume export spinner never ends.',
       improvement: 'Show an error and retry option.',
@@ -55,7 +56,7 @@ describe('FeedbackScreen', () => {
     renderWithQueryClient(<FeedbackScreen view="compose" />)
 
     await user.selectOptions(screen.getAllByRole('combobox')[0], 'Bug')
-    await user.selectOptions(screen.getAllByRole('combobox')[1], 'Blocking work')
+    await user.selectOptions(screen.getAllByRole('combobox')[1], 'Blocking me')
     await user.type(screen.getByPlaceholderText(/what should we know/i), 'Export is stuck')
     await user.type(screen.getByPlaceholderText(/tell us what happened/i), 'The resume export spinner never ends.')
     await user.type(screen.getByPlaceholderText(/a workflow, design, feature/i), 'Show an error and retry option.')
@@ -63,7 +64,7 @@ describe('FeedbackScreen', () => {
 
     await waitFor(() => expect(screen.getByText(/your feedback has landed/i)).toBeInTheDocument())
     expect(screen.getByText('ada@example.com')).toBeInTheDocument()
-    expect(sendFeedbackAction).toHaveBeenCalledWith(expect.objectContaining({ category: 'Bug', feeling: 'Blocking work' }))
+    expect(sendFeedbackAction).toHaveBeenCalledWith(expect.objectContaining({ category: 'Bug', feeling: 'Blocking me' }))
   })
 
   it('renders feedback history without tabs', async () => {

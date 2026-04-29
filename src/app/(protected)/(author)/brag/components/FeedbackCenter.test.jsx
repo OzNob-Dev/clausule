@@ -5,33 +5,40 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import FeedbackCenter from './FeedbackCenter'
 import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
+const listFeedbackThreadsAction = vi.fn()
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}))
+
+vi.mock('@actions/brag-actions', () => ({
+  listFeedbackThreadsAction: (...args) => listFeedbackThreadsAction(...args),
+  sendFeedbackAction: vi.fn(),
+}))
+
 describe('FeedbackCenter', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    listFeedbackThreadsAction.mockReset()
   })
 
   it('shows feedback threads with Clausule team replies', async () => {
     const user = userEvent.setup()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
-      feedback: [{
-        id: 'feedback-1',
-        category: 'Idea',
-        feeling: 'Love it',
-        subject: 'Keyboard shortcuts',
-        message: 'Please add j/k navigation.',
-        created_at: '2026-04-20T10:00:00.000Z',
-        replies: [{
-          id: 'reply-1',
-          author_name: 'Clausule team',
-          body: 'Tiny keyboard goblin assigned.',
-          from_team: true,
-          created_at: '2026-04-20T11:00:00.000Z',
-        }],
+    listFeedbackThreadsAction.mockResolvedValueOnce([{
+      id: 'feedback-1',
+      category: 'Idea',
+      feeling: 'Love it',
+      subject: 'Keyboard shortcuts',
+      message: 'Please add j/k navigation.',
+      created_at: '2026-04-20T10:00:00.000Z',
+      replies: [{
+        id: 'reply-1',
+        author_name: 'Clausule team',
+        body: 'Tiny keyboard goblin assigned.',
+        from_team: true,
+        created_at: '2026-04-20T11:00:00.000Z',
       }],
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    }))
+    }])
 
     renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
 
@@ -45,10 +52,7 @@ describe('FeedbackCenter', () => {
 
   it('supports arrow key tab navigation', async () => {
     const user = userEvent.setup()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ feedback: [] }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    }))
+    listFeedbackThreadsAction.mockResolvedValueOnce([])
 
     renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
 
@@ -65,26 +69,20 @@ describe('FeedbackCenter', () => {
 
   it('waits to fetch threads until the feedback-centre tab is opened', async () => {
     const user = userEvent.setup()
-    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ feedback: [] }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    }))
+    listFeedbackThreadsAction.mockResolvedValueOnce([])
 
     renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
 
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(listFeedbackThreadsAction).not.toHaveBeenCalled()
 
     await user.click(screen.getByRole('tab', { name: /feedback centre/i }))
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(listFeedbackThreadsAction).toHaveBeenCalledTimes(1))
   })
 
   it('shows a real error when feedback threads fail to load', async () => {
     const user = userEvent.setup()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ error: 'Backend unavailable' }), {
-      status: 503,
-      headers: { 'Content-Type': 'application/json' },
-    }))
+    listFeedbackThreadsAction.mockRejectedValueOnce(new Error('Backend unavailable'))
 
     renderWithQueryClient(<FeedbackCenter userEmail="ada@example.com" onClose={vi.fn()} />)
 

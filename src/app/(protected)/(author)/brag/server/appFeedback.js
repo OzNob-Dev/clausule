@@ -2,8 +2,8 @@ import { BrevoClient } from '@getbrevo/brevo'
 import { insert, select } from '@api/_lib/supabase.js'
 import { withTimeout } from '@api/_lib/network.js'
 
-const CATEGORIES = new Set(['Bug', 'Idea', 'Usability', 'Other'])
-const FEELINGS = new Set(['Love it', 'Confusing', 'Blocked', 'Just noting'])
+const CATEGORIES = new Set(['Idea', 'Bug', 'Question', 'Complaint', 'Compliment', 'Usability', 'Other'])
+const FEELINGS = new Set(['Just noting', 'Mildly annoying', 'Blocking me', 'Really excited', 'Love it', 'Confusing', 'Blocked'])
 const MAX_SUBJECT_LENGTH = 160
 const MAX_MESSAGE_LENGTH = 4000
 const MAX_IMPROVEMENT_LENGTH = 2000
