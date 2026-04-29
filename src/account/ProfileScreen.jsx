@@ -1,12 +1,10 @@
 'use client'
 
-import { useAuth } from '@auth/context/AuthContext'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { AppShell } from '@shared/components/layout/AppShell'
 import { ProfileActions } from '@shared/components/ui/ProfileActions'
 import { ProfileField } from '@shared/components/ui/ProfileField'
 import { ProfileFormCard } from '@shared/components/ui/ProfileFormCard'
-import { ProfileRail } from '@shared/components/ui/ProfileRail'
 import { useShallow } from 'zustand/shallow'
 import { formatMobile } from '@account/utils/formatMobile'
 import { useProfileForm } from '@account/hooks/useProfileForm'
@@ -14,7 +12,6 @@ import { useProfileSave } from '@account/hooks/useProfileSave'
 import '@account/styles/profile.css'
 
 export default function ProfileScreen() {
-  const { logout } = useAuth()
   const { profile } = useProfileStore(useShallow((state) => ({ profile: state.profile })))
   const { form, setForm, current, dirty, resetForm, commitBaseline } = useProfileForm(profile)
   const { saving, error, success, patchProfile } = useProfileSave({ current, emailChanged: false, commitBaseline })
@@ -26,7 +23,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <AppShell rail={<ProfileRail profile={profile} onLogout={logout} />}>
+    <AppShell>
       <div className="profile-screen page-enter">
         <header className="main-header">
           <p className="eyebrow" aria-hidden="true">Account</p>

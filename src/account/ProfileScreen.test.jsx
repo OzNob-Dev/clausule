@@ -54,16 +54,14 @@ describe('ProfileScreen', () => {
     })
   })
 
-  it('renders the mockup structure with the profile rail and readonly email', async () => {
+  it('renders the profile content with the shared shell and readonly email', async () => {
     const { default: ProfileScreen } = await import('./ProfileScreen')
 
     renderWithQueryClient(<ProfileScreen />)
 
     expect(screen.getByRole('heading', { name: 'Personal details' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Personal details' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByLabelText('Email')).toHaveAttribute('readonly')
-    expect(screen.getByText('Your profile')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Log out' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Profile' })).toHaveAttribute('aria-current', 'page')
   })
 
   it('saves the profile without the verification modal', async () => {
