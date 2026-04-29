@@ -1,5 +1,14 @@
+import { DM_Serif_Display } from 'next/font/google'
 import { Card } from '@shared/components/ui/Card'
 import { Link } from '@shared/components/ui/Link'
+
+const dmSerif = DM_Serif_Display({
+  subsets: ['latin'],
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+})
 
 const plans = [
   { name: 'Starter', price: 'Free', details: 'Landing pages, public routes, and a single workspace.' },
@@ -9,7 +18,7 @@ const plans = [
 
 export default function Page() {
   return (
-    <main className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+    <main className={`${dmSerif.variable} mx-auto max-w-7xl px-6 py-16 lg:px-8`}>
       <div className="max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-acc">Pricing</p>
         <h1 className="mt-4 font-serif text-4xl text-tp sm:text-5xl">Simple route for public, auth, and protected usage.</h1>

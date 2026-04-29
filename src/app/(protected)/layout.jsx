@@ -1,8 +1,17 @@
+import { DM_Serif_Display } from 'next/font/google'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { AuthProvider } from '@auth/context/AuthContext'
 import { getServerBootstrapSession } from '@auth/server/serverSession.js'
 import { MANAGER_ROUTES, ROUTES } from '@shared/utils/routes'
+
+const dmSerif = DM_Serif_Display({
+  subsets: ['latin'],
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+})
 
 export default async function ProtectedLayout({ children }) {
   const session = await getServerBootstrapSession()
@@ -17,5 +26,5 @@ export default async function ProtectedLayout({ children }) {
   )
   if (isManagerRoute && session.user.role !== 'manager') redirect(ROUTES.brag)
 
-  return <AuthProvider initialSession={session}>{children}</AuthProvider>
+  return <div className={dmSerif.variable}><AuthProvider initialSession={session}>{children}</AuthProvider></div>
 }

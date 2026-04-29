@@ -5,7 +5,6 @@ import RootLayout from './layout'
 
 vi.mock('next/font/google', () => ({
   DM_Sans: () => ({ variable: 'dm-sans' }),
-  DM_Serif_Display: () => ({ variable: 'dm-serif' }),
 }))
 
 vi.mock('@shared/providers/QueryProvider', () => ({
@@ -17,6 +16,8 @@ describe('RootLayout', () => {
     const { container } = render(<RootLayout><main>Home</main></RootLayout>)
 
     expect(container.querySelector('html')).toHaveAttribute('lang', 'en')
+    expect(container.querySelector('html')).toHaveClass('dm-sans')
+    expect(container.querySelector('html')).not.toHaveClass('dm-serif')
     expect(screen.getByText('Home')).toBeInTheDocument()
   })
 })

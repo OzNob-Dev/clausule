@@ -20,6 +20,10 @@ vi.mock('next/navigation', () => ({
   redirect,
 }))
 
+vi.mock('next/font/google', () => ({
+  DM_Serif_Display: () => ({ variable: 'dm-serif' }),
+}))
+
 vi.mock('next/headers', () => ({
   headers: async () => ({ get: (key) => (key === 'x-clausule-pathname' ? pathname : null) }),
 }))
@@ -74,9 +78,10 @@ describe('ProtectedLayout MFA lock', () => {
   })
 
   it('allows app access after MFA is configured', async () => {
-    render(await ProtectedLayout({ children: <div>Unlocked app</div> }))
+    const { container } = render(await ProtectedLayout({ children: <div>Unlocked app</div> }))
 
     expect(screen.getByText('Unlocked app')).toBeInTheDocument()
+    expect(container.firstChild).toHaveClass('dm-serif')
     expect(redirect).not.toHaveBeenCalled()
   })
 

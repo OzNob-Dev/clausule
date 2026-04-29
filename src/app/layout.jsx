@@ -1,4 +1,4 @@
-import { DM_Sans, DM_Serif_Display } from 'next/font/google'
+import { DM_Sans } from 'next/font/google'
 import { QueryProvider } from '@shared/providers/QueryProvider'
 import '@shared/styles/globals.css'
 
@@ -7,14 +7,6 @@ const dmSans = DM_Sans({
   weight: ['400', '500', '700', '900'],
   style: ['normal', 'italic'],
   variable: '--font-sans',
-  display: 'swap',
-})
-
-const dmSerif = DM_Serif_Display({
-  subsets: ['latin'],
-  weight: ['400'],
-  style: ['normal', 'italic'],
-  variable: '--font-serif',
   display: 'swap',
 })
 
@@ -31,7 +23,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${dmSerif.variable}`}>
+    <html lang="en" className={dmSans.variable}>
       <body>
         <QueryProvider>{children}</QueryProvider>
       </body>
