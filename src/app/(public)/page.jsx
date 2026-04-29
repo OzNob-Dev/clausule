@@ -11,11 +11,6 @@ export default function Page() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      setReady(true)
-      return
-    }
-
     if (hasDevAccess()) {
       router.replace(ROUTES.login)
       return
