@@ -23,11 +23,12 @@ const PROVIDERS = {
 export async function createSsoStart({ requestUrl, provider }) {
   const config = PROVIDERS[provider]
   const origin = new URL(requestUrl).origin
+  const loginUrl = `${origin}/login`
 
   if (!config) return { body: { error: 'Unknown provider' }, status: 400 }
 
   const clientId = config.clientId()
-  if (!clientId) return { redirect: `${origin}/?sso_error=not_configured` }
+  if (!clientId) return { redirect: `${loginUrl}?sso_error=not_configured` }
 
   const codeVerifier = crypto.randomBytes(32).toString('base64url')
   const codeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64url')
@@ -52,7 +53,7 @@ export async function createSsoStart({ requestUrl, provider }) {
     redirectOrigin: origin,
     expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
   })
-  if (error) return { redirect: `${origin}/?sso_error=account_error` }
+  if (error) return { redirect: `${loginUrl}?sso_error=account_error` }
 
   return {
     redirect: `${config.authUrl}?${query}`,

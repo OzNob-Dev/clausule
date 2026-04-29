@@ -160,7 +160,9 @@ describe('Google SSO callback', () => {
 
     const second = await GET(callbackRequest(), { params: { provider: 'google' } })
 
-    expect(new URL(first.headers.get('location')).searchParams.get('sso_error')).toBe('account_error')
+    const failureLocation = new URL(first.headers.get('location'))
+    expect(failureLocation.pathname).toBe('/login')
+    expect(failureLocation.searchParams.get('sso_error')).toBe('account_error')
     expect(new URL(second.headers.get('location')).pathname).toBe('/brag')
     expect(select).toHaveBeenCalledTimes(2)
   })

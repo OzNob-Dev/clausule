@@ -3,7 +3,9 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { SsoProviderButton } from './SsoProviderButton'
 
-const Link = vi.fn(({ children, external: _external, ...props }) => <a {...props}>{children}</a>)
+const { Link } = vi.hoisted(() => ({
+  Link: vi.fn(({ children, external: _external, ...props }) => <a {...props}>{children}</a>),
+}))
 
 vi.mock('./Link', () => ({
   Link,

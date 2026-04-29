@@ -122,7 +122,7 @@ function clearSsoState(res) {
 }
 
 function redirect(origin, errorCode) {
-  return NextResponse.redirect(`${origin}/?sso_error=${encodeURIComponent(errorCode)}`)
+  return NextResponse.redirect(`${origin}/login?sso_error=${encodeURIComponent(errorCode)}`)
 }
 
 function redirectToSignup(origin, provider, userInfo) {
