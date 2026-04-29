@@ -18,7 +18,7 @@ export function Button({ children, variant = 'primary', size = 'md', className, 
   const classes = cn(
     // 'inline-flex items-center justify-center font-sans font-bold transition-opacity duration-150 cursor-pointer border-none rounded-[var(--r)]',
     'be-cta',
-    variantStyles[variant],
+    //variantStyles[variant],
     sizeStyles[size],
     className
   )
