@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@shared/components/ui/Button'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import BragEmptyState from '@brag/components/BragEmptyState'
@@ -62,6 +62,10 @@ function groupEntries(entries, profile) {
   return [...years.values()].sort((a, b) => b.year - a.year)
 }
 
+function yearSectionId(year) {
+  return `be-doc-year-${year}`
+}
+
 function EntryDocCard({ entry }) {
   const evidenceTypes = evidenceTypesFromEntry(entry)
   const pills = evidenceTypes.slice(0, 4).map(evidenceTypeToPill)
@@ -105,8 +109,20 @@ function EntryDocCard({ entry }) {
 export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '', view = 'brag' }) {
   const profile = useProfileStore((state) => state.profile)
   const [composerOpen, setComposerOpen] = useState(false)
+  const [activeYear, setActiveYear] = useState(null)
   const groupedEntries = useMemo(() => groupEntries(initialEntries ?? [], profile), [initialEntries, profile.department, profile.jobTitle])
+  const years = useMemo(() => groupedEntries.map(({ year }) => year), [groupedEntries])
   const hasEntries = groupedEntries.length > 0
+  const entryCount = initialEntries?.length ?? 0
+
+  useEffect(() => {
+    setActiveYear((current) => (years.includes(current) ? current : years[0] ?? null))
+  }, [years])
+
+  const handleYearSelect = (year) => {
+    setActiveYear(year)
+    document.getElementById(yearSectionId(year))?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+  }
 
   if (view === 'resume') {
     return (
@@ -145,7 +161,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
 
             {!composerOpen ? (
               <>
-                <div className="be-doc-cta-wrap">
+                <div className="be-doc-toolbar">
                   <Button type="button" variant="primary" className="be-doc-add-button justify-start" onClick={() => setComposerOpen(true)}>
                     <span className="be-doc-add-icon" aria-hidden="true">
                       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -158,13 +174,38 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
                       <span className="be-doc-add-description">Capture a fresh entry for your brag doc</span>
                     </span>
                   </Button>
+
+                  {years.length ? (
+                    <section className="be-doc-year-nav" aria-label="Year navigation">
+                      <span className="be-doc-year-nav-label">Year</span>
+                      <div className="be-doc-year-nav-tabs" role="group" aria-label="Choose a year">
+                        {years.map((year) => (
+                          <button
+                            key={year}
+                            type="button"
+                            className={`be-doc-year-tab${activeYear === year ? ' be-doc-year-tab--active' : ''}`}
+                            aria-pressed={activeYear === year}
+                            aria-controls={yearSectionId(year)}
+                            onClick={() => handleYearSelect(year)}
+                          >
+                            {year}
+                          </button>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
+
+                  <div className="be-doc-entry-count" aria-label="Entry count">
+                    <strong>{entryCount}</strong>
+                    {entryCount === 1 ? 'entry' : 'entries'}
+                  </div>
                 </div>
 
                 <div className="be-doc-timeline">
                   {groupedEntries.map(({ year, groups }) => (
-                    <section key={year} className="be-doc-year-group" aria-labelledby={`be-doc-year-${year}`}>
+                    <section key={year} id={yearSectionId(year)} className="be-doc-year-group" aria-labelledby={`${yearSectionId(year)}-label`}>
                       <div className="be-doc-year-header">
-                        <h2 className="be-doc-year-badge" id={`be-doc-year-${year}`}>{year}</h2>
+                        <h2 className="be-doc-year-badge" id={`${yearSectionId(year)}-label`}>{year}</h2>
                         <div className="be-doc-year-line" aria-hidden="true" />
                       </div>
 

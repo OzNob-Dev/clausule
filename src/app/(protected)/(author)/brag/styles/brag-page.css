@@ -2285,7 +2285,11 @@
   margin-bottom: 24px;
 }
 
-.be-doc-cta-wrap {
+.be-doc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 16px;
   margin-bottom: 56px;
   animation: be-doc-group-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
 }
@@ -2295,7 +2299,8 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  width: 100%;
+  flex: 1 1 360px;
+  min-width: min(100%, 320px);
   padding: 16px 20px;
   border: 2px solid var(--be-doc-clay);
   border-radius: 16px;
@@ -2382,6 +2387,99 @@
   line-height: 1.4;
 }
 
+.be-doc-year-nav {
+  display: flex;
+  align-items: stretch;
+  min-width: min(100%, 320px);
+  height: 56px;
+  overflow: hidden;
+  border: 1.5px solid #2E2620;
+  border-radius: 14px;
+  background: #2E2620;
+  box-shadow: 0 2px 8px var(--be-doc-shadow-soft);
+}
+
+.be-doc-year-nav-label {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: #F7F3EE;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: #2E2620;
+}
+
+.be-doc-year-nav-tabs {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  background: var(--be-doc-cream);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.be-doc-year-nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.be-doc-year-tab {
+  min-width: 72px;
+  padding: 0 18px;
+  border: 0;
+  border-right: 1px solid rgba(46, 38, 32, 0.16);
+  background: transparent;
+  color: var(--be-doc-ink);
+  cursor: pointer;
+  font-family: var(--be-sans);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.be-doc-year-tab:last-child {
+  border-right: 0;
+}
+
+.be-doc-year-tab:hover {
+  background: #E7DED1;
+}
+
+.be-doc-year-tab--active {
+  background: #2E2620;
+  color: #F7F3EE;
+  font-weight: 700;
+}
+
+.be-doc-year-tab:focus-visible {
+  outline: 2px solid var(--be-doc-clay);
+  outline-offset: -2px;
+}
+
+.be-doc-entry-count {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: auto;
+  min-width: 92px;
+  color: rgba(61, 50, 41, 0.72);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.be-doc-entry-count strong {
+  color: var(--be-doc-ink);
+  font-family: var(--be-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
 .be-doc-timeline {
   display: grid;
   gap: 0;
@@ -2389,6 +2487,7 @@
 
 .be-doc-year-group {
   margin-bottom: 64px;
+  scroll-margin-top: 24px;
   animation: be-doc-group-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
@@ -2412,7 +2511,7 @@
   padding: 12px 24px;
   border: 2px solid var(--be-doc-taupe);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 2px 8px var(--be-doc-shadow-soft);
   color: var(--be-doc-ink);
   font-family: var(--be-serif);
@@ -3145,7 +3244,13 @@
     font-size: 2.5rem;
   }
 
+  .be-doc-toolbar {
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .be-doc-add-button {
+    width: 100%;
     gap: 16px;
     padding: 18px 20px;
   }
@@ -3161,6 +3266,32 @@
 
   .be-doc-add-description {
     font-size: 14px;
+  }
+
+  .be-doc-year-nav {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+  }
+
+  .be-doc-year-nav-label {
+    padding: 12px 16px;
+  }
+
+  .be-doc-year-nav-tabs {
+    width: 100%;
+  }
+
+  .be-doc-year-tab {
+    flex: 1 0 auto;
+    min-width: 64px;
+    height: 48px;
+  }
+
+  .be-doc-entry-count {
+    align-self: flex-end;
+    margin-left: 0;
+    text-align: left;
   }
 
   .be-doc-pagination {

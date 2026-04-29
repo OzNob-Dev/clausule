@@ -52,6 +52,8 @@ describe('BragEmployeeScreen', () => {
 
     expect(screen.getByRole('heading', { name: /your entries/i })).toBeInTheDocument()
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.getByRole('group', { name: /choose a year/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '2025' })).toHaveClass('be-doc-year-tab--active')
     expect(screen.getByRole('heading', { name: '2025' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '2024' })).toBeInTheDocument()
     expect(screen.getAllByText('Anthropic')).toHaveLength(2)
