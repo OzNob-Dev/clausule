@@ -2,8 +2,8 @@
  * Server-side auth helpers for Next.js App Router API routes.
  *
  * Two httpOnly cookies are used:
- *   clausule_at  — HS256 JWT access token  (15 min, SameSite=Strict)
- *   clausule_rt  — opaque refresh token    (30 days, SameSite=Strict)
+ *   clausule_at  — HS256 JWT access token  (15 min, SameSite=Lax)
+ *   clausule_rt  — opaque refresh token    (30 days, SameSite=Lax)
  *
  * `requireAuth` verifies the access token locally — no DB or Supabase
  * round-trip on every request.  Use the /api/auth/refresh route to exchange
@@ -47,7 +47,7 @@ function cookieFlags(maxAge) {
     `Max-Age=${maxAge}`,
     'Path=/',
     'HttpOnly',
-    'SameSite=Strict',
+    'SameSite=Lax',
     'Priority=High',
     IS_PROD ? 'Secure' : '',
   ].filter(Boolean).join('; ')
@@ -72,7 +72,7 @@ export function refreshTokenCookie(token) {
 }
 
 export function sessionCookie() {
-  return `${COOKIE_SESSION}=1; Max-Age=${REFRESH_TOKEN_TTL_S}; Path=/; SameSite=Strict; Priority=High${IS_PROD ? '; Secure' : ''}`
+  return `${COOKIE_SESSION}=1; Max-Age=${REFRESH_TOKEN_TTL_S}; Path=/; SameSite=Lax; Priority=High${IS_PROD ? '; Secure' : ''}`
 }
 
 /**
@@ -83,7 +83,7 @@ export function clearAuthCookies() {
   return [
     `${COOKIE_AT}=; ${cookieFlags(0)}`,
     `${COOKIE_RT}=; ${cookieFlags(0)}`,
-    `${COOKIE_SESSION}=; Max-Age=0; Path=/; SameSite=Strict; Priority=High${IS_PROD ? '; Secure' : ''}`,
+    `${COOKIE_SESSION}=; Max-Age=0; Path=/; SameSite=Lax; Priority=High${IS_PROD ? '; Secure' : ''}`,
   ]
 }
 

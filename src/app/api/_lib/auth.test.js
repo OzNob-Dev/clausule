@@ -6,11 +6,18 @@ vi.mock('./supabase.js', () => ({
 }))
 
 import { select } from './supabase.js'
-import { requireActiveAuth, requireAuth } from './auth.js'
+import { accessTokenCookie, clearAuthCookies, refreshTokenCookie, requireActiveAuth, requireAuth, sessionCookie } from './auth.js'
 
 describe('requireAuth test bypass', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('uses SameSite=Lax for auth cookies to support OAuth return navigation', () => {
+    expect(accessTokenCookie('token-1')).toContain('SameSite=Lax')
+    expect(refreshTokenCookie('token-2')).toContain('SameSite=Lax')
+    expect(sessionCookie()).toContain('SameSite=Lax')
+    expect(clearAuthCookies().every((cookie) => cookie.includes('SameSite=Lax'))).toBe(true)
   })
 
   afterEach(() => {
