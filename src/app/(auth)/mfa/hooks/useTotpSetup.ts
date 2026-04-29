@@ -54,6 +54,12 @@ export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0
     }
   }, [onVerified, onVerifiedDelayMs, scheduleTimeout, secret, totpCode, verifyMutation])
 
+  const submitCode = useCallback(() => {
+    if (totpCode.state !== 'idle') return
+    if (!totpCode.digits.every(Boolean)) return
+    void verifyTotp(totpCode.digits)
+  }, [totpCode.digits, totpCode.state, verifyTotp])
+
   useEffect(() => {
     if (!enabled) return
     if (totpCode.state !== 'idle') return
@@ -77,6 +83,7 @@ export function useTotpSetup({ enabled = true, onVerified, onVerifiedDelayMs = 0
     retry: () => setupQuery.refetch(),
     secret,
     secretDisplay: secret.match(/.{1,4}/g)?.join(' ') ?? secret,
+    submitCode,
     totpCode,
     uri,
   }

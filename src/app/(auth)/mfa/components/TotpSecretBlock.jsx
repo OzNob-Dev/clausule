@@ -33,6 +33,7 @@ export default function TotpSecretBlock({
   qrSize,
   secret,
   secretClassName,
+  secretAriaLabel = 'Manual entry key',
   secretRowClassName,
   uri,
   onCopy,
@@ -45,7 +46,7 @@ export default function TotpSecretBlock({
         </div>
       )}
       <div className={secretRowClassName}>
-        <code className={secretClassName}>{secret}</code>
+        <code className={secretClassName} role="textbox" aria-readonly="true" aria-label={secretAriaLabel}>{secret}</code>
         <Button type="button" variant="ghost" className={copyClassName} onClick={onCopy} aria-label="Copy secret key">
           <CopyIcon copied={copied} />
         </Button>

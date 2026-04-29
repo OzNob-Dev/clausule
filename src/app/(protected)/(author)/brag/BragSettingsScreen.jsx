@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import BragSettingsDangerZone from '@brag/components/BragSettingsDangerZone'
+import BragSecurityDangerZone from '@brag/components/BragSecurityDangerZone'
+import BragSecurityHeader from '@brag/components/BragSecurityHeader'
+import BragSecurityMethodsCard from '@brag/components/BragSecurityMethodsCard'
 import Layout from '@brag/components/layout'
-import MfaSecuritySection from '@brag/components/MfaSecuritySection'
 import { DeleteAccountDialog } from '@account/components/DeleteAccountDialog'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { useTotpStatusQuery } from '@shared/queries/useProfileQuery'
@@ -41,12 +42,9 @@ export default function BragSettings() {
   return (
     <>
       <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-settings-title">
-        <header className="bss-header">
-          <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
-          <p className="bss-subheading">Manage how you sign in to Clausule.</p>
-        </header>
+        <BragSecurityHeader />
         <div className="bss-divider" />
-        <MfaSecuritySection
+        <BragSecurityMethodsCard
           authenticatorAppConfigured={authenticatorAppConfigured}
           hasSecuritySnapshot={hasSecuritySnapshot}
           mfaRestrictionEnabled={mfaRestrictionEnabled}
@@ -54,7 +52,7 @@ export default function BragSettings() {
           onTotpDone={handleTotpDone}
           onToggleTotp={() => setTotpExpanded((v) => !v)}
         />
-        <BragSettingsDangerZone onDelete={() => setDeleteModal(true)} />
+        <BragSecurityDangerZone onDelete={() => setDeleteModal(true)} />
       </Layout>
       <DeleteAccountDialog
         open={deleteModal}

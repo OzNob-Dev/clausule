@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
-vi.mock('@brag/components/TotpSetupPanel', () => ({
+vi.mock('@brag/components/BragSecuritySetupPanel', () => ({
   default: () => <div id="totp-setup">TOTP setup</div>,
 }))
 
@@ -33,13 +33,16 @@ describe('BragSettings integration', () => {
     renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByRole('heading', { name: 'Security settings' })).toBeInTheDocument()
+    expect(screen.getByText('Account')).toBeInTheDocument()
     expect(screen.getByText('Manage how you sign in to Clausule.')).toBeInTheDocument()
-    expect(screen.getByText('Two-Factor Authentication')).toBeInTheDocument()
+    expect(screen.getByText('Two-factor authentication')).toBeInTheDocument()
+    expect(screen.getByText('Sign-in protection')).toBeInTheDocument()
     expect(screen.getByText('Email code')).toBeInTheDocument()
     expect(screen.getByLabelText('Email code is active')).toHaveTextContent('Active')
     expect(screen.getByText('Authenticator app')).toBeInTheDocument()
     expect(screen.getByLabelText('Authenticator app is active')).toHaveTextContent('Active')
-    expect(screen.getByText('Danger Zone')).toBeInTheDocument()
+    expect(screen.getByText('Danger zone')).toBeInTheDocument()
+    expect(screen.getByText('Irreversible actions')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Delete account' })).toBeInTheDocument()
     expect(screen.queryByText('Single sign-on')).not.toBeInTheDocument()
   })
