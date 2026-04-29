@@ -1,4 +1,5 @@
 import { QueryProvider } from '@shared/providers/QueryProvider'
+import DevAccessGate from '@shared/components/layout/DevAccessGate'
 import '@shared/styles/globals.css'
 
 export const metadata = {
@@ -16,7 +17,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <DevAccessGate>
+          <QueryProvider>{children}</QueryProvider>
+        </DevAccessGate>
       </body>
     </html>
   )

@@ -7,6 +7,10 @@ vi.mock('@shared/providers/QueryProvider', () => ({
   QueryProvider: ({ children }) => <>{children}</>,
 }))
 
+vi.mock('@shared/components/layout/DevAccessGate', () => ({
+  default: ({ children }) => <>{children}</>,
+}))
+
 describe('RootLayout', () => {
   it('renders the document shell and children', () => {
     const { container } = render(<RootLayout><main>Home</main></RootLayout>)
