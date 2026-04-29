@@ -116,6 +116,12 @@
   white-space: nowrap;
 }
 
+.bss-column {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+}
+
 .bss-method-row {
   display: flex;
   align-items: center;
@@ -403,10 +409,16 @@
   .bss-card-head,
   .bss-danger-card-head,
   .bss-method-row,
+  .bss-method-column,
   .bss-alert,
   .bss-danger-card .bss-danger-row {
     padding-left: 24px;
     padding-right: 24px;
+  }
+
+  .bss-method-column{
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
 
   .bss-method-row,

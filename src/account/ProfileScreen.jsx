@@ -32,7 +32,7 @@ export default function ProfileScreen() {
         eyebrowAriaHidden
         eyebrowClassName="bss-eyebrow"
         title="Personal details"
-        titleClassName="bss-card-head-title"
+        titleClassName="bss-heading"
         titleId="profile-page-title"
         description="Manage the identity, contact, and work details connected to your account."
         descriptionClassName="bss-subheading"
@@ -50,7 +50,7 @@ export default function ProfileScreen() {
           metaClassName="bss-card-head-meta"
           onSubmit={onSubmit}
         >
-          <section className="profile-section" aria-labelledby="section-identity">
+          <section className="bss-column" aria-labelledby="section-identity">
             <div className="section-label" id="section-identity">Identity</div>
             <div className="field-row">
               <ProfileField
