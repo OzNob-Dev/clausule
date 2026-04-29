@@ -60,6 +60,16 @@ describe('useSignInFlow', () => {
     expect(window.location.search).toBe('')
   })
 
+  it('hydrates specific callback failures from the URL', () => {
+    window.history.replaceState(null, '', '/login?sso_error=provider_mismatch')
+    const { result: mismatch } = renderHook(() => useSignInFlow())
+    expect(mismatch.current.ssoError).toBe('This account is linked to a different sign-in method. Try email instead.')
+
+    window.history.replaceState(null, '', '/login?sso_error=mfa_required')
+    const { result: mfa } = renderHook(() => useSignInFlow())
+    expect(mfa.current.ssoError).toBe('This account requires email sign-in and your authenticator app.')
+  })
+
   it('submits an email and routes signup continuations', async () => {
     sendCodeEmail.mockResolvedValue({ nextStep: 'signup' })
 

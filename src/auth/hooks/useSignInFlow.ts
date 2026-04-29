@@ -50,6 +50,8 @@ const SSO_ERROR_LABELS: Record<string, string> = {
   token_exchange_failed: 'Could not connect to the sign-in provider.',
   no_email: 'Your account did not share an email address.',
   account_error: 'Account error — please try again or use email.',
+  provider_mismatch: 'This account is linked to a different sign-in method. Try email instead.',
+  mfa_required: 'This account requires email sign-in and your authenticator app.',
   sso_denied: 'Sign-in was cancelled.',
 }
 
