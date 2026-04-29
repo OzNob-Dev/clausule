@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import BragEmptyState from '@brag/components/BragEmptyState'
 import EntryComposer from '@brag/components/EntryComposer'
+import Layout from '@brag/components/layout'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import '@brag/styles/brag-page.css'
@@ -80,85 +81,81 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
 
   if (view === 'resume') {
     return (
-      <main className="be-main be-doc-screen page-enter" aria-labelledby="brag-page-title">
-        <div className="be-inner be-doc-inner">
-          <h1 id="brag-page-title" className="sr-only">Brag document</h1>
-          {initialEntriesError ? (
-            <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
-          ) : (
-            <section aria-labelledby="resume-page-title">
-              <header className="be-doc-header">
-                <span className="be-doc-eyebrow">Your achievements</span>
-                <h1 id="resume-page-title" className="be-doc-title">Resume</h1>
-              </header>
-              <ResumeTab entries={initialEntries} />
-            </section>
-          )}
-        </div>
-      </main>
+      <Layout mainClassName="be-doc-screen page-enter" innerClassName="be-doc-inner" ariaLabelledby="brag-page-title">
+        <h1 id="brag-page-title" className="sr-only">Brag document</h1>
+        {initialEntriesError ? (
+          <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
+        ) : (
+          <section aria-labelledby="resume-page-title">
+            <header className="be-doc-header">
+              <span className="be-doc-eyebrow">Your achievements</span>
+              <h1 id="resume-page-title" className="be-doc-title">Resume</h1>
+            </header>
+            <ResumeTab entries={initialEntries} />
+          </section>
+        )}
+      </Layout>
     )
   }
 
   return (
-    <main className="be-main be-doc-screen page-enter" aria-labelledby="brag-page-title">
-      <div className="be-inner be-doc-inner">
-        <h1 id="brag-page-title" className="sr-only">Brag document</h1>
+    <Layout mainClassName="be-doc-screen page-enter" innerClassName="be-doc-inner" ariaLabelledby="brag-page-title">
+      <h1 id="brag-page-title" className="sr-only">Brag document</h1>
 
-        {initialEntriesError ? (
-          <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
-        ) : hasEntries ? (
-          <>
-            <header className="be-doc-header">
-              <span className="be-doc-eyebrow">Your achievements</span>
-              <h1 className="be-doc-title">Your entries</h1>
-            </header>
+      {initialEntriesError ? (
+        <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
+      ) : hasEntries ? (
+        <>
+          <header className="be-doc-header">
+            <span className="be-doc-eyebrow">Your achievements</span>
+            <h1 className="be-doc-title">Your entries</h1>
+          </header>
 
-            {!composerOpen ? (
-              <>
-                <BragDocToolbar
-                  activeYear={activeYear}
-                  entryCount={entryCount}
-                  years={years}
-                  onAddEntry={() => setComposerOpen(true)}
-                  onYearSelect={handleYearSelect}
-                />
+          {!composerOpen ? (
+            <>
+              <BragDocToolbar
+                activeYear={activeYear}
+                entryCount={entryCount}
+                years={years}
+                onAddEntry={() => setComposerOpen(true)}
+                onYearSelect={handleYearSelect}
+              />
 
-                <div className="be-doc-timeline">
-                  {visibleGroups.map(({ year, groups }) => (
-                    <section key={year} id={yearSectionId(year)} className="be-doc-year-group" aria-labelledby={`${yearSectionId(year)}-label`}>
-                      <div className="be-doc-year-header">
-                        <h2 className="be-doc-year-badge" id={`${yearSectionId(year)}-label`}>{year}</h2>
-                        <div className="be-doc-year-line" aria-hidden="true" />
-                      </div>
+              <div className="be-doc-timeline">
+                {visibleGroups.map(({ year, groups }) => (
+                  <section key={year} id={yearSectionId(year)} className="be-doc-year-group" aria-labelledby={`${yearSectionId(year)}-label`}>
+                    <div className="be-doc-year-header">
+                      <h2 className="be-doc-year-badge" id={`${yearSectionId(year)}-label`}>{year}</h2>
+                      <div className="be-doc-year-line" aria-hidden="true" />
+                    </div>
 
-                      {groups.map((group) => (
-                        <div key={group.key} className="be-doc-company-group">
-                          <header className="be-doc-company-header">
-                            <span className="be-doc-company-name">{group.company}</span>
-                            <span className="be-doc-company-role">{group.role}</span>
-                          </header>
+                    {groups.map((group) => (
+                      <div key={group.key} className="be-doc-company-group">
+                        <header className="be-doc-company-header">
+                          <span className="be-doc-company-name">{group.company}</span>
+                          <span className="be-doc-company-role">{group.role}</span>
+                        </header>
 
-                          <div className="be-doc-entries-list">
-                            {group.entries.map((entry) => (
-                              <BragDocEntryCard key={entry.id} entry={entry} />
-                            ))}
-                          </div>
+                        <div className="be-doc-entries-list">
+                          {group.entries.map((entry) => (
+                            <BragDocEntryCard key={entry.id} entry={entry} />
+                          ))}
                         </div>
-                      ))}
-                    </section>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
-            )}
-          </>
-        ) : composerOpen ? (
-          <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
-        ) : (
-          <BragEmptyState onAddEntry={() => setComposerOpen(true)} />
-        )}
-      </div>
-    </main>
+                      </div>
+                    ))}
+                  </section>
+                ))}
+              </div>
+            </>
+          ) : (
+            <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
+          )}
+        </>
+      ) : composerOpen ? (
+        <EntryComposer onSave={() => setComposerOpen(false)} onClose={() => setComposerOpen(false)} />
+      ) : (
+        <BragEmptyState onAddEntry={() => setComposerOpen(true)} />
+      )}
+    </Layout>
   )
 }

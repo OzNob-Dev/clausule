@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import BragSettingsDangerZone from '@brag/components/BragSettingsDangerZone'
+import Layout from '@brag/components/layout'
 import MfaSecuritySection from '@brag/components/MfaSecuritySection'
 import { DeleteAccountDialog } from '@account/components/DeleteAccountDialog'
 import { useProfileStore } from '@auth/store/useProfileStore'
@@ -39,24 +40,22 @@ export default function BragSettings() {
   }
   return (
     <>
-      <main className="be-main page-enter bss-screen" aria-labelledby="brag-settings-title">
-        <div className="be-inner bss-page">
-          <header className="bss-header">
-            <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
-            <p className="bss-subheading">Manage how you sign in to Clausule.</p>
-          </header>
-          <div className="bss-divider" />
-          <MfaSecuritySection
-            authenticatorAppConfigured={authenticatorAppConfigured}
-            hasSecuritySnapshot={hasSecuritySnapshot}
-            mfaRestrictionEnabled={mfaRestrictionEnabled}
-            totpExpanded={totpExpanded}
-            onTotpDone={handleTotpDone}
-            onToggleTotp={() => setTotpExpanded((v) => !v)}
-          />
-          <BragSettingsDangerZone onDelete={() => setDeleteModal(true)} />
-        </div>
-      </main>
+      <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-settings-title">
+        <header className="bss-header">
+          <h1 id="brag-settings-title" className="bss-heading">Security settings</h1>
+          <p className="bss-subheading">Manage how you sign in to Clausule.</p>
+        </header>
+        <div className="bss-divider" />
+        <MfaSecuritySection
+          authenticatorAppConfigured={authenticatorAppConfigured}
+          hasSecuritySnapshot={hasSecuritySnapshot}
+          mfaRestrictionEnabled={mfaRestrictionEnabled}
+          totpExpanded={totpExpanded}
+          onTotpDone={handleTotpDone}
+          onToggleTotp={() => setTotpExpanded((v) => !v)}
+        />
+        <BragSettingsDangerZone onDelete={() => setDeleteModal(true)} />
+      </Layout>
       <DeleteAccountDialog
         open={deleteModal}
         onClose={() => setDeleteModal(false)}

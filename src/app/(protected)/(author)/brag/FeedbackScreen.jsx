@@ -2,6 +2,7 @@
 
 import FeedbackComposer from '@brag/components/FeedbackComposer'
 import FeedbackHistoryPanel from '@brag/components/FeedbackHistoryPanel'
+import Layout from '@brag/components/layout'
 import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import '@brag/styles/brag-page.css'
@@ -24,32 +25,28 @@ function FeedbackHistoryScreen() {
   const loadError = feedbackQuery.error instanceof Error ? feedbackQuery.error.message : ''
 
   return (
-    <main className="be-main page-enter" aria-labelledby="feedback-history-title">
-      <div className="be-inner be-feedback-screen">
-        <FeedbackHero
-          id="feedback-history-title"
-          eyebrow="Feedback centre"
-          title="Back and forth with the Clausule team."
-          description="Track what you sent and any replies from the people shaping the product."
-        />
-        <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} />
-      </div>
-    </main>
+    <Layout mainClassName="page-enter" innerClassName="be-feedback-screen" ariaLabelledby="feedback-history-title">
+      <FeedbackHero
+        id="feedback-history-title"
+        eyebrow="Feedback centre"
+        title="Back and forth with the Clausule team."
+        description="Track what you sent and any replies from the people shaping the product."
+      />
+      <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} />
+    </Layout>
   )
 }
 
 function FeedbackComposeScreen({ userEmail }) {
   return (
-    <main className="be-main page-enter" aria-labelledby="feedback-page-title">
-      <div className="be-inner be-feedback-screen">
-        <FeedbackHero
-          id="feedback-page-title"
-          eyebrow="Product feedback"
-          title="Tell the Clausule team what would make this better."
-        />
-        <FeedbackComposer userEmail={userEmail} />
-      </div>
-    </main>
+    <Layout mainClassName="page-enter" innerClassName="be-feedback-screen" ariaLabelledby="feedback-page-title">
+      <FeedbackHero
+        id="feedback-page-title"
+        eyebrow="Product feedback"
+        title="Tell the Clausule team what would make this better."
+      />
+      <FeedbackComposer userEmail={userEmail} />
+    </Layout>
   )
 }
 
