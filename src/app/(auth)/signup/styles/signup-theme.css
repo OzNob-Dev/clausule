@@ -1,4 +1,5 @@
 /* ── Sign Up page theme + layout ─────────────────────────────── */
+@import '../../../../shared/styles/tokens.css';
 
 /* Two-panel shell for step 1 */
 .su-shell-wrap {
@@ -8,13 +9,13 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: #F5F0EA;
+  background: var(--cl-surface-warm);
   background-image: repeating-linear-gradient(
     to bottom,
     transparent,
     transparent 47px,
-    rgba(26, 21, 16, 0.028) 47px,
-    rgba(26, 21, 16, 0.028) 48px
+    var(--cl-rule-dark) 47px,
+    var(--cl-rule-dark) 48px
   );
   font-family: var(--su-font, 'DM Sans', sans-serif);
 }
@@ -23,8 +24,8 @@
   display: flex;
   width: 780px;
   max-width: 100%;
-  border: 1px solid rgba(26, 21, 16, 0.18);
-  border-radius: 16px;
+  border: 1px solid var(--cl-border-dark-4);
+  border-radius: var(--cl-radius-2xl);
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -33,7 +34,7 @@
 .su-shell-left {
   width: 268px;
   flex-shrink: 0;
-  background: #2A221A;
+  background: var(--cl-surface-ink);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -49,9 +50,9 @@
 .su-shell-bug {
   width: 28px;
   height: 28px;
-  background: #D05A34;
-  color: #FBF7F2;
-  border-radius: 8px;
+  background: var(--cl-accent);
+  color: var(--cl-surface-paper);
+  border-radius: var(--cl-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,13 +62,13 @@
 .su-shell-brand {
   font-size: 15px;
   font-weight: 800;
-  color: #FBF7F2;
+  color: var(--cl-surface-paper);
   letter-spacing: 0;
   text-decoration: none;
 }
 
 .su-shell-brand:focus-visible {
-  outline: 2px solid #D05A34;
+  outline: 2px solid var(--cl-accent);
   outline-offset: 4px;
   border-radius: 4px;
 }
@@ -81,7 +82,7 @@
 .su-shell-headline {
   font-size: 26px;
   font-weight: 900;
-  color: #FBF7F2;
+  color: var(--cl-surface-paper);
   letter-spacing: -0.8px;
   line-height: 1.15;
   margin: 0;
@@ -89,19 +90,19 @@
 
 .su-shell-subtext {
   font-size: 13px;
-  color: #B8B2AC;
+  color: var(--cl-surface-muted-11);
   line-height: 1.7;
   margin: 0;
 }
 
 .su-shell-footer {
   font-size: 11px;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
 }
 
 .su-shell-right {
   flex: 1;
-  background: #FDFCFA;
+  background: var(--cl-surface-paper-2);
   padding: 40px 36px;
   display: flex;
   flex-direction: column;
@@ -117,19 +118,19 @@
   min-height: 0;
   width: auto;
   flex-direction: column;
-  background: #FDFCFA;
+  background: var(--cl-surface-paper-2);
 }
 
 .su-shell-signin-note {
   font-size: 11px;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   text-align: center;
   margin-top: 20px;
   line-height: 1.6;
 }
 
 .su-shell-signin-note a {
-  color: #3D3228;
+  color: var(--cl-ink-2);
   font-weight: 600;
   text-decoration: none;
 }
@@ -141,21 +142,21 @@
 }
 
 .su-page {
-  --su-canvas:    #F5F0EA;
-  --su-card:      #FDFCFA;
-  --su-panel:     #EDE8E0;
-  --su-tx1:       #1A1510;
-  --su-tx2:       #3D3228;
-  --su-tx3:       #5B4E42;
-  --su-tx4:       #786B5F;
-  --su-acc:       #D05A34;
-  --su-acc-dk:    #A75743;
-  --su-acc-bg:    rgba(208, 90, 52, 0.1);
-  --su-border:    rgba(26, 21, 16, 0.1);
-  --su-border-em: rgba(26, 21, 16, 0.18);
-  --su-r:         10px;
-  --su-r2:        16px;
-  --su-font:      'DM Sans', sans-serif;
+  --su-canvas:    var(--cl-surface-warm);
+  --su-card:      var(--cl-surface-paper-2);
+  --su-panel:     var(--cl-surface-muted-17);
+  --su-tx1:       var(--cl-surface-ink-3);
+  --su-tx2:       var(--cl-ink-2);
+  --su-tx3:       var(--cl-surface-muted-4);
+  --su-tx4:       var(--cl-surface-muted-8);
+  --su-acc:       var(--cl-accent);
+  --su-acc-dk:    var(--cl-accent-muted);
+  --su-acc-bg:    var(--cl-accent-soft-3);
+  --su-border:    var(--cl-border-dark);
+  --su-border-em: var(--cl-border-dark-4);
+  --su-r:         var(--cl-radius-md);
+  --su-r2:        var(--cl-radius-2xl);
+  --su-font:      var(--cl-font-sans);
 
   font-family: var(--su-font);
   background: var(--su-canvas);
@@ -218,7 +219,7 @@
 .su-step-circle--active {
   background: var(--su-acc);
   border-color: var(--su-acc);
-  color: #FAF7F3;
+  color: var(--cl-surface-paper);
 }
 
 .su-step-label {
@@ -278,15 +279,15 @@
 .su-progress--sidebar .su-step-label {
   font-size: 11.5px;
   font-weight: 600;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
 }
 
 .su-progress--sidebar .su-step-label--active {
-  color: #B8B2AC;
+  color: var(--cl-surface-muted-11);
   font-weight: 600;
 }
 
-.su-progress--sidebar .su-step-label--done { color: #786B5F; }
+.su-progress--sidebar .su-step-label--done { color: var(--cl-surface-muted-8); }
 
 @media (max-width: 640px) {
   .su-progress--sidebar { display: none; }

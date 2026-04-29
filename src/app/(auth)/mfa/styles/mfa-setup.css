@@ -5,17 +5,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #D4C5B2;
+  background: var(--cl-surface-muted-13);
   padding: 1.5rem;
 }
 
 .mfa-card {
   width: 480px;
   max-width: 100%;
-  background: #FAF7F3;
+  background: var(--cl-surface-paper);
   border-radius: 20px;
   padding: 36px 44px 48px;
-  box-shadow: 0 12px 48px rgba(60, 45, 35, 0.13);
+  box-shadow: var(--cl-shadow-strong);
 }
 
 /* ── Progress segments ───────────────────────────────────────────── */
@@ -29,7 +29,7 @@
   height: 3px;
   flex: 1;
   border-radius: 2px;
-  background: rgba(60, 45, 35, 0.12);
+  background: var(--cl-border);
   transition: background 0.35s, opacity 0.35s;
 }
 
@@ -57,7 +57,7 @@
   width: 60px;
   height: 60px;
   border-radius: 18px;
-  background: rgba(208, 90, 52, 0.09);
+  background: var(--cl-accent-soft-2);
   color: var(--acc);
   display: flex;
   align-items: center;
@@ -76,7 +76,7 @@
   font-size: 23px;
   font-weight: 900;
   letter-spacing: -0.5px;
-  color: #2A221A;
+  color: var(--cl-surface-ink);
   margin: 0 0 10px;
   line-height: 1.2;
 }
@@ -84,13 +84,13 @@
 .mfa-sub {
   font-size: 14px;
   line-height: 1.7;
-  color: #5C5048;
+  color: var(--cl-surface-muted-3);
   margin: 0 0 28px;
   max-width: 320px;
 }
 
 .mfa-sub strong {
-  color: #2A221A;
+  color: var(--cl-surface-ink);
   font-weight: 700;
 }
 
@@ -102,8 +102,8 @@
   font-size: 11px;
   font-weight: 500;
   color: var(--acc);
-  background: rgba(208, 90, 52, 0.09);
-  border: 1px solid rgba(208, 90, 52, 0.18);
+  background: var(--cl-accent-soft-2);
+  border: 1px solid var(--cl-accent-soft-5);
   border-radius: 20px;
   padding: 5px 14px;
   margin-bottom: 24px;
@@ -122,14 +122,14 @@
 .mfa-otp-box {
   width: 50px;
   height: 58px;
-  border: 2px solid rgba(60, 45, 35, 0.16);
+  border: 2px solid var(--cl-border-5);
   border-radius: 12px;
   text-align: center;
   font-size: 24px;
   font-weight: 800;
   font-family: var(--font);
-  color: #2A221A;
-  background: #FAF7F3;
+  color: var(--cl-surface-ink);
+  background: var(--cl-surface-paper);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
   caret-color: var(--acc);
@@ -141,19 +141,19 @@
 
 .mfa-otp-box:focus {
   border-color: var(--acc);
-  box-shadow: 0 0 0 3px rgba(208, 90, 52, 0.12);
+  box-shadow: 0 0 0 3px var(--cl-accent-soft-13);
 }
 
 /* Error state — shake all boxes */
 .mfa-otp-row--error .mfa-otp-box {
-  border-color: #D94040;
+  border-color: var(--cl-danger-3);
   animation: mfa-shake 0.4s ease;
 }
 
 /* Valid state */
 .mfa-otp-row--valid .mfa-otp-box {
-  border-color: #5DCAA5;
-  background: rgba(93, 202, 165, 0.06);
+  border-color: var(--cl-success-3);
+  background: var(--cl-success-soft-2);
 }
 
 @keyframes mfa-shake {
@@ -168,14 +168,14 @@
 .mfa-error {
   font-size: 12px;
   font-weight: 600;
-  color: #D94040;
+  color: var(--cl-danger-3);
   margin: 0 0 10px;
 }
 
 /* ── Resend ──────────────────────────────────────────────────────── */
 .mfa-resend {
   font-size: 12px;
-  color: #8A7E76;
+  color: var(--cl-surface-muted-6);
   margin-top: 4px;
 }
 
@@ -202,7 +202,7 @@
   width: 100%;
   padding: 15px 20px;
   background: var(--acc);
-  color: #FAF7F3;
+  color: var(--cl-surface-paper);
   border: none;
   border-radius: 12px;
   font-size: 14px;
@@ -239,7 +239,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid rgba(250, 247, 243, 0.3);
-  border-top-color: #FAF7F3;
+  border-top-color: var(--cl-surface-paper);
   border-radius: 50%;
   animation: mfa-spin 0.65s linear infinite;
   flex-shrink: 0;
@@ -253,7 +253,7 @@
 .mfa-skip-btn {
   font-size: 12px;
   font-weight: 600;
-  color: #8A7E76;
+  color: var(--cl-surface-muted-6);
   background: none;
   border: none;
   cursor: pointer;

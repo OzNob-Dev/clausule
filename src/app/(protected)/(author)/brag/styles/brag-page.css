@@ -2,23 +2,23 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@400;500;600;700&display=swap');
 
 :root {
-  --be-motion-clay: #C94F2A;
-  --be-motion-gold: #F8D37B;
-  --be-motion-green: #2F6F5E;
-  --be-motion-blue: #1F5E8C;
+  --be-motion-clay: var(--cl-accent-strong);
+  --be-motion-gold: var(--cl-gold);
+  --be-motion-green: var(--cl-green-2);
+  --be-motion-blue: var(--cl-blue);
 }
 
 .be-feedback-screen {
   width: 100%;
   display: grid;
   gap: 24px;
-  --be-feedback-cream: #FAF8F5;
-  --be-feedback-taupe: #E8E3DB;
-  --be-feedback-ink: #3D3229;
-  --be-feedback-clay: #C46B4A;
-  --be-feedback-clay-deep: #A85A3D;
-  --be-feedback-sans: 'DM Sans', var(--font-sans), system-ui, sans-serif;
-  --be-feedback-serif: 'Fraunces', Georgia, serif;
+  --be-feedback-cream: var(--cl-surface-muted-19);
+  --be-feedback-taupe: var(--cl-muted-12);
+  --be-feedback-ink: var(--cl-ink-3);
+  --be-feedback-clay: var(--cl-accent-deep);
+  --be-feedback-clay-deep: var(--cl-accent-deeper);
+  --be-feedback-sans: var(--cl-font-sans);
+  --be-feedback-serif: var(--cl-font-editorial);
 }
 
 .be-feedback-hero {

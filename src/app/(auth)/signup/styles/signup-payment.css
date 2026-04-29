@@ -103,10 +103,10 @@
 .su-api-error {
   font-size: 13px;
   font-weight: 500;
-  color: #E05050;
-  background: rgba(224, 80, 80, 0.08);
-  border: 1px solid rgba(224, 80, 80, 0.2);
-  border-radius: 8px;
+  color: var(--cl-danger-3);
+  background: var(--cl-danger-soft-4);
+  border: 1px solid var(--cl-danger-soft-5);
+  border-radius: var(--cl-radius-md);
   padding: 10px 14px;
   margin-bottom: 14px;
   line-height: 1.5;

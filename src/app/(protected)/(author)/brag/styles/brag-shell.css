@@ -1,16 +1,16 @@
 /* ── Brag shell + sidebar ─────────────────────────────────────── */
 .be-page {
-  --be-sidebar-bg: #2A211A;
+  --be-sidebar-bg: var(--cl-surface-ink-5);
   --be-sidebar-bg-soft: rgba(255, 255, 255, 0.05);
-  --be-sidebar-bg-hover: rgba(196, 107, 74, 0.14);
-  --be-sidebar-border: rgba(255, 255, 255, 0.08);
-  --be-sidebar-border-strong: rgba(255, 255, 255, 0.14);
+  --be-sidebar-bg-hover: var(--cl-accent-soft-15);
+  --be-sidebar-border: var(--cl-border-dark-4);
+  --be-sidebar-border-strong: var(--cl-border-dark-5);
   --be-sidebar-text: rgba(255, 255, 255, 0.74);
   --be-sidebar-text-strong: rgba(255, 255, 255, 0.96);
   --be-sidebar-text-muted: rgba(255, 255, 255, 0.5);
-  --be-sidebar-accent: #C46B4A;
-  --be-sidebar-accent-soft: rgba(196, 107, 74, 0.18);
-  --be-sidebar-focus: #F8D37B;
+  --be-sidebar-accent: var(--cl-accent-deep);
+  --be-sidebar-accent-soft: var(--cl-accent-soft-18);
+  --be-sidebar-focus: var(--cl-gold);
   display: flex;
   width: 100%;
   min-height: 100vh;
@@ -69,14 +69,14 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--cl-font-editorial);
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.03em;
-  color: #35261F;
+  color: var(--cl-ink-6);
   background: linear-gradient(135deg, #E8D5C4 0%, #D4B5A0 100%);
-  border: 1px solid rgba(61, 50, 41, 0.08);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--cl-border-2);
+  box-shadow: var(--cl-shadow-ink);
   position: relative;
   overflow: hidden;
 }

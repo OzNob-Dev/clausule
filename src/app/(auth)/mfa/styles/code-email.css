@@ -1,12 +1,12 @@
 /* ── Mock code email ─────────────────────────────────────────────── */
 .ce-shell {
   width: 100%;
-  background: #fff;
-  border: 1px solid rgba(60, 45, 35, 0.13);
-  border-radius: 12px;
+  background: var(--cl-surface-white);
+  border: 1px solid var(--cl-border-3);
+  border-radius: var(--cl-radius-lg);
   overflow: hidden;
   margin-bottom: 24px;
-  box-shadow: 0 2px 12px rgba(60, 45, 35, 0.07);
+  box-shadow: var(--cl-shadow-paper);
   text-align: left;
 }
 
@@ -16,8 +16,8 @@
   align-items: center;
   gap: 5px;
   padding: 8px 12px;
-  background: #f5f5f5;
-  border-bottom: 1px solid rgba(0,0,0,0.07);
+  background: var(--cl-surface-paper-3);
+  border-bottom: 1px solid var(--cl-grid-2);
 }
 
 .ce-chrome-dot {
@@ -35,7 +35,7 @@
   margin-left: 6px;
   font-size: 10px;
   font-weight: 600;
-  color: #888;
+  color: var(--cl-muted-10);
   letter-spacing: 0.3px;
 }
 
@@ -45,7 +45,7 @@
   align-items: center;
   gap: 10px;
   padding: 12px 16px 8px;
-  border-bottom: 1px solid rgba(60,45,35,0.07);
+  border-bottom: 1px solid var(--cl-rule-3);
 }
 
 .ce-avatar {
@@ -53,7 +53,7 @@
   height: 30px;
   border-radius: 50%;
   background: rgba(208, 90, 52, 0.85);
-  color: #fff;
+  color: var(--cl-surface-white);
   font-size: 13px;
   font-weight: 700;
   display: flex;
@@ -67,7 +67,7 @@
 .ce-from {
   font-size: 11.5px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--cl-ink-7);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -75,19 +75,19 @@
 
 .ce-from-addr {
   font-weight: 400;
-  color: #888;
+  color: var(--cl-muted-10);
   font-size: 10.5px;
 }
 
 .ce-to {
   font-size: 10.5px;
-  color: #888;
+  color: var(--cl-muted-10);
   margin-top: 1px;
 }
 
 .ce-time {
   font-size: 10px;
-  color: #aaa;
+  color: var(--cl-muted-11);
   flex-shrink: 0;
 }
 
@@ -96,7 +96,7 @@
   padding: 8px 16px 4px;
   font-size: 12px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--cl-ink-7);
 }
 
 /* Body */
@@ -106,13 +106,13 @@
 
 .ce-greeting {
   font-size: 12px;
-  color: #333;
+  color: var(--cl-ink-7);
   margin: 0 0 4px;
 }
 
 .ce-copy {
   font-size: 11.5px;
-  color: #555;
+  color: var(--cl-surface-muted-4);
   margin: 0 0 12px;
   line-height: 1.5;
 }
@@ -129,9 +129,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FAF7F3;
-  border: 1.5px solid rgba(208, 90, 52, 0.3);
-  border-radius: 6px;
+  background: var(--cl-surface-paper);
+  border: 1.5px solid var(--cl-accent-soft-8);
+  border-radius: var(--cl-radius-sm);
   font-size: 16px;
   font-weight: 800;
   color: #C0532A;
@@ -141,8 +141,8 @@
 
 .ce-digit--hidden {
   color: transparent;
-  background: rgba(208, 90, 52, 0.08);
-  border-color: rgba(208, 90, 52, 0.15);
+  background: var(--cl-accent-soft);
+  border-color: var(--cl-accent-soft-15);
   position: relative;
   user-select: none;
 }
@@ -157,7 +157,7 @@
 
 .ce-disclaimer {
   font-size: 10.5px;
-  color: #aaa;
+  color: var(--cl-muted-11);
   margin: 0;
   line-height: 1.5;
 }

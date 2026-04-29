@@ -8,7 +8,7 @@
 .su-panel-summary-label {
   font-size: 9px;
   font-weight: 800;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
@@ -16,14 +16,14 @@
 .su-panel-summary-price {
   font-size: 26px;
   font-weight: 800;
-  color: #FBF7F2;
+  color: var(--cl-surface-paper);
   line-height: 1;
 }
 
 .su-panel-summary-period {
   font-size: 13px;
   font-weight: 500;
-  color: #B8B2AC;
+  color: var(--cl-surface-muted-11);
 }
 
 .su-panel-summary-list {
@@ -40,7 +40,7 @@
   align-items: flex-start;
   gap: 10px;
   font-size: 12px;
-  color: #B8B2AC;
+  color: var(--cl-surface-muted-11);
   line-height: 1.5;
 }
 
@@ -48,7 +48,7 @@
   width: 5px;
   height: 5px;
   border-radius: 1px;
-  background: #D05A34;
+  background: var(--cl-accent);
   flex-shrink: 0;
   margin-top: 5px;
 }
@@ -127,5 +127,5 @@
   line-height: 1.4;
 }
 
-.su-panel-tx1 { color: #FBF7F2; }
-.su-panel-tx2 { color: #B8B2AC; }
+.su-panel-tx1 { color: var(--cl-surface-paper); }
+.su-panel-tx2 { color: var(--cl-surface-muted-11); }

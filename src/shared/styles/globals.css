@@ -1,29 +1,6 @@
 @import "tailwindcss";
+@import "./tokens.css";
 @source "../../";
-
-:root {
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-serif: 'DM Serif Display', Georgia, serif;
-  --canvas: #F5F0EA;
-  --nav: #2A221A;
-  --card: #FAF7F3;
-  --tp: #2A221A;
-  --ts: #4D4035;
-  --tm: #54483F;
-  --tc: #584B42;
-  --rule:    rgba(60, 45, 35, 0.10);
-  --rule-em: rgba(60, 45, 35, 0.16);
-  --border:  rgba(60, 45, 35, 0.10);
-  --acc: #7F351F;
-  --acc-text: #F5F0EA;
-  --acc-tint: rgba(208, 90, 52, 0.14);
-  --bl: #7F351F;
-  --ring-outer: #C94F2A;
-  --ring-mid: #B9824F;
-  --ring-inner: #225F3D;
-  --r: 8px;
-  --r2: 8px;
-}
 
 body {
   margin: 0;
@@ -101,35 +78,35 @@ body {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: #F5F0EA;
+  background: var(--cl-surface-warm);
 
   /* Surface tokens */
-  --canvas:  #F5F0EA;
-  --card:    #FAF7F3;
-  --bg-doc:  #F5F0EA;
-  --bg-comp: #FAF7F3;
+  --canvas:  var(--cl-surface-warm);
+  --card:    var(--cl-surface-paper);
+  --bg-doc:  var(--cl-surface-warm);
+  --bg-comp: var(--cl-surface-paper);
 
   /* Text ramp (AAA ≥7:1 on #F5F0EA / #FAF7F3). */
-  --tp:  #2A221A;
-  --ts:  #4D4035;
-  --tm:  #54483F;
-  --tc:  #584B42;
-  --tx-1: #2A221A;
-  --tx-2: #4D4035;
-  --tx-3: #54483F;
-  --tx-4: #584B42;
+  --tp:  var(--cl-surface-ink);
+  --ts:  var(--cl-surface-muted);
+  --tm:  var(--cl-surface-muted-2);
+  --tc:  var(--cl-surface-muted-3);
+  --tx-1: var(--cl-surface-ink);
+  --tx-2: var(--cl-surface-muted);
+  --tx-3: var(--cl-surface-muted-2);
+  --tx-4: var(--cl-surface-muted-3);
 
   /* Borders */
-  --rule:    rgba(60, 45, 35, 0.10);
-  --rule-em: rgba(60, 45, 35, 0.16);
-  --border:  rgba(60, 45, 35, 0.10);
-  --border2: rgba(60, 45, 35, 0.16);
-  --cb:      rgba(60, 45, 35, 0.10);
+  --rule:    var(--cl-rule);
+  --rule-em: var(--cl-rule-6);
+  --border:  var(--cl-border);
+  --border2: var(--cl-border-5);
+  --cb:      var(--cl-border);
 
   /* Accent tints — readable on the light surface */
   --acc-tint:   rgba(208, 90, 52, 0.10);
-  --acc-bg:     rgba(208, 90, 52, 0.08);
-  --acc-border: rgba(208, 90, 52, 0.22);
+  --acc-bg:     var(--cl-accent-soft);
+  --acc-border: var(--cl-accent-soft-6);
   --acc-text:   var(--acc);   /* solid accent replaces light-on-dark variant */
 
   /* Semantic tints stay the same, only the text aliases shift */

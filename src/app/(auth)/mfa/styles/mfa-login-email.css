@@ -6,8 +6,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F5F0EA;
-  color: #1A1510;
+  background: var(--cl-surface-warm);
+  color: var(--cl-surface-ink-3);
   padding: 24px;
   overflow: hidden;
 }
@@ -17,7 +17,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: repeating-linear-gradient(to bottom, transparent, transparent 47px, rgba(26, 21, 16, 0.028) 47px, rgba(26, 21, 16, 0.028) 48px);
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 47px, var(--cl-rule-dark) 47px, var(--cl-rule-dark) 48px);
 }
 
 .mfa-email-shell {
@@ -27,9 +27,9 @@
   width: 780px;
   max-width: 100%;
   overflow: hidden;
-  background: #FDFCFA;
-  border: 1px solid rgba(26, 21, 16, 0.18);
-  border-radius: 8px;
+  background: var(--cl-surface-paper-2);
+  border: 1px solid var(--cl-border-dark-4);
+  border-radius: var(--cl-radius-md);
   animation: mfa-in 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
@@ -40,7 +40,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 36px;
-  background: #2A221A;
+  background: var(--cl-surface-ink);
   padding: 32px 28px;
 }
 
@@ -57,9 +57,9 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #FBF7F2;
-  background: #C94F2A;
-  border-radius: 8px;
+  color: var(--cl-surface-paper);
+  background: var(--cl-accent-strong);
+  border-radius: var(--cl-radius-md);
 }
 
 .mfa-email-logo-bug svg {
@@ -68,7 +68,7 @@
 }
 
 .mfa-email-logo-name {
-  color: #FBF7F2;
+  color: var(--cl-surface-paper);
   font-size: 15px;
   font-weight: 900;
   letter-spacing: 0;
@@ -81,7 +81,7 @@
 }
 
 .mfa-email-left-body h1 {
-  color: #FBF7F2;
+  color: var(--cl-surface-paper);
   font-family: var(--font-serif);
   font-size: 24px;
   line-height: 1.2;
@@ -90,11 +90,11 @@
 }
 
 .mfa-email-left-body em {
-  color: #C94F2A;
+  color: var(--cl-accent-strong);
 }
 
 .mfa-email-left-body p {
-  color: #B8B2AC;
+  color: var(--cl-surface-muted-11);
   font-size: 12.5px;
   line-height: 1.7;
   margin: 0;
@@ -111,7 +111,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   font-size: 11.5px;
   font-weight: 600;
 }
@@ -123,7 +123,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #B8B2AC;
+  color: var(--cl-surface-muted-11);
   background: rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   font-size: 10px;
@@ -131,17 +131,17 @@
 }
 
 .mfa-email-step-num--done {
-  color: #C94F2A;
+  color: var(--cl-accent-strong);
   background: rgba(201, 79, 42, 0.25);
 }
 
 .mfa-email-step-num--active {
   color: #FFFFFF;
-  background: #C94F2A;
+  background: var(--cl-accent-strong);
 }
 
 .mfa-email-step-current {
-  color: #B8B2AC;
+  color: var(--cl-surface-muted-11);
 }
 
 .mfa-email-right {
@@ -159,7 +159,7 @@
   align-items: center;
   gap: 5px;
   align-self: flex-start;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   background: transparent;
   border: 0;
   border-radius: 4px;
@@ -173,13 +173,13 @@
 
 .mfa-email-back:hover,
 .mfa-email-back:focus-visible {
-  color: #1A1510;
+  color: var(--cl-surface-ink-3);
 }
 
 .mfa-email-back:focus-visible,
 .mfa-email-resend:focus-visible,
 .mfa-email-verify:focus-visible {
-  outline: 2px solid #C94F2A;
+  outline: 2px solid var(--cl-accent-strong);
   outline-offset: 3px;
 }
 
@@ -189,7 +189,7 @@
 }
 
 .mfa-email-title {
-  color: #1A1510;
+  color: var(--cl-surface-ink-3);
   font-size: 22px;
   font-weight: 900;
   letter-spacing: 0;
@@ -197,21 +197,21 @@
 }
 
 .mfa-email-sub {
-  color: #5B4E42;
+  color: var(--cl-surface-muted-4);
   font-size: 13px;
   line-height: 1.65;
   margin: 0 0 18px;
 }
 
 .mfa-email-sub strong {
-  color: #1A1510;
+  color: var(--cl-surface-ink-3);
 }
 
 .mfa-email-preview {
   overflow: hidden;
-  background: #F5F0EA;
-  border: 1px solid rgba(26, 21, 16, 0.18);
-  border-radius: 8px;
+  background: var(--cl-surface-warm);
+  border: 1px solid var(--cl-border-dark-4);
+  border-radius: var(--cl-radius-md);
   margin-bottom: 22px;
 }
 
@@ -219,8 +219,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #EDE8E0;
-  border-bottom: 1px solid rgba(26, 21, 16, 0.1);
+  background: var(--cl-surface-muted-17);
+  border-bottom: 1px solid var(--cl-border-dark);
   padding: 9px 12px;
 }
 
@@ -231,9 +231,9 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #F5F0EA;
-  background: #1A1510;
-  border-radius: 5px;
+  color: var(--cl-surface-warm);
+  background: var(--cl-surface-ink-3);
+  border-radius: var(--cl-radius-sm);
 }
 
 .mfa-email-preview-icon svg {
@@ -247,14 +247,14 @@
 }
 
 .mfa-email-preview-from {
-  color: #1A1510;
+  color: var(--cl-surface-ink-3);
   font-size: 10.5px;
   font-weight: 700;
 }
 
 .mfa-email-preview-subject {
   overflow: hidden;
-  color: #786B5F;
+  color: var(--cl-surface-muted-8);
   font-size: 10px;
   font-weight: 500;
   text-overflow: ellipsis;
@@ -478,4 +478,3 @@
     width: calc(6 * 36px + 5 * 6px);
   }
 }
-

@@ -51,6 +51,7 @@ description: Clausule frontend guidance for React, Next.js screens, components, 
 - Do not call `startTransition` inside `setTimeout`. Wrap the state setter synchronously.
 - Use CSS custom properties for dynamic per-item colors instead of inline style objects.
 - For fixed animation delays in fixed-length lists, prefer Tailwind arbitrary-value classes over per-item inline style objects.
+- Shared CSS tokens live in `src/shared/styles/tokens.css`; add new palette, radius, or font constants there before spreading literals across route styles.
 
 ## Performance
 

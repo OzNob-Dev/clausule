@@ -4,16 +4,16 @@
 .coming-soon-wrapper {
   /* Scope variables locally so they don't affect other pages */
   --canvas: #F5F2EC;
-  --nav: #2A221A;
+  --nav: var(--cl-surface-ink);
   --tp: #1A1F2B;
   --ts: #4A4A47;
   --tm: #9A9994;
   --tc: #C4C0BA;
-  --acc: #D05A34;  /* terracotta accent */
-  --terra: #D05A34;
+  --acc: var(--cl-accent);  /* terracotta accent */
+  --terra: var(--cl-accent);
   --rule: rgba(0,0,0,0.09);
-  --serif: 'Fraunces', serif;
-  --sans: 'DM Sans', sans-serif;
+  --serif: var(--cl-font-editorial);
+  --sans: var(--cl-font-sans);
 
   /* Acts as the new 'body' */
   font-family: var(--sans);
@@ -34,7 +34,7 @@
   background-image: repeating-linear-gradient(
     to bottom,
     transparent, transparent 47px,
-    rgba(0,0,0,0.038) 47px, rgba(0,0,0,0.038) 48px
+    var(--cl-grid-2) 47px, var(--cl-grid-2) 48px
   );
   pointer-events: none;
   z-index: 0;

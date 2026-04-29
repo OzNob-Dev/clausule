@@ -2,10 +2,10 @@
 
 .li-page {
   min-height: 100%;
-  color: #3d3229;
+  color: var(--cl-ink-3);
   background:
-    radial-gradient(circle at top left, rgba(196, 107, 74, 0.1), transparent 28%),
-    linear-gradient(165deg, #faf8f5 0%, #f1ede6 100%);
+    radial-gradient(circle at top left, var(--cl-accent-soft-13), transparent 28%),
+    linear-gradient(165deg, var(--cl-surface-muted-19) 0%, var(--cl-surface-muted-20) 100%);
 }
 
 .li-shell.be-inner {
@@ -28,8 +28,8 @@
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 700;
-  color: #c46b4a;
-  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  color: var(--cl-accent-deep);
+  font-family: var(--cl-font-sans);
 }
 
 .li-header h1,
@@ -37,7 +37,7 @@
 .li-connect-card h3,
 .li-info h3,
 .li-review__head h3 {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--cl-font-serif);
   letter-spacing: -0.02em;
 }
 
@@ -56,22 +56,22 @@
   font-size: 1rem;
   line-height: 1.65;
   color: rgba(61, 50, 41, 0.76);
-  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-family: var(--cl-font-sans);
 }
 
 .li-divider {
   height: 2px;
   margin-bottom: 32px;
-  background: linear-gradient(90deg, #c46b4a 0%, rgba(196, 107, 74, 0) 100%);
+  background: linear-gradient(90deg, var(--cl-accent-deep) 0%, rgba(196, 107, 74, 0) 100%);
 }
 
 .li-card {
-  border: 1px solid rgba(61, 50, 41, 0.08);
+  border: 1px solid var(--cl-border-2);
   border-radius: 20px;
   padding: 40px;
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(20px);
-  box-shadow: 0 2px 8px rgba(61, 50, 41, 0.08), 0 16px 48px rgba(61, 50, 41, 0.12);
+  box-shadow: var(--cl-shadow-soft), var(--cl-shadow-med);
 }
 
 .li-steps {
@@ -84,12 +84,12 @@
 .li-step {
   height: 8px;
   border-radius: 999px;
-  background: #e8e2d8;
+  background: var(--cl-muted-12);
 }
 
 .li-step--active {
-  background: linear-gradient(90deg, #c46b4a 0%, #a85a3d 100%);
-  box-shadow: 0 0 0 1px rgba(196, 107, 74, 0.14);
+  background: linear-gradient(90deg, var(--cl-accent-deep) 0%, var(--cl-accent-deeper) 100%);
+  box-shadow: 0 0 0 1px var(--cl-accent-soft-15);
 }
 
 .li-stage {
@@ -119,14 +119,14 @@
   align-items: center;
   padding: 24px;
   border-radius: 16px;
-  border: 2px solid #e8e3db;
-  background: #fff;
+  border: 2px solid var(--cl-muted-12);
+  background: var(--cl-surface-white);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .li-connect-card:hover {
-  border-color: #0a66c2;
-  box-shadow: 0 4px 16px rgba(61, 50, 41, 0.12);
+  border-color: var(--cl-linkedin);
+  box-shadow: var(--cl-shadow-med);
   transform: translateY(-1px);
 }
 
@@ -142,15 +142,15 @@
 .li-success__mark {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
-  box-shadow: 0 8px 24px rgba(10, 102, 194, 0.26);
+  background: linear-gradient(135deg, var(--cl-linkedin) 0%, var(--cl-linkedin-2) 100%);
+  box-shadow: var(--cl-shadow-linkedin-2);
 }
 
 .li-mark {
   width: 40px;
   height: 40px;
-  background: #fff;
-  color: #0a66c2;
+  background: var(--cl-surface-white);
+  color: var(--cl-linkedin);
   font-size: 1rem;
   font-weight: 800;
   text-transform: lowercase;
@@ -170,7 +170,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease, background 160ms ease;
-  font-family: 'DM Sans', var(--font-sans), system-ui, sans-serif;
+  font-family: var(--cl-font-sans);
 }
 
 .li-btn:disabled {
@@ -183,31 +183,31 @@
 }
 
 .li-btn--primary {
-  color: #fff;
-  background: linear-gradient(135deg, #c46b4a 0%, #a85a3d 100%);
-  box-shadow: 0 8px 24px rgba(196, 107, 74, 0.28);
+  color: var(--cl-surface-white);
+  background: linear-gradient(135deg, var(--cl-accent-deep) 0%, var(--cl-accent-deeper) 100%);
+  box-shadow: 0 8px 24px var(--cl-accent-soft-21);
 }
 
 .li-btn--secondary {
-  color: #3b2f28;
+  color: var(--cl-brown);
   background: #f4efe7;
-  border: 2px solid #e8e3db;
+  border: 2px solid var(--cl-muted-12);
 }
 
 .li-btn--linkedin {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #fff;
-  background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
-  box-shadow: 0 8px 24px rgba(10, 102, 194, 0.24);
+  color: var(--cl-surface-white);
+  background: linear-gradient(135deg, var(--cl-linkedin) 0%, var(--cl-linkedin-2) 100%);
+  box-shadow: var(--cl-shadow-linkedin);
 }
 
 .li-info {
   padding: 22px 24px;
   border-radius: 12px;
-  background: rgba(196, 107, 74, 0.04);
-  border: 1.5px solid rgba(196, 107, 74, 0.15);
+  background: var(--cl-accent-soft-10);
+  border: 1.5px solid var(--cl-accent-soft-16);
 }
 
 .li-info h3 {
@@ -225,7 +225,7 @@
 .li-review {
   margin-top: 8px;
   padding-top: 24px;
-  border-top: 1.5px solid #e8e3db;
+  border-top: 1.5px solid var(--cl-muted-12);
 }
 
 .li-review__head {
@@ -246,7 +246,7 @@
   border-radius: 999px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0a66c2;
+  color: var(--cl-linkedin);
   background: rgba(10, 102, 194, 0.08);
 }
 

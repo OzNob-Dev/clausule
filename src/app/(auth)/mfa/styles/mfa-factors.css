@@ -12,17 +12,17 @@
 }
 
 .mfa-factor-card {
-  border: 1.5px solid rgba(60, 45, 35, 0.13);
+  border: 1.5px solid var(--cl-border-3);
   border-radius: 14px;
   padding: 18px;
   margin-bottom: 10px;
-  background: #FAF7F3;
+  background: var(--cl-surface-paper);
   transition: border-color 0.25s, background 0.25s, opacity 0.35s, filter 0.35s;
 }
 
 .mfa-factor-card--done {
-  border-color: rgba(93, 202, 165, 0.4);
-  background: rgba(93, 202, 165, 0.05);
+  border-color: var(--cl-success-soft-4);
+  background: var(--cl-success-soft);
 }
 
 .mfa-factor-card--locked {
@@ -43,7 +43,7 @@
   height: 26px;
   border-radius: 50%;
   background: var(--acc);
-  color: #FAF7F3;
+  color: var(--cl-surface-paper);
   font-size: 12px;
   font-weight: 800;
   display: flex;
@@ -55,44 +55,44 @@
 
 .mfa-factor-badge svg { width: 12px; height: 12px; }
 
-.mfa-factor-badge--done   { background: #3A9E7E; }
-.mfa-factor-badge--locked { background: rgba(60, 45, 35, 0.2); color: #8A7E76; }
+.mfa-factor-badge--done   { background: var(--cl-success-2); }
+.mfa-factor-badge--locked { background: rgba(60, 45, 35, 0.2); color: var(--cl-surface-muted-6); }
 
 .mfa-factor-title {
   font-size: 13px;
   font-weight: 700;
-  color: #2A221A;
+  color: var(--cl-surface-ink);
   line-height: 1.2;
 }
 
 .mfa-factor-sub {
   font-size: 11px;
-  color: #8A7E76;
+  color: var(--cl-surface-muted-6);
   margin-top: 2px;
 }
 
 .mfa-factor-body {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid rgba(60, 45, 35, 0.08);
+  border-top: 1px solid var(--cl-border-dark-4);
 }
 
 .mfa-factor-instruction {
   font-size: 13px;
   line-height: 1.65;
-  color: #5C5048;
+  color: var(--cl-surface-muted-3);
   margin: 0 0 14px;
 }
 
-.mfa-factor-instruction strong { color: #2A221A; font-weight: 700; }
+.mfa-factor-instruction strong { color: var(--cl-surface-ink); font-weight: 700; }
 
 /* ── QR code ─────────────────────────────────────────────────────── */
 .mfa-qr-wrap {
   display: flex;
   justify-content: center;
   padding: 12px;
-  background: #FAF7F3;
-  border: 1.5px solid rgba(60, 45, 35, 0.12);
+  background: var(--cl-surface-paper);
+  border: 1.5px solid var(--cl-border-2);
   border-radius: 12px;
   margin-bottom: 14px;
 }
@@ -104,19 +104,19 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(60, 45, 35, 0.05);
-  border: 1px solid rgba(60, 45, 35, 0.10);
-  border-radius: 8px;
+  background: var(--cl-rule-2);
+  border: 1px solid var(--cl-border);
+  border-radius: var(--cl-radius-md);
   padding: 10px 12px;
   margin-bottom: 14px;
 }
 
 .mfa-secret {
   flex: 1;
-  font-family: 'Courier New', monospace;
+  font-family: var(--cl-font-code);
   font-size: 13px;
   font-weight: 700;
-  color: #2A221A;
+  color: var(--cl-surface-ink);
   letter-spacing: 2px;
   word-break: break-all;
 }
@@ -136,7 +136,7 @@
   transition: background 0.15s;
 }
 
-.mfa-copy-btn:hover { background: rgba(208, 90, 52, 0.1); }
+.mfa-copy-btn:hover { background: var(--cl-accent-soft-3); }
 .mfa-copy-btn svg   { width: 14px; height: 14px; }
 
 /* Smaller demo pill inside a factor card */
@@ -163,7 +163,7 @@
 
 /* ── Mobile ──────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .mfa-card { padding: 28px 22px 40px; border-radius: 16px; }
+  .mfa-card { padding: 28px 22px 40px; border-radius: var(--cl-radius-2xl); }
 
   .mfa-otp-box { width: 42px; height: 50px; font-size: 20px; border-radius: 10px; }
 
