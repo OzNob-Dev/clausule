@@ -116,10 +116,13 @@
   white-space: nowrap;
 }
 
+.bss-form {
+  padding: 36px 40px;
+}
+
 .bss-column {
   display: flex;
   flex-direction: column;
-  padding: 24px 32px;
 }
 
 .bss-method-row {
