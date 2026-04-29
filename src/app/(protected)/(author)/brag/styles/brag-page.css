@@ -953,7 +953,6 @@
   justify-content: center;
   min-height: min(640px, calc(100vh - 160px));
   padding: 48px 24px;
-  background: linear-gradient(165deg, #F9F6F2 0%, #EFE8DF 100%);
 }
 
 .be-entry-composer {

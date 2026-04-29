@@ -259,7 +259,7 @@
   flex: 1;
   min-width: 0;
   overflow-y: auto;
-  background: #F5F0EA;
+  background: linear-gradient(165deg, #F9F6F2 0%, #EFE8DF 100%);
 }
 
 .be-inner {
