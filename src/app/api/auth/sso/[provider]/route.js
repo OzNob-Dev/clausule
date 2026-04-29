@@ -14,5 +14,7 @@ export async function GET(request, { params }) {
   if (result.body) return NextResponse.json(result.body, { status: result.status })
 
   const response = NextResponse.redirect(result.redirect)
+  if (result.warning) console.error(`[sso/${provider}] state store fallback:`, result.warning.message ?? result.warning)
+  if (result.stateCookie) response.headers.append('Set-Cookie', result.stateCookie)
   return response
 }

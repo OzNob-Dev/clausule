@@ -1,13 +1,15 @@
 import { homePathForRole } from '@shared/utils/routes'
 import { accountActive, findProfileByEmail, getAuthUserDetails, hasActiveSubscription } from './accountRepository.js'
 import { exchangeSsoCode } from './ssoProviders.js'
-import { consumeSsoAuthState } from './ssoState.js'
+import { consumeSsoAuthState, consumeSsoStateCookie } from './ssoState.js'
 
-export async function resolveSsoCallback({ origin, provider, code, state, appleUser }) {
+export async function resolveSsoCallback({ origin, provider, code, state, appleUser, cookieHeader = '' }) {
   if (!code || !state) return { type: 'error', error: 'missing_params' }
 
-  const { row: stored, error: stateError } = await consumeSsoAuthState({ state, provider })
-  if (stateError) return { type: 'error', error: 'account_error', log: [`[sso/${provider}] state consume:`, stateError.message ?? stateError] }
+  const { row: dbStored, error: stateError } = await consumeSsoAuthState({ state, provider })
+  const cookieStored = consumeSsoStateCookie({ cookieHeader, state, provider }).row
+  const stored = dbStored ?? cookieStored
+  if (stateError && !stored) return { type: 'error', error: 'account_error', log: [`[sso/${provider}] state consume:`, stateError.message ?? stateError] }
   if (!stored) return { type: 'error', error: 'state_mismatch' }
 
   let userInfo

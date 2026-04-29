@@ -5,6 +5,8 @@ import { resolveSsoCallback } from './ssoCallback.js'
 vi.mock('./ssoState.js', () => ({
   createSsoAuthState: vi.fn(),
   consumeSsoAuthState: vi.fn(),
+  createSsoStateCookie: vi.fn(() => 'sso_state=cookie; Path=/'),
+  consumeSsoStateCookie: vi.fn(() => ({ row: null, error: null })),
 }))
 
 vi.mock('./ssoProviders.js', () => ({
@@ -18,7 +20,7 @@ vi.mock('./accountRepository.js', () => ({
   accountActive: vi.fn((profile, hasPaid) => Boolean(profile?.is_active) || hasPaid),
 }))
 
-import { createSsoAuthState, consumeSsoAuthState } from './ssoState.js'
+import { createSsoAuthState, consumeSsoAuthState, consumeSsoStateCookie } from './ssoState.js'
 import { exchangeSsoCode } from './ssoProviders.js'
 import { findProfileByEmail, hasActiveSubscription, getAuthUserDetails } from './accountRepository.js'
 
@@ -36,7 +38,10 @@ describe('sso flow helpers', () => {
   })
 
   it('builds an SSO start redirect', async () => {
-    await expect(createSsoStart({ requestUrl: 'http://localhost/login', provider: 'google' })).resolves.toMatchObject({ redirect: expect.stringContaining('https://accounts.google.com/o/oauth2/v2/auth') })
+    await expect(createSsoStart({ requestUrl: 'http://localhost/login', provider: 'google' })).resolves.toMatchObject({
+      redirect: expect.stringContaining('https://accounts.google.com/o/oauth2/v2/auth'),
+      stateCookie: 'sso_state=cookie; Path=/',
+    })
     expect(createSsoAuthState).toHaveBeenCalled()
   })
 
@@ -46,5 +51,27 @@ describe('sso flow helpers', () => {
       destination: '/brag',
       session: { userId: 'user-1', email: 'ada@example.com', role: 'employee', authMethod: 'sso' },
     })
+  })
+
+  it('falls back to the signed cookie when the database state read fails', async () => {
+    consumeSsoAuthState.mockResolvedValueOnce({ row: null, error: { message: 'rpc failed' } })
+    consumeSsoStateCookie.mockReturnValueOnce({
+      row: { code_verifier: 'cookie-verifier', redirect_origin: 'http://localhost' },
+      error: null,
+    })
+
+    await expect(resolveSsoCallback({
+      origin: 'http://localhost',
+      provider: 'google',
+      code: 'code',
+      state: 'state',
+      appleUser: null,
+      cookieHeader: 'sso_state=cookie',
+    })).resolves.toMatchObject({
+      type: 'session',
+      session: { userId: 'user-1', email: 'ada@example.com', role: 'employee', authMethod: 'sso' },
+    })
+    expect(consumeSsoStateCookie).toHaveBeenCalledWith({ cookieHeader: 'sso_state=cookie', state: 'state', provider: 'google' })
+    expect(exchangeSsoCode).toHaveBeenCalledWith(expect.objectContaining({ codeVerifier: 'cookie-verifier' }))
   })
 })

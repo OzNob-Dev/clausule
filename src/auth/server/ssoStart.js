@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { createSsoAuthState } from './ssoState.js'
+import { createSsoAuthState, createSsoStateCookie } from './ssoState.js'
 
 const PROVIDERS = {
   google: {
@@ -33,6 +33,7 @@ export async function createSsoStart({ requestUrl, provider }) {
   const codeVerifier = crypto.randomBytes(32).toString('base64url')
   const codeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64url')
   const state = crypto.randomBytes(16).toString('hex')
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString()
   const redirectUri = `${origin}/api/auth/sso/${provider}/callback`
   const query = new URLSearchParams({
     client_id: clientId,
@@ -51,11 +52,12 @@ export async function createSsoStart({ requestUrl, provider }) {
     provider,
     codeVerifier,
     redirectOrigin: origin,
-    expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+    expiresAt,
   })
-  if (error) return { redirect: `${loginUrl}?sso_error=account_error` }
 
   return {
     redirect: `${config.authUrl}?${query}`,
+    stateCookie: createSsoStateCookie({ state, provider, codeVerifier, redirectOrigin: origin, expiresAt }),
+    warning: error ?? null,
   }
 }

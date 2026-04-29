@@ -20,11 +20,12 @@ describe('auth sso start route', () => {
   })
 
   it('redirects when the sso starter returns a redirect', async () => {
-    createSsoStart.mockResolvedValueOnce({ status: 302, redirect: 'https://example.com/login' })
+    createSsoStart.mockResolvedValueOnce({ status: 302, redirect: 'https://example.com/login', stateCookie: 'sso_state=cookie; Path=/' })
 
     const response = await GET(new Request('http://localhost/api/auth/sso/google'), { params: { provider: 'google' } })
 
     expect(response.status).toBe(307)
     expect(response.headers.get('location')).toBe('https://example.com/login')
+    expect(response.headers.get('set-cookie')).toContain('sso_state=cookie')
   })
 })

@@ -15,6 +15,7 @@ const ssoStateAndReconciliationPath = path.resolve(__dirname, '../../supabase/mi
 const passkeyAuthenticationPath = path.resolve(__dirname, '../../supabase/migrations/016_passkey_authentication.sql')
 const functionHardeningPath = path.resolve(__dirname, '../../supabase/migrations/020_function_privilege_and_search_path_hardening.sql')
 const deletedAccountAndPasskeyGuardsPath = path.resolve(__dirname, '../../supabase/migrations/021_deleted_account_and_passkey_guards.sql')
+const ssoStateAmbiguityFixPath = path.resolve(__dirname, '../../supabase/migrations/025_fix_create_sso_auth_state_ambiguity.sql')
 const hardeningSql = readFileSync(hardeningPath, 'utf8')
 const retrySql = readFileSync(retryPath, 'utf8')
 const cleanupSql = readFileSync(cleanupPath, 'utf8')
@@ -26,6 +27,7 @@ const ssoStateAndReconciliationSql = readFileSync(ssoStateAndReconciliationPath,
 const passkeyAuthenticationSql = readFileSync(passkeyAuthenticationPath, 'utf8')
 const functionHardeningSql = readFileSync(functionHardeningPath, 'utf8')
 const deletedAccountAndPasskeyGuardsSql = readFileSync(deletedAccountAndPasskeyGuardsPath, 'utf8')
+const ssoStateAmbiguityFixSql = readFileSync(ssoStateAmbiguityFixPath, 'utf8')
 
 describe('backend hardening migration', () => {
   it('adds the missing profile trigger and active-subscription guardrail', () => {
@@ -124,5 +126,11 @@ describe('backend hardening migration', () => {
     expect(deletedAccountAndPasskeyGuardsSql).toContain('create or replace function public.delete_passkey_device')
     expect(deletedAccountAndPasskeyGuardsSql).toContain("return query select 'last_device'::text;")
     expect(deletedAccountAndPasskeyGuardsSql).toContain('grant execute on function public.delete_passkey_device(uuid, uuid) to service_role;')
+  })
+
+  it('fixes the create_sso_auth_state conflict target ambiguity', () => {
+    expect(ssoStateAmbiguityFixSql).toContain('create or replace function public.create_sso_auth_state')
+    expect(ssoStateAmbiguityFixSql).toContain('on conflict on constraint sso_auth_states_pkey do update')
+    expect(ssoStateAmbiguityFixSql).toContain('grant execute on function public.create_sso_auth_state(text, text, text, text, timestamptz) to service_role;')
   })
 })
