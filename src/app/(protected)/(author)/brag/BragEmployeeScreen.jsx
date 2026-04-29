@@ -146,7 +146,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
             {!composerOpen ? (
               <>
                 <div className="be-doc-cta-wrap">
-                  <Button type="button" variant="primary" className="be-doc-add-button" onClick={() => setComposerOpen(true)}>
+                  <Button type="button" variant="primary" className="be-doc-add-button justify-start" onClick={() => setComposerOpen(true)}>
                     <span className="be-doc-add-icon" aria-hidden="true">
                       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <line x1="8" y1="3" x2="8" y2="13" />
