@@ -4,7 +4,7 @@ import { useProfileStore } from '@auth/store/useProfileStore'
 import Layout from '@brag/components/layout'
 import { ProfileActions } from '@shared/components/ui/ProfileActions'
 import { ProfileField } from '@shared/components/ui/ProfileField'
-import { ProfileFormCard } from '@shared/components/ui/ProfileFormCard'
+import { SectionCard } from '@shared/components/ui/SectionCard'
 import PageHeader from '@shared/components/ui/PageHeader'
 import { useShallow } from 'zustand/shallow'
 import { formatMobile } from '@account/utils/formatMobile'
@@ -38,7 +38,18 @@ export default function ProfileScreen() {
       />
 
       <div className="main-body">
-        <ProfileFormCard onSubmit={onSubmit}>
+        <SectionCard
+          as="form"
+          ariaLabel="Personal details form"
+          title="Your profile"
+          meta="Account settings"
+          className="form-card"
+          headerClassName="form-card-head"
+          titleClassName="form-card-title"
+          metaClassName="form-card-meta"
+          bodyClassName="form-body"
+          onSubmit={onSubmit}
+        >
           <section className="profile-section" aria-labelledby="section-identity">
             <div className="section-label" id="section-identity">Identity</div>
             <div className="field-row">
@@ -117,7 +128,7 @@ export default function ProfileScreen() {
           {success ? <p className="profile-status profile-status--success" role="status">{success}</p> : null}
 
           <ProfileActions onReset={resetForm} saving={saving} disabled={!dirty || saving} />
-        </ProfileFormCard>
+        </SectionCard>
       </div>
     </Layout>
   )

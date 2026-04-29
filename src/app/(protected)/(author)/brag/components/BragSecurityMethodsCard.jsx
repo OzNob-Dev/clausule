@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@shared/components/ui/Button'
+import { SectionCard } from '@shared/components/ui/SectionCard'
 import BragSecuritySetupPanel from '@brag/components/BragSecuritySetupPanel'
 
 function EmailIcon() {
@@ -42,11 +43,14 @@ export default function BragSecurityMethodsCard({
   return (
     <section className="bss-section" aria-labelledby="security-methods-title">
       <div className="bss-section-label" id="security-methods-title">Two-factor authentication</div>
-      <div className="bss-card">
-        <div className="bss-card-head">
-          <span className="bss-card-head-title">Sign-in protection</span>
-          <span className="bss-card-head-meta">2FA methods</span>
-        </div>
+      <SectionCard
+        className="bss-card"
+        headerClassName="bss-card-head"
+        titleClassName="bss-card-head-title"
+        metaClassName="bss-card-head-meta"
+        title="Sign-in protection"
+        meta="2FA methods"
+      >
 
         <div className="bss-method-row">
           <div className="bss-method-icon" aria-hidden="true">
@@ -114,7 +118,7 @@ export default function BragSecurityMethodsCard({
             </div>
           </div>
         )}
-      </div>
+      </SectionCard>
     </section>
   )
 }

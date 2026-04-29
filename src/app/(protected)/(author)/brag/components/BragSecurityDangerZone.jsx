@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@shared/components/ui/Button'
+import { SectionCard } from '@shared/components/ui/SectionCard'
 
 function TrashIcon() {
   return (
@@ -16,11 +17,14 @@ export default function BragSecurityDangerZone({ onDelete }) {
   return (
     <section className="bss-danger-section" aria-labelledby="security-danger-title">
       <div className="bss-danger-label" id="security-danger-title">Danger zone</div>
-      <div className="bss-danger-card">
-        <div className="bss-danger-card-head">
-          <span className="bss-danger-card-head-title">Irreversible actions</span>
-          <span className="bss-danger-card-head-meta">Proceed with care</span>
-        </div>
+      <SectionCard
+        className="bss-danger-card"
+        headerClassName="bss-danger-card-head"
+        titleClassName="bss-danger-card-head-title"
+        metaClassName="bss-danger-card-head-meta"
+        title="Irreversible actions"
+        meta="Proceed with care"
+      >
         <div className="bss-danger-row">
           <div className="bss-danger-copy">
             <div className="bss-danger-desc">
@@ -32,7 +36,7 @@ export default function BragSecurityDangerZone({ onDelete }) {
             Delete account
           </Button>
         </div>
-      </div>
+      </SectionCard>
     </section>
   )
 }

@@ -33,6 +33,9 @@ describe('EntryComposer', () => {
 
     renderWithQueryClient(<EntryComposer onSave={onSave} onClose={vi.fn()} />)
 
+    expect(screen.getByRole('form', { name: 'Add a new entry' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Close form' })).toBeInTheDocument()
+
     await user.type(screen.getByPlaceholderText(/what did you achieve/i), 'Won migration')
     await user.type(screen.getByPlaceholderText(/describe what you did/i), 'Cut deployment risk.')
     await user.click(screen.getByRole('button', { name: /work artefact/i }))

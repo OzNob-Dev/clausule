@@ -2,6 +2,7 @@
 
 import { Button } from '@shared/components/ui/Button'
 import { Field, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'
+import { SectionCard } from '@shared/components/ui/SectionCard'
 
 export const FEEDBACK_CATEGORIES = ['Idea', 'Bug', 'Question', 'Complaint', 'Compliment']
 export const FEEDBACK_FEELINGS = ['Just noting', 'Mildly annoying', 'Blocking me', 'Really excited']
@@ -79,21 +80,22 @@ export default function FeedbackFormView({
 
   return (
     <section className="be-feedback-stage" aria-label="Send app feedback">
-      <div className="be-feedback-card">
-        <div className="be-feedback-card-head">
-          <span className="be-feedback-card-title">Your feedback</span>
-          <span className="be-feedback-card-meta">Sent privately</span>
-        </div>
-
-        <form
-          className="be-feedback-form"
-          aria-label="Send app feedback"
-          onSubmit={(event) => {
-            event.preventDefault()
-            void onSend()
-          }}
-        >
-          <div className="be-feedback-grid">
+      <SectionCard
+        as="form"
+        className="be-feedback-card"
+        headerClassName="be-feedback-card-head"
+        titleClassName="be-feedback-card-title"
+        metaClassName="be-feedback-card-meta"
+        bodyClassName="be-feedback-form"
+        title="Your feedback"
+        meta="Sent privately"
+        ariaLabel="Send app feedback"
+        onSubmit={(event) => {
+          event.preventDefault()
+          void onSend()
+        }}
+      >
+        <div className="be-feedback-grid">
             <Field className="be-feedback-field be-feedback-field--select">
               <FieldLabel htmlFor="feedback-type">What is this about?</FieldLabel>
               <div className="be-feedback-select-wrap">
@@ -128,28 +130,27 @@ export default function FeedbackFormView({
             </Field>
           </div>
 
-          <div className="be-feedback-divider" />
+        <div className="be-feedback-divider" />
 
-          <label className={contactOk ? 'be-feedback-check be-feedback-check--checked' : 'be-feedback-check'} htmlFor="feedback-contact">
-            <input id="feedback-contact" className="be-feedback-check-input" type="checkbox" checked={contactOk} onChange={(event) => onContactOkChange(event.target.checked)} />
-            <span className="be-feedback-check-box" aria-hidden="true">
-              <svg className="be-feedback-check-tick" viewBox="0 0 12 12" fill="none">
-                <polyline points="2,6 5,9 10,3" />
-              </svg>
-            </span>
-            <span className="be-feedback-check-text">The Clausule team may contact me about this feedback.</span>
-          </label>
+        <label className={contactOk ? 'be-feedback-check be-feedback-check--checked' : 'be-feedback-check'} htmlFor="feedback-contact">
+          <input id="feedback-contact" className="be-feedback-check-input" type="checkbox" checked={contactOk} onChange={(event) => onContactOkChange(event.target.checked)} />
+          <span className="be-feedback-check-box" aria-hidden="true">
+            <svg className="be-feedback-check-tick" viewBox="0 0 12 12" fill="none">
+              <polyline points="2,6 5,9 10,3" />
+            </svg>
+          </span>
+          <span className="be-feedback-check-text">The Clausule team may contact me about this feedback.</span>
+        </label>
 
-          <p className="be-feedback-note">Sent privately to the app owners. This will not appear in your brag doc.</p>
+        <p className="be-feedback-note">Sent privately to the app owners. This will not appear in your brag doc.</p>
 
-          <div className="be-feedback-actions">
-            <Button type="button" variant="ghost" className="be-comp-cancel" onClick={onCancel}>Cancel</Button>
-            <Button type="submit" variant="primary" className="be-comp-save" disabled={!canSend}>Send feedback</Button>
-          </div>
+        <div className="be-feedback-actions">
+          <Button type="button" variant="ghost" className="be-comp-cancel" onClick={onCancel}>Cancel</Button>
+          <Button type="submit" variant="primary" className="be-comp-save" disabled={!canSend}>Send feedback</Button>
+        </div>
 
-          {error && <p className="be-comp-error" role="alert">{error}</p>}
-        </form>
-      </div>
+        {error && <p className="be-comp-error" role="alert">{error}</p>}
+      </SectionCard>
     </section>
   )
 }
