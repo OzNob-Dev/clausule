@@ -301,6 +301,32 @@
   background: var(--cl-surface-white);
 }
 
+.bss-danger-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 32px;
+  background: var(--cl-surface-ink-2);
+}
+
+.bss-danger-card-head-title {
+  color: var(--cl-surface-muted-15);
+  font-family: var(--cl-font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.bss-danger-card-head-meta {
+  color: var(--cl-surface-muted-7);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .bss-danger-card .bss-danger-row {
   display: flex;
   align-items: center;
@@ -311,15 +337,6 @@
 .bss-danger-copy {
   flex: 1;
   min-width: 0;
-}
-
-.bss-danger-title {
-  margin: 0 0 6px;
-  color: var(--cl-surface-ink-2);
-  font-family: var(--cl-font-serif);
-  font-size: 1.25rem;
-  font-weight: 400;
-  letter-spacing: -0.015em;
 }
 
 .bss-btn-danger {
@@ -384,6 +401,7 @@
   }
 
   .bss-card-head,
+  .bss-danger-card-head,
   .bss-method-row,
   .bss-alert,
   .bss-danger-card .bss-danger-row {

@@ -17,9 +17,12 @@ export default function BragSecurityDangerZone({ onDelete }) {
     <section className="bss-danger-section" aria-labelledby="security-danger-title">
       <div className="bss-danger-label" id="security-danger-title">Danger zone</div>
       <div className="bss-danger-card">
+        <div className="bss-danger-card-head">
+          <span className="bss-danger-card-head-title">Irreversible actions</span>
+          <span className="bss-danger-card-head-meta">Proceed with care</span>
+        </div>
         <div className="bss-danger-row">
           <div className="bss-danger-copy">
-            <div className="bss-danger-title">Irreversible actions</div>
             <div className="bss-danger-desc">
               Permanently removes your account and all brag doc entries, files, and records. This cannot be undone.
             </div>
