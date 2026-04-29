@@ -2,10 +2,11 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button } from '@shared/components/ui/Button'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import BragEmptyState from '@brag/components/BragEmptyState'
 import EntryComposer from '@brag/components/EntryComposer'
+import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
+import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import '@brag/styles/brag-page.css'
 import '@brag/styles/resume-tab.css'
 import '@shared/styles/page-loader.css'
@@ -14,31 +15,10 @@ const ResumeTab = dynamic(() => import('@brag/components/ResumeTab'), {
   loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,
 })
 
-function evidenceTypeToPill(type) {
-  if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
-  if (type === 'Work artefact') return { label: 'Work artefact', type: 'filled' }
-  if (type === 'Peer recognition') return { label: 'Peer recognition', type: 'blue' }
-  return { label: 'External link', type: 'empty' }
-}
-
-function evidenceTypesFromEntry(entry) {
-  return (entry.brag_entry_evidence ?? []).map(({ type }) => type).filter(Boolean)
-}
-
 function newestEntryFirst(a, b) {
   const dateDiff = new Date(b.entry_date).getTime() - new Date(a.entry_date).getTime()
   if (dateDiff) return dateDiff
   return new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
-}
-
-function dateLabel(entryDate) {
-  const then = new Date(entryDate)
-  const now = new Date()
-  const dayMs = 24 * 60 * 60 * 1000
-  const diff = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(then.getFullYear(), then.getMonth(), then.getDate())) / dayMs)
-  if (diff === 0) return 'Today'
-  if (diff === 1) return 'Yesterday'
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(then)
 }
 
 function groupEntries(entries, profile) {
@@ -70,45 +50,6 @@ function visibleEntriesByYear(groupedEntries, activeYear) {
   return activeYear === 'All' ? groupedEntries : groupedEntries.filter(({ year }) => String(year) === String(activeYear))
 }
 
-function EntryDocCard({ entry }) {
-  const evidenceTypes = evidenceTypesFromEntry(entry)
-  const pills = evidenceTypes.slice(0, 4).map(evidenceTypeToPill)
-
-  return (
-    <article className="be-doc-entry-card">
-      <div className="be-doc-entry-head">
-        <h4 className="be-doc-entry-title">{entry.title}</h4>
-        <div className="be-doc-entry-date">
-          <time dateTime={entry.entry_date}>{dateLabel(entry.entry_date)}</time>
-        </div>
-      </div>
-      <p className="be-doc-entry-body">{entry.body ?? ''}</p>
-      <div className="be-doc-entry-footer">
-        <div className="be-doc-strength-indicator">
-          <div className="be-doc-strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="12" r="6" />
-              <circle cx="12" cy="12" r="2" />
-            </svg>
-          </div>
-          <div className="be-doc-strength-content">
-            <div className="be-doc-strength-label">{entry.strength}</div>
-            <div className="be-doc-strength-description">{entry.strength_hint}</div>
-          </div>
-        </div>
-        <div className="be-doc-evidence-tags" role="list" aria-label="Evidence">
-          {pills.map((pill, i) => (
-            <span key={`${pill.label}-${i}`} role="listitem" className={`be-ev-pill be-ev-pill--${pill.type} be-doc-evidence-tag be-doc-evidence-tag--${pill.type}`}>
-              <span className="be-ev-pill-dot" aria-hidden="true" />
-              {pill.label}
-            </span>
-          ))}
-        </div>
-      </div>
-    </article>
-  )
-}
 
 export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '', view = 'brag' }) {
   const profile = useProfileStore((state) => state.profile)
@@ -117,7 +58,6 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
   const yearInitRef = useRef(false)
   const groupedEntries = useMemo(() => groupEntries(initialEntries ?? [], profile), [initialEntries, profile.department, profile.jobTitle])
   const years = useMemo(() => groupedEntries.map(({ year }) => year), [groupedEntries])
-  const yearTabs = useMemo(() => [...years, 'All'], [years])
   const visibleGroups = useMemo(() => visibleEntriesByYear(groupedEntries, activeYear), [activeYear, groupedEntries])
   const hasEntries = groupedEntries.length > 0
   const entryCount = useMemo(() => visibleGroups.reduce((total, group) => total + group.groups.reduce((sum, item) => sum + item.entries.length, 0), 0), [visibleGroups])
@@ -175,45 +115,13 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
 
             {!composerOpen ? (
               <>
-                <div className="be-doc-toolbar">
-                  <Button type="button" variant="primary" className="be-doc-add-button justify-start" onClick={() => setComposerOpen(true)}>
-                    <span className="be-doc-add-icon" aria-hidden="true">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <line x1="8" y1="3" x2="8" y2="13" />
-                        <line x1="3" y1="8" x2="13" y2="8" />
-                      </svg>
-                    </span>
-                    <span className="be-doc-add-copy">
-                      <span className="be-doc-add-label">Add a win</span>
-                      <span className="be-doc-add-description">Capture a fresh entry for your brag doc</span>
-                    </span>
-                  </Button>
-
-                  {yearTabs.length ? (
-                    <section className="be-doc-year-nav" aria-label="Year navigation">
-                      <span className="be-doc-year-nav-label">Year</span>
-                      <div className="be-doc-year-nav-tabs" role="group" aria-label="Choose a year">
-                        {yearTabs.map((year) => (
-                          <button
-                            key={year}
-                            type="button"
-                            className={`be-doc-year-tab${activeYear === year ? ' be-doc-year-tab--active' : ''}`}
-                            aria-pressed={activeYear === year}
-                            aria-controls={year === 'All' ? undefined : yearSectionId(year)}
-                            onClick={() => handleYearSelect(year)}
-                          >
-                            {year}
-                          </button>
-                        ))}
-                      </div>
-                    </section>
-                  ) : null}
-
-                  <div className="be-doc-entry-count" aria-label="Entry count">
-                    <strong>{entryCount}</strong>
-                    {entryCount === 1 ? 'entry' : 'entries'}
-                  </div>
-                </div>
+                <BragDocToolbar
+                  activeYear={activeYear}
+                  entryCount={entryCount}
+                  years={years}
+                  onAddEntry={() => setComposerOpen(true)}
+                  onYearSelect={handleYearSelect}
+                />
 
                 <div className="be-doc-timeline">
                   {visibleGroups.map(({ year, groups }) => (
@@ -232,7 +140,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
 
                           <div className="be-doc-entries-list">
                             {group.entries.map((entry) => (
-                              <EntryDocCard key={entry.id} entry={entry} />
+                              <BragDocEntryCard key={entry.id} entry={entry} />
                             ))}
                           </div>
                         </div>
