@@ -19,13 +19,13 @@ function FeedbackHistoryScreen() {
   return (
     <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="feedback-history-title">
       <PageHeader
-        className="be-feedback-hero"
-        eyebrow="Feedback centre"
-        eyebrowClassName="be-feedback-eyebrow"
+        className="bss-header"
+        eyebrow="Feedback history"
+        eyebrowClassName="bss-eyebrow"
         titleId="feedback-history-title"
         title="Back and forth with the Clausule team."
         description="Track what you sent and any replies from the people shaping the product."
-        descriptionClassName="be-feedback-hero-copy"
+        descriptionClassName="bss-heading"
       />
       <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} />
     </Layout>
@@ -36,11 +36,13 @@ function FeedbackComposeScreen({ userEmail }) {
   return (
     <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="feedback-page-title">
       <PageHeader
-        className="be-feedback-hero"
+        className="bss-header"
         eyebrow="Product feedback"
-        eyebrowClassName="be-feedback-eyebrow"
+        eyebrowClassName="bss-eyebrow"
         titleId="feedback-page-title"
-        title="Tell the Clausule team what would make this better."
+        title="Feedback for Clausule"
+        description="Tell the Clausule team what would make this better."
+        descriptionClassName="bss-subheading"
       />
       <FeedbackComposer userEmail={userEmail} />
     </Layout>
