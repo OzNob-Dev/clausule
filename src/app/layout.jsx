@@ -1,5 +1,6 @@
 import { QueryProvider } from '@shared/providers/QueryProvider'
 import '@shared/styles/globals.css'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata = {
   title: 'Clausule',
@@ -17,6 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <QueryProvider>{children}</QueryProvider>
+        <Analytics />
       </body>
     </html>
   )
