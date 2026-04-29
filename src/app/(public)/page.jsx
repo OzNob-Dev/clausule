@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ComingSoon from './landing/components/ComingSoon'
 import { ROUTES } from '@shared/utils/routes'
+import { hasDevAccess } from '@shared/components/layout/DevAccessGate'
 
 export default function Page() {
   const router = useRouter()
@@ -15,7 +16,7 @@ export default function Page() {
       return
     }
 
-    if (localStorage.getItem('clausule_dev_accexx') === 'granted') {
+    if (hasDevAccess()) {
       router.replace(ROUTES.login)
       return
     }

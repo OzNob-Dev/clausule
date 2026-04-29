@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react'
 import ComingSoon from '@landing/components/ComingSoon'
 
 const ACCESS_KEY = 'clausule_dev_accexx'
+const ACCESS_VALUES = new Set(['true', 'granted'])
+
+export function hasDevAccess() {
+  return ACCESS_VALUES.has(localStorage.getItem(ACCESS_KEY) ?? '')
+}
 
 export default function DevAccessGate({ children }) {
   const [allowed, setAllowed] = useState(false)
@@ -12,11 +17,11 @@ export default function DevAccessGate({ children }) {
     const params = new URLSearchParams(window.location.search)
 
     if (params.get('bypaxxx') === 'true') {
-      localStorage.setItem(ACCESS_KEY, 'granted')
+      localStorage.setItem(ACCESS_KEY, 'true')
       window.history.replaceState(null, '', window.location.pathname)
     }
 
-    setAllowed(localStorage.getItem(ACCESS_KEY) === 'granted')
+    setAllowed(hasDevAccess())
   }, [])
 
   return allowed ? children : <ComingSoon />

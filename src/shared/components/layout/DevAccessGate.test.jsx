@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import DevAccessGate from './DevAccessGate'
+import DevAccessGate, { hasDevAccess } from './DevAccessGate'
 
 describe('DevAccessGate', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('DevAccessGate', () => {
   })
 
   it('shows children when access is granted', async () => {
-    localStorage.setItem('clausule_dev_accexx', 'granted')
+    localStorage.setItem('clausule_dev_accexx', 'true')
 
     render(<DevAccessGate><div>Unlocked app</div></DevAccessGate>)
 
@@ -30,6 +30,12 @@ describe('DevAccessGate', () => {
     render(<DevAccessGate><div>Unlocked app</div></DevAccessGate>)
 
     await waitFor(() => expect(screen.getByText('Unlocked app')).toBeInTheDocument())
-    expect(localStorage.getItem('clausule_dev_accexx')).toBe('granted')
+    expect(localStorage.getItem('clausule_dev_accexx')).toBe('true')
+  })
+
+  it('accepts legacy granted storage values', async () => {
+    localStorage.setItem('clausule_dev_accexx', 'granted')
+
+    expect(hasDevAccess()).toBe(true)
   })
 })

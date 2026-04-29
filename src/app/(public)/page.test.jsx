@@ -32,7 +32,7 @@ describe('public page', () => {
   })
 
   it('redirects bypassed users to the login screen', async () => {
-    localStorage.setItem('clausule_dev_accexx', 'granted')
+    localStorage.setItem('clausule_dev_accexx', 'true')
 
     render(<Page />)
 
