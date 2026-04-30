@@ -64,7 +64,6 @@ export default function BragSettings() {
       <DeleteAccountDialog
         open={deleteModal}
         onClose={() => setDeleteModal(false)}
-        description="This will permanently delete your brag doc and all associated entries, evidence files, and records from our servers. This action cannot be undone."
       />
     </>
   )

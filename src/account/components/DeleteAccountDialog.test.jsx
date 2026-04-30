@@ -24,6 +24,7 @@ describe('DeleteAccountDialog', () => {
     const deleteButton = within(dialog).getByRole('button', { name: /delete account/i })
 
     expect(deleteButton).toBeDisabled()
+    expect(within(dialog).getByText(/this will permanently delete your brag doc/i)).toBeInTheDocument()
     expect(within(dialog).getByText(/there is no recovery option/i)).toBeInTheDocument()
 
     await user.type(within(dialog).getByLabelText(/type delete to confirm/i), 'DELETE')
@@ -43,6 +44,6 @@ describe('DeleteAccountDialog', () => {
     await user.type(within(dialog).getByLabelText(/type delete to confirm/i), 'DELETE')
     await user.click(within(dialog).getByRole('button', { name: /delete account/i }))
 
-    await waitFor(() => expect(within(dialog).getByRole('alert')).toHaveTextContent(/could not delete your account/i))
+    await waitFor(() => expect(within(dialog).getAllByRole('alert')[1]).toHaveTextContent(/could not delete your account/i))
   })
 })
