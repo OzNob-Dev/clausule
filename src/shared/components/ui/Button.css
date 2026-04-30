@@ -7,8 +7,8 @@
   padding: 16px 32px;
   border: none;
   border-radius: 10px;
-  background: var(--be-empty-accent);
-  color: var(--be-empty-canvas);
+  background: var(--be-motion-clay);
+  color: var(--cl-surface-warm);
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: 15px;
@@ -21,8 +21,8 @@
 
 .be-cta--primary,
 .be-cta--employee {
-  background: var(--be-empty-accent);
-  color: var(--be-empty-canvas);
+  background: var(--be-motion-clay);
+  color: var(--cl-surface-warm);
 }
 
 .be-cta--ghost {
