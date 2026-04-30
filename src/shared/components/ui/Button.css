@@ -49,6 +49,7 @@
 
 .be-cta--danger:hover {
   background: color-mix(in srgb, var(--rt) 90%, black);
+  color: color-mix(in srgb, var(--cl-danger-5) 90%, black);
 }
 
 .be-cta--confirm:hover {
