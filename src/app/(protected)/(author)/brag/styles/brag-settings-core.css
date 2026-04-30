@@ -78,43 +78,7 @@
   background: var(--cl-danger-alpha-18);
 }
 
-.bss-card,
-.bss-danger-card {
-  overflow: hidden;
-  border-radius: 16px;
-  background: var(--cl-surface-white);
-  box-shadow: var(--cl-shadow-soft), var(--cl-shadow-med);
-}
 
-.bss-card {
-  border: 1px solid var(--cl-border-2);
-}
-
-.bss-card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 32px;
-  background: var(--cl-surface-ink-2);
-}
-
-.bss-card-head-title {
-  color: var(--cl-surface-muted-15);
-  font-family: var(--cl-font-serif);
-  font-size: 1.5rem;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-}
-
-.bss-card-head-meta {
-  color: var(--cl-surface-muted-7);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
 
 .bss-form {
   padding: 36px 40px;
@@ -395,8 +359,6 @@
     margin-bottom: 32px;
   }
 
-  .bss-card-head,
-  .bss-danger-card-head,
   .bss-method-row,
   .bss-method-column,
   .bss-alert,

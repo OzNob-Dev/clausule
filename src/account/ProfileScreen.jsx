@@ -43,8 +43,6 @@ export default function ProfileScreen() {
         ariaLabel="Personal details form"
         title="Your profile"
         meta="Account settings"
-        className="bss-card"
-        headerClassName="bss-card-head"
         titleClassName="bss-card-head-title"
         metaClassName="bss-card-head-meta"
         onSubmit={onSubmit}

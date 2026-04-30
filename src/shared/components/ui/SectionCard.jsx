@@ -1,4 +1,5 @@
 import { cn } from '@shared/utils/cn'
+import './SectionCard.css'
 
 export function SectionCard({
   as: Component = 'div',
@@ -8,8 +9,8 @@ export function SectionCard({
   headerEnd = null,
   titleId,
   ariaLabel,
-  className = '',
-  headerClassName = '',
+  className = 'card',
+  headerClassName = 'card-header',
   titleClassName = '',
   metaClassName = '',
   bodyClassName = '',

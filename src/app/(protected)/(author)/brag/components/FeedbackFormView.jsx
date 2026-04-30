@@ -82,7 +82,6 @@ export default function FeedbackFormView({
     <section className="bss-section" aria-label="Send app feedback">
       <SectionCard
         as="form"
-        className="bss-card"
         headerClassName="be-feedback-card-head"
         titleClassName="be-feedback-card-title"
         metaClassName="be-feedback-card-meta"

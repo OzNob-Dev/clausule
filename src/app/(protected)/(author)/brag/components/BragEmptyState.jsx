@@ -1,3 +1,5 @@
+import { PlusIcon } from "@shared/components/ui/icon/PlusIcon"
+
 const PROMPTS = [
   {
     title: 'Log a recent win',
@@ -100,10 +102,7 @@ export default function BragEmptyState({ onAddEntry }) {
 
       <button type="button" className="be-cta" onClick={handleStart}>
         <span className="be-cta-icon" aria-hidden="true">
-          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="7" y1="2" x2="7" y2="12" />
-            <line x1="2" y1="7" x2="12" y2="7" />
-          </svg>
+          <PlusIcon />
         </span>
         Add your first entry
       </button>

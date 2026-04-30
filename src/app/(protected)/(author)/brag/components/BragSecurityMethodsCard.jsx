@@ -3,6 +3,7 @@
 import { Button } from '@shared/components/ui/Button'
 import { SectionCard } from '@shared/components/ui/SectionCard'
 import BragSecuritySetupPanel from '@brag/components/BragSecuritySetupPanel'
+import { TimerIcon } from '@shared/components/ui/icon/TimerIcon'
 
 function EmailIcon() {
   return (
@@ -44,8 +45,6 @@ export default function BragSecurityMethodsCard({
     <section className="bss-section" aria-labelledby="security-methods-title">
       <div className="bss-section-label" id="security-methods-title">Two-factor authentication</div>
       <SectionCard
-        className="bss-card"
-        headerClassName="bss-card-head"
         titleClassName="bss-card-head-title"
         metaClassName="bss-card-head-meta"
         title="Sign-in protection"
@@ -100,11 +99,7 @@ export default function BragSecurityMethodsCard({
         {!authenticatorAppConfigured && hasSecuritySnapshot && (
           <div className={`bss-alert${mfaRestrictionEnabled ? ' bss-alert--required' : ''}`} role="alert">
             <span className="bss-alert-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+              <TimerIcon />
             </span>
             <div className="bss-alert-copy">
               <div className="bss-alert-title">Authenticator setup required</div>

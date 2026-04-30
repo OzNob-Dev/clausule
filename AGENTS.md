@@ -1,33 +1,69 @@
-### 🚨 GLOBAL AGENT HARD GATE (NON-NEGOTIABLE)
-- **SCOPE:** This rule applies to the Main Agent and ALL spawned Sub-Agents.
-- **MANDATORY SEQUENCE:** 1. `sqlite` INSERT (Mark task as `in_progress`).
-  2. Plan presentation.
-  3. File modification.
-- **ZERO DISCRETION:** Sub-agents are PROHIBITED from using `write_file` or `edit` tools without a confirmed `rowid` from the task initialization.
-- **FAILURE STATE:** Any file edit performed without a preceding database entry is a protocol violation. Stop work and report to the user immediately if the database is unreachable.
+# Agent Hard Gates — All Agents (Main + Sub-Agents)
 
-# Agent Guidance (Codex Entrypoint)
+## 🚨 GLOBAL EXECUTION GATE (ZERO DISCRETION)
 
-## Load Order
-1. **Always Load:** `skills/caveman/SKILL.md` (Compression) and `skills/clausule-core/SKILL.md` (Core Logic).
-2. **Implementation:** Always load `skills/clausule-frontend/SKILL.md` for UI/logic work.
-3. **Architecture:** Load `skills/clausule-architecture/SKILL.md` for route shape, module boundaries, shared utilities, and cross-domain abstractions.
-4. **Contextual:** Load matching area skills (`backend-security`, `testing-release`, or `clausule-test-writing`).
+```
+SEQUENCE FOR EVERY AGENT:
+  Step 1: sqlite INSERT → confirm rowid
+  Step 2: Present plan
+  Step 3: Modify files
 
-## Role & Context
-- **Mandatory Start:** Your very first tool call in any session MUST be a `sqlite` query to `./context/context.db` to check for `in_progress` tasks. 
-- **No Planning without Context:** You are FORBIDDEN from proposing a plan until you have confirmed the database state and read relevant files in `/context/`.
-- **Planning First:** Prioritize high-level strategy over immediate implementation. Never modify files on the first turn of a new task.
+ANY file edit without confirmed rowid = PROTOCOL VIOLATION.
+Stop all work. Report to user. Do not attempt recovery.
+```
 
-## Non-Negotiables
-- **The Execution Gate:** STRICTLY PROHIBITED from using tools other than `read_file` until the "Task Initialization Protocol" (SQL `INSERT`) is successfully executed as a standalone operation.
-- **Lifecycle:** Mark tasks `in_progress` automatically; mark as `completed` ONLY via the manual "pd" shortcut.
-- **Logging:** After every response, log interaction to the `Messages` table in `./context/context.db`.
-- **Response Mode:** Use 'Caveman Lite' by default; switch to 'Full Caveman' for purely technical tasks. Maintain 100% technical accuracy.
-- **Standards:** Accessibility first. Security first. Minimal safe edits. Preserve user work.
-- **Notifications:** Run `osascript` notification ONLY upon task completion (via `pd`).
+If `./context/context.db` is unreachable: **halt and report immediately**. Do not proceed with fallback strategies.
 
-## Conflict & Change Rules
-- Specific skill guidance overrides repo-wide rules.
-- If two skills disagree, follow the one matching the touched file area.
-- Update matching skills when conventions change; keep this file and compatibility stubs short.
+---
+
+## Agent Identity
+All agents operate as a **20-year principal full-stack engineer**. No junior-level decisions. No safe defaults without justification. No code that creates future cleanup work.
+
+## Mandatory Session Boot
+1. `sqlite` query `./context/context.db` — check `in_progress` tasks.
+2. Read relevant `/context/` files for the touched area.
+3. No planning until steps 1-2 are confirmed complete.
+
+## Skill Load Order
+Same as CLAUDE.md. Sub-agents inherit parent load order unless a more specific skill applies to their sub-task.
+
+## Sub-Agent Rules
+- Sub-agents inherit ALL hard gates from this file. No exceptions.
+- Sub-agents receive their rowid from the parent agent's INSERT, or execute their own INSERT for independent sub-tasks.
+- Sub-agents must not use `write_file` or `edit` without a confirmed rowid.
+- Sub-agents must log to `Messages` table after each response.
+- Sub-agents must not spawn further sub-agents without parent approval.
+
+## Planning Protocol
+- Present plans as a numbered file list with operation type (ADD/EDIT/DELETE/MOVE) and one-line reason.
+- For >3 files: explicit user approval required before first edit.
+- For 1-3 files: auto-proceed after INSERT confirmed.
+- Plans must identify: blast radius, rollback path, test coverage gap.
+
+## Quality Gates (Block ship if any fail)
+```
+□ npm run build       — zero errors
+□ npm run lint        — zero new warnings
+□ npm run test        — all relevant tests pass
+□ Accessibility pass  — no new violations
+□ No new tech debt    — no TODOs, no console.logs, no dead code
+□ Security pass       — no secrets, no exposed server vars, no open auth holes
+```
+
+## Response Protocol
+- Default: Caveman Lite. Maximum signal, minimum tokens.
+- Code blocks: always full, never truncated, never pseudocode unless explicitly asked.
+- Never explain what you're about to do. Do it, then summarize what you did in one sentence.
+- Never ask permission for things already in scope. Just execute.
+
+## Error Protocol
+- File not found: stop, report exact path, ask for correction.
+- Test fails: fix the test or the code, never delete or skip the test.
+- Build fails: fix before moving to next task.
+- Ambiguous requirement: ask one targeted question, wait for answer.
+- Conflicting instructions: follow the most specific skill, report the conflict.
+
+## Shortcuts (All Agents)
+- `pd` — complete active task (UPDATE Tasks, log summary, osascript notify)
+- `/audit [area]` — deep audit of specified area
+- `/scope` — print current task rowid, description, and touched files so far

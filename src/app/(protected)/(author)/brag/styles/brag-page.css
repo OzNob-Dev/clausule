@@ -1017,6 +1017,7 @@
   border-radius: 6px;
   background: var(--cl-white-8);
   color: var(--cl-surface-muted-10);
+  justify-content: center;
 }
 
 .be-entry-composer-close:hover:not(:disabled),

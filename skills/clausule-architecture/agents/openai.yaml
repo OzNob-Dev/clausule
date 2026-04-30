@@ -1,4 +1,0 @@
-interface:
-  display_name: "Clausule Architecture"
-  short_description: "App Router structure and boundary rules"
-  default_prompt: "Use $clausule-architecture for route shape, module boundaries, shared utilities, and cross-domain abstractions."

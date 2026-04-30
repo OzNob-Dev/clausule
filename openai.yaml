@@ -1,0 +1,638 @@
+# VS Code AI Agent Configuration
+# Principal Full-Stack Engineer — Clausule Architecture
+
+name: principal-engineer
+version: 2.0.0
+description: >
+  20-year principal full-stack engineer operating within a Clausule architecture.
+  Zero new tech debt. Security first. AAA accessibility. Minimal blast radius.
+  Fails closed. Reads before writing. Plans before executing.
+
+model: gpt-4o
+temperature: 0.2
+max_tokens: 8000
+
+system_prompt: |
+  You are a 20-year principal full-stack engineer. Every decision reflects that experience.
+  
+  EXECUTION GATE (NON-NEGOTIABLE):
+  1. sqlite INSERT into Tasks → confirm rowid
+  2. Present plan
+  3. Modify files
+  No file edit without confirmed rowid. Ever.
+
+  HARD RULES:
+  - Zero new tech debt. Leave every file cleaner than found.
+  - Security first. Fail closed. Never expose secrets. Never log PII.
+  - AAA accessibility. Native elements. Keyboard + screen reader paths.
+  - Minimal blast radius. Smallest safe change.
+  - No hallucinated APIs. Grep before assuming a method exists.
+  - No orphaned code. Every addition wired. Every deletion traced.
+  - Read context files before proposing anything.
+
+  RESPONSE MODE: Caveman Lite by default — no filler, full precision.
+  Never explain what you're about to do. Do it. Summarize in one sentence.
+
+skills:
+  - name: core
+    description: Repo-wide principal engineering principles, naming, error handling, change sizing
+    file: skills/core/SKILL.md
+    triggers: ["*"]  # Always loaded
+    tools: [read_file, search_content]
+
+  - name: caveman
+    description: Ultra-compressed communication. Max signal, min tokens.
+    file: skills/caveman/SKILL.md
+    triggers: ["*"]  # Always loaded
+    tools: []
+
+  - name: frontend
+    description: React, Next.js, TypeScript, Tailwind, accessibility, performance, design
+    file: skills/frontend/SKILL.md
+    triggers:
+      - "*.tsx"
+      - "*.jsx"
+      - "*.css"
+      - "*.scss"
+      - component
+      - screen
+      - hook
+      - style
+      - layout
+      - page
+      - ui
+    tools: [read_file, write_file, search_content, run_command]
+
+  - name: component-library
+    description: Design system components, API design, token compliance, composability
+    file: skills/component-library/SKILL.md
+    triggers:
+      - "src/shared/components/**"
+      - design system
+      - primitive
+      - component library
+      - "build component"
+      - "new component"
+    tools: [read_file, write_file, search_content]
+
+  - name: refactor
+    description: Systematic refactoring, smell detection, characterization tests, safe restructuring
+    file: skills/refactor/SKILL.md
+    triggers:
+      - refactor
+      - clean up
+      - restructure
+      - extract
+      - split
+      - "file >200"
+      - too complex
+      - simplify
+    tools: [read_file, write_file, search_content, run_command, list_files]
+
+  - name: mocks
+    description: Factory functions, MSW handlers, module mocks, test fixtures, test infrastructure
+    file: skills/mocks/SKILL.md
+    triggers:
+      - "*.test.*"
+      - "*.spec.*"
+      - mock
+      - fixture
+      - factory
+      - stub
+      - handler
+      - msw
+      - test data
+    tools: [read_file, write_file, search_content, run_command]
+
+  - name: security
+    description: Auth, authorization, input validation, secrets, API hardening, crypto, sessions
+    file: skills/security/SKILL.md
+    triggers:
+      - auth
+      - session
+      - token
+      - permission
+      - password
+      - signup
+      - login
+      - mfa
+      - passkey
+      - sso
+      - webhook
+      - payment
+      - pii
+      - validate
+      - security
+      - "src/app/api/**"
+      - "supabase/migrations/**"
+    tools: [read_file, search_content, run_command]
+
+  - name: architecture
+    description: App Router structure, module boundaries, data flow, route design, layer decisions
+    file: skills/architecture/SKILL.md
+    triggers:
+      - architecture
+      - structure
+      - boundaries
+      - route
+      - "new feature"
+      - "new module"
+      - data flow
+      - where should
+      - where does
+    tools: [read_file, search_content, list_files]
+
+  - name: tech-debt
+    description: Debt identification, prevention, migration patterns, zero-debt enforcement
+    file: skills/tech-debt/SKILL.md
+    triggers:
+      - debt
+      - legacy
+      - migrate
+      - modernize
+      - cleanup
+      - old code
+      - TODO
+      - any type
+      - magic value
+    tools: [read_file, write_file, search_content, run_command]
+
+  - name: release
+    description: Pre-deploy gates, feature flags, rollback plans, migration strategy, risk assessment
+    file: skills/release/SKILL.md
+    triggers:
+      - release
+      - deploy
+      - ship
+      - flag
+      - rollout
+      - migration
+      - rollback
+      - production
+    tools: [read_file, run_command]
+
+  - name: data
+    description: DB schema design, query optimization, indexing, N+1 detection, Supabase, RLS, migrations
+    file: skills/data/SKILL.md
+    triggers:
+      - "*.sql"
+      - "supabase/**"
+      - migration
+      - schema
+      - query
+      - database
+      - index
+      - rls
+      - rpc
+    tools: [read_file, write_file, search_content, run_command]
+
+  - name: api-design
+    description: REST contracts, versioning, error shapes, pagination, rate limiting, backward compat
+    file: skills/api-design/SKILL.md
+    triggers:
+      - "src/app/api/**"
+      - api route
+      - endpoint
+      - rest
+      - pagination
+      - versioning
+    tools: [read_file, write_file, search_content]
+
+  - name: typescript
+    description: Advanced typing, generics, discriminated unions, branded types, no-any enforcement
+    file: skills/typescript/SKILL.md
+    triggers:
+      - "*.ts"
+      - "*.tsx"
+      - typescript
+      - type
+      - generic
+      - interface
+      - "any type"
+    tools: [read_file, write_file, search_content]
+
+  - name: testing
+    description: Test strategy, philosophy, coverage quality, unit/integration/e2e, flakiness prevention
+    file: skills/testing/SKILL.md
+    triggers:
+      - "*.test.*"
+      - "*.spec.*"
+      - test strategy
+      - coverage
+      - what to test
+      - test quality
+    tools: [read_file, write_file, run_command]
+
+  - name: performance
+    description: Core Web Vitals, bundle optimization, React render, DB query performance, caching
+    file: skills/performance/SKILL.md
+    triggers:
+      - performance
+      - slow
+      - bundle size
+      - lcp
+      - cls
+      - cwv
+      - optimize
+      - cache
+    tools: [read_file, search_content, run_command]
+
+  - name: dx
+    description: CI/CD pipelines, linting, formatting, pre-commit hooks, local dev, onboarding
+    file: skills/dx/SKILL.md
+    triggers:
+      - ci
+      - pipeline
+      - github actions
+      - lint
+      - husky
+      - pre-commit
+      - onboarding
+      - tooling
+      - ".eslintrc*"
+      - ".github/**"
+    tools: [read_file, write_file, run_command]
+
+  - name: state-machines
+    description: XState v5, useReducer FSMs, discriminated union state, when to use machines
+    file: skills/state-machines/SKILL.md
+    triggers:
+      - state machine
+      - xstate
+      - wizard
+      - multi-step
+      - complex state
+      - boolean flags
+    tools: [read_file, write_file, search_content]
+
+  - name: error-handling
+    description: Typed error hierarchy, Result types, error boundaries, retry logic, user-facing copy
+    file: skills/error-handling/SKILL.md
+    triggers:
+      - error handling
+      - try catch
+      - result type
+      - error boundary
+      - retry
+      - AppError
+    tools: [read_file, write_file, search_content]
+
+  - name: logging-observability
+    description: Structured logging, correlation IDs, Sentry, alerting, PII sanitization
+    file: skills/logging-observability/SKILL.md
+    triggers:
+      - logging
+      - sentry
+      - observability
+      - monitoring
+      - alert
+      - correlation id
+      - pii
+    tools: [read_file, write_file, search_content]
+
+  - name: forms
+    description: react-hook-form, Zod validation, accessible fields, multi-step forms, server actions
+    file: skills/forms/SKILL.md
+    triggers:
+      - form
+      - react-hook-form
+      - zod
+      - validation
+      - input
+      - field
+      - submit
+    tools: [read_file, write_file, search_content]
+
+  - name: animation
+    description: Framer Motion, reduced-motion compliance, performance-safe patterns, timing
+    file: skills/animation/SKILL.md
+    triggers:
+      - animation
+      - framer
+      - motion
+      - transition
+      - animate
+      - keyframe
+    tools: [read_file, write_file, search_content]
+
+  - name: i18n
+    description: next-intl, ICU messages, locale routing, RTL support, date/number/currency formatting
+    file: skills/i18n/SKILL.md
+    triggers:
+      - i18n
+      - internationalization
+      - locale
+      - translation
+      - rtl
+      - next-intl
+      - "messages/**"
+    tools: [read_file, write_file, search_content]
+
+  - name: documentation
+    description: JSDoc, ADRs, README standards, changelog discipline, inline comment policy
+    file: skills/documentation/SKILL.md
+    triggers:
+      - documentation
+      - jsdoc
+      - adr
+      - readme
+      - changelog
+      - comment
+    tools: [read_file, write_file]
+
+context:
+  - when: "editing *.tsx, *.jsx, *.css, *.scss or any UI file"
+    load: [core, typescript, frontend, refactor, caveman]
+
+  - when: "editing src/shared/components/**"
+    load: [core, typescript, frontend, component-library, refactor, caveman]
+
+  - when: "editing any form or field component"
+    load: [core, frontend, forms, typescript, caveman]
+
+  - when: "editing *.test.*, *.spec.* or any test/mock file"
+    load: [core, testing, mocks, caveman]
+
+  - when: "editing src/app/api/**, supabase/**, **/auth/**, **/actions/**"
+    load: [core, security, api-design, data, logging-observability, caveman]
+
+  - when: "editing files >200 lines or refactoring"
+    load: [core, refactor, tech-debt, typescript, caveman]
+
+  - when: "discussing architecture, new features, or module design"
+    load: [core, architecture, security, api-design, caveman]
+
+  - when: "preparing for release, reviewing risk, or dealing with migrations"
+    load: [core, release, security, data, caveman]
+
+  - when: "editing supabase/** or any SQL/migration file"
+    load: [core, data, security, caveman]
+
+  - when: "adding animations or motion"
+    load: [core, animation, performance, caveman]
+
+  - when: "adding i18n, locale, or translation"
+    load: [core, i18n, caveman]
+
+  - when: "complex state management or multi-step flow"
+    load: [core, state-machines, typescript, caveman]
+
+  - when: "adding error handling, logging, or observability"
+    load: [core, error-handling, logging-observability, security, caveman]
+
+  - when: "CI/CD, tooling, linting, or DX work"
+    load: [core, dx, security, caveman]
+
+  - when: "writing or reviewing TypeScript types"
+    load: [core, typescript, caveman]
+
+  - when: "performance investigation or optimization"
+    load: [core, performance, data, data-advanced, caveman]
+
+  - when: "editing src/features/**/server/** or service/repository layer"
+    load: [core, backend-architecture, security, error-handling, logging-observability, caveman]
+
+  - when: "background jobs, queues, cron, or async processing"
+    load: [core, background-jobs, error-handling, logging-observability, caveman]
+
+  - when: "caching, Redis, or performance data layer"
+    load: [core, caching, data, caveman]
+
+  - when: "realtime, websocket, SSE, or live updates"
+    load: [core, realtime, security, caveman]
+
+  - when: "email, notifications, or outbox pattern"
+    load: [core, email-notifications, background-jobs, security, caveman]
+
+  - when: "file uploads, storage, or image processing"
+    load: [core, file-storage, security, caveman]
+
+  - when: "payments, billing, Stripe, or subscriptions"
+    load: [core, payments, security, logging-observability, caveman]
+
+  - when: "rate limiting, throttling, or abuse prevention"
+    load: [core, rate-limiting, security, caching, caveman]
+
+  - when: "complex schema design, multi-tenancy, audit logs, or soft deletes"
+    load: [core, data, data-advanced, security, caveman]
+
+commands:
+  - name: /refactor
+    description: Systematic refactor of file or selection
+    skill: refactor
+
+  - name: /audit
+    description: P0-P3 audit of specified area (frontend|security|architecture|debt|release|performance|data|dx)
+    prompt: |
+      Perform a full audit of the specified area or current file.
+      Return findings ordered P0-P3 with file path, line number, root cause, and fix.
+      No general observations. Every finding must be actionable.
+
+  - name: /component
+    description: Build a new design-system component from scratch
+    skill: component-library
+
+  - name: /mock
+    description: Create factory functions and MSW handlers for an entity or API
+    skill: mocks
+
+  - name: /secure
+    description: Security review of a file, route, or auth flow
+    skill: security
+
+  - name: /debt
+    description: Identify and prioritize tech debt in a file or module
+    skill: tech-debt
+
+  - name: /release
+    description: Generate release checklist and risk assessment for current changes
+    skill: release
+
+  - name: /perf
+    description: Performance audit of a component, page, or query
+    skill: performance
+
+  - name: /types
+    description: Review or improve TypeScript types in current file
+    skill: typescript
+
+  - name: /adr
+    description: Create an Architecture Decision Record for a significant decision
+    skill: documentation
+
+  - name: /form
+    description: Build a fully accessible, validated form with RHF + Zod
+    skill: forms
+
+  - name: /errors
+    description: Design error handling strategy for a new feature or flow
+    skill: error-handling
+
+  - name: /service
+    description: Design service + repository layer for a new backend feature
+    skill: backend-architecture
+
+  - name: /job
+    description: Design a background job with idempotency, retry, and DLQ
+    skill: background-jobs
+
+  - name: /schema
+    description: Review or design a DB schema with indexes, RLS, and constraints
+    skill: data
+
+  - name: /payment
+    description: Review payment flow or webhook handler against Stripe best practices
+    skill: payments
+
+  - name: /caveman
+    description: Switch communication compression level (lite|full|ultra)
+    skill: caveman
+
+  - name: /scope
+    description: Print current task rowid, description, and touched files
+    prompt: "Query context.db for the active in_progress task and list all files modified in this session."
+
+  - name: /why
+    description: Explain current decision in plain English (one response, then revert to caveman)
+    skill: caveman
+
+safety:
+  validation:
+    - command: "npm run build"
+      description: "Build must succeed — zero errors"
+    - command: "npm run lint"
+      description: "Zero new lint warnings"
+    - command: "npm run test"
+      description: "All affected tests pass"
+
+  protected_files:
+    - "package.json"
+    - "package-lock.json"
+    - "yarn.lock"
+    - "pnpm-lock.yaml"
+    - "tsconfig.json"
+    - "tsconfig.*.json"
+    - "*.config.{js,ts,mjs,cjs}"
+    - ".env*"
+    - "vite.config.*"
+    - "next.config.*"
+    - "webpack.config.*"
+    - "supabase/config.toml"
+    - ".github/**"
+
+refactor:
+  large_file_threshold: 200
+  require_approval_above: 500
+  auto_generate_tests: true
+  require_characterization_tests: true
+  phases_above: 1000
+
+performance:
+  cache_skills: true
+  parallel_tool_calls: true
+  max_context_size: 32000
+
+  - name: backend-architecture
+    description: Service layer, repository pattern, DI, DDD boundaries, module organization
+    file: skills/backend-architecture/SKILL.md
+    triggers:
+      - service layer
+      - repository
+      - backend architecture
+      - domain logic
+      - business logic
+    tools: [read_file, write_file, search_content]
+
+  - name: background-jobs
+    description: Queues, workers, idempotency, retry strategy, DLQ, cron jobs, Inngest
+    file: skills/background-jobs/SKILL.md
+    triggers:
+      - background job
+      - queue
+      - worker
+      - cron
+      - inngest
+      - scheduled
+    tools: [read_file, write_file, search_content]
+
+  - name: caching
+    description: Redis patterns, cache invalidation, stampede prevention, TTL design
+    file: skills/caching/SKILL.md
+    triggers:
+      - cache
+      - redis
+      - upstash
+      - ttl
+      - invalidate
+    tools: [read_file, write_file, search_content]
+
+  - name: realtime
+    description: WebSockets, SSE, Supabase Realtime, presence, broadcast, connection lifecycle
+    file: skills/realtime/SKILL.md
+    triggers:
+      - realtime
+      - websocket
+      - sse
+      - presence
+      - broadcast
+      - live update
+    tools: [read_file, write_file, search_content]
+
+  - name: email-notifications
+    description: Transactional email, outbox pattern, bounce handling, Resend, React Email
+    file: skills/email-notifications/SKILL.md
+    triggers:
+      - email
+      - notification
+      - resend
+      - bounce
+      - unsubscribe
+      - outbox
+    tools: [read_file, write_file, search_content]
+
+  - name: file-storage
+    description: File uploads, presigned URLs, validation, CDN, Supabase Storage, image processing
+    file: skills/file-storage/SKILL.md
+    triggers:
+      - file upload
+      - storage
+      - presigned
+      - image upload
+      - sharp
+    tools: [read_file, write_file, search_content]
+
+  - name: payments
+    description: Stripe integration, webhooks, idempotency, subscription lifecycle, failed payment recovery
+    file: skills/payments/SKILL.md
+    triggers:
+      - stripe
+      - payment
+      - subscription
+      - billing
+      - checkout
+      - invoice
+    tools: [read_file, write_file, search_content]
+
+  - name: rate-limiting
+    description: Sliding window, token bucket, Redis-backed limiters, abuse detection
+    file: skills/rate-limiting/SKILL.md
+    triggers:
+      - rate limit
+      - rate limiting
+      - throttle
+      - abuse
+      - brute force
+    tools: [read_file, write_file, search_content]
+
+  - name: data-advanced
+    description: Query optimization, EXPLAIN ANALYZE, soft deletes, audit logs, multi-tenancy, read replicas
+    file: skills/data-advanced/SKILL.md
+    triggers:
+      - explain analyze
+      - query optimization
+      - soft delete
+      - audit log
+      - multi-tenant
+      - read replica
+      - slow query
+    tools: [read_file, write_file, search_content, run_command]

@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
+.card,
+.danger-card {
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--cl-surface-white);
+  box-shadow: var(--cl-shadow-soft), var(--cl-shadow-med);
+}
+
+.card {
+  border: 1px solid var(--cl-border-2);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 32px;
+  background: var(--cl-surface-ink-2);
+}
+
+.bss-card-head-title {
+  color: var(--cl-surface-muted-15);
+  font-family: var(--cl-font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.bss-card-head-meta {
+  color: var(--cl-surface-muted-7);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.card,
+.danger-card,
+.bss-danger-card .bss-danger-row {
+  padding-left: 24px;
+  padding-right: 24px;
+}

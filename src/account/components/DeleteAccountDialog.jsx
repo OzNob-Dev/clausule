@@ -5,6 +5,8 @@ import { Button } from '@shared/components/ui/Button'
 import { Modal } from '@shared/components/ui/Modal'
 import { useDeleteAccount } from '@account/hooks/useDeleteAccount'
 import './DeleteAccountDialog.css'
+import { ShieldIcon } from '@shared/components/ui/icon/ShieldIcon'
+import { TriangleIcon } from '@shared/components/ui/icon/TriangleIcon'
 
 const DEFAULT_DESCRIPTION =
   'This will permanently delete your brag doc and all associated entries, evidence files, and records from our servers.'
@@ -219,13 +221,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
           <canvas ref={headCanvasRef} className="delete-account-dialog__canvas" aria-hidden="true" />
           <div className="delete-account-dialog__head-content">
             <div className="delete-account-dialog__icon-wrap" aria-hidden="true">
-              <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M26 8 L40 14 L40 26 C40 34 33 40 26 44 C19 40 12 34 12 26 L12 14 Z" stroke="var(--cl-dialog-delete-icon-accent)" strokeWidth="1.6" fill="var(--cl-dialog-delete-icon-fill-2)" strokeLinejoin="round" />
-                <path d="M26 12 L24 20 L28 24 L23 36" stroke="var(--cl-dialog-delete-icon-accent-2)" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.9" />
-                <path d="M28 24 L33 28 L31 34" stroke="var(--cl-dialog-delete-icon-accent-2)" strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.7" />
-                <line x1="21" y1="21" x2="31" y2="31" stroke="var(--cl-dialog-delete-icon-cross)" strokeWidth="1.8" strokeLinecap="round" />
-                <line x1="31" y1="21" x2="21" y2="31" stroke="var(--cl-dialog-delete-icon-cross)" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
+              <ShieldIcon />
             </div>
 
             <div className="delete-account-dialog__head-text">
@@ -240,11 +236,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
 
           <div className="delete-account-dialog__warning" role="alert">
             <span className="delete-account-dialog__warning-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+              <TriangleIcon />
             </span>
             <span className="delete-account-dialog__warning-text">You will lose all your data immediately. There is no recovery option.</span>
           </div>

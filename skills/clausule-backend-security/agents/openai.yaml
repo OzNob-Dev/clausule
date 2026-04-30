@@ -1,4 +1,0 @@
-interface:
-  display_name: "Clausule Backend Security"
-  short_description: "API, database, auth, privacy rules"
-  default_prompt: "Use $clausule-backend-security when changing Clausule API routes, database, auth, privacy, or server logic."
