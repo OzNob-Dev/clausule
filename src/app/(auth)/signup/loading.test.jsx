@@ -1,15 +1,11 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import Loading from './loading'
 
-vi.mock('@shared/components/ui/PageLoader', () => ({
-  default: ({ variant }) => <div>loader:{variant}</div>,
-}))
-
 describe('signup loading', () => {
-  it('renders the shared loader', () => {
+  it('renders the shared loading overlay', () => {
     render(<Loading />)
-    expect(screen.getByText('loader:signup')).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Loading' })).toBeInTheDocument()
   })
 })

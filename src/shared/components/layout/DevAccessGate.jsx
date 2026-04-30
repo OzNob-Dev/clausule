@@ -2,7 +2,7 @@
 import './DevAccessGate.css'
 import { useEffect, useState } from 'react'
 import ComingSoon from '@shared/components/ComingSoon'
-import PageLoader from '@shared/components/ui/PageLoader'
+import LoadingOverlay from '@shared/components/ui/LoadingOverlay'
 
 const ACCESS_KEY = 'clausule_dev_accexx'
 const ACCESS_VALUES = new Set(['true', 'granted'])
@@ -27,6 +27,6 @@ export default function DevAccessGate({ children }) {
     setChecked(true)
   }, [])
 
-  if (!checked) return <PageLoader variant="app" />
+  if (!checked) return <div className="relative min-h-[55vh] w-full overflow-hidden"><LoadingOverlay /></div>
   return allowed ? children : <ComingSoon />
 }

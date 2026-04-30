@@ -11,7 +11,6 @@ import { ConversationIllustration } from './ConversationIllustration'
 import { DeviceLockIcon } from './DeviceLockIcon'
 import { DocumentIcon } from './DocumentIcon'
 import { DownloadIcon } from './DownloadIcon'
-import { DotsIcon, FrameIcon, HelixIcon, OrbitIcon, RadarIcon, ShieldBadgeIcon } from './PageLoaderIcons'
 import { MailIcon } from './MailIcon'
 import { MailSendIcon } from './MailSendIcon'
 import { MessageIcon } from './MessageIcon'
@@ -50,12 +49,6 @@ describe('icon set', () => {
         <SparkleIcon />
         <DownloadIcon />
         <SsoProviderIcon provider="google" />
-        <OrbitIcon />
-        <RadarIcon />
-        <DotsIcon />
-        <HelixIcon />
-        <FrameIcon />
-        <ShieldBadgeIcon />
         <ConversationIllustration />
         <RingsIcon offsets={[0, 0, 0]} />
       </>

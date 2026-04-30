@@ -19,9 +19,9 @@ const makeDust = () => Array.from({ length: 55 }, () => ({
 }))
 
 export default function LoadingOverlay({
-  label = 'Loading app',
+  label = 'Loading',
   eyebrow = 'Please wait',
-  heading = 'Just a moment.',
+  heading = (<><span>Just a</span><br /><em>moment.</em></>),
   sub = 'Fetching your data',
 }) {
   const canvasRef = useRef(null)
@@ -121,9 +121,25 @@ export default function LoadingOverlay({
   return (
     <div className="loading-overlay" role="status" aria-label={label}>
       <canvas ref={canvasRef} className="loader-canvas" aria-hidden="true" />
+      <div className="skeleton-body" aria-hidden="true">
+        <div className="skel-line-group">
+          <div className="skel-line" />
+          <div className="skel-line" />
+          <div className="skel-line" />
+        </div>
+        <div className="skel-line-group">
+          <div className="skel-line" />
+          <div className="skel-line" />
+          <div className="skel-line" />
+        </div>
+        <div className="skel-line-group">
+          <div className="skel-line" />
+          <div className="skel-line" />
+        </div>
+      </div>
       <div className="loader-copy">
         <p className="loader-eyebrow">{eyebrow}</p>
-        <h2 className="loader-heading">Just a<br /><em>moment.</em></h2>
+        <h2 className="loader-heading">{heading}</h2>
         <div className="loader-rule" />
         <p className="loader-sub">{sub}</p>
         <div className="loader-dots" aria-hidden="true">
@@ -137,9 +153,6 @@ export default function LoadingOverlay({
           position: absolute;
           inset: 0;
           overflow: hidden;
-          display: grid;
-          place-items: center;
-          padding: clamp(24px, 4vw, 52px);
           background: linear-gradient(165deg, #F7F3EE 0%, #EDE6DA 100%);
         }
         .loader-canvas {
@@ -149,8 +162,45 @@ export default function LoadingOverlay({
           height: 100%;
           display: block;
         }
+        .skeleton-body {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 240px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          pointer-events: none;
+          margin-top: 4px;
+          z-index: 0;
+        }
+        .skel-line-group {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .skel-line {
+          height: 1px;
+          background: rgba(28, 26, 23, 0.12);
+          border-radius: 1px;
+          transform-origin: left center;
+          transform: scaleX(0);
+          animation: line-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .skel-line-group:nth-child(1) .skel-line:nth-child(1) { width: 55%; animation-delay: 0.1s; }
+        .skel-line-group:nth-child(1) .skel-line:nth-child(2) { width: 38%; animation-delay: 0.28s; }
+        .skel-line-group:nth-child(1) .skel-line:nth-child(3) { width: 45%; animation-delay: 0.46s; }
+        .skel-line-group:nth-child(2) .skel-line:nth-child(1) { width: 62%; animation-delay: 0.6s; }
+        .skel-line-group:nth-child(2) .skel-line:nth-child(2) { width: 30%; animation-delay: 0.78s; }
+        .skel-line-group:nth-child(2) .skel-line:nth-child(3) { width: 50%; animation-delay: 0.96s; }
+        .skel-line-group:nth-child(3) .skel-line:nth-child(1) { width: 42%; animation-delay: 1.1s; }
+        .skel-line-group:nth-child(3) .skel-line:nth-child(2) { width: 58%; animation-delay: 1.28s; }
         .loader-copy {
-          position: relative;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
           z-index: 1;
           display: flex;
           flex-direction: column;
@@ -216,6 +266,10 @@ export default function LoadingOverlay({
           from { opacity: 0; transform: translateY(14px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes line-draw {
+          from { transform: scaleX(0); opacity: 0; }
+          to { transform: scaleX(1); opacity: 1; }
+        }
         @keyframes italic-glow {
           0%, 100% { opacity: 0.75; }
           50% { opacity: 1; }
@@ -228,6 +282,7 @@ export default function LoadingOverlay({
           40% { transform: translateY(-6px); opacity: 1; }
         }
         @media (prefers-reduced-motion: reduce) {
+          .skel-line,
           .loader-eyebrow,
           .loader-heading,
           .loader-heading em,
