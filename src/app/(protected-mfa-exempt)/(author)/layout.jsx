@@ -1,16 +1,17 @@
 'use client'
 
 import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
-import PageShell from '@shared/components/layout/PageShell'
 import '@brag/styles/brag-shell.css'
 
 export default function AuthorLayout({ children }) {
   return (
     <div className="be-page">
       <BragIdentitySidebar activePage="settings" eyebrow="Clausule · Settings" ariaLabel="Sidebar navigation" />
-      <PageShell mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-settings-title">
-        {children}
-      </PageShell>
+      <main className="be-main page-enter bss-screen" aria-labelledby="brag-settings-title">
+        <div className="be-inner bss-page">
+          {children}
+        </div>
+      </main>
     </div>
   )
 }

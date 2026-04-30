@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation'
 import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
-import PageShell from '@shared/components/layout/PageShell'
 import '@brag/styles/brag-shell.css'
 
 const PAGE_CONFIG = {
@@ -26,9 +25,11 @@ export default function AuthorLayout({ children }) {
         eyebrow={pageConfig.eyebrow}
         ariaLabel="Sidebar navigation"
       />
-      <PageShell mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby={pageConfig.ariaLabelledby}>
-        {children}
-      </PageShell>
+      <main className="be-main page-enter bss-screen" aria-labelledby={pageConfig.ariaLabelledby}>
+        <div className="be-inner bss-page">
+          {children}
+        </div>
+      </main>
     </div>
   )
 }
