@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { Button } from '@shared/components/ui/Button'
-import { FieldInput } from '@shared/components/ui/Field'
 import { Modal } from '@shared/components/ui/Modal'
 import { useDeleteAccount } from '@account/hooks/useDeleteAccount'
 import './DeleteAccountDialog.css'
@@ -15,6 +14,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
   const headCanvasRef = useRef(null)
   const titleId = useId()
   const subtitleId = useId()
+  const confirmDescId = useId()
   const { deleteAccount, deleting } = useDeleteAccount()
   const [confirmText, setConfirmText] = useState('')
   const [deleteError, setDeleteError] = useState('')
@@ -249,22 +249,27 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
             <span className="delete-account-dialog__warning-text">You will lose all your data immediately. There is no recovery option.</span>
           </div>
 
-          <div className="delete-account-dialog__confirm">
-            <label className="delete-account-dialog__label" htmlFor="delete-confirm-input">Type DELETE to confirm</label>
-            <FieldInput
-              ref={confirmInputRef}
-              id="delete-confirm-input"
-              type="text"
-              value={confirmText}
-              onChange={(event) => setConfirmText(event.target.value)}
-              placeholder="DELETE"
-              autoComplete="off"
-              autoFocus
-              spellCheck={false}
-              className="delete-account-dialog__input"
-              aria-describedby="delete-confirm-hint"
-            />
-            <span id="delete-confirm-hint" className="sr-only">Type the word DELETE in capitals to enable the delete button</span>
+          <div className="delete-account-dialog__confirm confirm-section">
+            <span className="delete-account-dialog__label confirm-label">Confirmation required</span>
+            <div className="delete-account-dialog__input-wrap confirm-input-wrap">
+              <span className="delete-account-dialog__input-label-inner confirm-input-label-inner" aria-hidden="true">Type DELETE to confirm</span>
+              <input
+                ref={confirmInputRef}
+                id="delete-confirm-input"
+                type="text"
+                value={confirmText}
+                onChange={(event) => setConfirmText(event.target.value)}
+                placeholder="DELETE"
+                autoComplete="off"
+                autoFocus
+                spellCheck={false}
+                className="delete-account-dialog__input confirm-input"
+                aria-describedby={confirmDescId}
+              />
+              <div className="delete-account-dialog__input-underline confirm-input-underline" aria-hidden="true" />
+            </div>
+            <p className="delete-account-dialog__hint confirm-input-hint" aria-hidden="true">Type DELETE in capitals - this cannot be undone</p>
+            <span id={confirmDescId} className="sr-only">Type the word DELETE in capital letters to enable the delete button</span>
           </div>
 
           <div className="delete-account-dialog__rule" />

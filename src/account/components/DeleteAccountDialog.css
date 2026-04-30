@@ -142,35 +142,88 @@
 
 .delete-account-dialog__label {
   display: block;
-  margin-bottom: 10px;
-  color: #8B7B6B;
+  margin-bottom: 12px;
+  color: #4A3828;
   font-size: 11px;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.2;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
+.delete-account-dialog__input-wrap {
+  position: relative;
+  border: 1.5px solid rgba(176, 48, 48, 0.35);
+  border-radius: 10px;
+  background: #1A0808;
+  padding: 16px 20px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.delete-account-dialog__input-wrap:focus-within {
+  border-color: #B83232;
+  box-shadow: 0 0 0 3px rgba(176, 48, 48, 0.15), inset 0 0 40px rgba(180, 30, 10, 0.2);
+}
+
+.delete-account-dialog__input-label-inner {
+  display: block;
+  margin-bottom: 6px;
+  color: #F0A090;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'Source Sans 3', var(--font-sans), system-ui, sans-serif;
+}
+
 .delete-account-dialog__input {
-  border: 1.5px solid rgba(28, 26, 23, 0.15) !important;
-  border-radius: 8px !important;
-  background: #fff !important;
-  padding: 13px 16px !important;
-  font-family: 'Source Sans 3', var(--font-sans), system-ui, sans-serif !important;
-  font-size: 14px !important;
-  letter-spacing: 2px !important;
-  color: #3D2F22 !important;
-  outline: none !important;
-  transition: border-color .15s !important;
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #FFE8E8;
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 6px;
+  outline: none;
+  caret-color: #FF7050;
 }
 
 .delete-account-dialog__input::placeholder {
-  color: #C8BDB4;
-  letter-spacing: 1px;
+  color: rgba(255, 160, 130, 0.6);
+  letter-spacing: 6px;
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
 }
 
-.delete-account-dialog__input:focus {
-  border-color: #B83232 !important;
+.delete-account-dialog__input-underline {
+  height: 1.5px;
+  margin-top: 10px;
+  border-radius: 1px;
+  background: rgba(176, 48, 48, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.delete-account-dialog__input-underline::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 -100%;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 80, 40, 0.7), transparent);
+  animation: delete-account-dialog-underline-sweep 2.4s ease-in-out infinite;
+}
+
+.delete-account-dialog__hint {
+  margin: 8px 0 0;
+  color: #C08888;
+  font-size: 11px;
+  line-height: 1.45;
+  letter-spacing: 0.3px;
 }
 
 .delete-account-dialog__rule {
@@ -276,6 +329,20 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes delete-account-dialog-underline-sweep {
+  0% {
+    left: -100%;
+  }
+
+  60% {
+    left: 100%;
+  }
+
+  100% {
+    left: 100%;
   }
 }
 
