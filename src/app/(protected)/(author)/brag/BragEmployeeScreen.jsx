@@ -9,7 +9,7 @@ import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import PageHeader from '@shared/components/ui/PageHeader'
 import '@brag/styles/brag-settings-core.css'
-import '@brag/styles/brag-page.css'
+import '@brag/styles/brag-doc.css'
 import '@brag/styles/resume-tab.css'
 import '@shared/styles/page-loader.css'
 

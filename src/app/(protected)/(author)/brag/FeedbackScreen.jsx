@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { ConversationIllustration } from '@shared/components/ui/icon/ConversationIllustration'
 import '@brag/styles/brag-settings-core.css'
-import '@brag/styles/brag-page.css'
+import '@brag/styles/brag-feedback.css'
 import '@shared/styles/page-loader.css'
 
 function FeedbackHistoryEmptyState() {
