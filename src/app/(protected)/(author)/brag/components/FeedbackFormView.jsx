@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@shared/components/ui/Button'
-import { Field, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'
+import { Field, FieldCheckbox, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'
 import { SectionCard } from '@shared/components/ui/SectionCard'
 
 export const FEEDBACK_CATEGORIES = ['Idea', 'Bug', 'Question', 'Complaint', 'Compliment']
@@ -133,7 +133,7 @@ export default function FeedbackFormView({
         <div className="be-feedback-divider" />
 
         <label className={contactOk ? 'be-feedback-check be-feedback-check--checked' : 'be-feedback-check'} htmlFor="feedback-contact">
-          <input id="feedback-contact" className="be-feedback-check-input" type="checkbox" checked={contactOk} onChange={(event) => onContactOkChange(event.target.checked)} />
+          <FieldCheckbox id="feedback-contact" className="be-feedback-check-input" checked={contactOk} onChange={(event) => onContactOkChange(event.target.checked)} />
           <span className="be-feedback-check-box" aria-hidden="true">
             <svg className="be-feedback-check-tick" viewBox="0 0 12 12" fill="none">
               <polyline points="2,6 5,9 10,3" />

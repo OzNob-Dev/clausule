@@ -2145,17 +2145,19 @@
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 22px;
-  height: 22px;
-  margin-top: 1px;
+  width: 24px;
+  height: 24px;
+  margin-top: 0;
   border: 1.5px solid var(--cl-ink-alpha-20);
-  border-radius: 6px;
-  background: var(--cl-surface-white);
+  border-radius: 9999px;
+  background: linear-gradient(180deg, var(--cl-surface-white) 0%, var(--cl-surface-muted-19) 100%);
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
 .be-feedback-check--checked .be-feedback-check-box {
   border-color: var(--acc);
-  background: var(--acc);
+  background: linear-gradient(180deg, var(--acc) 0%, var(--cl-accent-deep) 100%);
+  box-shadow: 0 4px 12px var(--cl-accent-alpha-20);
 }
 
 .be-feedback-check-tick {
@@ -2163,7 +2165,9 @@
   width: 11px;
   height: 11px;
   stroke: var(--cl-surface-white);
-  stroke-width: 2.5;
+  stroke-width: 2.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .be-feedback-check--checked .be-feedback-check-tick {
@@ -4354,18 +4358,19 @@
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 22px;
-  height: 22px;
-  margin-top: 1px;
+  width: 24px;
+  height: 24px;
+  margin-top: 0;
   border: 1.5px solid var(--cl-ink-alpha-20);
-  border-radius: 6px;
-  background: var(--cl-surface-white);
-  transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, var(--cl-surface-white) 0%, var(--cl-surface-muted-19) 100%);
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
 .be-feedback-check--checked .be-feedback-check-box {
   border-color: var(--be-feedback-coral);
-  background: var(--be-feedback-coral);
+  background: linear-gradient(180deg, var(--be-feedback-coral) 0%, var(--be-feedback-coral-deep) 100%);
+  box-shadow: 0 4px 12px var(--cl-accent-alpha-20);
 }
 
 .bss-screen .be-feedback-card .be-feedback-check-tick {
@@ -4373,7 +4378,9 @@
   width: 11px;
   height: 11px;
   stroke: var(--cl-surface-white);
-  stroke-width: 2.5;
+  stroke-width: 2.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .be-feedback-check--checked .be-feedback-check-tick {
