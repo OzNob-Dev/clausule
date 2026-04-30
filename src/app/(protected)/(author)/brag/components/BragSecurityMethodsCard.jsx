@@ -80,7 +80,7 @@ export default function BragSecurityMethodsCard({
           ) : hasSecuritySnapshot ? (
             <Button
               type="button"
-              variant="ghost"
+              variant="primary"
               className="bss-method-action"
               onClick={onToggleTotp}
               aria-expanded={totpExpanded}
@@ -110,7 +110,7 @@ export default function BragSecurityMethodsCard({
               <div className="bss-alert-title">Authenticator setup required</div>
               <p className="bss-alert-desc">
                 This keeps your account protected.{' '}
-                <button type="button" className="bss-alert-link" onClick={onToggleTotp}>
+                <button type="button" As="link" className="alert-link" onClick={onToggleTotp}>
                   Set it up now
                 </button>{' '}
                 to continue using the app.

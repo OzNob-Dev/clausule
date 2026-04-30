@@ -205,7 +205,6 @@
 }
 
 .bss-method-action,
-.bss-alert-link,
 .bss-totp-cancel,
 .bss-totp-verify,
 .bss-totp-retry,
@@ -233,7 +232,6 @@
 }
 
 .bss-method-action:focus-visible,
-.bss-alert-link:focus-visible,
 .bss-totp-cancel:focus-visible,
 .bss-totp-verify:focus-visible,
 .bss-totp-retry:focus-visible,
@@ -287,18 +285,6 @@
 
 .bss-alert-desc {
   display: inline;
-}
-
-.bss-alert-link {
-  display: inline;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--cl-accent-deep);
-  font-size: inherit;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
 
 .bss-danger-section {

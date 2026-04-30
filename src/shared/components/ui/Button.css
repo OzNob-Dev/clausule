@@ -102,6 +102,28 @@
   }
 }
 
+
+.alert-link {
+  border: 0;
+  font-family: var(--cl-font-sans);
+  cursor: pointer;
+  display: inline;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--cl-accent-deep);
+  font-size: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.alert-link:focus-visible {
+  outline: 2px solid var(--cl-accent-deep);
+  outline-offset: 2px;
+}
+
+
 .form-buttons {
   display: flex;
   justify-content: flex-end;

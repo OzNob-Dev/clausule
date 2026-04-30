@@ -57,10 +57,10 @@ export default function BragSecuritySetupPanel({ onDone, onCancel }) {
             </div>
 
             <div className="bss-totp-actions">
-              <Button type="button" variant="ghost" className="bss-totp-cancel" onClick={onCancel}>
+              <Button type="button" variant="ghost" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button type="button" className="bss-totp-verify" onClick={() => totpSetup.submitCode()}>
+              <Button type="button" variant="primary" onClick={() => totpSetup.submitCode()}>
                 Verify and enable
               </Button>
             </div>
