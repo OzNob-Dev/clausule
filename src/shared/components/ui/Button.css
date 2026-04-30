@@ -127,7 +127,7 @@
   stroke-width: 2.5;
 }
 
-.be-cta > .copy {
+.be-cta.copy {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -142,6 +142,7 @@
   border-radius: 0px;
   height: 45px;
   border: 0px;
+  border-radius: 0px;
 }
 
 .be-cta > .copy:hover {
