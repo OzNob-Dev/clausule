@@ -4,7 +4,7 @@ import '@shared/styles/page-loader.css'
 export default function Loading() {
   return (
     <div className="page-loader-wrap" aria-busy="true">
-      <PageLoader variant="profile" />
+      <PageLoader variant="app" />
     </div>
   )
 }

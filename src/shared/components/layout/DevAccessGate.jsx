@@ -2,6 +2,7 @@
 import './DevAccessGate.css'
 import { useEffect, useState } from 'react'
 import ComingSoon from '@shared/components/ComingSoon'
+import PageLoader from '@shared/components/ui/PageLoader'
 
 const ACCESS_KEY = 'clausule_dev_accexx'
 const ACCESS_VALUES = new Set(['true', 'granted'])
@@ -11,6 +12,7 @@ export function hasDevAccess() {
 }
 
 export default function DevAccessGate({ children }) {
+  const [checked, setChecked] = useState(false)
   const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
@@ -22,7 +24,9 @@ export default function DevAccessGate({ children }) {
     }
 
     setAllowed(hasDevAccess())
+    setChecked(true)
   }, [])
 
+  if (!checked) return <PageLoader variant="app" />
   return allowed ? children : <ComingSoon />
 }

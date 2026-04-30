@@ -1,3 +1,10 @@
+import PageLoader from '@shared/components/ui/PageLoader'
+import '@shared/styles/page-loader.css'
+
 export default function Loading() {
-  return <p className="li-loading" role="status">Loading LinkedIn import…</p>
+  return (
+    <div className="page-loader-wrap" aria-busy="true">
+      <PageLoader variant="app" />
+    </div>
+  )
 }

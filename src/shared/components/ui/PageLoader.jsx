@@ -18,6 +18,7 @@ function BragAnim() {
 /* ── Variant registry ──────────────────────────────────────────── */
 
 const LOADERS = {
+  app:      { label: 'Loading app',           Anim: null        },
   signup:   { label: 'Signing up',             Anim: OrbitIcon   },
   auth:     { label: 'Signing in',             Anim: RadarIcon   },
   brag:     { label: 'Loading doc',            Anim: BragAnim    },
@@ -35,9 +36,11 @@ export default function PageLoader({ variant = 'brag' }) {
   return (
     <div className="page-loader" role="status" aria-label={label}>
       <span className="sr-only">{label}</span>
-      <div className="page-loader-icon" aria-hidden="true">
-        <Anim />
-      </div>
+      {Anim ? (
+        <div className="page-loader-icon" aria-hidden="true">
+          <Anim />
+        </div>
+      ) : null}
       <p className="page-loader-label" aria-hidden="true">{label}</p>
     </div>
   )

@@ -2,10 +2,11 @@
 
 import { usePathname } from 'next/navigation'
 import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
+import PageLoader from '@shared/components/ui/PageLoader'
 import { PAGE_CONFIG } from './authorPageConfig'
 import '@brag/styles/brag-shell.css'
 
-export default function AuthorLayout({ children }) {
+export default function Loading() {
   const pathname = usePathname()
   const pageConfig = PAGE_CONFIG[pathname] ?? PAGE_CONFIG['/brag']
 
@@ -16,10 +17,11 @@ export default function AuthorLayout({ children }) {
         activeChildPage={pageConfig.activeChildPage}
         eyebrow={pageConfig.eyebrow}
         ariaLabel="Sidebar navigation"
+        showSignOut={false}
       />
-      <main className="be-main page-enter bss-screen" aria-labelledby={pageConfig.ariaLabelledby}>
+      <main className="be-main page-enter bss-screen" aria-busy="true" aria-labelledby={pageConfig.ariaLabelledby}>
         <div className="be-inner bss-page">
-          {children}
+          <PageLoader variant="app" />
         </div>
       </main>
     </div>

@@ -5,6 +5,7 @@ import PageLoader from './PageLoader'
 
 describe('PageLoader', () => {
   it.each([
+    ['app', 'Loading app'],
     ['signup', 'Signing up'],
     ['auth', 'Signing in'],
     ['brag', 'Loading doc'],
