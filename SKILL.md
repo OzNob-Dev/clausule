@@ -1,291 +1,400 @@
 ---
-name: security-audit
+name: project-structure
 description: >
-  Principal security audit methodology covering OWASP Top 10 mapped to Next.js/Supabase,
-  specific attack vectors (SSRF, mass assignment, IDOR, open redirects, header injection),
-  Supabase-specific pitfalls, and a structured review checklist. Load when performing
-  a security review, auditing auth flows, reviewing API routes, or doing a pre-release
-  security pass on any feature touching auth, data, payments, or user input.
+  Single authoritative source for the complete project folder structure, file placement
+  rules, root config files, path aliases, naming conventions, and the relationship between
+  all top-level directories. Load at the start of any session involving new files, new
+  features, refactoring, or whenever file placement is uncertain. This skill answers
+  "where does X go?" for any file in the project.
 ---
 
-# Security Audit — Principal Standards
+# Project Structure — Authoritative Reference
 
-## Audit Methodology
-
-Run in this order — cheapest checks first:
+## Root Directory
 
 ```
-1. Static scan      → grep/rg for known bad patterns (minutes)
-2. Data flow        → trace untrusted input from entry to sink (15-30 min)
-3. Auth boundary    → every route, action, RPC — is auth checked? (15 min)
-4. Authorization    → every data access — is ownership verified? (15 min)
-5. Secret exposure  → env vars, logs, responses (10 min)
-6. Dependency scan  → npm audit, known CVEs (5 min)
-7. Manual testing   → auth bypass attempts, injection, IDOR (30+ min)
+/
+├── src/                          ← all application source code
+├── supabase/                     ← Supabase local dev, migrations, functions
+├── public/                       ← static assets (served at /)
+├── docs/                         ← architecture docs, ADRs, tech specs
+├── scripts/                      ← one-off CLI scripts (health checks, data tasks)
+├── .github/                      ← CI/CD workflows, PR templates
+│
+├── next.config.ts                ← Next.js configuration
+├── tailwind.config.ts            ← Tailwind CSS configuration
+├── tsconfig.json                 ← TypeScript configuration + path aliases
+├── middleware.ts                 ← Vercel Edge Middleware (auth, redirects, rate limiting)
+├── vercel.json                   ← Vercel deployment config (function limits, headers)
+├── .env.local.example            ← Committed env var template (no secrets)
+├── .env.local                    ← NEVER committed — actual secrets
+├── package.json
+├── package-lock.json
+├── lighthouserc.js               ← Lighthouse CI config
+├── commitlint.config.js          ← Commit message rules
+└── CLAUDE.md / AGENTS.md        ← Agent guidance entrypoints
 ```
 
-## Static Scan Patterns (Run First)
-
-```bash
-# Secrets in code
-rg "sk_live|sk_test|whsec_|service_role|eyJhbGc" --type ts
-rg "process\.env\." src/app --include="*.tsx" # client bundle exposure check
-
-# console.log in production paths
-rg "console\.log" src --include="*.ts" --include="*.tsx" -l
-
-# Any type usage
-rg ": any" src --include="*.ts" --include="*.tsx" -c
-
-# Raw SQL interpolation
-rg '\$\{' src --include="*.ts" -l | xargs rg "SELECT|INSERT|UPDATE|DELETE"
-
-# Disabled auth
-rg "skipAuth|bypassAuth|noAuth|TODO.*auth|FIXME.*auth" src -i
-
-# Unsafe innerHTML
-rg "dangerouslySetInnerHTML" src --include="*.tsx"
-
-# Missing await on auth checks
-rg "requireAuth\(\)" src --include="*.ts" | grep -v "await"
-
-# Direct service_role usage in client files
-rg "SERVICE_ROLE" src/app --include="*.tsx"
-
-# Open redirects
-rg "redirect\(.*req\." src --include="*.ts"
-rg "router\.push.*searchParams" src --include="*.tsx"
-```
-
-## OWASP Top 10 — Next.js/Supabase Mapping
-
-### A01: Broken Access Control
-```
-CHECK:
-□ Every API route has auth check before data access
-□ Every server action has auth check
-□ Data queries filter by userId/orgId — not just route-level auth
-□ Supabase RLS enabled on all user-scoped tables
-□ Admin routes protected with role check, not just auth check
-□ IDOR: resource IDs validated against owner, not just existence
-
-SUPABASE SPECIFIC:
-□ RLS policies test-verified (not just assumed correct)
-□ service_role client never used in user-facing routes without explicit justification
-□ No .from('users').select('*') returning all users without RLS
-□ Realtime subscriptions only on RLS-protected tables
-
-NEXT.JS SPECIFIC:
-□ Server actions validate session before mutation
-□ Route params (userId, postId) verified against DB ownership, not trusted from URL
-□ Layout auth checks cannot be bypassed by direct page navigation
-□ middleware.ts covers all protected route patterns (no gaps)
-```
-
-### A02: Cryptographic Failures
-```
-CHECK:
-□ Passwords: bcrypt/Argon2id only (Supabase handles this — verify not bypassed)
-□ One-time tokens: cryptographically random (crypto.randomBytes, not Math.random)
-□ JWT verification: signature verified, not just decoded
-□ Sensitive data encrypted at rest (Supabase storage: verify bucket policies)
-□ No sensitive data in URL params (visible in logs, referrer headers)
-□ HTTPS enforced — no HTTP fallback in production
-□ Cookies: HttpOnly, Secure, SameSite=Lax minimum
-```
-
-### A03: Injection
-```
-CHECK:
-□ All Supabase queries use parameterized SDK methods (no raw SQL with interpolation)
-□ .rpc() calls use parameterized args, not string-built queries
-□ User input never interpolated into filter strings
-□ Email content sanitized before rendering (re-injection via email templates)
-□ Log statements don't interpolate user input unsanitized
-□ File paths never constructed from user input
-□ No eval(), new Function(), or dynamic require() with user input
-```
-
-### A04: Insecure Design
-```
-CHECK:
-□ Rate limiting on auth endpoints (login, register, reset, OTP)
-□ Account enumeration prevented (consistent timing + messaging on auth failures)
-□ One-time tokens are single-use (consumed on first use)
-□ Password reset tokens expire (15-60 min max)
-□ Concurrent session limits enforced if required
-□ Brute force protection on sensitive operations
-□ Soft-deleted accounts not silently reactivated via login/signup
-```
-
-### A05: Security Misconfiguration
-```
-CHECK:
-□ No debug endpoints in production (e.g., /api/debug, /api/test)
-□ Error responses don't expose stack traces, DB errors, or internal paths
-□ CORS: explicit allowlist, no wildcard * in production
-□ Security headers present (X-Content-Type-Options, X-Frame-Options, CSP)
-□ Vercel.json security headers applied
-□ Supabase: email confirmation required for signup (not disabled)
-□ Supabase: leaked password protection enabled
-□ NODE_ENV checks not used as security gates (use explicit env var)
-```
-
-### A06: Vulnerable and Outdated Components
-```bash
-npm audit --audit-level=high
-npx audit-ci --high
-
-# Check for known-vulnerable patterns
-rg "jsonwebtoken" package.json  # old versions have critical CVEs
-rg "axios" package.json         # check version for SSRF issues
-```
-
-### A07: Identification and Authentication Failures
-```
-CHECK:
-□ Session tokens: not in localStorage (XSS steals them)
-□ Session tokens: not in URL params (logged, leaked via referrer)
-□ Session invalidated on logout (not just cookie cleared client-side)
-□ Session invalidated on password change
-□ Supabase: getUser() used server-side, not getSession() (getSession is unverified)
-□ Multi-device sessions: logout one vs logout all behaviour intentional
-□ OAuth state parameter validated (CSRF protection)
-□ Email verification enforced before full access
-```
-
-### A08: Software and Data Integrity Failures
-```
-CHECK:
-□ Webhook signatures verified before processing payload
-□ Stripe: webhook signature verified (not just parsing the body)
-□ npm packages: lock file committed, CI uses npm ci
-□ GitHub Actions: pinned action versions (not @latest)
-□ Supabase Edge Functions: auth header verified before processing
-□ File uploads: content validated by magic bytes, not extension
-```
-
-### A09: Security Logging and Monitoring Failures
-```
-CHECK:
-□ Auth failures logged (with IP, user agent — without credentials)
-□ Auth successes logged
-□ Permission denials logged
-□ Admin actions logged
-□ Logs don't contain passwords, tokens, session IDs, PII
-□ Alerts configured for: auth failure spike, rate limit abuse, error rate spike
-□ Correlation IDs on all requests (enables incident investigation)
-```
-
-### A10: Server-Side Request Forgery (SSRF)
-```
-CHECK:
-□ Any endpoint that fetches a URL provided by user input
-□ Webhooks that call back to user-supplied URLs: validate domain allowlist
-□ Import-from-URL features: validate and restrict
-□ Metadata endpoint protection (cloud provider metadata: 169.254.169.254)
-
-PATTERN TO FLAG:
-// DANGEROUS
-const response = await fetch(req.body.url);
-
-// SAFE
-const ALLOWED_DOMAINS = ['api.stripe.com', 'api.github.com'];
-const url = new URL(req.body.url);
-if (!ALLOWED_DOMAINS.includes(url.hostname)) throw new ValidationError('Domain not allowed');
-```
-
-## Supabase-Specific Pitfalls
+## src/ — Complete Annotated Structure
 
 ```
-PITFALL 1: RLS policies that look right but aren't
-  -- BROKEN: checks auth.uid() but doesn't restrict to owned rows
-  CREATE POLICY "users_select" ON posts FOR SELECT USING (auth.uid() IS NOT NULL);
-  -- CORRECT: restricts to own rows
-  CREATE POLICY "users_select_own" ON posts FOR SELECT USING (auth.uid() = user_id);
-
-PITFALL 2: service_role bypasses RLS — any query with service_role sees ALL rows
-  -- Always audit: where is createAdminClient() used? Is it justified?
-
-PITFALL 3: getSession() vs getUser() on server
-  -- getSession() reads from cookie and DOES NOT verify with Supabase server
-  -- An attacker can forge a session cookie that getSession() accepts
-  -- Always use getUser() for server-side auth checks
-
-PITFALL 4: Realtime on tables without RLS
-  -- All rows broadcast to all subscribers if RLS not configured for realtime
-
-PITFALL 5: Storage bucket policies
-  -- Public buckets: anyone with the URL can access
-  -- Always verify bucket is private for user-specific files
-  -- Verify storage RLS policies match table RLS policies
-
-PITFALL 6: Edge Function auth
-  -- Edge Functions run with service_role by default
-  -- Must verify Authorization header manually if user-scoped
+src/
+├── app/                          ← Next.js App Router (thin shells only)
+│   ├── (public)/                 ← Unauthenticated routes
+│   │   ├── page.tsx              ← Landing / marketing home
+│   │   ├── pricing/page.tsx
+│   │   └── blog/[slug]/page.tsx
+│   ├── (auth)/                   ← Auth flows (login, register, reset)
+│   │   ├── login/page.tsx
+│   │   ├── register/page.tsx
+│   │   ├── forgot-password/page.tsx
+│   │   └── verify-email/page.tsx
+│   ├── (protected)/              ← Authenticated routes
+│   │   ├── layout.tsx            ← Auth gate + app shell
+│   │   ├── error.tsx             ← Protected route error boundary
+│   │   ├── dashboard/page.tsx
+│   │   ├── settings/
+│   │   │   ├── page.tsx
+│   │   │   ├── profile/page.tsx
+│   │   │   ├── billing/page.tsx
+│   │   │   └── team/page.tsx
+│   │   └── [feature]/            ← One folder per feature area
+│   │       ├── page.tsx
+│   │       └── [id]/page.tsx
+│   ├── api/                      ← HTTP endpoints (webhooks, OAuth, exposed API)
+│   │   ├── _lib/                 ← Shared route handler utilities (NOT exported as routes)
+│   │   │   ├── auth.ts           ← requireAuth, withAuth wrappers
+│   │   │   ├── response.ts       ← standardised response helpers (ok(), error())
+│   │   │   └── validate.ts       ← request validation middleware helper
+│   │   ├── auth/
+│   │   │   └── callback/route.ts ← Supabase OAuth callback
+│   │   ├── webhooks/
+│   │   │   ├── stripe/route.ts
+│   │   │   └── resend/route.ts
+│   │   └── [resource]/
+│   │       ├── route.ts          ← GET (list), POST (create)
+│   │       └── [id]/route.ts     ← GET, PATCH, DELETE single resource
+│   ├── layout.tsx                ← Root layout (providers, theme script, fonts)
+│   ├── globals.css               ← CSS entry point (imports tokens, base styles)
+│   ├── error.tsx                 ← Root error boundary
+│   ├── global-error.tsx          ← Catastrophic error boundary
+│   ├── not-found.tsx             ← 404 page
+│   └── robots.ts / sitemap.ts   ← SEO metadata routes
+│
+├── features/                     ← Feature-first domain modules
+│   └── [feature]/                ← e.g., auth, billing, posts, team
+│       ├── ui/                   ← Client components for this feature
+│       │   ├── FeatureScreen.tsx ← Primary screen component
+│       │   ├── FeatureCard.tsx
+│       │   └── FeatureForm.tsx
+│       ├── server/               ← Server-side logic (NEVER imported in client)
+│       │   ├── [feature].service.ts    ← Business logic, orchestration
+│       │   ├── [feature].repository.ts ← Data access, DB queries
+│       │   └── [feature].types.ts      ← Server-side domain types
+│       ├── hooks/                ← Client-side React hooks for this feature
+│       │   └── use[Feature].ts
+│       ├── schemas/              ← Zod schemas shared between client + server
+│       │   └── [feature].schema.ts
+│       └── index.ts              ← Public API — exports only what other features need
+│
+├── shared/                       ← Reusable across multiple features
+│   ├── components/
+│   │   ├── ui/                   ← Design system primitives
+│   │   │   ├── Button/
+│   │   │   │   ├── Button.tsx
+│   │   │   │   ├── Button.test.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── Input/
+│   │   │   ├── Select/
+│   │   │   ├── Modal/
+│   │   │   ├── Toast/
+│   │   │   └── ... (one folder per primitive)
+│   │   ├── layout/               ← App-level layout components
+│   │   │   ├── AppShell.tsx      ← Root layout wrapper
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── Header.tsx
+│   │   │   ├── SkipNav.tsx
+│   │   │   └── RouteChangeAnnouncer.tsx
+│   │   └── providers/            ← React context providers
+│   │       ├── ThemeProvider.tsx
+│   │       ├── QueryProvider.tsx  ← ReactQueryClientProvider
+│   │       └── index.tsx         ← Composes all providers
+│   ├── hooks/                    ← Reusable client hooks
+│   │   ├── useDebounce.ts
+│   │   ├── useLocalStorage.ts
+│   │   ├── useMediaQuery.ts
+│   │   └── useTrackedTimeout.ts
+│   ├── queries/                  ← React Query query functions (server state reads)
+│   │   ├── users.queries.ts
+│   │   └── [resource].queries.ts
+│   ├── utils/
+│   │   ├── supabase/             ← Supabase client instances (see vercel-supabase skill)
+│   │   │   ├── client.ts         ← createBrowserClient (client components)
+│   │   │   ├── server.ts         ← createServerClient (server components, actions, routes)
+│   │   │   └── admin.ts          ← service_role client — SERVER ONLY
+│   │   ├── api.ts                ← apiFetch, jsonRequest helpers
+│   │   ├── cn.ts                 ← className merge (clsx + tailwind-merge)
+│   │   ├── format.ts             ← formatDate, formatCurrency, formatNumber
+│   │   ├── logger.ts             ← structured logger wrapper
+│   │   └── errors.ts             ← AppError class hierarchy
+│   ├── styles/
+│   │   ├── tokens.css            ← ALL design tokens (colors, spacing, radius, typography)
+│   │   └── animations.css        ← Shared keyframe animations
+│   ├── types/                    ← Shared TypeScript types
+│   │   ├── index.ts              ← Re-exports all shared types
+│   │   └── [domain].types.ts     ← e.g., auth.types.ts, billing.types.ts
+│   ├── data/                     ← MOCK DATA ONLY — never used in production
+│   │   └── [resource].mock.ts    ← For tests, Storybook, prototypes
+│   └── test/                     ← Test infrastructure
+│       ├── factories/            ← Entity builder functions
+│       │   ├── user.factory.ts
+│       │   └── [entity].factory.ts
+│       ├── handlers/             ← MSW request handlers
+│       │   ├── [resource].handlers.ts
+│       │   └── index.ts          ← Combines all handlers
+│       ├── server.ts             ← MSW server setup
+│       ├── setup.ts              ← Global test setup (cleanup, server start/stop)
+│       ├── renderWithProviders.tsx ← Render helper with all providers
+│       └── renderWithQueryClient.tsx ← Render helper with React Query only
+│
+├── actions/                      ← Server Actions (writes only)
+│   ├── auth.actions.ts
+│   ├── billing.actions.ts
+│   └── [domain].actions.ts
+│
+├── lib/                          ← Framework-adjacent utilities (not domain logic)
+│   ├── auth.ts                   ← requireAuth(), getSession(), requireRole()
+│   ├── inngest.ts                ← Inngest client + function exports
+│   └── stripe.ts                 ← Stripe client instance
+│
+└── types/
+    └── database.ts               ← GENERATED — supabase gen types (never edit manually)
 ```
 
-## Next.js-Specific Pitfalls
+## supabase/ — Database and Edge Functions
 
 ```
-PITFALL 1: Server action without auth check
-  'use server';
-  export async function deletePost(id: string) {
-    // MISSING: session check — any authenticated user can delete any post
-    await db.from('posts').delete().eq('id', id);
+supabase/
+├── migrations/                   ← Forward-only SQL migrations
+│   ├── 20240101000000_init.sql
+│   └── 20240115_add_posts.sql    ← naming: {timestamp}_{description}.sql
+├── functions/                    ← Supabase Edge Functions (Deno)
+│   └── [function-name]/
+│       └── index.ts
+├── seed.sql                      ← Dev seed data (NOT for production)
+└── config.toml                   ← Local Supabase dev config
+```
+
+## public/ — Static Assets
+
+```
+public/
+├── images/                       ← Optimised static images
+├── icons/                        ← App icons, favicons
+│   ├── favicon.ico
+│   ├── icon.png
+│   └── apple-icon.png
+├── fonts/                        ← Self-hosted fonts (prefer next/font)
+└── og/                           ← Open Graph images
+```
+
+## docs/ — Project Documentation
+
+```
+docs/
+├── decisions/                    ← Architecture Decision Records
+│   └── ADR-001-[slug].md
+├── tech-specs/                   ← Feature tech specs (pre-implementation)
+│   └── [feature]-spec.md
+└── tech-debt.md                  ← Prioritised tech debt register
+```
+
+## Path Aliases (tsconfig.json)
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*":          ["./src/*"],
+      "@shared/*":    ["./src/shared/*"],
+      "@features/*":  ["./src/features/*"],
+      "@actions/*":   ["./src/actions/*"],
+      "@lib/*":       ["./src/lib/*"],
+      "@types/*":     ["./src/types/*"]
+    }
   }
-
-PITFALL 2: Open redirect via next/navigation
-  // DANGEROUS: user controls destination
-  const returnUrl = searchParams.get('returnUrl');
-  redirect(returnUrl); // can redirect to evil.com
-
-  // SAFE: validate origin
-  const returnUrl = searchParams.get('returnUrl') ?? '/dashboard';
-  const isInternal = returnUrl.startsWith('/') && !returnUrl.startsWith('//');
-  redirect(isInternal ? returnUrl : '/dashboard');
-
-PITFALL 3: Dynamic route params trusted without DB ownership check
-  // DANGEROUS
-  const { data } = await supabase.from('posts').select().eq('id', params.id).single();
-  // User can guess any ID and access it if RLS not configured
-
-PITFALL 4: Middleware gaps
-  // Protected routes defined as: /dashboard, /settings
-  // But: /dashboard%2e and /DASHBOARD may not match
-  // Always test middleware with encoded and cased variants
-
-PITFALL 5: Client component importing server-only modules
-  'use client';
-  import { createAdminClient } from '@/utils/supabase/admin'; // EXPOSES service_role KEY
+}
 ```
-
-## Mass Assignment
 
 ```typescript
-// DANGEROUS: spread request body directly onto DB insert
-const body = await request.json();
-await supabase.from('users').update(body).eq('id', userId);
-// Attacker can set: { role: 'admin', stripeCustomerId: 'cus_attacker' }
+// Usage — always use aliases, never relative paths crossing domain boundaries
+import { Button } from '@shared/components/ui/Button';
+import { useAuth } from '@features/auth/hooks/useAuth';
+import { createPost } from '@actions/posts.actions';
+import { requireAuth } from '@lib/auth';
+import type { Database } from '@types/database';
 
-// SAFE: explicit field allowlist
-const { name, bio, avatarUrl } = await request.json();
-await supabase.from('users').update({ name, bio, avatarUrl }).eq('id', userId);
-// Or use Zod schema to define allowed fields
-const updateSchema = z.object({ name: z.string(), bio: z.string().optional() }).strict();
-const validated = updateSchema.parse(body);
+// NEVER across domains:
+import { Button } from '../../shared/components/ui/Button';  // ✗ relative
+import { useAuth } from '../auth/hooks/useAuth';              // ✗ feature-to-feature
 ```
 
-## Audit Output Format
+## File Naming Conventions
 
 ```
-SEVERITY: P0 (Critical) | P1 (High) | P2 (Medium) | P3 (Low)
-
-Finding:
-  File: src/app/api/posts/route.ts:34
-  Severity: P0
-  Category: Broken Access Control (A01)
-  Issue: Server action deletes post without verifying ownership
-  Attack: Authenticated user can delete any user's post by supplying arbitrary ID
-  Fix: Add `.eq('user_id', session.user.id)` to delete query, or verify ownership first
+React components:       PascalCase       UserCard.tsx, LoginForm.tsx
+Component folders:      PascalCase       Button/, UserCard/
+Hooks:                  camelCase        useAuth.ts, useDebounce.ts
+Utilities:              camelCase        formatDate.ts, cn.ts
+Services:               camelCase        auth.service.ts
+Repositories:           camelCase        user.repository.ts
+Schemas:                camelCase        register.schema.ts
+Actions:                camelCase        auth.actions.ts
+Route files:            lowercase        route.ts, page.tsx, layout.tsx
+Test files:             match source     Button.test.tsx, auth.service.test.ts
+Factory files:          camelCase        user.factory.ts
+Handler files:          camelCase        users.handlers.ts
+Type files:             camelCase        auth.types.ts
+CSS files:              kebab-case       tokens.css, animations.css
+Migration files:        timestamp+snake  20240115_add_posts.sql
 ```
+
+## "Where Does X Go?" Decision Table
+
+```
+What you're creating              Where it goes
+─────────────────────────────────────────────────────────────────────────────
+Page/screen UI                    src/app/[route-group]/[route]/page.tsx
+                                  + src/features/[feature]/ui/[Feature]Screen.tsx
+HTTP endpoint                     src/app/api/[resource]/route.ts
+Server action (mutation)          src/actions/[domain].actions.ts
+Business logic                    src/features/[feature]/server/[feature].service.ts
+DB query                          src/features/[feature]/server/[feature].repository.ts
+React Query function              src/shared/queries/[resource].queries.ts
+Reusable UI primitive             src/shared/components/ui/[Name]/
+App layout component              src/shared/components/layout/
+Context provider                  src/shared/components/providers/
+Reusable hook (1 feature)         src/features/[feature]/hooks/
+Reusable hook (2+ features)       src/shared/hooks/
+Zod schema (form + server)        src/features/[feature]/schemas/
+Shared TypeScript types           src/shared/types/
+Auth/session helpers              src/lib/auth.ts
+Design token                      src/shared/styles/tokens.css
+Supabase browser client           src/shared/utils/supabase/client.ts
+Supabase server client            src/shared/utils/supabase/server.ts
+Admin client (service_role)       src/shared/utils/supabase/admin.ts
+DB migration                      supabase/migrations/
+Generated DB types                src/types/database.ts (auto-generated, never edit)
+Test factory                      src/shared/test/factories/
+MSW handler                       src/shared/test/handlers/
+Environment config types          src/lib/env.ts (validated with t3-env/Zod)
+Background job function           src/lib/inngest.ts (or src/jobs/ if many)
+Stripe client                     src/lib/stripe.ts
+Email service                     src/features/email/server/ or src/lib/email.ts
+Feature flag check                src/lib/flags.ts
+One-off script (not in app)       scripts/
+Architecture decision             docs/decisions/ADR-NNN-[slug].md
+Tech spec                         docs/tech-specs/[feature]-spec.md
+```
+
+## Root Config Files
+
+### next.config.ts
+```typescript
+import type { NextConfig } from 'next';
+
+const config: NextConfig = {
+  // Bundle analyser (enabled via ANALYZE=true npm run build)
+  ...(process.env.ANALYZE === 'true' && {
+    // @next/bundle-analyzer wraps this
+  }),
+
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.supabase.co' },
+    ],
+  },
+
+  // Strict mode always
+  reactStrictMode: true,
+
+  // Experimental features used
+  experimental: {
+    typedRoutes: true,  // type-safe href
+  },
+};
+
+export default config;
+```
+
+### vercel.json
+```json
+{
+  "functions": {
+    "src/app/api/webhooks/**": { "maxDuration": 60 },
+    "src/app/api/ai/**": { "maxDuration": 60 }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ]
+}
+```
+
+### middleware.ts — What Belongs Here
+```
+YES:
+  ✓ Session refresh (Supabase auth token rotation)
+  ✓ Auth redirect (unauthenticated → /login)
+  ✓ Role-based route protection
+  ✓ Security headers (if not in vercel.json)
+  ✓ Locale detection and redirect
+  ✓ Rate limiting (simple counters via Upstash)
+
+NO:
+  ✗ Business logic
+  ✗ DB queries (no DB client in edge runtime)
+  ✗ Node.js built-ins (fs, crypto, path)
+  ✗ Heavy npm packages
+  ✗ Stripe or other heavy SDKs
+```
+
+## Boundary Rules (Summary)
+
+```
+src/app/            → imports from src/features/, src/shared/, src/lib/, src/actions/
+                      NEVER imports from another route in src/app/
+
+src/features/[A]/   → imports from src/shared/, src/lib/, src/types/
+                      NEVER imports from src/features/[B]/ (use src/shared/ instead)
+                      NEVER imported by src/shared/
+
+src/shared/         → imports from src/lib/, src/types/
+                      NEVER imports from src/features/ or src/app/
+
+src/actions/        → imports from src/features/, src/shared/, src/lib/
+                      SERVER ONLY — never imported in client components
+
+src/lib/            → framework glue (Supabase client, Stripe, Inngest, auth helpers)
+                      No business logic. No domain knowledge.
+```
+
+## Anti-Patterns (Instant Rejection)
+- Business logic in `src/app/*/page.tsx`
+- DB queries in route handlers instead of `src/features/*/server/`
+- `src/features/auth/` importing from `src/features/billing/`
+- `src/shared/` importing from `src/features/`
+- `src/types/database.ts` manually edited (auto-generated — always regenerate)
+- Components in `src/app/` instead of `src/features/*/ui/` or `src/shared/components/`
+- Server-only modules (admin client, service layer) imported in client components
+- Relative imports crossing domain boundaries (`../../shared/`)
+- Multiple Supabase client instantiations instead of using the shared utils
+- Mock/demo data imported in production code paths

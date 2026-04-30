@@ -10,8 +10,8 @@ export default function BragSecurityDangerZone({ onDelete }) {
     <section className="bss-danger-section" aria-labelledby="security-danger-title">
       <div className="bss-danger-label" id="security-danger-title">Danger zone</div>
       <SectionCard
-        className="danger-card"
-        headerClassName="danger-card-head"
+        className="danger-card bss-danger-card"
+        headerClassName="danger-card-head bss-danger-card-head"
         titleClassName="bss-danger-card-head-title"
         metaClassName="bss-danger-card-head-meta"
         title="Irreversible actions"
@@ -23,7 +23,7 @@ export default function BragSecurityDangerZone({ onDelete }) {
               Permanently removes your account and all brag doc entries, files, and records. This cannot be undone.
             </div>
           </div>
-          <Button type="button" variant="danger" className="danger" onClick={onDelete}>
+          <Button type="button" variant="danger" className="bss-btn-danger" onClick={onDelete}>
             <TrashIcon />
             Delete account
           </Button>

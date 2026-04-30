@@ -440,6 +440,16 @@ context:
   - when: "quarterly health audit or measuring codebase quality"
     load: [core, codebase-health, tech-debt, dependency-audit, caveman]
 
+  - when: "any session start, new file, new feature, or uncertain about file placement"
+    load: [project-structure, core, architecture, caveman]
+
+  - when: "editing tailwind.config.ts, globals.css, tokens.css, or any styling architecture"
+    load: [tailwind-architecture, design-tokens, dark-mode, caveman]
+
+  - when: "adding new CSS utilities, @layer rules, or Tailwind plugins"
+    load: [tailwind-architecture, frontend, caveman]
+
+
 commands:
   - name: /refactor
     description: Systematic refactor of file or selection
@@ -563,6 +573,15 @@ commands:
   - name: /health
     description: Run a codebase health audit with metrics and prioritised debt register
     skill: codebase-health
+
+
+  - name: /structure
+    description: Show where a specific file type belongs in the project structure
+    skill: project-structure
+
+  - name: /tailwind
+    description: Review or fix Tailwind/CSS architecture decisions
+    skill: tailwind-architecture
 
 
 safety:
@@ -928,3 +947,32 @@ performance:
     tools: [read_file, search_content, run_command]
 
 # Additional context rules for new skills
+
+  - name: project-structure
+    description: Authoritative complete folder structure, file placement rules, path aliases, naming conventions, config files
+    file: skills/project-structure/SKILL.md
+    triggers:
+      - project structure
+      - folder structure
+      - where does
+      - where should
+      - file placement
+      - new file
+      - new feature
+      - directory
+      - path alias
+    tools: [read_file, search_content]
+
+  - name: tailwind-architecture
+    description: Complete Tailwind config, CSS custom property integration, @layer strategy, dark mode, globals.css structure
+    file: skills/tailwind-architecture/SKILL.md
+    triggers:
+      - tailwind
+      - tailwind config
+      - globals.css
+      - "@layer"
+      - css architecture
+      - dark:
+      - cn()
+      - tailwind.config
+    tools: [read_file, write_file, search_content]

@@ -74,6 +74,7 @@ describe('ProfileScreen', () => {
     await user.click(screen.getByRole('button', { name: /send feedback/i }))
 
     await waitFor(() => expect(saveProfileAction).toHaveBeenCalled())
+    expect(screen.getByRole('button', { name: /send feedback/i })).toHaveClass('be-comp-save')
     expect(saveProfileAction).toHaveBeenCalledWith(expect.objectContaining({
       firstName: 'Ada',
       lastName: 'Lovelace',

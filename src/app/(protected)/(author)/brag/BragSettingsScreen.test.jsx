@@ -30,7 +30,7 @@ describe('BragSettings integration', () => {
     const { default: BragSettings } = await import('./BragSettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
-    renderWithQueryClient(<BragSettings />)
+    const { container } = renderWithQueryClient(<BragSettings />)
 
     expect(screen.getByRole('heading', { name: 'Security settings' })).toBeInTheDocument()
     expect(screen.getByText('Account')).toBeInTheDocument()
@@ -43,7 +43,9 @@ describe('BragSettings integration', () => {
     expect(screen.getByLabelText('Authenticator app is active')).toHaveTextContent('Active')
     expect(screen.getByText('Danger zone')).toBeInTheDocument()
     expect(screen.getByText('Irreversible actions')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Delete account' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Delete account' })).toHaveClass('bss-btn-danger')
+    expect(container.querySelector('.bss-danger-card')).toBeTruthy()
+    expect(container.querySelector('.bss-danger-card-head')).toBeTruthy()
     expect(screen.queryByText('Single sign-on')).not.toBeInTheDocument()
   })
 

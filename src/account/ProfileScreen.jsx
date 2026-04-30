@@ -121,7 +121,7 @@ export default function ProfileScreen() {
           <div className="section-rule" aria-hidden="true" />
           <div className="form-buttons">
             <Button type="button" variant="ghost" className="be-comp-cancel" onClick={resetForm} disabled={!dirty || saving}>Reset</Button>
-            <Button type="submit" variant="primary" disabled={!dirty || saving}>
+            <Button type="submit" variant="primary" className="be-comp-save" disabled={!dirty || saving}>
               <CheckIcon />
               Send feedback
             </Button>

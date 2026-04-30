@@ -100,7 +100,7 @@ describe('FeedbackScreen', () => {
     renderWithQueryClient(<FeedbackScreen view="history" />)
 
     expect(await screen.findByRole('heading', { name: /the conversation/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /send your first note/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /send your first note/i })).toHaveClass('be-feedback-empty-state__cta')
     expect(screen.queryByRole('region', { name: /feedback history/i })).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /send your first note/i }))

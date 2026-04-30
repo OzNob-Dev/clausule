@@ -109,58 +109,7 @@
   line-height: 1.5;
 }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding-top: 4px;
-}
-
-.btn-reset {
-  padding: 11px 22px;
-  border: 1.5px solid var(--cl-ink-alpha-15);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--cl-surface-muted-9);
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
-}
-
-.btn-reset:hover:not(:disabled) {
-  background: var(--cl-surface-muted-16);
-  color: var(--cl-muted);
-}
-
-.btn-reset:focus-visible,
-.btn-save:focus-visible {
-  outline: 2px solid var(--cl-accent-deep);
-  outline-offset: 2px;
-}
-
-.btn-save {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 24px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--cl-surface-ink-5);
-  color: var(--cl-surface-muted-16);
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.btn-save:hover:not(:disabled) {
-  background: var(--cl-surface-ink-6);
-}
-
-.btn-save svg {
+.form-buttons .be-comp-save svg {
   width: 13px;
   height: 13px;
   fill: none;
@@ -185,5 +134,18 @@
 @media (max-width: 860px) {
   .field-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .form-buttons {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .form-buttons .be-comp-cancel,
+  .form-buttons .be-comp-save {
+    width: 100%;
+    justify-content: center;
   }
 }

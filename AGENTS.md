@@ -27,6 +27,11 @@ All agents operate as a **20-year principal full-stack engineer**. No junior-lev
 ## Skill Load Order
 Same as CLAUDE.md. Sub-agents inherit parent load order unless a more specific skill applies to their sub-task.
 
+Always loaded first, every session, before any file work:
+1. `skills/project-structure/SKILL.md` — file placement, boundaries, naming
+2. `skills/caveman/SKILL.md` — response compression
+3. `skills/core/SKILL.md` — engineering principles
+
 ## Sub-Agent Rules
 - Sub-agents inherit ALL hard gates from this file. No exceptions.
 - Sub-agents receive their rowid from the parent agent's INSERT, or execute their own INSERT for independent sub-tasks.
