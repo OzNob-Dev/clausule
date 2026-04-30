@@ -13,8 +13,33 @@
   font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
   box-shadow: 0 4px 16px var(--cl-accent-alpha-25), 0 12px 40px var(--cl-accent-soft-16);
   transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.be-cta--primary,
+.be-cta--employee {
+  background: var(--be-empty-accent);
+  color: var(--be-empty-canvas);
+}
+
+.be-cta--ghost {
+  background: transparent;
+  color: var(--ts);
+  border: 1px solid var(--rule);
+  box-shadow: none;
+}
+
+.be-cta--danger {
+  background: var(--rt);
+  color: var(--canvas);
+}
+
+.be-cta--confirm {
+  background: var(--gt);
+  color: var(--canvas);
 }
 
 .be-cta:hover {
@@ -22,9 +47,30 @@
   background: var(--cl-surface-ink-6);
 }
 
+.be-cta--primary:hover,
+.be-cta--employee:hover {
+  background: color-mix(in srgb, var(--acc) 88%, black);
+}
+
+.be-cta--ghost:hover {
+  background: color-mix(in srgb, var(--canvas) 95%, var(--tp));
+}
+
+.be-cta--danger:hover {
+  background: color-mix(in srgb, var(--rt) 90%, black);
+}
+
+.be-cta--confirm:hover {
+  background: color-mix(in srgb, var(--gt) 90%, black);
+}
+
 .be-cta:focus-visible {
   outline: 2px solid var(--be-empty-accent);
   outline-offset: 3px;
+}
+
+.be-cta--ghost:focus-visible {
+  outline-color: var(--rule);
 }
 
 .be-cta-icon {

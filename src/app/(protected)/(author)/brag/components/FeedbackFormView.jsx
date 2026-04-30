@@ -146,7 +146,7 @@ export default function FeedbackFormView({
 
         <div className="be-feedback-actions">
           <Button type="button" variant="ghost" className="be-comp-cancel" onClick={onCancel}>Cancel</Button>
-          <Button type="submit" variant="primary" className="be-cta" disabled={!canSend}>Send feedback</Button>
+          <Button type="submit" variant="primary" disabled={!canSend}>Send feedback</Button>
         </div>
 
         {error && <p className="be-comp-error" role="alert">{error}</p>}
