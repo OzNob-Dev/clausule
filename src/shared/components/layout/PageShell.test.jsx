@@ -1,14 +1,14 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import Layout from './layout'
+import PageShell from './PageShell'
 
-describe('layout', () => {
-  it('wraps content in the shared authenticated shell', () => {
+describe('PageShell', () => {
+  it('renders the shared main shell', () => {
     render(
-      <Layout mainClassName="page-enter demo" innerClassName="demo-inner" ariaLabelledby="demo-title">
+      <PageShell mainClassName="page-enter demo" innerClassName="demo-inner" ariaLabelledby="demo-title">
         <h1 id="demo-title">Demo</h1>
-      </Layout>
+      </PageShell>
     )
 
     expect(screen.getByRole('main', { name: 'Demo' })).toHaveClass('be-main', 'page-enter', 'demo')

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import BragSecurityDangerZone from '@brag/components/BragSecurityDangerZone'
 import BragSecurityMethodsCard from '@brag/components/BragSecurityMethodsCard'
-import Layout from '@brag/components/layout'
 import PageHeader from '@shared/components/ui/PageHeader'
 import { DeleteAccountDialog } from '@account/components/DeleteAccountDialog'
 import { useProfileStore } from '@auth/store/useProfileStore'
@@ -41,29 +40,27 @@ export default function BragSettings() {
   }
   return (
     <>
-      <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-settings-title">
-        <PageHeader
-          className="bss-header"
-          eyebrow="Account"
-          eyebrowAriaHidden
-          eyebrowClassName="bss-eyebrow"
-          title="Security settings"
-          titleClassName="bss-heading"
-          titleId="brag-settings-title"
-          description="Manage how you sign in to Clausule."
-          descriptionClassName="bss-subheading"
-        />
-        <div className="bss-divider" />
-        <BragSecurityMethodsCard
-          authenticatorAppConfigured={authenticatorAppConfigured}
-          hasSecuritySnapshot={hasSecuritySnapshot}
-          mfaRestrictionEnabled={mfaRestrictionEnabled}
-          totpExpanded={totpExpanded}
-          onTotpDone={handleTotpDone}
-          onToggleTotp={() => setTotpExpanded((v) => !v)}
-        />
-        <BragSecurityDangerZone onDelete={() => setDeleteModal(true)} />
-      </Layout>
+      <PageHeader
+        className="bss-header"
+        eyebrow="Account"
+        eyebrowAriaHidden
+        eyebrowClassName="bss-eyebrow"
+        title="Security settings"
+        titleClassName="bss-heading"
+        titleId="brag-settings-title"
+        description="Manage how you sign in to Clausule."
+        descriptionClassName="bss-subheading"
+      />
+      <div className="bss-divider" />
+      <BragSecurityMethodsCard
+        authenticatorAppConfigured={authenticatorAppConfigured}
+        hasSecuritySnapshot={hasSecuritySnapshot}
+        mfaRestrictionEnabled={mfaRestrictionEnabled}
+        totpExpanded={totpExpanded}
+        onTotpDone={handleTotpDone}
+        onToggleTotp={() => setTotpExpanded((v) => !v)}
+      />
+      <BragSecurityDangerZone onDelete={() => setDeleteModal(true)} />
       <DeleteAccountDialog
         open={deleteModal}
         onClose={() => setDeleteModal(false)}

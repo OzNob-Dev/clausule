@@ -2,7 +2,6 @@
 
 import FeedbackComposer from '@brag/components/FeedbackComposer'
 import FeedbackHistoryPanel from '@brag/components/FeedbackHistoryPanel'
-import Layout from '@brag/components/layout'
 import PageHeader from '@shared/components/ui/PageHeader'
 import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 import { useProfileStore } from '@auth/store/useProfileStore'
@@ -75,7 +74,7 @@ function FeedbackHistoryScreen() {
   const hasHistory = threads.length > 0
 
   return (
-    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="feedback-history-title">
+    <>
       <PageHeader
         className="bss-header"
         eyebrow="Feedback history"
@@ -88,13 +87,13 @@ function FeedbackHistoryScreen() {
       />
       <div className="bss-divider" />
       {loading || loadError || hasHistory ? <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} /> : <FeedbackHistoryEmptyState />}
-    </Layout>
+    </>
   )
 }
 
 function FeedbackComposeScreen({ userEmail }) {
   return (
-    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="feedback-page-title">
+    <>
       <PageHeader
         className="bss-header"
         eyebrow="Product feedback"
@@ -106,7 +105,7 @@ function FeedbackComposeScreen({ userEmail }) {
         descriptionClassName="bss-subheading"
       />
       <FeedbackComposer userEmail={userEmail} />
-    </Layout>
+    </>
   )
 }
 

@@ -9,8 +9,14 @@ vi.mock('@brag/components/BragIdentitySidebar', () => ({
 
 describe('mfa exempt author layout', () => {
   it('renders the settings sidebar and children', () => {
-    render(<Layout><div>open</div></Layout>)
+    render(
+      <Layout>
+        <h1 id="brag-settings-title">Security settings</h1>
+        <div>open</div>
+      </Layout>
+    )
     expect(screen.getByText('settings:Clausule · Settings')).toBeInTheDocument()
+    expect(screen.getByRole('main', { name: 'Security settings' })).toHaveClass('be-main', 'page-enter', 'bss-screen')
     expect(screen.getByText('open')).toBeInTheDocument()
   })
 })

@@ -1,11 +1,10 @@
 'use client'
-import '@shared/styles/globals.css'
 
 function classNames(...values) {
   return values.filter(Boolean).join(' ')
 }
 
-export default function Layout({ children, mainClassName = '', innerClassName = '', ariaLabelledby }) {
+export default function PageShell({ children, mainClassName = '', innerClassName = '', ariaLabelledby }) {
   return (
     <main className={classNames('be-main', mainClassName)} aria-labelledby={ariaLabelledby}>
       <div className={classNames('be-inner', innerClassName)}>

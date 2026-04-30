@@ -1,7 +1,6 @@
 'use client'
 
 import { useProfileStore } from '@auth/store/useProfileStore'
-import Layout from '@brag/components/layout'
 import { ProfileActions } from '@shared/components/ui/ProfileActions'
 import { ProfileField } from '@shared/components/ui/ProfileField'
 import { SectionCard } from '@shared/components/ui/SectionCard'
@@ -25,7 +24,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="profile-page-title">
+    <>
       <PageHeader
         className="bss-header"
         eyebrow="Account"
@@ -124,6 +123,6 @@ export default function ProfileScreen() {
           <ProfileActions onReset={resetForm} saving={saving} disabled={!dirty || saving} />
         </div>
       </SectionCard>
-    </Layout>
+    </>
   )
 }

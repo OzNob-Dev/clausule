@@ -59,7 +59,6 @@ describe('ProfileScreen', () => {
 
     renderWithQueryClient(<ProfileScreen />)
 
-    expect(screen.getByRole('main', { name: 'Personal details' })).toHaveClass('be-main', 'page-enter')
     expect(screen.getByRole('heading', { name: 'Personal details' })).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toHaveAttribute('readonly')
   })

@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import BragEmptyState from '@brag/components/BragEmptyState'
 import EntryComposer from '@brag/components/EntryComposer'
-import Layout from '@brag/components/layout'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import PageHeader from '@shared/components/ui/PageHeader'
@@ -83,7 +82,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
 
   if (view === 'resume') {
     return (
-      <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-page-title">
+      <>
         <h1 id="brag-page-title" className="sr-only">Brag document</h1>
         {initialEntriesError ? (
           <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
@@ -100,12 +99,12 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
             <ResumeTab entries={initialEntries} />
           </section>
         )}
-      </Layout>
+      </>
     )
   }
 
   return (
-    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="brag-page-title">
+    <>
       <h1 id="brag-page-title" className="sr-only">Brag document</h1>
 
       {initialEntriesError ? (
@@ -165,6 +164,6 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
       ) : (
         <BragEmptyState onAddEntry={() => setComposerOpen(true)} />
       )}
-    </Layout>
+    </>
   )
 }

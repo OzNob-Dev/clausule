@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@shared/components/ui/Button'
 import { FieldCheckbox } from '@shared/components/ui/Field'
 import { ROUTES } from '@shared/utils/routes'
-import Layout from '@brag/components/layout'
 import { createLinkedInImportAction, publishLinkedInImportAction, updateLinkedInImportAction } from '@actions/brag-actions'
 import '@brag/styles/brag-settings-core.css'
 import '@brag/styles/linkedin-import.css'
@@ -162,7 +161,7 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
   }
 
   return (
-    <Layout mainClassName="page-enter bss-screen" innerClassName="bss-page" ariaLabelledby="linkedin-import-title">
+    <>
       <header className="li-header">
         <span className="li-eyebrow">Brag Doc Builder</span>
         <h1 id="linkedin-import-title">Import from LinkedIn</h1>
@@ -265,6 +264,6 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
 
         {error ? <p className="li-error" role="alert">{error}</p> : null}
       </section>
-    </Layout>
+    </>
   )
 }
