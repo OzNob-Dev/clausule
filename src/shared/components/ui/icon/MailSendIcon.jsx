@@ -1,3 +1,5 @@
+import './MailSendIcon.css'
+
 export function MailSendIcon({ size = 72, ...props }) {
   return (
     <svg width={size} height={size} viewBox="0 0 72 72" fill="none" aria-hidden="true" {...props}>

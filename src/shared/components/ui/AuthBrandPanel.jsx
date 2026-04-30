@@ -1,5 +1,5 @@
 'use client'
-
+import './AuthBrandPanel.css'
 import { usePathname } from 'next/navigation'
 import SignInBrandPanel from './SignInBrandPanel'
 import SignupPanelSummary from '@signup/components/SignupPanelSummary'

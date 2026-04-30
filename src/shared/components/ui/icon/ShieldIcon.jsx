@@ -1,4 +1,4 @@
-import './Icon.css'
+import './ShieldIcon.css'
 
 export function ShieldIcon() {
   return (

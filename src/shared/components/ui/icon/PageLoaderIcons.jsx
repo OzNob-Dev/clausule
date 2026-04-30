@@ -1,3 +1,5 @@
+import './PageLoaderIcons.css'
+
 export function OrbitIcon() {
   return (
     <svg viewBox="0 0 96 96" fill="none" aria-hidden="true">

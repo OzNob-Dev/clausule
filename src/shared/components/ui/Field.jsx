@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 import { cn } from '@shared/utils/cn'
 import { areaClass, fieldClass } from '@shared/constants/classNames'
-
+import './Field.css'
 export function Field({ className = '', children, ...props }) {
   return (
     <div className={cn('grid gap-2', className)} {...props}>

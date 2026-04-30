@@ -1,5 +1,5 @@
 'use client'
-
+import './PageLoader.css'
 import '@shared/styles/page-loader.css'
 import { DotsIcon, FrameIcon, HelixIcon, OrbitIcon, RadarIcon, ShieldBadgeIcon } from '@shared/components/ui/icon/PageLoaderIcons'
 

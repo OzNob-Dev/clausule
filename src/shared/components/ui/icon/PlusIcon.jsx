@@ -1,4 +1,4 @@
-import './Icon.css'
+import './PlusIcon.css'
 
 export function PlusIcon() {
   return (

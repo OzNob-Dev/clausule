@@ -1,4 +1,4 @@
-import './Icon.css'
+import './CopyIcon.css'
 
 export function CopyIcon({ copied}) {
   return copied ? (

@@ -1,3 +1,5 @@
+import './ThinkingDots.css'
+
 const DELAY_CLASSES = [
   '',
   'motion-safe:[animation-delay:150ms]',

@@ -1,3 +1,5 @@
+import './CodeEmail.css'
+
 export function CodeEmail({ to, code = '••••••', revealed = false }) {
   const digits = String(code).replace(/\s+/g, '').slice(0, 6).padEnd(6, '•').split('')
 

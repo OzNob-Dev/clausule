@@ -1,3 +1,5 @@
+import './TrashIcon.css'
+
 export function TrashIcon({ size = 14, ...props }) {
   return (
     <svg width={size} height={size} viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" {...props}>

@@ -1,7 +1,7 @@
 import { BackIcon } from '@shared/components/ui/icon/BackIcon'
 import { Button } from './Button'
 import { Link } from './Link'
-
+import './SignupButtons.css'
 export function CtaBtn({ onClick, terra = false, children, as: As = 'button', href, ...props }) {
   const className = `su-cta-btn${terra ? ' su-cta-btn--terra' : ''}`
 

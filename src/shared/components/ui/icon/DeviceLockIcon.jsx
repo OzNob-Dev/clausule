@@ -1,3 +1,5 @@
+import './DeviceLockIcon.css'
+
 export function DeviceLockIcon({ size = 16, ...props }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true" {...props}>

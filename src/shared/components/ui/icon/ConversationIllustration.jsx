@@ -1,3 +1,5 @@
+import './ConversationIllustration.css'
+
 export function ConversationIllustration({ size = 220, ...props }) {
   return (
     <svg width={size} height="160" viewBox="0 0 220 160" fill="none" aria-hidden="true" {...props}>

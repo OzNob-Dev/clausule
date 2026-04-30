@@ -2,7 +2,7 @@ import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { SsoProviderIcon } from '@shared/components/ui/icon/SsoProviderIcon'
 import { Link } from './Link'
 import { ssoAuthPath } from '@shared/utils/sso'
-
+import './SsoProviderButton.css'
 export function SsoProviderButton({ provider }) {
   return (
     <Link href={ssoAuthPath(provider.id)} external variant="button" className="su-sso-provider">

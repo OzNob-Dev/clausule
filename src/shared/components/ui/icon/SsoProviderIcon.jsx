@@ -1,3 +1,5 @@
+import './SsoProviderIcon.css'
+
 export function SsoProviderIcon({ provider }) {
   if (provider === 'google') {
     return (

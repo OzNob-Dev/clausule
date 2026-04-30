@@ -1,5 +1,5 @@
 import { cn } from '@shared/utils/cn'
-
+import './ProfileField.css'
 export function ProfileField({
   id,
   label,

@@ -1,5 +1,5 @@
 import { cn } from '@shared/utils/cn'
-
+import './Card.css'
 const toneStyles = {
   default: 'border-rule bg-card',
   elevated: 'border-rule bg-card shadow-[var(--cl-shadow-card-soft)]',

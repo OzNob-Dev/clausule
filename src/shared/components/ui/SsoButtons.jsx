@@ -1,6 +1,6 @@
 import { getActiveSsoProviders } from '@shared/utils/sso'
 import { SsoProviderButton } from './SsoProviderButton'
-
+import './SsoButtons.css'
 export default function SsoButtons({ config }) {
   const enabledProviders = getActiveSsoProviders(config)
   if (!enabledProviders.length) return null

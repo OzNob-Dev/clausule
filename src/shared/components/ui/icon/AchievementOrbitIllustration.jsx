@@ -1,3 +1,5 @@
+import './AchievementOrbitIllustration.css'
+
 export function AchievementOrbitIllustration({ size = 200, ...props }) {
   return (
     <svg width={size} height={size} viewBox="0 0 200 200" fill="none" aria-hidden="true" {...props}>

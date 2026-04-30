@@ -1,5 +1,5 @@
 import { TargetIcon } from '@shared/components/ui/icon/TargetIcon'
-
+import './BragDocEntryCard.css'
 function evidenceTypeToPill(type) {
   if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
   if (type === 'Work artefact') return { label: 'Work artefact', type: 'filled' }

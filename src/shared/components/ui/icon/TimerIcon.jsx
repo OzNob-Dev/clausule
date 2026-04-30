@@ -1,4 +1,4 @@
-import './Icon.css'
+import './TimerIcon.css'
 
 export function TimerIcon() {
   return (

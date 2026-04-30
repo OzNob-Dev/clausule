@@ -1,3 +1,5 @@
+import './CloseIcon.css'
+
 export function CloseIcon({ size = 14, ...props }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" {...props}>

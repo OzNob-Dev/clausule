@@ -1,6 +1,6 @@
 import { Button } from './Button'
 import { UploadIcon } from '@shared/components/ui/icon/UploadIcon'
-
+import './EntryComposerSections.css'
 const EVIDENCE_TYPES = ['Work artefact', 'Metrics / data', 'Peer recognition', 'External link']
 
 const STRENGTH_LEVELS = [

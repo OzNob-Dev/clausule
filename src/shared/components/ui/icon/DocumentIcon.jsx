@@ -1,3 +1,5 @@
+import './DocumentIcon.css'
+
 export function DocumentIcon({ size = 24, ...props }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" {...props}>

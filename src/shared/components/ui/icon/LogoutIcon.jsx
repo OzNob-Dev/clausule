@@ -1,3 +1,5 @@
+import './LogoutIcon.css'
+
 export function LogoutIcon({ size = 24, ...props }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" {...props}>

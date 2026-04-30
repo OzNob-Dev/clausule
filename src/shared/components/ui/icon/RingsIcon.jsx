@@ -1,3 +1,5 @@
+import './RingsIcon.css'
+
 export function RingsIcon({ offsets = [0, 0, 0], size = 44, ...props }) {
   const [outerOff, midOff, innerOff] = offsets
   return (

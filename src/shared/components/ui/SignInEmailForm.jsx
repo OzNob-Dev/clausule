@@ -1,7 +1,7 @@
 import { cn } from '@shared/utils/cn'
 import { Button } from './Button'
 import { FieldHint, FieldInput, FieldLabel } from './Field'
-
+import './SignInEmailForm.css'
 export default function SignInEmailForm({
   email,
   result,

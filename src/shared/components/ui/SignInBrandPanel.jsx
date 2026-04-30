@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { BrandMarkIcon } from '@shared/components/ui/icon/BrandMarkIcon'
-
+import './SignInBrandPanel.css'
 const DEFAULT_HEADLINE = 'Thoughtful records.\nBetter conversations.'
 const DEFAULT_SUBTEXT = 'The file note tool built for managers who care about their people — and a brag doc for the people themselves.'
 
