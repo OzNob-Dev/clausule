@@ -1,7 +1,6 @@
 'use client'
 
 import { useProfileStore } from '@auth/store/useProfileStore'
-import { ProfileActions } from '@shared/components/ui/ProfileActions'
 import { ProfileField } from '@shared/components/ui/ProfileField'
 import { SectionCard } from '@shared/components/ui/SectionCard'
 import PageHeader from '@shared/components/ui/PageHeader'
@@ -120,7 +119,13 @@ export default function ProfileScreen() {
           {error ? <p className="profile-status profile-status--error" role="alert">{error}</p> : null}
           {success ? <p className="profile-status profile-status--success" role="status">{success}</p> : null}
           <div className="section-rule" aria-hidden="true" />
-          <ProfileActions onReset={resetForm} saving={saving} disabled={!dirty || saving} />
+          <Button type="button" variant="ghost" className="be-comp-cancel" onClick={resetForm} disabled={!dirty || saving}>Reset</Button>
+          <Button type="submit" variant="primary" disabled={!dirty || saving}>
+            <svg viewBox="0 0 14 14" aria-hidden="true">
+              <polyline points="2,7 5.5,10.5 12,3" />
+            </svg>
+            Send feedback
+          </Button>
         </div>
       </SectionCard>
     </>
