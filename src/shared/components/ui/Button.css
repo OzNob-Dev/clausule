@@ -123,7 +123,6 @@
   outline-offset: 2px;
 }
 
-
 .form-buttons {
   display: flex;
   justify-content: flex-end;
@@ -132,9 +131,49 @@
 }
 
 .be-cta > .tick {
-  width: 13px;
-  height: 13px;
   fill: none;
   stroke: var(--cl-surface-muted-16);
   stroke-width: 2.5;
+}
+
+.bss-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  align-self: stretch;
+  border-left: 1px solid var(--cl-border-2);
+  background: var(--cl-surface-muted-20);
+  color: var(--cl-surface-muted-7);
+}
+
+.bss-copy-btn:hover {
+  background: var(--cl-surface-muted-21);
+  color: var(--cl-accent-deep);
+}
+
+.be-cta > .copy {
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  fill: none;
+}
+
+.be-cta > svg {
+  width: 15px;
+  height: 15px;
+}
+
+.danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border: 1.5px solid var(--cl-danger-5);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cl-danger-5);
+  font-size: .875rem;
+  font-weight: 700;
 }

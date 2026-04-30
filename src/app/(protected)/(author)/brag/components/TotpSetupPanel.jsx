@@ -28,7 +28,6 @@ export default function TotpSetupPanel({ onDone, onCancel }) {
         <>
           <TotpSecretBlock
             copied={totpSetup.copied}
-            copyClassName="bss-copy-btn"
             qrClassName="bss-qr-wrap"
             qrSize={136}
             secret={totpSetup.secretDisplay}

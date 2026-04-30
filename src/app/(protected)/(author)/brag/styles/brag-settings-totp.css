@@ -98,27 +98,6 @@
   user-select: all;
 }
 
-.bss-copy-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  align-self: stretch;
-  border-left: 1px solid var(--cl-border-2);
-  background: var(--cl-surface-muted-20);
-  color: var(--cl-surface-muted-7);
-}
-
-.bss-copy-btn:hover {
-  background: var(--cl-surface-muted-21);
-  color: var(--cl-accent-deep);
-}
-
-.bss-copy-btn svg {
-  width: 15px;
-  height: 15px;
-}
-
 .bss-otp-block {
   display: grid;
   gap: 12px;

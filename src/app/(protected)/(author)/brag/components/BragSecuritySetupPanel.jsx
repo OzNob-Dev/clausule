@@ -30,7 +30,6 @@ export default function BragSecuritySetupPanel({ onDone, onCancel }) {
         <>
           <TotpSecretBlock
             copied={totpSetup.copied}
-            copyClassName="bss-copy-btn"
             qrClassName="bss-qr-wrap"
             contentClassName="bss-totp-content"
             layoutClassName="bss-totp-layout"
