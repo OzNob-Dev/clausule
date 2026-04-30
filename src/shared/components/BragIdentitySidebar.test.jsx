@@ -10,6 +10,10 @@ vi.mock('@auth/context/AuthContext', () => ({
   useAuth: () => ({ logout }),
 }))
 
+vi.mock('next/link', () => ({
+  default: ({ href, children, ...props }) => <a href={href} {...props}>{children}</a>,
+}))
+
 describe('BragIdentitySidebar', () => {
   beforeEach(() => {
     logout.mockClear()

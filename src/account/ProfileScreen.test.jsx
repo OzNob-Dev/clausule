@@ -71,7 +71,7 @@ describe('ProfileScreen', () => {
 
     await user.clear(screen.getByLabelText('Mobile'))
     await user.type(screen.getByLabelText('Mobile'), '0401 234 567')
-    await user.click(screen.getByRole('button', { name: /save changes/i }))
+    await user.click(screen.getByRole('button', { name: /send feedback/i }))
 
     await waitFor(() => expect(saveProfileAction).toHaveBeenCalled())
     expect(saveProfileAction).toHaveBeenCalledWith(expect.objectContaining({
@@ -98,6 +98,6 @@ describe('ProfileScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Reset' }))
 
     expect(screen.getByLabelText('First name')).toHaveValue('Ada')
-    expect(screen.getByRole('button', { name: /save changes/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /send feedback/i })).toBeDisabled()
   })
 })

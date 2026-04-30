@@ -204,7 +204,7 @@ function manualReferences(targetFile, textIndex) {
 }
 
 export function analyzeUnusedFiles(rootDir = process.cwd()) {
-  const files = collectFiles(rootDir).filter((file) => !file.startsWith('.next/'))
+  const files = collectFiles(rootDir).filter((file) => !file.startsWith('.next/') && existsSync(path.join(rootDir, file)))
   const aliases = loadAliasMap(rootDir)
   const textIndex = buildTextIndex(rootDir, files)
   const inbound = new Map()

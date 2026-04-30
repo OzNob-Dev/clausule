@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import BragRail from './BragRail'
+import BragIdentitySidebar from './BragIdentitySidebar'
 import { useProfileStore } from '@auth/store/useProfileStore'
 
 const logout = vi.fn()
@@ -10,7 +10,7 @@ vi.mock('@auth/context/AuthContext', () => ({
   useAuth: () => ({ logout }),
 }))
 
-describe('BragRail integration', () => {
+describe('BragIdentitySidebar integration', () => {
   beforeEach(() => {
     logout.mockClear()
     useProfileStore.getState().clearProfile()
@@ -23,7 +23,7 @@ describe('BragRail integration', () => {
       email: 'ada@example.com',
     })
 
-    render(<BragRail activePage="brag" activeChildPage="resume" />)
+    render(<BragIdentitySidebar activePage="brag" activeChildPage="resume" />)
 
     expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
     expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('href', '/brag/resume')
@@ -34,7 +34,7 @@ describe('BragRail integration', () => {
   it('delegates sign out to auth context', async () => {
     const user = (await import('@testing-library/user-event')).default.setup()
 
-    render(<BragRail activePage="brag" />)
+    render(<BragIdentitySidebar activePage="brag" />)
     await user.click(screen.getByRole('button', { name: /log out/i }))
 
     expect(logout).toHaveBeenCalledTimes(1)
