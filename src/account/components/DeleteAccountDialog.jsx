@@ -27,10 +27,6 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
     const head = canvas.parentElement
     if (!ctx || !head) return undefined
 
-    const styles = getComputedStyle(document.documentElement)
-    const rgb = (name, alpha) => `rgb(${styles.getPropertyValue(name).trim()} / ${alpha})`
-    const color = (name) => styles.getPropertyValue(name).trim()
-
     let raf = 0
     let t = 0
 
@@ -39,8 +35,11 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
       canvas.height = head.offsetHeight
     }
 
+    resize()
+    window.addEventListener('resize', resize)
+
     const embers = Array.from({ length: 55 }, () => ({
-      x: Math.random() * 1,
+      x: Math.random(),
       y: 1 + Math.random() * 0.3,
       vx: (Math.random() - 0.5) * 0.004,
       vy: -(0.004 + Math.random() * 0.007),
@@ -76,9 +75,9 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
       ctx.clearRect(0, 0, W, H)
 
       const baseGlow = ctx.createLinearGradient(0, H, 0, 0)
-      baseGlow.addColorStop(0, rgb('--cl-dialog-delete-canvas-base-start-rgb', 0.55))
-      baseGlow.addColorStop(0.4, rgb('--cl-dialog-delete-canvas-base-mid-rgb', 0.3))
-      baseGlow.addColorStop(1, rgb('--cl-dialog-delete-canvas-base-end-rgb', 0.05))
+      baseGlow.addColorStop(0, 'rgba(200,40,10,0.55)')
+      baseGlow.addColorStop(0.4, 'rgba(140,20,5,0.3)')
+      baseGlow.addColorStop(1, 'rgba(80,5,5,0.05)')
       ctx.fillStyle = baseGlow
       ctx.fillRect(0, 0, W, H)
 
@@ -88,9 +87,9 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
         const rx = (b.rx + Math.sin(t * b.speed + b.phase * 2) * 0.04) * W
         const ry = (b.ry * 0.35 + Math.cos(t * b.speed * 1.2) * 0.05) * H
         const g = ctx.createRadialGradient(px, py, 0, px, py, rx)
-        g.addColorStop(0, rgb('--cl-dialog-delete-canvas-blob-start-rgb', 0.35))
-        g.addColorStop(0.5, rgb('--cl-dialog-delete-canvas-blob-mid-rgb', 0.2))
-        g.addColorStop(1, rgb('--cl-dialog-delete-canvas-blob-end-rgb', 0))
+        g.addColorStop(0, 'rgba(255,120,30,0.35)')
+        g.addColorStop(0.5, 'rgba(200,50,10,0.2)')
+        g.addColorStop(1, 'rgba(150,20,5,0)')
         ctx.beginPath()
         ctx.ellipse(px, py, rx, ry, 0, 0, Math.PI * 2)
         ctx.fillStyle = g
@@ -106,9 +105,9 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
         const midX = (x1 + x2) / 2 + Math.sin(t * 0.03 + c.phase) * 8
         const midY = (y1 + y2) / 2
         const crackGrad = ctx.createLinearGradient(x1, y1, x2, y2)
-        crackGrad.addColorStop(0, rgb('--cl-dialog-delete-canvas-crack-start-rgb', c.opacity))
-        crackGrad.addColorStop(0.5, rgb('--cl-dialog-delete-canvas-crack-mid-rgb', c.opacity * 0.7))
-        crackGrad.addColorStop(1, rgb('--cl-dialog-delete-canvas-crack-end-rgb', 0))
+        crackGrad.addColorStop(0, `rgba(255,140,60,${c.opacity})`)
+        crackGrad.addColorStop(0.5, `rgba(255,80,20,${c.opacity * 0.7})`)
+        crackGrad.addColorStop(1, 'rgba(255,60,10,0)')
 
         ctx.beginPath()
         ctx.moveTo(x1, y1)
@@ -121,7 +120,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
         ctx.beginPath()
         ctx.moveTo(x1, y1)
         ctx.quadraticCurveTo(midX, midY, x2, y2)
-        ctx.strokeStyle = rgb('--cl-dialog-delete-canvas-shimmer-rgb', c.opacity * 0.25)
+        ctx.strokeStyle = `rgba(255,100,30,${c.opacity * 0.25})`
         ctx.lineWidth = 5 + c.opacity * 4
         ctx.stroke()
       })
@@ -142,22 +141,22 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
         const glow = ctx.createRadialGradient(e.x * W, e.y * H, 0, e.x * W, e.y * H, e.r * 3.5)
         glow.addColorStop(0, `hsla(${e.hue},100%,75%,${alpha * 0.9})`)
         glow.addColorStop(0.4, `hsla(${e.hue},90%,55%,${alpha * 0.5})`)
-        glow.addColorStop(1, color('--cl-black-0'))
+        glow.addColorStop(1, 'rgba(255,100,30,0)')
         ctx.beginPath()
         ctx.arc(e.x * W, e.y * H, e.r * 3.5, 0, Math.PI * 2)
         ctx.fillStyle = glow
         ctx.fill()
         ctx.beginPath()
         ctx.arc(e.x * W, e.y * H, e.r * 0.6, 0, Math.PI * 2)
-        ctx.fillStyle = rgb('--cl-dialog-delete-canvas-ember-core-rgb', alpha * 0.95)
+        ctx.fillStyle = `hsla(50,100%,90%,${alpha * 0.95})`
         ctx.fill()
       })
 
       const shimmerY = 12 + Math.sin(t * 0.025) * 4
       const shimmer = ctx.createLinearGradient(0, shimmerY - 8, 0, shimmerY + 8)
-      shimmer.addColorStop(0, rgb('--cl-dialog-delete-canvas-shimmer-rgb', 0))
-      shimmer.addColorStop(0.5, rgb('--cl-dialog-delete-canvas-shimmer-rgb', 0.08 + 0.06 * Math.sin(t * 0.04)))
-      shimmer.addColorStop(1, rgb('--cl-dialog-delete-canvas-shimmer-rgb', 0))
+      shimmer.addColorStop(0, 'rgba(255,100,40,0)')
+      shimmer.addColorStop(0.5, `rgba(255,100,40,${0.08 + 0.06 * Math.sin(t * 0.04)})`)
+      shimmer.addColorStop(1, 'rgba(255,100,40,0)')
       ctx.fillStyle = shimmer
       ctx.fillRect(0, shimmerY - 8, W, 16)
 
@@ -165,9 +164,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
       raf = window.requestAnimationFrame(draw)
     }
 
-    resize()
     raf = window.requestAnimationFrame(draw)
-    window.addEventListener('resize', resize)
 
     return () => {
       window.removeEventListener('resize', resize)
