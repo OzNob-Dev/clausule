@@ -138,7 +138,7 @@ export default function FeedbackFormView({
           <span className="be-feedback-check-text">The Clausule team may contact me about this feedback.</span>
         </label>
 
-        <p className="be-feedback-note">Sent privately to the app owners. This will not appear in your brag doc.</p>
+        <p className="form-buttons">Sent privately to the app owners. This will not appear in your brag doc.</p>
 
         <div className="be-feedback-actions">
           <Button type="button" variant="ghost" className="be-comp-cancel" onClick={onCancel}>Cancel</Button>

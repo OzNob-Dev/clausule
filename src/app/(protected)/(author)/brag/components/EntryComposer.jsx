@@ -102,7 +102,7 @@ export default function EntryComposer({ onSave = () => {}, onClose = () => {} })
 
         <div className="be-entry-form-rule" aria-hidden="true" />
 
-        <div className="be-entry-actions">
+        <div className="form-buttons">
           <Button type="button" variant="ghost" className="be-entry-btn be-entry-btn--secondary" onClick={onClose} disabled={saving}>Cancel</Button>
           <Button type="submit" variant="primary" disabled={saving || !title.trim()}>
             {saving ? 'Saving...' : 'Save entry'}

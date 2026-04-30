@@ -75,18 +75,22 @@ function FeedbackHistoryScreen() {
 
   return (
     <>
-      <PageHeader
-        className="bss-header"
-        eyebrow="Feedback history"
-        eyebrowClassName="bss-eyebrow"
-        titleId="feedback-history-title"
-        title="Back and forth with the Clausule team."
-        titleClassName="bss-heading"
-        description="Track what you sent and any replies from the people shaping the product."
-        descriptionClassName="bss-subheading"
-      />
-      <div className="bss-divider" />
-      {loading || loadError || hasHistory ? <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} /> : <FeedbackHistoryEmptyState />}
+    {!hasHistory && <FeedbackHistoryEmptyState />}
+    {loading || loadError || hasHistory &&
+      <>
+        <PageHeader
+          className="bss-header"
+          eyebrow="Feedback history"
+          eyebrowClassName="bss-eyebrow"
+          titleId="feedback-history-title"
+          title="Back and forth with the Clausule team."
+          titleClassName="bss-heading"
+          description="Track what you sent and any replies from the people shaping the product."
+          descriptionClassName="bss-subheading"
+        />
+        <div className="bss-divider" />
+        <FeedbackHistoryPanel threads={threads} loading={loading} error={loadError} />
+      </>}
     </>
   )
 }
