@@ -416,6 +416,30 @@ context:
   - when: "complex schema design, multi-tenancy, audit logs, or soft deletes"
     load: [core, data, data-advanced, security, caveman]
 
+  - when: "performing a security review or audit"
+    load: [core, security-audit, security, vercel-supabase, caveman]
+
+  - when: "performing an accessibility review or audit"
+    load: [core, accessibility-audit, frontend, caveman]
+
+  - when: "performing a performance review or investigating slowness"
+    load: [core, performance-audit, performance, data-advanced, caveman]
+
+  - when: "reviewing or adding dependencies"
+    load: [core, dependency-audit, security, caveman]
+
+  - when: "reviewing a pull request or writing review feedback"
+    load: [core, pr-review, security, caveman]
+
+  - when: "implementing optimistic updates or instant UI feedback"
+    load: [core, optimistic-ui, frontend, typescript, caveman]
+
+  - when: "starting a new feature or writing a tech spec"
+    load: [core, feature-design, architecture, caveman]
+
+  - when: "quarterly health audit or measuring codebase quality"
+    load: [core, codebase-health, tech-debt, dependency-audit, caveman]
+
 commands:
   - name: /refactor
     description: Systematic refactor of file or selection
@@ -495,6 +519,51 @@ commands:
   - name: /why
     description: Explain current decision in plain English (one response, then revert to caveman)
     skill: caveman
+
+
+  - name: /infra
+    description: Review Vercel + Supabase config, env vars, middleware, auth setup
+    skill: vercel-supabase
+
+  - name: /tokens
+    description: Design or review design token architecture
+    skill: design-tokens
+
+  - name: /responsive
+    description: Audit or fix responsive layout and mobile experience
+    skill: responsive-design
+
+  - name: /copy
+    description: Review or write microcopy, empty states, and error messages
+    skill: copy-ux
+  - name: /security-audit
+    description: Full OWASP-mapped security audit of a file, route, or feature
+    skill: security-audit
+
+  - name: /a11y-audit
+    description: Structured WCAG 2.2 accessibility audit with keyboard and screen reader protocol
+    skill: accessibility-audit
+
+  - name: /perf-audit
+    description: Full performance audit with Lighthouse, bundle, React Profiler, and DB query analysis
+    skill: performance-audit
+
+  - name: /deps
+    description: Audit dependencies for security, bundle impact, maintenance, and license
+    skill: dependency-audit
+
+  - name: /review
+    description: Review a PR or file with blocking vs advisory findings, ordered by severity
+    skill: pr-review
+
+  - name: /spec
+    description: Write a tech spec for a new feature before implementation starts
+    skill: feature-design
+
+  - name: /health
+    description: Run a codebase health audit with metrics and prioritised debt register
+    skill: codebase-health
+
 
 safety:
   validation:
@@ -636,3 +705,226 @@ performance:
       - read replica
       - slow query
     tools: [read_file, write_file, search_content, run_command]
+
+  - name: vercel-supabase
+    description: Vercel function limits, edge middleware, Supabase SSR auth, service_role safety, env vars, caching hierarchy
+    file: skills/vercel-supabase/SKILL.md
+    triggers:
+      - vercel
+      - supabase
+      - edge middleware
+      - service_role
+      - createServerClient
+      - supabase/ssr
+      - preview deployment
+      - vercel.json
+    tools: [read_file, write_file, search_content]
+
+  - name: navigation
+    description: App Router nav, active states, breadcrumbs, mobile nav, focus management on route change
+    file: skills/navigation/SKILL.md
+    triggers:
+      - navigation
+      - nav
+      - sidebar
+      - breadcrumb
+      - mobile menu
+      - active link
+      - usePathname
+    tools: [read_file, write_file, search_content]
+
+  - name: modals-overlays
+    description: Modal dialog, drawer, popover, tooltip, toast, command palette — focus management and ARIA
+    file: skills/modals-overlays/SKILL.md
+    triggers:
+      - modal
+      - dialog
+      - drawer
+      - popover
+      - tooltip
+      - toast
+      - command palette
+      - overlay
+      - focus trap
+    tools: [read_file, write_file, search_content]
+
+  - name: dark-mode
+    description: Systematic dark mode, FOUC prevention, token strategy, ThemeProvider, Tailwind dark:
+    file: skills/dark-mode/SKILL.md
+    triggers:
+      - dark mode
+      - dark theme
+      - theme toggle
+      - color scheme
+      - fouc
+      - ThemeProvider
+    tools: [read_file, write_file, search_content]
+
+  - name: responsive-design
+    description: Mobile-first, container queries, fluid typography, layout patterns, touch targets, print
+    file: skills/responsive-design/SKILL.md
+    triggers:
+      - responsive
+      - mobile
+      - breakpoint
+      - container query
+      - fluid
+      - layout
+      - touch target
+    tools: [read_file, write_file, search_content]
+
+  - name: copy-ux
+    description: Microcopy, button labels, empty states, error messages, loading states, confirmation dialogs
+    file: skills/copy-ux/SKILL.md
+    triggers:
+      - copy
+      - microcopy
+      - empty state
+      - error message
+      - button label
+      - loading state
+      - confirmation
+      - ux writing
+    tools: [read_file, write_file]
+
+  - name: onboarding-flows
+    description: Multi-step onboarding, progress persistence, checklist onboarding, first-run experience
+    file: skills/onboarding-flows/SKILL.md
+    triggers:
+      - onboarding
+      - first run
+      - checklist
+      - welcome flow
+      - step flow
+      - post signup
+    tools: [read_file, write_file, search_content]
+
+  - name: design-tokens
+    description: Token architecture, Figma to code pipeline, semantic vs primitive tokens, theming
+    file: skills/design-tokens/SKILL.md
+    triggers:
+      - design token
+      - token
+      - tokens.css
+      - theming
+      - design system tokens
+    tools: [read_file, write_file, search_content]
+
+  - name: data-tables
+    description: TanStack Table, sortable/filterable/paginated tables, virtualization, server-side ops
+    file: skills/data-tables/SKILL.md
+    triggers:
+      - table
+      - data table
+      - tanstack table
+      - sortable
+      - filterable
+      - pagination table
+    tools: [read_file, write_file, search_content]
+
+  - name: security-audit
+    description: OWASP Top 10 mapped to Next.js/Supabase, attack vectors, Supabase pitfalls, audit checklist
+    file: skills/security-audit/SKILL.md
+    triggers:
+      - security audit
+      - security review
+      - owasp
+      - penetration
+      - vulnerability
+      - attack vector
+      - idor
+      - ssrf
+      - mass assignment
+    tools: [read_file, search_content, run_command]
+
+  - name: accessibility-audit
+    description: WCAG 2.2 audit methodology, axe-core, keyboard testing, screen reader protocol, color contrast
+    file: skills/accessibility-audit/SKILL.md
+    triggers:
+      - accessibility audit
+      - a11y audit
+      - wcag
+      - screen reader
+      - keyboard audit
+      - color contrast audit
+      - axe
+    tools: [read_file, search_content, run_command]
+
+  - name: performance-audit
+    description: Lighthouse CI, bundle analysis, React Profiler, DB query audit, perceived performance
+    file: skills/performance-audit/SKILL.md
+    triggers:
+      - performance audit
+      - lighthouse
+      - bundle analysis
+      - react profiler
+      - slow query audit
+      - web vitals audit
+    tools: [read_file, search_content, run_command]
+
+  - name: dependency-audit
+    description: Bundle impact, security advisories, maintenance status, license compliance, native alternatives
+    file: skills/dependency-audit/SKILL.md
+    triggers:
+      - dependency audit
+      - npm audit
+      - package audit
+      - license
+      - depcheck
+      - outdated packages
+      - supply chain
+    tools: [read_file, search_content, run_command]
+
+  - name: pr-review
+    description: PR review methodology, blocking vs advisory, feedback framing, review by PR size
+    file: skills/pr-review/SKILL.md
+    triggers:
+      - code review
+      - pr review
+      - pull request
+      - review this
+      - review feedback
+      - lgtm
+    tools: [read_file, search_content]
+
+  - name: optimistic-ui
+    description: React Query optimistic updates, conflict resolution, rollback UX, skeleton transitions
+    file: skills/optimistic-ui/SKILL.md
+    triggers:
+      - optimistic
+      - optimistic update
+      - instant feedback
+      - perceived performance
+      - rollback
+      - onMutate
+    tools: [read_file, write_file, search_content]
+
+  - name: feature-design
+    description: Feature breakdown, tech specs, unknowns, spike vs build, work slicing, estimation
+    file: skills/feature-design/SKILL.md
+    triggers:
+      - feature design
+      - tech spec
+      - feature breakdown
+      - estimation
+      - spike
+      - new feature
+      - requirements
+      - how should i build
+      - where do i start
+    tools: [read_file, write_file]
+
+  - name: codebase-health
+    description: Complexity trends, coverage, build time, dead code, dependency age, quarterly audits
+    file: skills/codebase-health/SKILL.md
+    triggers:
+      - codebase health
+      - technical health
+      - code quality metrics
+      - dead code
+      - tech debt audit
+      - quarterly audit
+      - health score
+    tools: [read_file, search_content, run_command]
+
+# Additional context rules for new skills

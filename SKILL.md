@@ -1,236 +1,291 @@
 ---
-name: backend-architecture
+name: security-audit
 description: >
-  Principal guidance for backend service layer design, repository pattern, dependency
-  injection, domain-driven design boundaries, module organization, and when to split
-  a monolith. Load when designing new backend features, reviewing service layer structure,
-  establishing module boundaries, or evaluating architectural patterns.
+  Principal security audit methodology covering OWASP Top 10 mapped to Next.js/Supabase,
+  specific attack vectors (SSRF, mass assignment, IDOR, open redirects, header injection),
+  Supabase-specific pitfalls, and a structured review checklist. Load when performing
+  a security review, auditing auth flows, reviewing API routes, or doing a pre-release
+  security pass on any feature touching auth, data, payments, or user input.
 ---
 
-# Backend Architecture — Principal Standards
+# Security Audit — Principal Standards
 
-## Layered Architecture
+## Audit Methodology
+
+Run in this order — cheapest checks first:
+
 ```
-HTTP Layer        → Route handlers (thin — parse, validate, respond)
-Service Layer     → Business logic (orchestration, rules, decisions)
-Repository Layer  → Data access (queries, persistence, mapping)
-Domain Layer      → Pure domain objects, types, value objects
-Infrastructure    → External services (email, storage, payments, queues)
+1. Static scan      → grep/rg for known bad patterns (minutes)
+2. Data flow        → trace untrusted input from entry to sink (15-30 min)
+3. Auth boundary    → every route, action, RPC — is auth checked? (15 min)
+4. Authorization    → every data access — is ownership verified? (15 min)
+5. Secret exposure  → env vars, logs, responses (10 min)
+6. Dependency scan  → npm audit, known CVEs (5 min)
+7. Manual testing   → auth bypass attempts, injection, IDOR (30+ min)
 ```
 
-Each layer depends only on layers below it. Never skip layers. Never call infrastructure directly from route handlers.
+## Static Scan Patterns (Run First)
 
-## Service Layer
+```bash
+# Secrets in code
+rg "sk_live|sk_test|whsec_|service_role|eyJhbGc" --type ts
+rg "process\.env\." src/app --include="*.tsx" # client bundle exposure check
 
-### Responsibilities
-- Orchestrates repositories and infrastructure
-- Enforces business rules
-- Owns transaction boundaries
-- Returns domain objects or Result types — never raw DB rows
+# console.log in production paths
+rg "console\.log" src --include="*.ts" --include="*.tsx" -l
+
+# Any type usage
+rg ": any" src --include="*.ts" --include="*.tsx" -c
+
+# Raw SQL interpolation
+rg '\$\{' src --include="*.ts" -l | xargs rg "SELECT|INSERT|UPDATE|DELETE"
+
+# Disabled auth
+rg "skipAuth|bypassAuth|noAuth|TODO.*auth|FIXME.*auth" src -i
+
+# Unsafe innerHTML
+rg "dangerouslySetInnerHTML" src --include="*.tsx"
+
+# Missing await on auth checks
+rg "requireAuth\(\)" src --include="*.ts" | grep -v "await"
+
+# Direct service_role usage in client files
+rg "SERVICE_ROLE" src/app --include="*.tsx"
+
+# Open redirects
+rg "redirect\(.*req\." src --include="*.ts"
+rg "router\.push.*searchParams" src --include="*.tsx"
+```
+
+## OWASP Top 10 — Next.js/Supabase Mapping
+
+### A01: Broken Access Control
+```
+CHECK:
+□ Every API route has auth check before data access
+□ Every server action has auth check
+□ Data queries filter by userId/orgId — not just route-level auth
+□ Supabase RLS enabled on all user-scoped tables
+□ Admin routes protected with role check, not just auth check
+□ IDOR: resource IDs validated against owner, not just existence
+
+SUPABASE SPECIFIC:
+□ RLS policies test-verified (not just assumed correct)
+□ service_role client never used in user-facing routes without explicit justification
+□ No .from('users').select('*') returning all users without RLS
+□ Realtime subscriptions only on RLS-protected tables
+
+NEXT.JS SPECIFIC:
+□ Server actions validate session before mutation
+□ Route params (userId, postId) verified against DB ownership, not trusted from URL
+□ Layout auth checks cannot be bypassed by direct page navigation
+□ middleware.ts covers all protected route patterns (no gaps)
+```
+
+### A02: Cryptographic Failures
+```
+CHECK:
+□ Passwords: bcrypt/Argon2id only (Supabase handles this — verify not bypassed)
+□ One-time tokens: cryptographically random (crypto.randomBytes, not Math.random)
+□ JWT verification: signature verified, not just decoded
+□ Sensitive data encrypted at rest (Supabase storage: verify bucket policies)
+□ No sensitive data in URL params (visible in logs, referrer headers)
+□ HTTPS enforced — no HTTP fallback in production
+□ Cookies: HttpOnly, Secure, SameSite=Lax minimum
+```
+
+### A03: Injection
+```
+CHECK:
+□ All Supabase queries use parameterized SDK methods (no raw SQL with interpolation)
+□ .rpc() calls use parameterized args, not string-built queries
+□ User input never interpolated into filter strings
+□ Email content sanitized before rendering (re-injection via email templates)
+□ Log statements don't interpolate user input unsanitized
+□ File paths never constructed from user input
+□ No eval(), new Function(), or dynamic require() with user input
+```
+
+### A04: Insecure Design
+```
+CHECK:
+□ Rate limiting on auth endpoints (login, register, reset, OTP)
+□ Account enumeration prevented (consistent timing + messaging on auth failures)
+□ One-time tokens are single-use (consumed on first use)
+□ Password reset tokens expire (15-60 min max)
+□ Concurrent session limits enforced if required
+□ Brute force protection on sensitive operations
+□ Soft-deleted accounts not silently reactivated via login/signup
+```
+
+### A05: Security Misconfiguration
+```
+CHECK:
+□ No debug endpoints in production (e.g., /api/debug, /api/test)
+□ Error responses don't expose stack traces, DB errors, or internal paths
+□ CORS: explicit allowlist, no wildcard * in production
+□ Security headers present (X-Content-Type-Options, X-Frame-Options, CSP)
+□ Vercel.json security headers applied
+□ Supabase: email confirmation required for signup (not disabled)
+□ Supabase: leaked password protection enabled
+□ NODE_ENV checks not used as security gates (use explicit env var)
+```
+
+### A06: Vulnerable and Outdated Components
+```bash
+npm audit --audit-level=high
+npx audit-ci --high
+
+# Check for known-vulnerable patterns
+rg "jsonwebtoken" package.json  # old versions have critical CVEs
+rg "axios" package.json         # check version for SSRF issues
+```
+
+### A07: Identification and Authentication Failures
+```
+CHECK:
+□ Session tokens: not in localStorage (XSS steals them)
+□ Session tokens: not in URL params (logged, leaked via referrer)
+□ Session invalidated on logout (not just cookie cleared client-side)
+□ Session invalidated on password change
+□ Supabase: getUser() used server-side, not getSession() (getSession is unverified)
+□ Multi-device sessions: logout one vs logout all behaviour intentional
+□ OAuth state parameter validated (CSRF protection)
+□ Email verification enforced before full access
+```
+
+### A08: Software and Data Integrity Failures
+```
+CHECK:
+□ Webhook signatures verified before processing payload
+□ Stripe: webhook signature verified (not just parsing the body)
+□ npm packages: lock file committed, CI uses npm ci
+□ GitHub Actions: pinned action versions (not @latest)
+□ Supabase Edge Functions: auth header verified before processing
+□ File uploads: content validated by magic bytes, not extension
+```
+
+### A09: Security Logging and Monitoring Failures
+```
+CHECK:
+□ Auth failures logged (with IP, user agent — without credentials)
+□ Auth successes logged
+□ Permission denials logged
+□ Admin actions logged
+□ Logs don't contain passwords, tokens, session IDs, PII
+□ Alerts configured for: auth failure spike, rate limit abuse, error rate spike
+□ Correlation IDs on all requests (enables incident investigation)
+```
+
+### A10: Server-Side Request Forgery (SSRF)
+```
+CHECK:
+□ Any endpoint that fetches a URL provided by user input
+□ Webhooks that call back to user-supplied URLs: validate domain allowlist
+□ Import-from-URL features: validate and restrict
+□ Metadata endpoint protection (cloud provider metadata: 169.254.169.254)
+
+PATTERN TO FLAG:
+// DANGEROUS
+const response = await fetch(req.body.url);
+
+// SAFE
+const ALLOWED_DOMAINS = ['api.stripe.com', 'api.github.com'];
+const url = new URL(req.body.url);
+if (!ALLOWED_DOMAINS.includes(url.hostname)) throw new ValidationError('Domain not allowed');
+```
+
+## Supabase-Specific Pitfalls
+
+```
+PITFALL 1: RLS policies that look right but aren't
+  -- BROKEN: checks auth.uid() but doesn't restrict to owned rows
+  CREATE POLICY "users_select" ON posts FOR SELECT USING (auth.uid() IS NOT NULL);
+  -- CORRECT: restricts to own rows
+  CREATE POLICY "users_select_own" ON posts FOR SELECT USING (auth.uid() = user_id);
+
+PITFALL 2: service_role bypasses RLS — any query with service_role sees ALL rows
+  -- Always audit: where is createAdminClient() used? Is it justified?
+
+PITFALL 3: getSession() vs getUser() on server
+  -- getSession() reads from cookie and DOES NOT verify with Supabase server
+  -- An attacker can forge a session cookie that getSession() accepts
+  -- Always use getUser() for server-side auth checks
+
+PITFALL 4: Realtime on tables without RLS
+  -- All rows broadcast to all subscribers if RLS not configured for realtime
+
+PITFALL 5: Storage bucket policies
+  -- Public buckets: anyone with the URL can access
+  -- Always verify bucket is private for user-specific files
+  -- Verify storage RLS policies match table RLS policies
+
+PITFALL 6: Edge Function auth
+  -- Edge Functions run with service_role by default
+  -- Must verify Authorization header manually if user-scoped
+```
+
+## Next.js-Specific Pitfalls
+
+```
+PITFALL 1: Server action without auth check
+  'use server';
+  export async function deletePost(id: string) {
+    // MISSING: session check — any authenticated user can delete any post
+    await db.from('posts').delete().eq('id', id);
+  }
+
+PITFALL 2: Open redirect via next/navigation
+  // DANGEROUS: user controls destination
+  const returnUrl = searchParams.get('returnUrl');
+  redirect(returnUrl); // can redirect to evil.com
+
+  // SAFE: validate origin
+  const returnUrl = searchParams.get('returnUrl') ?? '/dashboard';
+  const isInternal = returnUrl.startsWith('/') && !returnUrl.startsWith('//');
+  redirect(isInternal ? returnUrl : '/dashboard');
+
+PITFALL 3: Dynamic route params trusted without DB ownership check
+  // DANGEROUS
+  const { data } = await supabase.from('posts').select().eq('id', params.id).single();
+  // User can guess any ID and access it if RLS not configured
+
+PITFALL 4: Middleware gaps
+  // Protected routes defined as: /dashboard, /settings
+  // But: /dashboard%2e and /DASHBOARD may not match
+  // Always test middleware with encoded and cased variants
+
+PITFALL 5: Client component importing server-only modules
+  'use client';
+  import { createAdminClient } from '@/utils/supabase/admin'; // EXPOSES service_role KEY
+```
+
+## Mass Assignment
 
 ```typescript
-// src/features/auth/server/auth.service.ts
-export class AuthService {
-  constructor(
-    private readonly userRepo: UserRepository,
-    private readonly sessionRepo: SessionRepository,
-    private readonly emailService: EmailService,
-    private readonly hashService: HashService,
-  ) {}
+// DANGEROUS: spread request body directly onto DB insert
+const body = await request.json();
+await supabase.from('users').update(body).eq('id', userId);
+// Attacker can set: { role: 'admin', stripeCustomerId: 'cus_attacker' }
 
-  async register(input: RegisterInput): Promise<Result<User, AuthError>> {
-    // Business rule: email must be unique
-    const existing = await this.userRepo.findByEmail(input.email);
-    if (existing) return err(new ConflictError('Email already registered'));
-
-    // Domain logic: hash before persist
-    const hashedPassword = await this.hashService.hash(input.password);
-
-    // Persist
-    const user = await this.userRepo.create({
-      email: input.email,
-      name: input.name,
-      passwordHash: hashedPassword,
-    });
-
-    // Side effect after durable write
-    await this.emailService.sendVerification(user);
-
-    return ok(user);
-  }
-}
+// SAFE: explicit field allowlist
+const { name, bio, avatarUrl } = await request.json();
+await supabase.from('users').update({ name, bio, avatarUrl }).eq('id', userId);
+// Or use Zod schema to define allowed fields
+const updateSchema = z.object({ name: z.string(), bio: z.string().optional() }).strict();
+const validated = updateSchema.parse(body);
 ```
 
-### Service Rules
-- Services are **stateless**. No instance-level mutable state.
-- Services own **transaction boundaries**. Start and commit/rollback in service, not repository.
-- Services return **domain types**, never raw DB records or ORMs.
-- Side effects (email, notifications, webhooks) happen **after** the durable write succeeds.
-- Services never import from route files or other features' services directly.
-- One service per domain area. Never a `UtilityService` or `HelperService`.
-
-## Repository Pattern
-
-### Responsibilities
-- All database access isolated here
-- Maps DB records → domain objects
-- Abstracts query complexity from services
-- Single source of truth for data access patterns
-
-```typescript
-// src/features/users/server/user.repository.ts
-export class UserRepository {
-  constructor(private readonly db: SupabaseClient) {}
-
-  async findById(id: UserId): Promise<User | null> {
-    const { data, error } = await this.db
-      .from('users')
-      .select('id, email, name, role, created_at')
-      .eq('id', id)
-      .eq('deleted_at', null)  // soft-delete filter
-      .maybeSingle();
-
-    if (error) throw new DatabaseError('Failed to fetch user', { cause: error });
-    return data ? this.toDomain(data) : null;
-  }
-
-  async findByEmail(email: Email): Promise<User | null> {
-    const { data, error } = await this.db
-      .from('users')
-      .select('id, email, name, role, password_hash, created_at')
-      .eq('email', email)
-      .maybeSingle();
-
-    if (error) throw new DatabaseError('Failed to fetch user by email', { cause: error });
-    return data ? this.toDomain(data) : null;
-  }
-
-  async create(input: CreateUserInput): Promise<User> {
-    const { data, error } = await this.db
-      .from('users')
-      .insert(this.toRecord(input))
-      .select('id, email, name, role, created_at')
-      .single();
-
-    if (error) throw new DatabaseError('Failed to create user', { cause: error });
-    return this.toDomain(data);
-  }
-
-  // Private: DB record → domain object mapping
-  private toDomain(record: UserRecord): User {
-    return {
-      id: record.id as UserId,
-      email: record.email as Email,
-      name: record.name,
-      role: record.role as UserRole,
-      createdAt: new Date(record.created_at),
-    };
-  }
-}
-```
-
-### Repository Rules
-- One repository per aggregate root (not per table).
-- Never expose raw DB types outside the repository.
-- Never put business logic in repositories. Logic = service. Data access = repository.
-- Column names stay inside the repository (snake_case DB ↔ camelCase domain).
-- Repositories throw `DatabaseError` for infrastructure failures — services handle them.
-
-## Domain Objects
-
-```typescript
-// Value objects — immutable, comparable by value
-type UserId = string & { __brand: 'UserId' };
-type Email = string & { __brand: 'Email' };
-type Money = { amount: number; currency: string };
-
-// Entities — identity by ID
-interface User {
-  id: UserId;
-  email: Email;
-  name: string;
-  role: UserRole;
-  createdAt: Date;
-}
-
-// Domain events — what happened
-interface UserRegistered {
-  type: 'USER_REGISTERED';
-  userId: UserId;
-  email: Email;
-  occurredAt: Date;
-}
-```
-
-## Dependency Injection
-
-For Next.js App Router: factory functions over DI containers (containers add complexity without proportional benefit at app scale).
-
-```typescript
-// src/features/auth/server/index.ts — factory
-import { createClient } from '@/shared/utils/supabase/server';
-
-export async function createAuthService(): Promise<AuthService> {
-  const db = await createClient();
-  const userRepo = new UserRepository(db);
-  const sessionRepo = new SessionRepository(db);
-  const emailService = new EmailService();
-  const hashService = new HashService();
-  return new AuthService(userRepo, sessionRepo, emailService, hashService);
-}
-
-// In server action or route handler
-const authService = await createAuthService();
-const result = await authService.register(input);
-```
-
-For testing: inject mocks via constructor — no magic required.
-
-```typescript
-// Test
-const mockUserRepo = { findByEmail: vi.fn(), create: vi.fn() } as MockUserRepo;
-const service = new AuthService(mockUserRepo, mockSessionRepo, mockEmail, mockHash);
-```
-
-## Module Boundaries
+## Audit Output Format
 
 ```
-src/features/[feature]/
-  server/
-    [feature].service.ts       ← business logic
-    [feature].repository.ts    ← data access
-    [feature].types.ts         ← domain types for this feature
-    index.ts                   ← factory + public exports
-  ui/                          ← client-side components
-  hooks/                       ← client-side hooks
-  schemas/                     ← shared Zod schemas
+SEVERITY: P0 (Critical) | P1 (High) | P2 (Medium) | P3 (Low)
+
+Finding:
+  File: src/app/api/posts/route.ts:34
+  Severity: P0
+  Category: Broken Access Control (A01)
+  Issue: Server action deletes post without verifying ownership
+  Attack: Authenticated user can delete any user's post by supplying arbitrary ID
+  Fix: Add `.eq('user_id', session.user.id)` to delete query, or verify ownership first
 ```
-
-Cross-feature access: services never import from another feature's internals. Shared domain types live in `src/shared/types/`.
-
-## When to Split a Monolith
-
-Stay monolith when:
-- Team <10 engineers
-- Deployment complexity would outweigh benefit
-- No clear domain boundaries yet
-- Shared DB transactions are common
-
-Consider splitting when:
-- A domain scales independently (different load profile)
-- A domain has a completely separate team
-- A domain needs a different tech stack
-- A domain's failure must not affect others
-
-Split by: extracting to a separate Next.js app, not microservices. Microservices at startup scale = operational debt without benefit.
-
-## Anti-Patterns (Instant Rejection)
-- Business logic in route handlers
-- DB queries in route handlers
-- Services importing from route files
-- God service: `UserService` handling auth + billing + notifications
-- Repositories containing business logic
-- Raw DB records crossing service boundaries
-- Services directly calling other features' repositories
-- Stateful services (instance-level mutable fields)
-- Infrastructure calls (email, webhooks) before durable DB write
