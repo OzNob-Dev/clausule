@@ -75,12 +75,6 @@
   background: var(--cl-white-12);
 }
 
-.be-cta-icon svg {
-  width: 14px;
-  height: 14px;
-}
-
-
 @media (max-width: 560px) {
   .be-cta {
     width: 100%;
@@ -145,16 +139,14 @@
   stroke: var(--ink);
   stroke-width: 1.8;
   fill: none;
+  border-radius: 0px;
+  height: 45px;
+  border: 0px;
 }
 
 .be-cta > .copy:hover {
   background: var(--cl-surface-muted-21);
   color: var(--cl-accent-deep);
-}
-
-.be-cta > svg {
-  width: 15px;
-  height: 15px;
 }
 
 .danger {
