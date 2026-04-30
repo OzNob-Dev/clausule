@@ -7,6 +7,11 @@ import { Button } from '@shared/components/ui/Button'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import { ROUTES } from '@shared/utils/routes'
 import { cn } from '@shared/utils/cn'
+import { ProfileIcon } from '@shared/components/ui/icon/ProfileIcon'
+import { SecurityIcon } from '@shared/components/ui/icon/SecurityIcon'
+import { DocumentIcon } from '@shared/components/ui/icon/DocumentIcon'
+import { MessageIcon } from '@shared/components/ui/icon/MessageIcon'
+import { LogoutIcon } from '@shared/components/ui/icon/LogoutIcon'
 
 const NAV_SECTIONS = [
   {
@@ -41,36 +46,13 @@ const NAV_SECTIONS = [
 ]
 
 function SidebarIcon({ icon }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      {icon === 'profile' && (
-        <>
-          <circle cx="12" cy="8" r="3.5" />
-          <path d="M5 19c1.8-3 4.3-4.5 7-4.5s5.2 1.5 7 4.5" />
-        </>
-      )}
-      {icon === 'security' && (
-        <>
-          <rect x="4.5" y="10.5" width="15" height="9" rx="2.25" />
-          <path d="M8 10.5V8.25a4 4 0 0 1 8 0v2.25" />
-          <path d="M12 14v2.25" />
-        </>
-      )}
-      {icon === 'brag' && (
-        <>
-          <path d="M7 3.5h7.5L19 8v12.5H7z" />
-          <path d="M14.5 3.5V8H19" />
-          <path d="M9.5 12h5M9.5 15h5" />
-        </>
-      )}
-      {icon === 'feedback' && (
-        <>
-          <path d="M5 5.5h14v9H9.5L5 18v-12.5Z" />
-          <path d="M8 9h8M8 12h5" />
-        </>
-      )}
-    </svg>
-  )
+  return icon === 'profile'
+    ? <ProfileIcon />
+    : icon === 'security'
+      ? <SecurityIcon />
+      : icon === 'brag'
+        ? <DocumentIcon />
+        : <MessageIcon />
 }
 
 export default function BragIdentitySidebar({
@@ -143,11 +125,7 @@ export default function BragIdentitySidebar({
       {showSignOut && (
         <div className="be-sidebar-foot">
           <Button type="button" variant="ghost" className="be-sidebar-signout" onClick={logout}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+            <LogoutIcon />
             Log out
           </Button>
         </div>

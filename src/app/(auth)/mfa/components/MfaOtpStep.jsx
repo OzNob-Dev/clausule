@@ -1,5 +1,6 @@
 import { CodeEmail } from '@shared/components/ui/CodeEmail'
 import { Button } from '@shared/components/ui/Button'
+import { MailIcon } from '@shared/components/ui/icon/MailIcon'
 import DigitRow from './DigitRow'
 
 export default function MfaOtpStep({
@@ -16,10 +17,7 @@ export default function MfaOtpStep({
   return (
     <div className="mfa-pane" key="otp">
       <div className="mfa-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <rect x="3" y="6" width="18" height="13" rx="2" />
-          <path d="M3 10l9 6 9-6" />
-        </svg>
+        <MailIcon />
       </div>
       <h1 className="mfa-heading">Check your email</h1>
       <p className="mfa-sub">

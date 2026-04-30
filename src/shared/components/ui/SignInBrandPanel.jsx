@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BrandBugIcon } from './BrandBugIcon'
+import { BrandMarkIcon } from '@shared/components/ui/icon/BrandMarkIcon'
 
 const DEFAULT_HEADLINE = 'Thoughtful records.\nBetter conversations.'
 const DEFAULT_SUBTEXT = 'The file note tool built for managers who care about their people — and a brag doc for the people themselves.'
@@ -16,7 +16,7 @@ export default function SignInBrandPanel({
     <div className="su-shell-left">
       <div className="su-shell-logo">
         <div className="su-shell-bug">
-          <BrandBugIcon />
+          <BrandMarkIcon />
         </div>
         <BrandName href={brandHref ?? undefined} className="su-shell-brand">clausule</BrandName>
       </div>

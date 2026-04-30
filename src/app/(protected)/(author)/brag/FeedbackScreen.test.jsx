@@ -87,7 +87,7 @@ describe('FeedbackScreen', () => {
     renderWithQueryClient(<FeedbackScreen view="history" />)
 
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
-    expect(screen.getByRole('region', { name: /feedback history/i })).toBeInTheDocument()
+    expect(await screen.findByRole('region', { name: /feedback history/i })).toBeInTheDocument()
     expect(await screen.findByText('jj')).toBeInTheDocument()
     expect(screen.getByText('bnv')).toBeInTheDocument()
     expect(screen.getByText('Thanks for the note.')).toBeInTheDocument()

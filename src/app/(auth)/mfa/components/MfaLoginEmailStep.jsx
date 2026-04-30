@@ -1,6 +1,10 @@
 import DigitRow from './DigitRow'
 import { Button } from '@shared/components/ui/Button'
 import { maskEmail } from '@mfa/utils/maskEmail'
+import { BackIcon } from '@shared/components/ui/icon/BackIcon'
+import { BrandMarkIcon } from '@shared/components/ui/icon/BrandMarkIcon'
+import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
+import { MailIcon } from '@shared/components/ui/icon/MailIcon'
 
 export default function MfaLoginEmailStep({
   email,
@@ -28,9 +32,7 @@ export default function MfaLoginEmailStep({
         <section className="mfa-email-left" aria-label="Sign-in progress">
           <div className="mfa-email-logo">
             <div className="mfa-email-logo-bug" aria-hidden="true">
-              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <path d="M3 5h12M3 9h8M3 13h5" />
-              </svg>
+              <BrandMarkIcon />
             </div>
             <div className="mfa-email-logo-name">clausule</div>
           </div>
@@ -57,9 +59,7 @@ export default function MfaLoginEmailStep({
 
         <section className="mfa-email-right">
           <Button type="button" variant="ghost" className="mfa-email-back" onClick={onBack} aria-label="Back to sign in">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-              <polyline points="10 4 6 8 10 12" />
-            </svg>
+            <BackIcon />
             Back
           </Button>
 
@@ -71,10 +71,7 @@ export default function MfaLoginEmailStep({
           <div className="mfa-email-preview" role="img" aria-label="Example of the email you received">
             <div className="mfa-email-preview-head">
               <div className="mfa-email-preview-icon" aria-hidden="true">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="4" width="12" height="9" rx="1.5" />
-                  <polyline points="2 4 8 9 14 4" />
-                </svg>
+                <MailIcon size={16} />
               </div>
               <div className="mfa-email-preview-meta">
                 <div className="mfa-email-preview-from">noreply@clausule.com</div>
@@ -128,9 +125,7 @@ export default function MfaLoginEmailStep({
             disabled={!codeReady || otpState === 'checking' || otpState === 'done' || expirySeconds <= 0}
             aria-label="Verify your code"
           >
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              <polyline points="3 8 7 12 13 4" />
-            </svg>
+            <CheckIcon />
             Verify code
           </Button>
 

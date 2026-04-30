@@ -1,7 +1,11 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import SignupAside from './SignupAside'
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams(''),
+}))
 
 describe('SignupAside', () => {
   it('shows the plan price and includes', () => {

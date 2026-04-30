@@ -11,7 +11,7 @@ import { useProfileSave } from '@account/hooks/useProfileSave'
 import { Button } from '@shared/components/ui/Button'
 import '@brag/styles/brag-settings-core.css'
 import '@account/styles/profile.css'
-import { TickIcon } from '@shared/components/ui/icon/TickIcon'
+import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 
 export default function ProfileScreen() {
   const { profile } = useProfileStore(useShallow((state) => ({ profile: state.profile })))
@@ -122,7 +122,7 @@ export default function ProfileScreen() {
           <div className="form-buttons">
             <Button type="button" variant="ghost" className="be-comp-cancel" onClick={resetForm} disabled={!dirty || saving}>Reset</Button>
             <Button type="submit" variant="primary" disabled={!dirty || saving}>
-              <TickIcon />
+              <CheckIcon />
               Send feedback
             </Button>
           </div>

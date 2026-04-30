@@ -14,8 +14,11 @@ vi.mock('@shared/components/ui/SignupButtons', () => ({
   CtaBtn: ({ children, onClick, disabled }) => <button type="button" disabled={disabled} onClick={onClick}>{children}</button>,
 }))
 
-vi.mock('@shared/components/ui/SignupIcons', () => ({
+vi.mock('@shared/components/ui/icon/ArrowIcon', () => ({
   ArrowIcon: () => <span>arrow</span>,
+}))
+
+vi.mock('@shared/components/ui/icon/CheckIcon', () => ({
   CheckIcon: () => <span>check</span>,
 }))
 

@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Button } from '@shared/components/ui/Button'
 import { EntryEvidenceFilesNotice, EntryEvidenceTypeGroup, EntryStrengthMeter } from '@shared/components/ui/EntryComposerSections'
 import { SectionCard } from '@shared/components/ui/SectionCard'
+import { CloseIcon } from '@shared/components/ui/icon/CloseIcon'
 import { createEntryAction } from '@actions/brag-actions'
 
 export default function EntryComposer({ onSave = () => {}, onClose = () => {} }) {
@@ -60,10 +61,7 @@ export default function EntryComposer({ onSave = () => {}, onClose = () => {} })
         ariaLabel="Add a new entry"
         headerEnd={(
           <Button type="button" variant="ghost" className="be-entry-composer-close" onClick={onClose} aria-label="Close form">
-            <svg viewBox="0 0 14 14" aria-hidden="true">
-              <line x1="1" y1="1" x2="13" y2="13" />
-              <line x1="13" y1="1" x2="1" y2="13" />
-            </svg>
+            <CloseIcon size={14} />
           </Button>
         )}
         onSubmit={(event) => {

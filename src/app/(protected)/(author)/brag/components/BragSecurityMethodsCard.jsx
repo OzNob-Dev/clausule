@@ -4,25 +4,8 @@ import { Button } from '@shared/components/ui/Button'
 import { SectionCard } from '@shared/components/ui/SectionCard'
 import BragSecuritySetupPanel from '@brag/components/BragSecuritySetupPanel'
 import { TimerIcon } from '@shared/components/ui/icon/TimerIcon'
-
-function EmailIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <polyline points="3 7 12 13 21 7" />
-    </svg>
-  )
-}
-
-function AuthenticatorIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <rect x="5" y="2" width="14" height="20" rx="2" />
-      <rect x="8" y="7" width="8" height="6" rx="1" />
-      <circle cx="12" cy="17.5" r="1" />
-    </svg>
-  )
-}
+import { MailIcon } from '@shared/components/ui/icon/MailIcon'
+import { DeviceLockIcon } from '@shared/components/ui/icon/DeviceLockIcon'
 
 function StatusPill({ label, ariaLabel }) {
   return (
@@ -53,7 +36,7 @@ export default function BragSecurityMethodsCard({
 
         <div className="bss-method-row">
           <div className="bss-method-icon" aria-hidden="true">
-            <EmailIcon />
+            <MailIcon />
           </div>
           <div className="bss-method-content">
             <div className="bss-method-title">Email code</div>
@@ -64,7 +47,7 @@ export default function BragSecurityMethodsCard({
 
         <div className="bss-method-row">
           <div className={`bss-method-icon${authenticatorAppConfigured || hasSecuritySnapshot ? ' bss-method-icon--active' : ''}`} aria-hidden="true">
-            <AuthenticatorIcon />
+            <DeviceLockIcon size={24} />
           </div>
           <div className="bss-method-content">
             <div className="bss-method-title">Authenticator app</div>

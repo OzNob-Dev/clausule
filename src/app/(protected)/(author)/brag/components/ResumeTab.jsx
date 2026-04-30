@@ -5,6 +5,9 @@ import { useProfileStore } from '@auth/store/useProfileStore'
 import { Button } from '@shared/components/ui/Button'
 import { profileDisplayName } from '@shared/utils/profile'
 import { ThinkingDots } from '@shared/components/ui/ThinkingDots'
+import { CopyIcon } from '@shared/components/ui/icon/CopyIcon'
+import { DownloadIcon } from '@shared/components/ui/icon/DownloadIcon'
+import { SparkleIcon } from '@shared/components/ui/icon/SparkleIcon'
 import ResumeDocument from './ResumeDocument'
 
 function bulletFromEntry(entry) {
@@ -47,9 +50,7 @@ function GenerateButton({ disabled, generating, visible, onClick }) {
         </>
       ) : (
         <>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-            <path d="M8 2l1 2.5L11.5 5l-2 2 .5 3L8 8.5 5.5 10l.5-3-2-2L6.5 4.5z"/>
-          </svg>
+          <SparkleIcon />
           {visible ? 'Regenerate' : 'Generate resume'}
         </>
       )}
@@ -61,17 +62,11 @@ function ResumeActions({ copied, onCopy, onDownload }) {
   return (
     <div className="be-cv-actions">
       <Button type="button" onClick={onCopy} className="be-cv-copy-btn" variant="ghost">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-          <rect x="5" y="5" width="9" height="9" rx="1"/>
-          <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
-        </svg>
+        <CopyIcon />
         Copy text
       </Button>
       <Button type="button" onClick={onDownload} className="be-cv-dl-btn" variant="ghost">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-          <path d="M8 2v8M5 7l3 3 3-3"/>
-          <line x1="2" y1="13" x2="14" y2="13"/>
-        </svg>
+        <DownloadIcon />
         Download .txt
       </Button>
       <span className={`be-cv-copied${copied ? ' be-cv-copied--show' : ''}`} aria-live="polite">Copied</span>

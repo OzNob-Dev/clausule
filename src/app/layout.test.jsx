@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import RootLayout from './layout'
+import RootLayout, { metadata } from './layout'
 
 vi.mock('@shared/providers/QueryProvider', () => ({
   QueryProvider: ({ children }) => <>{children}</>,
@@ -17,5 +17,13 @@ describe('RootLayout', () => {
 
     expect(container.querySelector('html')).toHaveAttribute('lang', 'en')
     expect(screen.getByText('Home')).toBeInTheDocument()
+  })
+
+  it('keeps the favicon metadata pointed at the public svg mirror', () => {
+    expect(metadata.icons.icon).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ url: '/favicon.svg', type: 'image/svg+xml' }),
+      ])
+    )
   })
 })

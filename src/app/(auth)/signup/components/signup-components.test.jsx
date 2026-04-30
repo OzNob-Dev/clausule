@@ -4,7 +4,9 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import SignupAside from './SignupAside'
 import { BackBtn, CtaBtn } from '@shared/components/ui/SignupButtons'
-import { ArrowIcon, BackIcon, CheckIcon } from '@shared/components/ui/SignupIcons'
+import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
+import { BackIcon } from '@shared/components/ui/icon/BackIcon'
+import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 import SignupProgress from './SignupProgress'
 import SignupStepDone from './SignupStepDone'
 
@@ -13,6 +15,7 @@ const push = vi.fn()
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
   usePathname: () => '/signup',
+  useSearchParams: () => new URLSearchParams(''),
 }))
 
 describe('Signup component integration', () => {

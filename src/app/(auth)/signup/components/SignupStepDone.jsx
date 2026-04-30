@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { ROUTES } from '@shared/utils/routes'
 import { Link } from '@shared/components/ui/Link'
 import { CtaBtn } from '@shared/components/ui/SignupButtons'
-import { ArrowIcon, CheckIcon } from '@shared/components/ui/SignupIcons'
+import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
+import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 
 const NEXT_STEPS = [
   { label: 'Set up MFA', desc: '- ensure your account is secure.' },
@@ -26,9 +27,7 @@ export default function SignupStepDone({ email }) {
   return (
     <div>
       <div className="su-success-ring">
-        <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="#F5F0EA" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-          <polyline points="7 17 13 23 27 11" />
-        </svg>
+        <CheckIcon size={34} strokeWidth={2.5} />
       </div>
 
       <div className="su-step-heading">You're in.</div>

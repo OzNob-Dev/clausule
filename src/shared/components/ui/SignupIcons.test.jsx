@@ -1,8 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { ArrowIcon, BackIcon, CheckIcon } from './SignupIcons'
+import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
+import { BackIcon } from '@shared/components/ui/icon/BackIcon'
+import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 
-describe('SignupIcons', () => {
+describe('Generic icons', () => {
   it('renders the svg icons', () => {
     const { container } = render(<><CheckIcon /><ArrowIcon /><BackIcon /></>)
 

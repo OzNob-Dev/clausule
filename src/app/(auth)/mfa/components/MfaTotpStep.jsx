@@ -1,4 +1,6 @@
 import { Button } from '@shared/components/ui/Button'
+import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
+import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 import DigitRow from './DigitRow'
 import TotpSecretBlock from './TotpSecretBlock'
 
@@ -26,9 +28,7 @@ export default function MfaTotpStep({
         <div className="mfa-factor-head">
           <div className={`mfa-factor-badge${totpDone ? ' mfa-factor-badge--done' : ''}`}>
             {totpDone ? (
-              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M2 6l3 3 5-5" />
-              </svg>
+              <CheckIcon />
             ) : (
               '1'
             )}
@@ -80,9 +80,7 @@ export default function MfaTotpStep({
         <div className="mfa-factor-actions">
           <Button className="mfa-enter-btn" onClick={onContinue}>
             Continue
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <path d="M3 8h10M9 4l4 4-4 4" />
-            </svg>
+            <ArrowIcon />
           </Button>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { BackIcon } from './SignupIcons'
+import { BackIcon } from '@shared/components/ui/icon/BackIcon'
 import { Button } from './Button'
 import { Link } from './Link'
 

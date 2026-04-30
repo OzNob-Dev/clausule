@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { INDIVIDUAL_MONTHLY_PLAN, formatPlanLabel } from '@signup/shared/plan'
 import { apiJson, jsonRequest } from '@shared/utils/api'
 import { BackBtn, CtaBtn } from '@shared/components/ui/SignupButtons'
-import { ArrowIcon } from '@shared/components/ui/SignupIcons'
+import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 
 export default function SignupStepPayment({ accountData, onBack, onNext }) {
   const [apiError, setApiError] = useState('')

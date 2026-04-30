@@ -1,5 +1,5 @@
-import { ArrowIcon } from './SignupIcons'
-import { SsoProviderIcon } from './SsoProviderIcon'
+import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
+import { SsoProviderIcon } from '@shared/components/ui/icon/SsoProviderIcon'
 import { Link } from './Link'
 import { ssoAuthPath } from '@shared/utils/sso'
 

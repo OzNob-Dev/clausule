@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { SsoProviderIcon } from './SsoProviderIcon'
+import { SsoProviderIcon } from '@shared/components/ui/icon/SsoProviderIcon'
 
 describe('SsoProviderIcon', () => {
   it('renders a provider-specific icon and falls back to null for unknown providers', () => {

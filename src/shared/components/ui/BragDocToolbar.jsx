@@ -1,4 +1,5 @@
 import { Button } from './Button'
+import { PlusIcon } from '@shared/components/ui/icon/PlusIcon'
 
 export default function BragDocToolbar({ activeYear, entryCount = 0, years = [], onAddEntry, onYearSelect }) {
   const yearTabs = [...years, 'All']
@@ -7,10 +8,7 @@ export default function BragDocToolbar({ activeYear, entryCount = 0, years = [],
     <div className="be-doc-toolbar">
       <Button type="button" variant="primary" className="be-doc-add-button justify-start" onClick={onAddEntry}>
         <span className="be-doc-add-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <line x1="8" y1="3" x2="8" y2="13" />
-            <line x1="3" y1="8" x2="13" y2="8" />
-          </svg>
+          <PlusIcon />
         </span>
         <span className="be-doc-add-copy">
           <span className="be-doc-add-label">Add a win</span>

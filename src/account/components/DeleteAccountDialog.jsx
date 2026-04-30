@@ -6,7 +6,7 @@ import { Modal } from '@shared/components/ui/Modal'
 import { useDeleteAccount } from '@account/hooks/useDeleteAccount'
 import './DeleteAccountDialog.css'
 import { ShieldIcon } from '@shared/components/ui/icon/ShieldIcon'
-import { TriangleIcon } from '@shared/components/ui/icon/TriangleIcon'
+import { AlertIcon } from '@shared/components/ui/icon/AlertIcon'
 
 const DEFAULT_DESCRIPTION =
   'This will permanently delete your brag doc and all associated entries, evidence files, and records from our servers.'
@@ -236,7 +236,7 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
 
           <div className="delete-account-dialog__warning" role="alert">
             <span className="delete-account-dialog__warning-icon" aria-hidden="true">
-              <TriangleIcon />
+              <AlertIcon />
             </span>
             <span className="delete-account-dialog__warning-text">You will lose all your data immediately. There is no recovery option.</span>
           </div>

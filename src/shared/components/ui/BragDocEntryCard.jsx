@@ -1,3 +1,5 @@
+import { TargetIcon } from '@shared/components/ui/icon/TargetIcon'
+
 function evidenceTypeToPill(type) {
   if (type === 'Metrics / data') return { label: 'Metrics', type: 'gold' }
   if (type === 'Work artefact') return { label: 'Work artefact', type: 'filled' }
@@ -34,11 +36,7 @@ export default function BragDocEntryCard({ entry }) {
       <div className="be-doc-entry-footer">
         <div className="be-doc-strength-indicator">
           <div className="be-doc-strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="12" r="6" />
-              <circle cx="12" cy="12" r="2" />
-            </svg>
+            <TargetIcon />
           </div>
           <div className="be-doc-strength-content">
             <div className="be-doc-strength-label">{entry.strength}</div>

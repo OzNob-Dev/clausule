@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { Button } from '@shared/components/ui/Button'
 import { Link } from '@shared/components/ui/Link'
+import { BrandMarkIcon } from '@shared/components/ui/icon/BrandMarkIcon'
 import '@landing/styles/not-found.css'
 
 const FLOATS = [
@@ -47,9 +48,7 @@ export default function NotFound() {
       {/* Logo */}
       <Link href="/" className="nf-logo" aria-label="Clausule — home">
         <div className="nf-logo-bug" aria-hidden="true">
-          <svg viewBox="0 0 18 18" fill="none" stroke="#F5F0EA" strokeWidth="2.2" strokeLinecap="round" width="14" height="14">
-            <path d="M3 5h12M3 9h8M3 13h5" />
-          </svg>
+          <BrandMarkIcon size={14} />
         </div>
         <span className="nf-logo-name">clausule</span>
       </Link>

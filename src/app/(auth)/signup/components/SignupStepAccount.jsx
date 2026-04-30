@@ -10,7 +10,7 @@ import { ROUTES } from '@shared/utils/routes'
 import { CtaBtn } from '@shared/components/ui/SignupButtons'
 import { Field, FieldCheckbox, FieldInput, FieldLabel } from '@shared/components/ui/Field'
 import { Button } from '@shared/components/ui/Button'
-import { ArrowIcon } from '@shared/components/ui/SignupIcons'
+import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { Link } from '@shared/components/ui/Link'
 
 function createState(initialData) {

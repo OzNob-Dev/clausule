@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 
 const STEPS = ['Account', 'Plan', 'Done']
 
@@ -21,9 +22,7 @@ export default function SignupProgress({ mobile = false }) {
               <div className="su-step-item">
                 <div className={`su-step-circle${done ? ' su-step-circle--done' : active ? ' su-step-circle--active' : ''}`} aria-hidden="true">
                   {done ? (
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                      <polyline points="3 8 6 11 13 4" />
-                    </svg>
+                    <CheckIcon />
                   ) : (
                     stepNumber
                   )}
