@@ -136,12 +136,11 @@
   border-left: 1px solid var(--cl-border-2);
   background: var(--cl-surface-muted-20);
   color: var(--cl-surface-muted-7);
-  fill: none;
   border-radius: 0px;
-  height: 45px;
   border: 0px;
   border-radius: 0px;
   border-left: 1px solid var(--cl-border-3);
+  padding: 14px 16px;
 }
 
 .be-cta.copy:hover {
