@@ -101,3 +101,11 @@
     transform: none;
   }
 }
+
+.be-cta > .tick {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: var(--cl-surface-muted-16);
+  stroke-width: 2.5;
+}
