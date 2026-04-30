@@ -205,6 +205,7 @@
   font-size: 13px;
   font-weight: 700;
   line-height: 1.2;
+  justify-content: center;
   cursor: pointer;
   transition: background .15s, border-color .15s, color .15s, opacity .15s;
   font-family: 'Source Sans 3', var(--font-sans), system-ui, sans-serif;
