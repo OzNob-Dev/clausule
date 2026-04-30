@@ -120,7 +120,7 @@ export default function ProfileScreen() {
           {error ? <p className="profile-status profile-status--error" role="alert">{error}</p> : null}
           {success ? <p className="profile-status profile-status--success" role="status">{success}</p> : null}
           <div className="section-rule" aria-hidden="true" />
-          <div classNAme="form-buttons">
+          <div className="form-buttons">
             <Button type="button" variant="ghost" className="be-comp-cancel" onClick={resetForm} disabled={!dirty || saving}>Reset</Button>
             <Button type="submit" variant="primary" disabled={!dirty || saving}>
               <svg viewBox="0 0 14 14" aria-hidden="true" className="tick">
