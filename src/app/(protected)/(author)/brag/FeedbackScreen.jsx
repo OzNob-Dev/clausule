@@ -1,7 +1,7 @@
 'use client'
 
-import FeedbackComposer from '@brag/components/FeedbackComposer'
-import FeedbackHistoryPanel from '@brag/components/FeedbackHistoryPanel'
+import FeedbackComposer from '@shared/components/FeedbackComposer'
+import FeedbackHistoryPanel from '@shared/components/FeedbackHistoryPanel'
 import PageHeader from '@shared/components/ui/PageHeader'
 import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 import { useProfileStore } from '@auth/store/useProfileStore'

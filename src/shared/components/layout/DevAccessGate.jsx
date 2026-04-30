@@ -1,7 +1,7 @@
 'use client'
 import './DevAccessGate.css'
 import { useEffect, useState } from 'react'
-import ComingSoon from '@landing/components/ComingSoon'
+import ComingSoon from '@shared/components/ComingSoon'
 
 const ACCESS_KEY = 'clausule_dev_accexx'
 const ACCESS_VALUES = new Set(['true', 'granted'])

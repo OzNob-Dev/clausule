@@ -8,11 +8,11 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }))
 
-vi.mock('@signup/components/SignupProgress', () => ({
+vi.mock('@shared/components/SignupProgress', () => ({
   default: () => <div>Progress</div>,
 }))
 
-vi.mock('@signup/components/SignupStepAccount', () => ({
+vi.mock('@shared/components/SignupStepAccount', () => ({
   default: () => <div>Account</div>,
 }))
 

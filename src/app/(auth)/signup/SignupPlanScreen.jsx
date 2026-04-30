@@ -1,8 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import SignupProgress from '@signup/components/SignupProgress'
-import SignupStepPayment from '@signup/components/SignupStepPayment'
+import SignupProgress from '@shared/components/SignupProgress'
+import SignupStepPayment from '@shared/components/SignupStepPayment'
 import '@signup/styles/signup-theme.css'
 import '@signup/styles/signup-form.css'
 import '@signup/styles/signup-payment.css'

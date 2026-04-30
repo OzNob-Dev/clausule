@@ -11,11 +11,11 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
 }))
 
-vi.mock('@signup/components/SignupProgress', () => ({
+vi.mock('@shared/components/SignupProgress', () => ({
   default: () => <div>signup progress</div>,
 }))
 
-vi.mock('@signup/components/SignupStepPayment', () => ({
+vi.mock('@shared/components/SignupStepPayment', () => ({
   default: ({ accountData, onNext, onBack }) => (
     <div>
       <span>payment:{accountData.email}</span>

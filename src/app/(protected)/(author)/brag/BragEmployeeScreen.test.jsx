@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import BragEmployeeScreen from './BragEmployeeScreen'
 
-vi.mock('@brag/components/EntryComposer', () => ({
+vi.mock('@shared/components/EntryComposer', () => ({
   default: () => <div role="form" aria-label="Add a new entry">Composer</div>,
 }))
 

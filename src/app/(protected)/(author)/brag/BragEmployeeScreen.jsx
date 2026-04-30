@@ -3,8 +3,8 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProfileStore } from '@auth/store/useProfileStore'
-import BragEmptyState from '@brag/components/BragEmptyState'
-import EntryComposer from '@brag/components/EntryComposer'
+import BragEmptyState from '@shared/components/BragEmptyState'
+import EntryComposer from '@shared/components/EntryComposer'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import PageHeader from '@shared/components/ui/PageHeader'
@@ -13,7 +13,7 @@ import '@brag/styles/brag-doc.css'
 import '@brag/styles/resume-tab.css'
 import '@shared/styles/page-loader.css'
 
-const ResumeTab = dynamic(() => import('@brag/components/ResumeTab'), {
+const ResumeTab = dynamic(() => import('@shared/components/ResumeTab'), {
   loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,
 })
 

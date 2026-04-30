@@ -24,15 +24,15 @@ vi.mock('@mfa/hooks/useMfaSetupFlow', () => ({
   }),
 }))
 
-vi.mock('@mfa/components/MfaOtpStep', () => ({
+vi.mock('@shared/components/MfaOtpStep', () => ({
   default: ({ onResend }) => <Button type="button" onClick={onResend}>Resend code</Button>,
 }))
 
-vi.mock('@mfa/components/MfaSuccessStep', () => ({
+vi.mock('@shared/components/MfaSuccessStep', () => ({
   default: () => <div>Done</div>,
 }))
 
-vi.mock('@mfa/components/MfaTotpStep', () => ({
+vi.mock('@shared/components/MfaTotpStep', () => ({
   default: () => <div>Totp</div>,
 }))
 

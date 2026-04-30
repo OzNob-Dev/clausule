@@ -1,9 +1,9 @@
 'use client'
 
 import { useMfaSetupFlow } from '@mfa/hooks/useMfaSetupFlow'
-import MfaOtpStep from '@mfa/components/MfaOtpStep'
-import MfaSuccessStep from '@mfa/components/MfaSuccessStep'
-import MfaTotpStep from '@mfa/components/MfaTotpStep'
+import MfaOtpStep from '@shared/components/MfaOtpStep'
+import MfaSuccessStep from '@shared/components/MfaSuccessStep'
+import MfaTotpStep from '@shared/components/MfaTotpStep'
 import '@mfa/styles/mfa-layout.css'
 import '@mfa/styles/mfa-factors.css'
 import '@mfa/styles/code-email.css'

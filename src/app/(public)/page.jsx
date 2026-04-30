@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import ComingSoon from './landing/components/ComingSoon'
+import ComingSoon from '@shared/components/ComingSoon'
 import { ROUTES } from '@shared/utils/routes'
 import { hasDevAccess } from '@shared/components/layout/DevAccessGate'
 

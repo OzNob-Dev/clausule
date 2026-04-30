@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import Layout from './layout'
 
-vi.mock('@brag/components/BragIdentitySidebar', () => ({
+vi.mock('@shared/components/BragIdentitySidebar', () => ({
   default: ({ activePage, eyebrow }) => <div>{activePage}:{eyebrow}</div>,
 }))
 

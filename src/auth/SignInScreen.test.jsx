@@ -36,11 +36,11 @@ vi.mock('@shared/components/ui/SsoButtons', () => ({
   default: () => <div>SSO</div>,
 }))
 
-vi.mock('@mfa/components/MfaLoginEmailStep', () => ({
+vi.mock('@shared/components/MfaLoginEmailStep', () => ({
   default: () => <div>Email MFA</div>,
 }))
 
-vi.mock('@mfa/components/MfaLoginAppStep', () => ({
+vi.mock('@shared/components/MfaLoginAppStep', () => ({
   default: () => <div>App MFA</div>,
 }))
 

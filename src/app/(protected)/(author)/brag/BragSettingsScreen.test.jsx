@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 
-vi.mock('@brag/components/BragSecuritySetupPanel', () => ({
+vi.mock('@shared/components/BragSecuritySetupPanel', () => ({
   default: () => <div id="totp-setup">TOTP setup</div>,
 }))
 
-vi.mock('@account/components/DeleteAccountDialog', () => ({
+vi.mock('@shared/components/DeleteAccountDialog', () => ({
   DeleteAccountDialog: () => null,
 }))
 

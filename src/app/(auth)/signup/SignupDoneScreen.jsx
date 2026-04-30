@@ -1,7 +1,7 @@
 'use client'
 
-import SignupProgress from '@signup/components/SignupProgress'
-import SignupStepDone from '@signup/components/SignupStepDone'
+import SignupProgress from '@shared/components/SignupProgress'
+import SignupStepDone from '@shared/components/SignupStepDone'
 import '@signup/styles/signup-theme.css'
 import '@signup/styles/signup-success.css'
 

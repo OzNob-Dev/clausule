@@ -1,6 +1,6 @@
 'use client'
 
-import BragIdentitySidebar from '@brag/components/BragIdentitySidebar'
+import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
 import PageShell from '@shared/components/layout/PageShell'
 import '@brag/styles/brag-shell.css'
 

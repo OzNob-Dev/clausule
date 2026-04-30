@@ -2,9 +2,9 @@
 import './AuthBrandPanel.css'
 import { usePathname } from 'next/navigation'
 import SignInBrandPanel from './SignInBrandPanel'
-import SignupPanelSummary from '@signup/components/SignupPanelSummary'
-import SignupPlanPanelContent from '@signup/components/SignupPlanPanelContent'
-import SignupProgress from '@signup/components/SignupProgress'
+import SignupPanelSummary from '@shared/components/SignupPanelSummary'
+import SignupPlanPanelContent from '@shared/components/SignupPlanPanelContent'
+import SignupProgress from '@shared/components/SignupProgress'
 import panelConfig from '@auth/brand-panel-config.json'
 
 export default function AuthBrandPanel({ brandHref }) {

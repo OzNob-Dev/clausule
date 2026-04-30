@@ -9,7 +9,7 @@ vi.mock('next/navigation', () => ({
   usePathname: () => pathname,
 }))
 
-vi.mock('@brag/components/BragIdentitySidebar', () => ({
+vi.mock('@shared/components/BragIdentitySidebar', () => ({
   default: ({ activePage, activeChildPage, eyebrow }) => <div>{activePage}:{activeChildPage ?? ''}:{eyebrow}</div>,
 }))
 

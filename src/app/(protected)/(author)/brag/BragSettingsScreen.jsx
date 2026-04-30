@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import BragSecurityDangerZone from '@brag/components/BragSecurityDangerZone'
-import BragSecurityMethodsCard from '@brag/components/BragSecurityMethodsCard'
+import BragSecurityDangerZone from '@shared/components/BragSecurityDangerZone'
+import BragSecurityMethodsCard from '@shared/components/BragSecurityMethodsCard'
 import PageHeader from '@shared/components/ui/PageHeader'
-import { DeleteAccountDialog } from '@account/components/DeleteAccountDialog'
+import { DeleteAccountDialog } from '@shared/components/DeleteAccountDialog'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { useTotpStatusQuery } from '@shared/queries/useProfileQuery'
 import '@brag/styles/brag-settings-core.css'
