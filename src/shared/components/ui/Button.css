@@ -27,10 +27,6 @@
   box-shadow: none;
 }
 
-.be-cta--danger {
-  background: var(--cl-red-soft-alpha-18);
-  color: var(--canvas);
-}
 
 .be-cta--confirm {
   background: var(--cl-success-3);
@@ -172,8 +168,8 @@
   padding: 9px 18px;
   border: 1.5px solid var(--cl-danger-5);
   border-radius: 8px;
-  background: transparent;
-  color: var(--cl-danger-5);
+  background: var(--cl-danger-5);
+  color: var(--cl-surface-warm);
   font-size: .875rem;
   font-weight: 700;
 }
