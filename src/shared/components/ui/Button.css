@@ -19,11 +19,6 @@
   transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
-.be-cta--primary,
-.be-cta--employee {
-  background: var(--be-motion-clay);
-  color: var(--cl-surface-warm);
-}
 
 .be-cta--ghost {
   background: transparent;
@@ -33,12 +28,12 @@
 }
 
 .be-cta--danger {
-  background: var(--rt);
+  background: var(--cl-red-soft-alpha-18);
   color: var(--canvas);
 }
 
 .be-cta--confirm {
-  background: var(--gt);
+  background: var(--cl-success-3);
   color: var(--canvas);
 }
 
@@ -65,7 +60,7 @@
 }
 
 .be-cta:focus-visible {
-  outline: 2px solid var(--be-empty-accent);
+  outline: 2px solid var(--be-motion-clay);
   outline-offset: 3px;
 }
 
