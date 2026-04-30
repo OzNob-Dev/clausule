@@ -8,6 +8,7 @@ import { useShallow } from 'zustand/shallow'
 import { formatMobile } from '@account/utils/formatMobile'
 import { useProfileForm } from '@account/hooks/useProfileForm'
 import { useProfileSave } from '@account/hooks/useProfileSave'
+import { Button } from '@shared/components/ui/Button'
 import '@brag/styles/brag-settings-core.css'
 import '@account/styles/profile.css'
 
