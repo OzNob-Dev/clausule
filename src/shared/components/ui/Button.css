@@ -34,7 +34,6 @@
 }
 
 .be-cta:hover {
-  transform: translateY(-1px);
   background: var(--cl-surface-ink-6);
 }
 
@@ -139,7 +138,7 @@
   border-radius: 0px;
   border: 0px;
   border-radius: 0px;
-  border-left: 1px solid var(--cl-border-3);
+  border-left: 1px solid var(--cl-border-7);
   padding: 14px 16px;
 }
 
