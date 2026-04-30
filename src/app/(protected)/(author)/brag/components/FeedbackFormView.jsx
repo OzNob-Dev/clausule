@@ -134,11 +134,7 @@ export default function FeedbackFormView({
 
         <label className={contactOk ? 'be-feedback-check be-feedback-check--checked' : 'be-feedback-check'} htmlFor="feedback-contact">
           <FieldCheckbox id="feedback-contact" className="be-feedback-check-input" checked={contactOk} onChange={(event) => onContactOkChange(event.target.checked)} />
-          <span className="be-feedback-check-box" aria-hidden="true">
-            <svg className="be-feedback-check-tick" viewBox="0 0 12 12" fill="none">
-              <polyline points="2,6 5,9 10,3" />
-            </svg>
-          </span>
+
           <span className="be-feedback-check-text">The Clausule team may contact me about this feedback.</span>
         </label>
 
