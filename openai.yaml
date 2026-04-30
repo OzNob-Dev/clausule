@@ -36,19 +36,19 @@ system_prompt: |
 skills:
   - name: core
     description: Repo-wide principal engineering principles, naming, error handling, change sizing
-    file: skills/core/SKILL.md
+    file: core/SKILL.md
     triggers: ["*"]  # Always loaded
     tools: [read_file, search_content]
 
   - name: caveman
     description: Ultra-compressed communication. Max signal, min tokens.
-    file: skills/caveman/SKILL.md
+    file: caveman/SKILL.md
     triggers: ["*"]  # Always loaded
     tools: []
 
   - name: frontend
     description: React, Next.js, TypeScript, Tailwind, accessibility, performance, design
-    file: skills/frontend/SKILL.md
+    file: frontend/SKILL.md
     triggers:
       - "*.tsx"
       - "*.jsx"
@@ -65,7 +65,7 @@ skills:
 
   - name: component-library
     description: Design system components, API design, token compliance, composability
-    file: skills/component-library/SKILL.md
+    file: component-library/SKILL.md
     triggers:
       - "src/shared/components/**"
       - design system
@@ -77,7 +77,7 @@ skills:
 
   - name: refactor
     description: Systematic refactoring, smell detection, characterization tests, safe restructuring
-    file: skills/refactor/SKILL.md
+    file: refactor/SKILL.md
     triggers:
       - refactor
       - clean up
@@ -91,7 +91,7 @@ skills:
 
   - name: mocks
     description: Factory functions, MSW handlers, module mocks, test fixtures, test infrastructure
-    file: skills/mocks/SKILL.md
+    file: mocks/SKILL.md
     triggers:
       - "*.test.*"
       - "*.spec.*"
@@ -106,7 +106,7 @@ skills:
 
   - name: security
     description: Auth, authorization, input validation, secrets, API hardening, crypto, sessions
-    file: skills/security/SKILL.md
+    file: security/SKILL.md
     triggers:
       - auth
       - session
@@ -129,7 +129,7 @@ skills:
 
   - name: architecture
     description: App Router structure, module boundaries, data flow, route design, layer decisions
-    file: skills/architecture/SKILL.md
+    file: architecture/SKILL.md
     triggers:
       - architecture
       - structure
@@ -144,7 +144,7 @@ skills:
 
   - name: tech-debt
     description: Debt identification, prevention, migration patterns, zero-debt enforcement
-    file: skills/tech-debt/SKILL.md
+    file: tech-debt/SKILL.md
     triggers:
       - debt
       - legacy
@@ -159,7 +159,7 @@ skills:
 
   - name: release
     description: Pre-deploy gates, feature flags, rollback plans, migration strategy, risk assessment
-    file: skills/release/SKILL.md
+    file: release/SKILL.md
     triggers:
       - release
       - deploy
@@ -173,7 +173,7 @@ skills:
 
   - name: data
     description: DB schema design, query optimization, indexing, N+1 detection, Supabase, RLS, migrations
-    file: skills/data/SKILL.md
+    file: data/SKILL.md
     triggers:
       - "*.sql"
       - "supabase/**"
@@ -188,7 +188,7 @@ skills:
 
   - name: api-design
     description: REST contracts, versioning, error shapes, pagination, rate limiting, backward compat
-    file: skills/api-design/SKILL.md
+    file: api-design/SKILL.md
     triggers:
       - "src/app/api/**"
       - api route
@@ -200,7 +200,7 @@ skills:
 
   - name: typescript
     description: Advanced typing, generics, discriminated unions, branded types, no-any enforcement
-    file: skills/typescript/SKILL.md
+    file: typescript/SKILL.md
     triggers:
       - "*.ts"
       - "*.tsx"
@@ -213,7 +213,7 @@ skills:
 
   - name: testing
     description: Test strategy, philosophy, coverage quality, unit/integration/e2e, flakiness prevention
-    file: skills/testing/SKILL.md
+    file: testing/SKILL.md
     triggers:
       - "*.test.*"
       - "*.spec.*"
@@ -225,7 +225,7 @@ skills:
 
   - name: performance
     description: Core Web Vitals, bundle optimization, React render, DB query performance, caching
-    file: skills/performance/SKILL.md
+    file: performance/SKILL.md
     triggers:
       - performance
       - slow
@@ -239,7 +239,7 @@ skills:
 
   - name: dx
     description: CI/CD pipelines, linting, formatting, pre-commit hooks, local dev, onboarding
-    file: skills/dx/SKILL.md
+    file: dx/SKILL.md
     triggers:
       - ci
       - pipeline
@@ -255,7 +255,7 @@ skills:
 
   - name: state-machines
     description: XState v5, useReducer FSMs, discriminated union state, when to use machines
-    file: skills/state-machines/SKILL.md
+    file: state-machines/SKILL.md
     triggers:
       - state machine
       - xstate
@@ -267,7 +267,7 @@ skills:
 
   - name: error-handling
     description: Typed error hierarchy, Result types, error boundaries, retry logic, user-facing copy
-    file: skills/error-handling/SKILL.md
+    file: error-handling/SKILL.md
     triggers:
       - error handling
       - try catch
@@ -279,7 +279,7 @@ skills:
 
   - name: logging-observability
     description: Structured logging, correlation IDs, Sentry, alerting, PII sanitization
-    file: skills/logging-observability/SKILL.md
+    file: logging-observability/SKILL.md
     triggers:
       - logging
       - sentry
@@ -292,7 +292,7 @@ skills:
 
   - name: forms
     description: react-hook-form, Zod validation, accessible fields, multi-step forms, server actions
-    file: skills/forms/SKILL.md
+    file: forms/SKILL.md
     triggers:
       - form
       - react-hook-form
@@ -305,7 +305,7 @@ skills:
 
   - name: animation
     description: Framer Motion, reduced-motion compliance, performance-safe patterns, timing
-    file: skills/animation/SKILL.md
+    file: animation/SKILL.md
     triggers:
       - animation
       - framer
@@ -317,7 +317,7 @@ skills:
 
   - name: i18n
     description: next-intl, ICU messages, locale routing, RTL support, date/number/currency formatting
-    file: skills/i18n/SKILL.md
+    file: i18n/SKILL.md
     triggers:
       - i18n
       - internationalization
@@ -330,7 +330,7 @@ skills:
 
   - name: documentation
     description: JSDoc, ADRs, README standards, changelog discipline, inline comment policy
-    file: skills/documentation/SKILL.md
+    file: documentation/SKILL.md
     triggers:
       - documentation
       - jsdoc
@@ -622,7 +622,7 @@ performance:
 
   - name: backend-architecture
     description: Service layer, repository pattern, DI, DDD boundaries, module organization
-    file: skills/backend-architecture/SKILL.md
+    file: backend-architecture/SKILL.md
     triggers:
       - service layer
       - repository
@@ -633,7 +633,7 @@ performance:
 
   - name: background-jobs
     description: Queues, workers, idempotency, retry strategy, DLQ, cron jobs, Inngest
-    file: skills/background-jobs/SKILL.md
+    file: background-jobs/SKILL.md
     triggers:
       - background job
       - queue
@@ -645,7 +645,7 @@ performance:
 
   - name: caching
     description: Redis patterns, cache invalidation, stampede prevention, TTL design
-    file: skills/caching/SKILL.md
+    file: caching/SKILL.md
     triggers:
       - cache
       - redis
@@ -656,7 +656,7 @@ performance:
 
   - name: realtime
     description: WebSockets, SSE, Supabase Realtime, presence, broadcast, connection lifecycle
-    file: skills/realtime/SKILL.md
+    file: realtime/SKILL.md
     triggers:
       - realtime
       - websocket
@@ -668,7 +668,7 @@ performance:
 
   - name: email-notifications
     description: Transactional email, outbox pattern, bounce handling, Resend, React Email
-    file: skills/email-notifications/SKILL.md
+    file: email-notifications/SKILL.md
     triggers:
       - email
       - notification
@@ -680,7 +680,7 @@ performance:
 
   - name: file-storage
     description: File uploads, presigned URLs, validation, CDN, Supabase Storage, image processing
-    file: skills/file-storage/SKILL.md
+    file: file-storage/SKILL.md
     triggers:
       - file upload
       - storage
@@ -691,7 +691,7 @@ performance:
 
   - name: payments
     description: Stripe integration, webhooks, idempotency, subscription lifecycle, failed payment recovery
-    file: skills/payments/SKILL.md
+    file: payments/SKILL.md
     triggers:
       - stripe
       - payment
@@ -703,7 +703,7 @@ performance:
 
   - name: rate-limiting
     description: Sliding window, token bucket, Redis-backed limiters, abuse detection
-    file: skills/rate-limiting/SKILL.md
+    file: rate-limiting/SKILL.md
     triggers:
       - rate limit
       - rate limiting
@@ -714,7 +714,7 @@ performance:
 
   - name: data-advanced
     description: Query optimization, EXPLAIN ANALYZE, soft deletes, audit logs, multi-tenancy, read replicas
-    file: skills/data-advanced/SKILL.md
+    file: data-advanced/SKILL.md
     triggers:
       - explain analyze
       - query optimization
@@ -727,7 +727,7 @@ performance:
 
   - name: vercel-supabase
     description: Vercel function limits, edge middleware, Supabase SSR auth, service_role safety, env vars, caching hierarchy
-    file: skills/vercel-supabase/SKILL.md
+    file: vercel-supabase/SKILL.md
     triggers:
       - vercel
       - supabase
@@ -741,7 +741,7 @@ performance:
 
   - name: navigation
     description: App Router nav, active states, breadcrumbs, mobile nav, focus management on route change
-    file: skills/navigation/SKILL.md
+    file: navigation/SKILL.md
     triggers:
       - navigation
       - nav
@@ -754,7 +754,7 @@ performance:
 
   - name: modals-overlays
     description: Modal dialog, drawer, popover, tooltip, toast, command palette — focus management and ARIA
-    file: skills/modals-overlays/SKILL.md
+    file: modals-overlays/SKILL.md
     triggers:
       - modal
       - dialog
@@ -769,7 +769,7 @@ performance:
 
   - name: dark-mode
     description: Systematic dark mode, FOUC prevention, token strategy, ThemeProvider, Tailwind dark:
-    file: skills/dark-mode/SKILL.md
+    file: dark-mode/SKILL.md
     triggers:
       - dark mode
       - dark theme
@@ -781,7 +781,7 @@ performance:
 
   - name: responsive-design
     description: Mobile-first, container queries, fluid typography, layout patterns, touch targets, print
-    file: skills/responsive-design/SKILL.md
+    file: responsive-design/SKILL.md
     triggers:
       - responsive
       - mobile
@@ -794,7 +794,7 @@ performance:
 
   - name: copy-ux
     description: Microcopy, button labels, empty states, error messages, loading states, confirmation dialogs
-    file: skills/copy-ux/SKILL.md
+    file: copy-ux/SKILL.md
     triggers:
       - copy
       - microcopy
@@ -808,7 +808,7 @@ performance:
 
   - name: onboarding-flows
     description: Multi-step onboarding, progress persistence, checklist onboarding, first-run experience
-    file: skills/onboarding-flows/SKILL.md
+    file: onboarding-flows/SKILL.md
     triggers:
       - onboarding
       - first run
@@ -820,7 +820,7 @@ performance:
 
   - name: design-tokens
     description: Token architecture, Figma to code pipeline, semantic vs primitive tokens, theming
-    file: skills/design-tokens/SKILL.md
+    file: design-tokens/SKILL.md
     triggers:
       - design token
       - token
@@ -831,7 +831,7 @@ performance:
 
   - name: data-tables
     description: TanStack Table, sortable/filterable/paginated tables, virtualization, server-side ops
-    file: skills/data-tables/SKILL.md
+    file: data-tables/SKILL.md
     triggers:
       - table
       - data table
@@ -843,7 +843,7 @@ performance:
 
   - name: security-audit
     description: OWASP Top 10 mapped to Next.js/Supabase, attack vectors, Supabase pitfalls, audit checklist
-    file: skills/security-audit/SKILL.md
+    file: security-audit/SKILL.md
     triggers:
       - security audit
       - security review
@@ -858,7 +858,7 @@ performance:
 
   - name: accessibility-audit
     description: WCAG 2.2 audit methodology, axe-core, keyboard testing, screen reader protocol, color contrast
-    file: skills/accessibility-audit/SKILL.md
+    file: accessibility-audit/SKILL.md
     triggers:
       - accessibility audit
       - a11y audit
@@ -871,7 +871,7 @@ performance:
 
   - name: performance-audit
     description: Lighthouse CI, bundle analysis, React Profiler, DB query audit, perceived performance
-    file: skills/performance-audit/SKILL.md
+    file: performance-audit/SKILL.md
     triggers:
       - performance audit
       - lighthouse
@@ -883,7 +883,7 @@ performance:
 
   - name: dependency-audit
     description: Bundle impact, security advisories, maintenance status, license compliance, native alternatives
-    file: skills/dependency-audit/SKILL.md
+    file: dependency-audit/SKILL.md
     triggers:
       - dependency audit
       - npm audit
@@ -896,7 +896,7 @@ performance:
 
   - name: pr-review
     description: PR review methodology, blocking vs advisory, feedback framing, review by PR size
-    file: skills/pr-review/SKILL.md
+    file: pr-review/SKILL.md
     triggers:
       - code review
       - pr review
@@ -908,7 +908,7 @@ performance:
 
   - name: optimistic-ui
     description: React Query optimistic updates, conflict resolution, rollback UX, skeleton transitions
-    file: skills/optimistic-ui/SKILL.md
+    file: optimistic-ui/SKILL.md
     triggers:
       - optimistic
       - optimistic update
@@ -920,7 +920,7 @@ performance:
 
   - name: feature-design
     description: Feature breakdown, tech specs, unknowns, spike vs build, work slicing, estimation
-    file: skills/feature-design/SKILL.md
+    file: feature-design/SKILL.md
     triggers:
       - feature design
       - tech spec
@@ -935,7 +935,7 @@ performance:
 
   - name: codebase-health
     description: Complexity trends, coverage, build time, dead code, dependency age, quarterly audits
-    file: skills/codebase-health/SKILL.md
+    file: codebase-health/SKILL.md
     triggers:
       - codebase health
       - technical health
@@ -950,7 +950,7 @@ performance:
 
   - name: project-structure
     description: Authoritative complete folder structure, file placement rules, path aliases, naming conventions, config files
-    file: skills/project-structure/SKILL.md
+    file: project-structure/SKILL.md
     triggers:
       - project structure
       - folder structure
@@ -965,7 +965,7 @@ performance:
 
   - name: tailwind-architecture
     description: Complete Tailwind config, CSS custom property integration, @layer strategy, dark mode, globals.css structure
-    file: skills/tailwind-architecture/SKILL.md
+    file: tailwind-architecture/SKILL.md
     triggers:
       - tailwind
       - tailwind config

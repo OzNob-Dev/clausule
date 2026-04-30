@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
-import PageLoader from '@shared/components/ui/PageLoader'
+import LoadingOverlay from '@shared/components/ui/LoadingOverlay'
 import { PAGE_CONFIG } from './authorPageConfig'
 import '@brag/styles/brag-shell.css'
 
@@ -19,10 +19,8 @@ export default function Loading() {
         ariaLabel="Sidebar navigation"
         showSignOut={false}
       />
-      <main className="be-main page-enter bss-screen" aria-busy="true" aria-labelledby={pageConfig.ariaLabelledby}>
-        <div className="be-inner bss-page">
-          <PageLoader variant="app" />
-        </div>
+      <main className="be-main page-enter bss-screen" aria-busy="true" aria-labelledby={pageConfig.ariaLabelledby} style={{ position: 'relative' }}>
+        <LoadingOverlay />
       </main>
     </div>
   )

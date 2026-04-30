@@ -10,8 +10,8 @@ export default function BragSecurityDangerZone({ onDelete }) {
     <section className="bss-danger-section" aria-labelledby="security-danger-title">
       <div className="bss-danger-label" id="security-danger-title">Danger zone</div>
       <SectionCard
-        className="danger-card bss-danger-card"
-        headerClassName="danger-card-head bss-danger-card-head"
+        className="danger-card"
+        headerClassName="danger-card-head"
         titleClassName="bss-danger-card-head-title"
         metaClassName="bss-danger-card-head-meta"
         title="Irreversible actions"
