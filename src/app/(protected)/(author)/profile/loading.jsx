@@ -1,10 +1,9 @@
-import PageLoader from '@shared/components/ui/PageLoader'
-import '@shared/styles/page-loader.css'
+import LoadingOverlay from '@shared/components/ui/LoadingOverlay'
 
 export default function Loading() {
   return (
-    <div className="page-loader-wrap" aria-busy="true">
-      <PageLoader variant="app" />
+    <div className="relative min-h-[55vh] w-full overflow-hidden" aria-busy="true">
+      <LoadingOverlay />
     </div>
   )
 }
