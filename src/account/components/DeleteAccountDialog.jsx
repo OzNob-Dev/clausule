@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useId, useRef, useState } from 'react'
+import { Button } from '@shared/components/ui/Button'
 import { FieldInput } from '@shared/components/ui/Field'
 import { Modal } from '@shared/components/ui/Modal'
 import { useDeleteAccount } from '@account/hooks/useDeleteAccount'
@@ -271,16 +272,19 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
           {deleteError && <p className="delete-account-dialog__error" role="alert">{deleteError}</p>}
 
           <div className="delete-account-dialog__actions">
-            <button type="button" className="delete-account-dialog__cancel" onClick={handleClose} disabled={deleting}>Cancel</button>
-            <button
+            <Button type="button" variant="ghost" className="delete-account-dialog__cancel" onClick={handleClose} disabled={deleting}>
+              Cancel
+            </Button>
+            <Button
               type="button"
               className={`delete-account-dialog__delete${confirmReady ? ' is-ready' : ''}`}
               onClick={handleConfirm}
               disabled={!confirmReady || deleting}
               aria-disabled={!confirmReady || deleting}
+              variant="ghost"
             >
               {deleting ? 'Deleting account...' : 'Delete account'}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
