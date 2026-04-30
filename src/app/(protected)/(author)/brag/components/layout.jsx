@@ -1,4 +1,5 @@
 'use client'
+import '@shared/styles/globals.css'
 
 function classNames(...values) {
   return values.filter(Boolean).join(' ')
