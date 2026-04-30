@@ -132,7 +132,7 @@
   stroke-width: 2.5;
 }
 
-.bss-copy-btn {
+.be-cta > .copy {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -141,17 +141,14 @@
   border-left: 1px solid var(--cl-border-2);
   background: var(--cl-surface-muted-20);
   color: var(--cl-surface-muted-7);
-}
-
-.bss-copy-btn:hover {
-  background: var(--cl-surface-muted-21);
-  color: var(--cl-accent-deep);
-}
-
-.be-cta > .copy {
   stroke: var(--ink);
   stroke-width: 1.8;
   fill: none;
+}
+
+.be-cta > .copy:hover {
+  background: var(--cl-surface-muted-21);
+  color: var(--cl-accent-deep);
 }
 
 .be-cta > svg {
