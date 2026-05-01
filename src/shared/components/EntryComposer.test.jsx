@@ -33,8 +33,12 @@ describe('EntryComposer', () => {
 
     renderWithQueryClient(<EntryComposer onSave={onSave} onClose={vi.fn()} />)
 
-    expect(screen.getByRole('form', { name: 'Add a new entry' })).toBeInTheDocument()
+    const form = screen.getByRole('form', { name: 'Add a new entry' })
+
+    expect(form).toBeInTheDocument()
+    expect(form).toHaveClass('max-w-[860px]', 'rounded-[16px]', 'border-[0.5px]')
     expect(screen.getByRole('button', { name: 'Close form' })).toBeInTheDocument()
+    expect(screen.getByText('New entry')).toHaveClass('text-[28px]', 'leading-none', 'text-[var(--cl-surface-muted-15)]')
 
     await user.type(screen.getByPlaceholderText(/what did you achieve/i), 'Won migration')
     await user.type(screen.getByPlaceholderText(/describe what you did/i), 'Cut deployment risk.')

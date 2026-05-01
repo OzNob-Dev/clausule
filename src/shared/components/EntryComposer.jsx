@@ -53,10 +53,10 @@ export default function EntryComposer({ onSave = () => {}, onClose = () => {} })
     <div className="be-entry-composer-stage py-6">
       <SectionCard
         as="form"
-        className="be-entry-composer overflow-hidden rounded-[20px] border border-[var(--cl-ink-alpha-12)] bg-[var(--cl-surface-white)] shadow-[0_24px_50px_rgba(26,18,12,0.08)]"
-        headerClassName="be-entry-composer-head border-b border-[var(--cl-ink-alpha-12)] bg-[var(--cl-surface-muted-21)] px-7 py-5"
-        titleClassName="be-entry-composer-title [font-family:'DM_Serif_Display',Georgia,serif] text-[30px] leading-[1.05] tracking-[-0.02em] text-[var(--cl-surface-ink-2)]"
-        bodyClassName="be-entry-composer-body px-7 py-7"
+        className="be-entry-composer max-w-[860px] overflow-hidden rounded-[16px] border-[0.5px] border-[rgba(28,26,23,0.1)] bg-[var(--cl-surface-white)]"
+        headerClassName="be-entry-composer-head bg-[var(--cl-surface-ink-2)] px-10 py-6 max-[860px]:px-6"
+        titleClassName="be-entry-composer-title [font-family:'DM_Serif_Display',Georgia,serif] text-[28px] leading-none tracking-[-0.02em] text-[var(--cl-surface-muted-15)]"
+        bodyClassName="be-entry-composer-body px-10 py-9 max-[860px]:px-6"
         title="New entry"
         ariaLabel="Add a new entry"
         headerEnd={(
