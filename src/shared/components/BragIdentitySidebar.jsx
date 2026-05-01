@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useProfileStore } from '@auth/store/useProfileStore'
 import ClientSignOutButton from '@shared/components/ClientSignOutButton'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import { ROUTES } from '@shared/utils/routes'
@@ -7,6 +10,7 @@ import { ProfileIcon } from '@shared/components/ui/icon/ProfileIcon'
 import { SecurityIcon } from '@shared/components/ui/icon/SecurityIcon'
 import { DocumentIcon } from '@shared/components/ui/icon/DocumentIcon'
 import { MessageIcon } from '@shared/components/ui/icon/MessageIcon'
+import { useShallow } from 'zustand/shallow'
 const NAV_SECTIONS = [
   {
     title: 'Account',
@@ -57,9 +61,19 @@ export default function BragIdentitySidebar({
   profile = {},
   showSignOut = true,
 }) {
-  const displayName = profileDisplayName(profile)
-  const initials = profileInitials(profile)
-  const email = profile.email?.trim() || ''
+  const { storeProfile, userEmail } = useProfileStore(useShallow((state) => ({
+    storeProfile: state.profile,
+    userEmail: state.user?.email ?? '',
+  })))
+  const identity = {
+    ...profile,
+    firstName: storeProfile.firstName || profile.firstName || profile.first_name || '',
+    lastName: storeProfile.lastName || profile.lastName || profile.last_name || '',
+    email: storeProfile.email || profile.email || userEmail || '',
+  }
+  const displayName = profileDisplayName(identity)
+  const initials = profileInitials(identity)
+  const email = identity.email?.trim() || ''
 
   return (
     <aside

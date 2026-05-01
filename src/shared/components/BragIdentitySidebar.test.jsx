@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import BragIdentitySidebar from './BragIdentitySidebar'
+import { useProfileStore } from '@auth/store/useProfileStore'
 
 const logout = vi.fn()
 
@@ -16,6 +17,7 @@ vi.mock('next/link', () => ({
 describe('BragIdentitySidebar', () => {
   beforeEach(() => {
     logout.mockClear()
+    useProfileStore.getState().clearProfile()
   })
 
   it('renders child menus for resume and feedback history', async () => {
@@ -43,6 +45,17 @@ describe('BragIdentitySidebar', () => {
 
     expect(screen.getByText('A')).toBeInTheDocument()
     expect(screen.getByText('ada')).toBeInTheDocument()
+    expect(screen.getByText('ada@example.com')).toBeInTheDocument()
+  })
+
+  it('prefers hydrated store identity when shell props are empty', () => {
+    useProfileStore.getState().setUser({ id: 'user-1', email: 'ada@example.com', role: 'employee' })
+    useProfileStore.getState().setProfile({ firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' })
+
+    render(<BragIdentitySidebar activePage="settings" eyebrow="Clausule · Settings" profile={{}} />)
+
+    expect(screen.getByText('AL')).toBeInTheDocument()
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
     expect(screen.getByText('ada@example.com')).toBeInTheDocument()
   })
 })

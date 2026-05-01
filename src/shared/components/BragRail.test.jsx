@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import BragIdentitySidebar from './BragIdentitySidebar'
+import { useProfileStore } from '@auth/store/useProfileStore'
 
 const logout = vi.fn()
 
@@ -12,6 +13,7 @@ vi.mock('@shared/components/ClientSignOutButton', () => ({
 describe('BragIdentitySidebar integration', () => {
   beforeEach(() => {
     logout.mockClear()
+    useProfileStore.getState().clearProfile()
   })
 
   it('renders the same sidebar routes as the standalone shell', () => {
