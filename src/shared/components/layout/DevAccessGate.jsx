@@ -1,5 +1,4 @@
 'use client'
-import './DevAccessGate.css'
 import { useEffect, useState } from 'react'
 import ComingSoon from '@shared/components/ComingSoon'
 

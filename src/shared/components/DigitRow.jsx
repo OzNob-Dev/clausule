@@ -1,4 +1,3 @@
-import './DigitRow.css'
 import { FieldInput } from '@shared/components/ui/Field'
 
 const VARIANTS = {

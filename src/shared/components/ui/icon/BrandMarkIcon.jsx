@@ -1,4 +1,3 @@
-import './BrandMarkIcon.css'
 
 export function BrandMarkIcon({ size = 18, ...props }) {
   return (

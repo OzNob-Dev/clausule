@@ -1,4 +1,3 @@
-import './LogoutIcon.css'
 
 export function LogoutIcon({ size = 24, ...props }) {
   return (

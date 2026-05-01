@@ -7,6 +7,7 @@ import { Link } from '@shared/components/ui/Link'
 import { CtaBtn } from '@shared/components/ui/SignupButtons'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
+import { authStepHeadingClassName, authStepSubClassName } from '@shared/components/layout/authShellClasses'
 
 const NEXT_STEPS = [
   { label: 'Set up MFA', desc: '- ensure your account is secure.' },
@@ -30,8 +31,8 @@ export default function SignupStepDone({ email }) {
         <CheckIcon size={34} strokeWidth={2.5} />
       </div>
 
-      <div className="su-step-heading">You're in.</div>
-      <div className="su-step-sub su-done-sub mb-7">
+      <div className={authStepHeadingClassName}>You're in.</div>
+      <div className={`${authStepSubClassName} su-done-sub mb-7`}>
         Your Clausule account is ready. We've sent a confirmation to <strong className="text-[var(--su-tx1)]">{email || 'you@email.com'}</strong>.
       </div>
 

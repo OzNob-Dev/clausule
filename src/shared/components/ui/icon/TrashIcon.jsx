@@ -1,4 +1,3 @@
-import './TrashIcon.css'
 
 export function TrashIcon({ size = 14, ...props }) {
   return (

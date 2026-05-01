@@ -1,4 +1,3 @@
-import './DocumentIcon.css'
 
 export function DocumentIcon({ size = 24, ...props }) {
   return (

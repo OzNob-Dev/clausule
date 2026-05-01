@@ -1,4 +1,3 @@
-import './SecurityIcon.css'
 
 export function SecurityIcon({ size = 24, ...props }) {
   return (

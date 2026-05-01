@@ -1,4 +1,3 @@
-import './MailSendIcon.css'
 
 export function MailSendIcon({ size = 72, ...props }) {
   return (

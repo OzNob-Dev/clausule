@@ -1,5 +1,4 @@
 'use client'
-import './FeedbackComposer.css'
 
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'

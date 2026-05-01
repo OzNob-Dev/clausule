@@ -1,4 +1,3 @@
-import './TargetIcon.css'
 
 export function TargetIcon({ size = 24, ...props }) {
   return (

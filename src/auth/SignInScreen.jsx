@@ -9,6 +9,7 @@ import MfaLoginEmailStep from '@shared/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@shared/components/MfaLoginAppStep'
 import '@mfa/styles/mfa-layout.css'
 import '@shared/styles/page-loader.css'
+import { authShellNarrowClassName } from '@shared/components/layout/authShellClasses'
 
 export default function SignIn() {
   const flow = useSignInFlow()
@@ -52,7 +53,7 @@ export default function SignIn() {
   }
 
   return (
-    <div className="su-narrow su-auth-stack page-enter">
+    <div className={`${authShellNarrowClassName} su-auth-stack page-enter`}>
       <SignInEmailForm
         email={flow.email}
         result={flow.result}

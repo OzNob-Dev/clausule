@@ -1,4 +1,3 @@
-import './ResumeDocument.css'
 import { FieldInput, FieldTextarea } from '@shared/components/ui/Field'
 
 function EditableField({ ariaLabel, className, disabled, field, multiline = false, onChange, value }) {

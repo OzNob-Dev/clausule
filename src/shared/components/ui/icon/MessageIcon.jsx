@@ -1,4 +1,3 @@
-import './MessageIcon.css'
 
 export function MessageIcon({ size = 24, ...props }) {
   return (

@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation'
 import SignupProgress from '@shared/components/SignupProgress'
 import SignupStepPayment from '@shared/components/SignupStepPayment'
-import '@signup/styles/signup-theme.css'
 import '@shared/styles/page-loader.css'
+import { authShellNarrowClassName } from '@shared/components/layout/authShellClasses'
 
 /**
  * @param {{ accountData: { email: string, firstName: string, lastName: string } }} props
@@ -30,7 +30,7 @@ export default function SignupPlanScreen({ accountData }) {
   return (
     <>
       <SignupProgress mobile />
-      <div className="su-narrow page-enter">
+      <div className={`${authShellNarrowClassName} page-enter`}>
         <SignupStepPayment
           accountData={accountData}
           onNext={handleNext}

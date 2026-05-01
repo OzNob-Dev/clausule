@@ -1,5 +1,4 @@
 'use client'
-import './FeedbackFormView.css'
 
 import { Button } from '@shared/components/ui/Button'
 import { Field, FieldCheckbox, FieldInput, FieldLabel, FieldSelect, FieldTextarea } from '@shared/components/ui/Field'

@@ -1,4 +1,3 @@
-import './TrophyIcon.css'
 
 export function TrophyIcon({ size = 24, ...props }) {
   return (

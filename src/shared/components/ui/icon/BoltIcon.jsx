@@ -1,4 +1,3 @@
-import './BoltIcon.css'
 
 export function BoltIcon({ size = 24, ...props }) {
   return (

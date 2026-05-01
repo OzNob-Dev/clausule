@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SignupProgress from '@shared/components/SignupProgress'
 import SignupStepAccount from '@shared/components/SignupStepAccount'
-import '@signup/styles/signup-theme.css'
 import '@shared/styles/page-loader.css'
+import { authShellNarrowClassName, authSigninNoteClassName, authShellRootClassName } from '@shared/components/layout/authShellClasses'
 
 function SignUpInner() {
   const router = useRouter()
@@ -36,7 +36,7 @@ function SignUpInner() {
   return (
     <>
       <SignupProgress mobile />
-      <div className="su-narrow">
+      <div className={authShellNarrowClassName}>
         <SignupStepAccount
           emailLocked={redirectedFromSignIn}
           hideSso={redirectedFromSignIn}
@@ -44,7 +44,7 @@ function SignUpInner() {
           initialData={initialData}
         />
       </div>
-      <p className="su-shell-signin-note">
+      <p className={authSigninNoteClassName}>
         Already have an account?{' '}
         <Link href="/">Sign in</Link>
       </p>
@@ -54,7 +54,7 @@ function SignUpInner() {
 
 export default function SignUp() {
   return (
-    <Suspense fallback={<div className="su-page" aria-busy="true" />}>
+    <Suspense fallback={<div className={authShellRootClassName} aria-busy="true" />}>
       <SignUpInner />
     </Suspense>
   )

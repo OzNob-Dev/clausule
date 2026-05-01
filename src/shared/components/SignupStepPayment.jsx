@@ -6,6 +6,7 @@ import { INDIVIDUAL_MONTHLY_PLAN, formatPlanLabel } from '@signup/shared/plan'
 import { apiJson, jsonRequest } from '@shared/utils/api'
 import { BackBtn, CtaBtn } from '@shared/components/ui/SignupButtons'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
+import { authStepHeadingClassName, authStepSubClassName } from '@shared/components/layout/authShellClasses'
 
 export default function SignupStepPayment({ accountData, onBack, onNext }) {
   const [apiError, setApiError] = useState('')
@@ -39,8 +40,8 @@ export default function SignupStepPayment({ accountData, onBack, onNext }) {
 
   return (
     <div>
-      <div className="su-step-heading">Review your plan</div>
-      <div className="su-step-sub mb-6">Checkout is not connected in this build, so this step does not ask for or store card details.</div>
+      <div className={authStepHeadingClassName}>Review your plan</div>
+      <div className={`${authStepSubClassName} mb-6`}>Checkout is not connected in this build, so this step does not ask for or store card details.</div>
 
       <div className="su-order-summary mb-6 rounded-[var(--su-r2)] bg-[var(--su-panel)] p-5">
         <div className="su-order-label mb-[14px] text-[var(--cl-text-2xs)] font-bold uppercase tracking-[0.8px] text-[var(--su-tx3)]">Order summary</div>

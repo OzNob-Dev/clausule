@@ -1,4 +1,3 @@
-import './AlertIcon.css'
 
 export function AlertIcon({ size = 24, ...props }) {
   return (

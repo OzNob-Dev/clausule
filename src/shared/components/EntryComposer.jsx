@@ -1,4 +1,3 @@
-import './EntryComposer.css'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { Button } from '@shared/components/ui/Button'

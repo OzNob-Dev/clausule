@@ -1,5 +1,4 @@
 'use client'
-import './BragSecuritySetupPanel.css'
 
 import { Button } from '@shared/components/ui/Button'
 import { useTotpSetup } from '@mfa/hooks/useTotpSetup'

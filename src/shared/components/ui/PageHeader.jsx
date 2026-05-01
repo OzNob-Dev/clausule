@@ -1,5 +1,4 @@
 'use client'
-import './PageHeader.css'
 export default function PageHeader({
   className,
   eyebrow,

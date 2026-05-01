@@ -1,4 +1,3 @@
-import './FeedbackHistoryToolbar.css'
 const filterTabs = [
   ['all', 'All'],
   ['ideas', 'Ideas'],

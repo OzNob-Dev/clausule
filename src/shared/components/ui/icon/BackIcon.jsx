@@ -1,4 +1,3 @@
-import './BackIcon.css'
 
 export function BackIcon({ size = 13, ...props }) {
   return (

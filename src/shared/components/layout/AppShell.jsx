@@ -1,4 +1,3 @@
-import './AppShell.css'
 
 export function AppShell({ children }) {
   return (

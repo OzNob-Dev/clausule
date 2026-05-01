@@ -1,4 +1,3 @@
-import './ProfileIcon.css'
 
 export function ProfileIcon({ size = 24, ...props }) {
   return (

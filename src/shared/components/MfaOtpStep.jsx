@@ -1,4 +1,3 @@
-import './MfaOtpStep.css'
 import { CodeEmail } from '@shared/components/ui/CodeEmail'
 import { Button } from '@shared/components/ui/Button'
 import { MailIcon } from '@shared/components/ui/icon/MailIcon'

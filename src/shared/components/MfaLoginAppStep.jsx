@@ -1,4 +1,3 @@
-import './MfaLoginAppStep.css'
 import DigitRow from './DigitRow'
 import { Button } from '@shared/components/ui/Button'
 import { maskEmail } from '@mfa/utils/maskEmail'

@@ -1,5 +1,4 @@
 'use client'
-import './ResumeTab.css'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProfileStore } from '@auth/store/useProfileStore'

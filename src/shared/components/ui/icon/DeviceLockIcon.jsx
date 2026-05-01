@@ -1,4 +1,3 @@
-import './DeviceLockIcon.css'
 
 export function DeviceLockIcon({ size = 16, ...props }) {
   return (

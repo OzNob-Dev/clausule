@@ -1,4 +1,3 @@
-import './FeedbackHistoryThreadCard.css'
 const dateFmt = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' })
 
 function formatDate(value) {

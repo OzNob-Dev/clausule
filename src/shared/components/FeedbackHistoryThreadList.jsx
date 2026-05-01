@@ -1,4 +1,3 @@
-import './FeedbackHistoryThreadList.css'
 import FeedbackHistoryThreadCard from '@shared/components/FeedbackHistoryThreadCard'
 
 function emptyCopy(filter) {

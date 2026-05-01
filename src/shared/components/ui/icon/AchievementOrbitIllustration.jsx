@@ -1,4 +1,3 @@
-import './AchievementOrbitIllustration.css'
 
 export function AchievementOrbitIllustration({ size = 200, ...props }) {
   return (

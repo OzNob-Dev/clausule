@@ -1,4 +1,3 @@
-import './CloseIcon.css'
 
 export function CloseIcon({ size = 14, ...props }) {
   return (

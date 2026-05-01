@@ -1,4 +1,3 @@
-import './ConversationIllustration.css'
 
 export function ConversationIllustration({ size = 220, ...props }) {
   return (

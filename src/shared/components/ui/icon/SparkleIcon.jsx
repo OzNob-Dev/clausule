@@ -1,4 +1,3 @@
-import './SparkleIcon.css'
 
 export function SparkleIcon({ size = 16, ...props }) {
   return (

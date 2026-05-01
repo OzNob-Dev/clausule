@@ -1,4 +1,3 @@
-import './CheckIcon.css'
 
 export function CheckIcon({ size = 12, strokeWidth = 2.5, ...props }) {
   return (

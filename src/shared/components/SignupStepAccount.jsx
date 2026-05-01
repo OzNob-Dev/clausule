@@ -12,6 +12,7 @@ import { Field, FieldCheckbox, FieldInput, FieldLabel } from '@shared/components
 import { Button } from '@shared/components/ui/Button'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { Link } from '@shared/components/ui/Link'
+import { authStepHeadingClassName, authStepSubClassName } from '@shared/components/layout/authShellClasses'
 
 function createState(initialData) {
   return {
@@ -95,8 +96,8 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <div className="su-step-heading">Create your account</div>
-      <div className="su-step-sub mb-6">
+      <div className={authStepHeadingClassName}>Create your account</div>
+      <div className={`${authStepSubClassName} mb-6`}>
         {hasSso ? 'Continue with your existing account — no new password needed.' : 'Your brag doc, your file. Takes about 2 minutes.'}
       </div>
 

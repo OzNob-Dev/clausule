@@ -1,4 +1,3 @@
-import './DownloadIcon.css'
 
 export function DownloadIcon({ size = 16, ...props }) {
   return (

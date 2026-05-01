@@ -1,4 +1,3 @@
-import './TotpSecretBlock.css'
 import dynamic from 'next/dynamic'
 import { Button } from '@shared/components/ui/Button'
 import { CopyIcon } from '@shared/components/ui/icon/CopyIcon'

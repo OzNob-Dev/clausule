@@ -1,4 +1,3 @@
-import './ArrowIcon.css'
 
 export function ArrowIcon({ size = 16, ...props }) {
   return (

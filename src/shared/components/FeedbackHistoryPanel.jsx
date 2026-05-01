@@ -1,4 +1,3 @@
-import './FeedbackHistoryPanel.css'
 import { useState } from 'react'
 import FeedbackHistoryToolbar from '@shared/components/FeedbackHistoryToolbar'
 import FeedbackHistoryThreadList from '@shared/components/FeedbackHistoryThreadList'

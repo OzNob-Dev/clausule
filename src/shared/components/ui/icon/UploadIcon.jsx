@@ -1,4 +1,3 @@
-import './UploadIcon.css'
 
 export function UploadIcon({ size = 24, ...props }) {
   return (

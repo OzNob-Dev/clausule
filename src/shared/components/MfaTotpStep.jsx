@@ -1,4 +1,3 @@
-import './MfaTotpStep.css'
 import { Button } from '@shared/components/ui/Button'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'

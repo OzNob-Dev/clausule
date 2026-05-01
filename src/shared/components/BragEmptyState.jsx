@@ -1,4 +1,3 @@
-import './BragEmptyState.css'
 import { PlusIcon } from "@shared/components/ui/icon/PlusIcon"
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { BoltIcon } from '@shared/components/ui/icon/BoltIcon'

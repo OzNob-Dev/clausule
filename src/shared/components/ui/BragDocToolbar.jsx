@@ -1,6 +1,5 @@
 import { Button } from './Button'
 import { PlusIcon } from '@shared/components/ui/icon/PlusIcon'
-import './BragDocToolbar.css'
 export default function BragDocToolbar({ activeYear, entryCount = 0, years = [], onAddEntry, onYearSelect }) {
   const yearTabs = [...years, 'All']
 

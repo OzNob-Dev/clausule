@@ -1,4 +1,3 @@
-import './ThinkingDots.css'
 
 const DELAY_CLASSES = [
   '',

@@ -1,6 +1,7 @@
 import { cn } from '@shared/utils/cn'
 import { Button } from './Button'
 import { FieldHint, FieldInput, FieldLabel } from './Field'
+import { authStepHeadingClassName, authStepSubClassName } from '@shared/components/layout/authShellClasses'
 export default function SignInEmailForm({
   email,
   result,
@@ -17,8 +18,8 @@ export default function SignInEmailForm({
 }) {
   return (
     <>
-      <div className="su-step-heading">Welcome back</div>
-      <div className="su-step-sub mb-6">We'll send a verification code to your email.</div>
+      <div className={authStepHeadingClassName}>Welcome back</div>
+      <div className={`${authStepSubClassName} mb-6`}>We'll send a verification code to your email.</div>
 
       {ssoError && <p className="su-field-hint su-field-hint--error mt-[5px] text-[var(--cl-text-xs)] font-medium text-[var(--cl-danger-2)]" role="alert">{ssoError}</p>}
       {submitError && <p className="su-field-hint su-field-hint--error mt-[5px] text-[var(--cl-text-xs)] font-medium text-[var(--cl-danger-2)]" role="alert">{submitError}</p>}

@@ -2,7 +2,7 @@
 
 import SignupProgress from '@shared/components/SignupProgress'
 import SignupStepDone from '@shared/components/SignupStepDone'
-import '@signup/styles/signup-theme.css'
+import { authShellNarrowClassName } from '@shared/components/layout/authShellClasses'
 
 /**
  * @param {{ email: string }} props
@@ -11,7 +11,7 @@ export default function SignupDoneScreen({ email }) {
   return (
     <>
       <SignupProgress mobile />
-      <div className="su-narrow page-enter">
+      <div className={`${authShellNarrowClassName} page-enter`}>
         <SignupStepDone email={email} />
       </div>
     </>
