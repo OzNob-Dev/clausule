@@ -6,14 +6,9 @@ import { QueryProvider } from '../providers/QueryProvider'
 import { useFeedbackThreadsQuery } from './useFeedbackThreadsQuery'
 import { useProfileQuery, useTotpStatusQuery } from './useProfileQuery'
 import { apiFetch } from '../utils/api'
-import { listFeedbackThreadsAction } from '@actions/brag-actions'
 
 vi.mock('../utils/api', () => ({
   apiFetch: vi.fn(),
-}))
-
-vi.mock('@actions/brag-actions', () => ({
-  listFeedbackThreadsAction: vi.fn(),
 }))
 
 function wrapper() {
@@ -46,19 +41,20 @@ describe('shared queries', () => {
   })
 
   it('does not fetch feedback threads until enabled', async () => {
-    listFeedbackThreadsAction.mockResolvedValueOnce([{ id: 'thread-1' }])
+    apiFetch.mockResolvedValueOnce(new Response(JSON.stringify({ feedback: [{ id: 'thread-1' }] }), { status: 200 }))
 
     const { result, rerender } = renderHook(({ enabled }) => useFeedbackThreadsQuery({ enabled }), {
       initialProps: { enabled: false },
       wrapper: wrapper(),
     })
 
-    expect(listFeedbackThreadsAction).not.toHaveBeenCalled()
+    expect(apiFetch).not.toHaveBeenCalled()
 
     rerender({ enabled: true })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual([{ id: 'thread-1' }])
+    expect(apiFetch).toHaveBeenCalledWith('/api/feedback')
   })
 
   it('uses the shared QueryProvider defaults', () => {

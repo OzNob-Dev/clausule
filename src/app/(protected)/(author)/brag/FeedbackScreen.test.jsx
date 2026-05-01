@@ -5,18 +5,21 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import FeedbackScreen from './FeedbackScreen'
 import { renderWithQueryClient } from '@shared/test/renderWithQueryClient'
 import { useProfileStore } from '@auth/store/useProfileStore'
+import { apiFetch } from '@shared/utils/api'
 
 const push = vi.fn()
 const sendFeedbackAction = vi.fn()
-const listFeedbackThreadsAction = vi.fn()
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
 }))
 
+vi.mock('@shared/utils/api', () => ({
+  apiFetch: vi.fn(),
+}))
+
 vi.mock('@actions/brag-actions', () => ({
   sendFeedbackAction: (...args) => sendFeedbackAction(...args),
-  listFeedbackThreadsAction: (...args) => listFeedbackThreadsAction(...args),
 }))
 
 describe('FeedbackScreen', () => {
@@ -24,7 +27,7 @@ describe('FeedbackScreen', () => {
     vi.restoreAllMocks()
     push.mockReset()
     sendFeedbackAction.mockReset()
-    listFeedbackThreadsAction.mockReset()
+    apiFetch.mockReset()
     useProfileStore.getState().clearProfile()
     useProfileStore.getState().setProfile({ email: 'ada@example.com' })
   })
@@ -40,7 +43,6 @@ describe('FeedbackScreen', () => {
 
   it('sends feedback from the composer view', async () => {
     const user = userEvent.setup()
-    listFeedbackThreadsAction.mockResolvedValueOnce([])
     sendFeedbackAction.mockResolvedValueOnce({
       id: 'feedback-1',
       category: 'Bug',
@@ -68,21 +70,23 @@ describe('FeedbackScreen', () => {
   })
 
   it('renders feedback history without tabs', async () => {
-    listFeedbackThreadsAction.mockResolvedValueOnce([{
-      id: 'feedback-1',
-      category: 'Idea',
-      feeling: 'Just noting',
-      subject: 'jj',
-      message: 'bnv',
-      created_at: '2026-04-27T10:00:00.000Z',
-      replies: [{
-        id: 'reply-1',
-        author_name: 'Clausule team',
-        body: 'Thanks for the note.',
-        from_team: true,
-        created_at: '2026-04-27T11:00:00.000Z',
+    apiFetch.mockResolvedValueOnce(new Response(JSON.stringify({
+      feedback: [{
+        id: 'feedback-1',
+        category: 'Idea',
+        feeling: 'Just noting',
+        subject: 'jj',
+        message: 'bnv',
+        created_at: '2026-04-27T10:00:00.000Z',
+        replies: [{
+          id: 'reply-1',
+          author_name: 'Clausule team',
+          body: 'Thanks for the note.',
+          from_team: true,
+          created_at: '2026-04-27T11:00:00.000Z',
+        }],
       }],
-    }])
+    }), { status: 200 }))
 
     renderWithQueryClient(<FeedbackScreen view="history" />)
 
@@ -91,18 +95,19 @@ describe('FeedbackScreen', () => {
     expect(await screen.findByText('jj')).toBeInTheDocument()
     expect(screen.getByText('bnv')).toBeInTheDocument()
     expect(screen.getByText('Thanks for the note.')).toBeInTheDocument()
-    expect(listFeedbackThreadsAction).toHaveBeenCalledTimes(1)
+    expect(apiFetch).toHaveBeenCalledWith('/api/feedback')
   })
 
   it('renders the empty history mockup when there is no feedback yet', async () => {
     const user = userEvent.setup()
-    listFeedbackThreadsAction.mockResolvedValueOnce([])
+    apiFetch.mockResolvedValueOnce(new Response(JSON.stringify({ feedback: [] }), { status: 200 }))
 
     renderWithQueryClient(<FeedbackScreen view="history" />)
 
     expect(await screen.findByRole('heading', { name: /the conversation/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /send your first note/i })).toHaveClass('be-feedback-empty-state__cta')
     expect(screen.queryByRole('region', { name: /feedback history/i })).not.toBeInTheDocument()
+    expect(apiFetch).toHaveBeenCalledWith('/api/feedback')
 
     await user.click(screen.getByRole('button', { name: /send your first note/i }))
     expect(push).toHaveBeenCalledWith('/brag/feedback')
