@@ -92,6 +92,17 @@ describe('layout shells', () => {
     expect(screen.getByText('feedback:feedback-history:Clausule · Feedback:ada@example.com')).toBeInTheDocument()
   })
 
+  it('falls back to the auth user email for the author shell sidebar', () => {
+    render(
+      <AuthorShell pathname="/brag/settings" session={{ user: { email: 'ada@example.com' } }}>
+        <h1 id="brag-settings-title">Security settings</h1>
+        <div>open</div>
+      </AuthorShell>
+    )
+
+    expect(screen.getByText('settings::Clausule · Settings:ada@example.com')).toBeInTheDocument()
+  })
+
   it('renders the fallback author shell for brag settings', () => {
     render(
       <AuthorShell pathname="/brag/settings">
