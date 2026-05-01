@@ -398,10 +398,10 @@
   --ring-inner: var(--cl-ring-inner);
   --r: var(--cl-radius-md);
   --r2: var(--cl-radius-md);
-  --sidebar-bg: var(--cl-surface-ink-2);
-  --sidebar-bg-soft: var(--cl-surface-ink-4);
+  --sidebar-bg: var(--cl-surface-ink);
+  --sidebar-bg-soft: var(--cl-surface-ink-7);
   --sidebar-bg-hover: var(--cl-white-4);
-  --sidebar-border: var(--cl-surface-ink-5);
+  --sidebar-border: var(--cl-surface-ink-8);
   --sidebar-text: var(--cl-surface-muted-10);
   --sidebar-text-strong: var(--cl-surface-muted-14);
   --sidebar-text-muted: var(--cl-surface-muted-7);
