@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@shared/components/ui/Button'
 import { Link } from '@shared/components/ui/Link'
 import { BrandMarkIcon } from '@shared/components/ui/icon/BrandMarkIcon'
-import '@landing/styles/not-found.css'
 
 const FLOATS = [
   { text: 'Led the platform migration with zero rollbacks', style: { left: '3%', top: '20%', '--rot': '-2deg', animationDuration: '8s', animationDelay: '0s' } },
@@ -43,48 +42,48 @@ export default function NotFound() {
   const router = useRouter()
 
   return (
-    <div className="nf-wrap">
-      <div className="nf-ruled" aria-hidden="true" />
+    <div className="nf-wrap fixed inset-0 flex min-h-screen w-screen flex-col items-center justify-center overflow-hidden bg-[var(--cl-surface-warm)] px-6 py-12">
+      <div className="nf-ruled pointer-events-none fixed inset-0 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_47px,var(--cl-rule-dark-2)_47px,var(--cl-rule-dark-2)_48px)]" aria-hidden="true" />
 
-      <Link href="/" className="nf-logo" aria-label="Clausule - home">
-        <div className="nf-logo-bug" aria-hidden="true">
+      <Link href="/" className="nf-logo fixed left-7 top-5 z-10 flex items-center gap-[9px] no-underline" aria-label="Clausule - home">
+        <div className="nf-logo-bug flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--cl-surface-ink-3)]" aria-hidden="true">
           <BrandMarkIcon size={14} />
         </div>
-        <span className="nf-logo-name">clausule</span>
+        <span className="nf-logo-name text-[var(--cl-text-lg)] font-extrabold tracking-[-0.3px] text-[var(--cl-surface-ink-3)]">clausule</span>
       </Link>
 
-      <div className="nf-floats" aria-hidden="true">
+      <div className="nf-floats pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         {FLOATS.map(({ text, style }) => (
-          <div key={text} className="nf-fe" style={style}>
-            <span className="nf-dot" />
+          <div key={text} className="nf-fe absolute whitespace-nowrap rounded-[var(--cl-radius-lg)] border border-[var(--cl-border-dark)] bg-[var(--cl-surface-paper-2)] px-3.5 py-2.5 text-[var(--cl-text-xs)] font-bold text-[var(--cl-surface-muted-8)] opacity-70" style={style}>
+            <span className="nf-dot mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[var(--acc,var(--cl-accent))] align-middle" />
             {text}
           </div>
         ))}
       </div>
 
-      <main className="nf-content">
-        <div className="nf-num" aria-label="404">
+      <main className="nf-content relative z-[1] flex max-w-[440px] flex-col items-center text-center">
+        <div className="nf-num flex items-center text-[140px] font-black leading-[0.9] tracking-[-8px] text-[var(--cl-surface-ink-3)] max-[480px]:text-[100px] max-[480px]:tracking-[-5px]" aria-label="404">
           <span aria-hidden="true">4</span>
-          <div className="nf-doc" role="img" aria-label="document">
-            <div className="nf-doc-corner" />
-            <div className="nf-doc-line" />
-            <div className="nf-doc-line" />
-            <div className="nf-doc-line" />
+          <div className="nf-doc relative flex h-[90px] w-[72px] -translate-y-1 flex-col items-start justify-center gap-[7px] rounded-lg bg-[var(--cl-surface-ink-3)] px-3 py-3.5 max-[480px]:h-[66px] max-[480px]:w-[52px]" role="img" aria-label="document">
+            <div className="nf-doc-corner absolute -right-px -top-px h-[14px] w-[14px] rounded-tr-lg bg-[var(--cl-surface-warm)] after:absolute after:left-0 after:top-0 after:h-[14px] after:w-[14px] after:rounded-[0_8px_0_6px] after:bg-[var(--cl-ink-2)] after:content-['']" />
+            <div className="nf-doc-line h-1 w-full rounded bg-[var(--cl-surface-warm)]" />
+            <div className="nf-doc-line h-1 w-[72%] rounded bg-[var(--cl-surface-warm)]" />
+            <div className="nf-doc-line h-1 w-[44%] rounded bg-[var(--acc,var(--cl-accent))]" />
           </div>
           <span aria-hidden="true">4</span>
         </div>
 
-        <h1 className="nf-heading">This entry doesn't exist.</h1>
-        <p className="nf-sub">
+        <h1 className="nf-heading mb-2 mt-7 text-[26px] font-black tracking-[-0.6px] text-[var(--cl-surface-ink-3)]">This entry doesn't exist.</h1>
+        <p className="nf-sub mb-8 text-[var(--cl-text-lg)] leading-[1.65] text-[var(--cl-surface-muted-4)]">
           Whatever you were looking for isn't in the file.
           <br />
           It might have been moved, deleted, or never written down.
         </p>
 
-        <div className="nf-actions">
+        <div className="nf-actions flex flex-wrap justify-center gap-3">
           <Button
             type="button"
-            className="nf-btn-secondary"
+            className="nf-btn-secondary rounded-[var(--cl-radius-md)] border-[1.5px] border-[var(--cl-border-dark-4)] bg-transparent px-[22px] py-3 text-[var(--cl-text-base)] font-bold text-[var(--cl-ink-2)] shadow-none hover:border-[var(--cl-ink-alpha-20)]"
             onClick={() => router.back()}
             variant="ghost"
           >

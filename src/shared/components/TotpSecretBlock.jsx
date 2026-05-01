@@ -17,6 +17,7 @@ const QRCodeSVG = dynamic(
 export default function TotpSecretBlock({
   copied,
   contentClassName = '',
+  copyClassName = '',
   layoutClassName = '',
   qrClassName,
   qrSize,
@@ -38,7 +39,7 @@ export default function TotpSecretBlock({
       <div className={contentClassName}>
         <div className={secretRowClassName}>
           <code className={secretClassName} role="textbox" aria-readonly="true" aria-label={secretAriaLabel}>{secret}</code>
-          <Button type="button" variant="ghost" className="copy" onClick={onCopy} aria-label="Copy secret key">
+          <Button type="button" variant="ghost" className={copyClassName || 'copy'} onClick={onCopy} aria-label="Copy secret key">
             <CopyIcon copied={copied} />
           </Button>
         </div>

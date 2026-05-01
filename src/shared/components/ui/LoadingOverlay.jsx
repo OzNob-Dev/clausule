@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import './LoadingOverlay.css'
 
 const POOLS = [
   { x: 0.22, y: 0.48, r: 0.42, phase: 0, sp: 0.003 },
@@ -119,18 +118,18 @@ export default function LoadingOverlay({
   }, [])
 
   return (
-    <div className="loading-overlay-frame" aria-busy="true">
-      <div className="loading-overlay" role="status" aria-label={label}>
-        <canvas ref={canvasRef} className="loader-canvas" aria-hidden="true" />
-        <div className="loader-copy">
-          <p className="loader-eyebrow">{eyebrow}</p>
-          <h2 className="loader-heading" aria-label="Just a moment.">Just a<br /><em>moment.</em></h2>
-          <div className="loader-rule" />
-          <p className="loader-sub">{sub}</p>
-          <div className="loader-dots" aria-hidden="true">
-            <span className="dot" />
-            <span className="dot" />
-            <span className="dot" />
+    <div className="loading-overlay-frame relative h-screen min-h-full w-full flex-1 self-stretch overflow-hidden" aria-busy="true">
+      <div className="loading-overlay absolute inset-0 h-full overflow-hidden bg-[linear-gradient(165deg,#F7F3EE_0%,#EDE6DA_100%)] [font-family:'Source_Sans_3',sans-serif]" role="status" aria-label={label}>
+        <canvas ref={canvasRef} className="loader-canvas absolute inset-0 block h-full w-full" aria-hidden="true" />
+        <div className="loader-copy pointer-events-none absolute left-1/2 top-1/2 z-[1] flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-5 text-center">
+          <p className="loader-eyebrow text-[var(--cl-text-2xs)] font-bold uppercase tracking-[3.5px] text-[rgba(196,107,74,0.6)] motion-safe:animate-pulse">{eyebrow}</p>
+          <h2 className="loader-heading text-[clamp(34px,5vw,42px)] leading-[1.08] tracking-[-1.2px] text-[#1C1A17] [font-family:var(--cl-font-editorial)]" aria-label="Just a moment.">Just a<br /><em className="text-[#C46B4A]">moment.</em></h2>
+          <div className="loader-rule h-px w-12 bg-[rgba(196,107,74,0.4)]" />
+          <p className="loader-sub text-[var(--cl-text-md)] leading-[1.5] tracking-[0.2px] text-[#8B7B6B]">{sub}</p>
+          <div className="loader-dots flex gap-2.5" aria-hidden="true">
+            <span className="dot h-1 w-1 rounded-full bg-[#C46B4A] motion-safe:animate-bounce" />
+            <span className="dot h-1 w-1 rounded-full bg-[#C46B4A] motion-safe:animate-bounce [animation-delay:0.15s]" />
+            <span className="dot h-1 w-1 rounded-full bg-[#C46B4A] motion-safe:animate-bounce [animation-delay:0.3s]" />
           </div>
         </div>
       </div>

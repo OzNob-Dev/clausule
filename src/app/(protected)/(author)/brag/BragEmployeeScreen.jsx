@@ -8,9 +8,6 @@ import EntryComposer from '@shared/components/EntryComposer'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import PageHeader from '@shared/components/ui/PageHeader'
-import '@brag/styles/brag-settings-core.css'
-import '@brag/styles/brag-doc.css'
-import '@brag/styles/resume-tab.css'
 import '@shared/styles/page-loader.css'
 
 const ResumeTab = dynamic(() => import('@shared/components/ResumeTab'), {
@@ -89,11 +86,11 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
         ) : (
           <section aria-labelledby="resume-page-title">
             <PageHeader
-              className="be-doc-header"
+              className="be-doc-header max-w-[760px] border-b border-[var(--cl-ink-alpha-12)] pb-7"
               eyebrow="Your achievements"
-              eyebrowClassName="be-doc-eyebrow"
+              eyebrowClassName="be-doc-eyebrow mb-3 block text-[var(--cl-text-xs)] font-bold uppercase tracking-[2.5px] text-[var(--cl-accent-deep)]"
               title="Resume"
-              titleClassName="be-doc-title"
+              titleClassName="be-doc-title [font-family:'DM_Serif_Display',Georgia,serif] text-[44px] leading-none tracking-[-1.5px] text-[var(--cl-surface-ink-2)]"
               titleId="resume-page-title"
             />
             <ResumeTab entries={initialEntries} />
@@ -112,11 +109,11 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
       ) : hasEntries ? (
         <>
           <PageHeader
-            className="be-doc-header"
+            className="be-doc-header max-w-[760px] border-b border-[var(--cl-ink-alpha-12)] pb-7"
             eyebrow="Your achievements"
-            eyebrowClassName="be-doc-eyebrow"
+            eyebrowClassName="be-doc-eyebrow mb-3 block text-[var(--cl-text-xs)] font-bold uppercase tracking-[2.5px] text-[var(--cl-accent-deep)]"
             title="Your entries"
-            titleClassName="be-doc-title"
+            titleClassName="be-doc-title [font-family:'DM_Serif_Display',Georgia,serif] text-[44px] leading-none tracking-[-1.5px] text-[var(--cl-surface-ink-2)]"
           />
 
           {!composerOpen ? (
@@ -129,22 +126,22 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
                 onYearSelect={handleYearSelect}
               />
 
-              <div className="be-doc-timeline">
+              <div className="be-doc-timeline grid gap-0">
                 {visibleGroups.map(({ year, groups }) => (
-                  <section key={year} id={yearSectionId(year)} className="be-doc-year-group" aria-labelledby={`${yearSectionId(year)}-label`}>
-                    <div className="be-doc-year-header">
-                      <h2 className="be-doc-year-badge" id={`${yearSectionId(year)}-label`}>{year}</h2>
-                      <div className="be-doc-year-line" aria-hidden="true" />
+                  <section key={year} id={yearSectionId(year)} className="be-doc-year-group mb-[52px] scroll-mt-6 last:mb-0" aria-labelledby={`${yearSectionId(year)}-label`}>
+                    <div className="be-doc-year-header mb-7 flex items-center gap-4">
+                      <h2 className="be-doc-year-badge rounded-md bg-[var(--cl-surface-muted-13)] px-3 py-[5px] text-[var(--cl-text-sm)] font-bold leading-[1.4] tracking-[0.8px] text-[var(--cl-surface-ink-2)]" id={`${yearSectionId(year)}-label`}>{year}</h2>
+                      <div className="be-doc-year-line h-px flex-1 bg-[var(--cl-ink-alpha-12)]" aria-hidden="true" />
                     </div>
 
                     {groups.map((group) => (
-                      <div key={group.key} className="be-doc-company-group">
-                        <header className="be-doc-company-header">
-                          <span className="be-doc-company-name">{group.company}</span>
-                          <span className="be-doc-company-role">{group.role}</span>
+                      <div key={group.key} className="be-doc-company-group mb-9 last:mb-0">
+                        <header className="be-doc-company-header mb-5 flex flex-col gap-1">
+                          <span className="be-doc-company-name text-[var(--cl-text-xl)] font-bold text-[var(--cl-surface-ink-2)]">{group.company}</span>
+                          <span className="be-doc-company-role text-[var(--cl-text-sm)] uppercase tracking-[0.12em] text-[var(--cl-surface-muted-8)]">{group.role}</span>
                         </header>
 
-                        <div className="be-doc-entries-list">
+                        <div className="be-doc-entries-list grid gap-4">
                           {group.entries.map((entry) => (
                             <BragDocEntryCard key={entry.id} entry={entry} />
                           ))}

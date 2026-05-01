@@ -9,7 +9,6 @@ import { formatMobile } from '@account/utils/formatMobile'
 import { useProfileForm } from '@account/hooks/useProfileForm'
 import { useProfileSave } from '@account/hooks/useProfileSave'
 import { Button } from '@shared/components/ui/Button'
-import '@brag/styles/brag-settings-core.css'
 import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 
 export default function ProfileScreen() {
@@ -26,17 +25,17 @@ export default function ProfileScreen() {
   return (
     <>
       <PageHeader
-        className="bss-header"
+        className="bss-header mb-8"
         eyebrow="Account"
         eyebrowAriaHidden
-        eyebrowClassName="bss-eyebrow"
+        eyebrowClassName="bss-eyebrow mb-[10px] text-[var(--cl-text-sm)] font-bold uppercase tracking-[0.14em] text-[var(--cl-accent-deep)]"
         title="Personal details"
-        titleClassName="bss-heading"
+        titleClassName="bss-heading [font-family:var(--cl-font-serif)] text-[clamp(2.5rem,4.6vw,3.4rem)] leading-[1.02] tracking-[-0.02em] text-[var(--cl-surface-ink-2)]"
         titleId="profile-page-title"
         description="Manage the identity, contact, and work details connected to your account."
-        descriptionClassName="bss-subheading"
+        descriptionClassName="bss-subheading text-[clamp(1rem,1.8vw,1.125rem)] leading-[1.6] text-[var(--cl-surface-muted-9)]"
       />
-      <div className="bss-divider" />
+      <div className="bss-divider mb-11 h-0.5 bg-[linear-gradient(90deg,var(--cl-accent-deep)_0%,var(--cl-accent-soft-11)_58%,transparent_100%)]" />
       <SectionCard
         as="form"
         ariaLabel="Personal details form"

@@ -24,11 +24,11 @@ export function ConversationIllustration({ size = 220, ...props }) {
       <g className="be-feedback-empty-state__bubble be-feedback-empty-state__bubble--four">
         <rect x="114" y="110" width="96" height="36" rx="10" fill="#FAF0EA" stroke="rgba(196,107,74,0.2)" strokeWidth="0.8" />
         <rect x="196" y="140" width="14" height="7" rx="0 0 6 0" fill="#FAF0EA" stroke="rgba(196,107,74,0.2)" strokeWidth="0.8" />
-        <circle className="be-feedback-empty-state__dot be-feedback-empty-state__dot--one" cx="149" cy="128" r="3.5" fill="#C46B4A" />
-        <circle className="be-feedback-empty-state__dot be-feedback-empty-state__dot--two" cx="162" cy="128" r="3.5" fill="#C46B4A" />
-        <circle className="be-feedback-empty-state__dot be-feedback-empty-state__dot--three" cx="175" cy="128" r="3.5" fill="#C46B4A" />
+        <circle className="be-feedback-empty-state__dot be-feedback-empty-state__dot--one animate-pulse" cx="149" cy="128" r="3.5" fill="#C46B4A" />
+        <circle className="be-feedback-empty-state__dot be-feedback-empty-state__dot--two animate-pulse" cx="162" cy="128" r="3.5" fill="#C46B4A" />
+        <circle className="be-feedback-empty-state__dot be-feedback-empty-state__dot--three animate-pulse" cx="175" cy="128" r="3.5" fill="#C46B4A" />
       </g>
-      <g className="be-feedback-empty-state__arrow">
+      <g className="be-feedback-empty-state__arrow animate-pulse">
         <circle cx="110" cy="80" r="14" fill="#EAE4DA" />
         <path d="M104 80h12M110 74l6 6-6 6" stroke="#C46B4A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </g>

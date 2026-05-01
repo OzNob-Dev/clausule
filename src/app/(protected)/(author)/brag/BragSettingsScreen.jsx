@@ -8,8 +8,6 @@ import PageHeader from '@shared/components/ui/PageHeader'
 import { DeleteAccountDialog } from '@shared/components/DeleteAccountDialog'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { useTotpStatusQuery } from '@shared/queries/useProfileQuery'
-import '@brag/styles/brag-settings-core.css'
-import '@brag/styles/brag-settings-totp.css'
 import '@shared/styles/page-loader.css'
 
 export default function BragSettings() {
@@ -41,17 +39,17 @@ export default function BragSettings() {
   return (
     <>
       <PageHeader
-        className="bss-header"
+        className="bss-header mb-8"
         eyebrow="Account"
         eyebrowAriaHidden
-        eyebrowClassName="bss-eyebrow"
+        eyebrowClassName="bss-eyebrow mb-[10px] text-[var(--cl-text-sm)] font-bold uppercase tracking-[0.14em] text-[var(--cl-accent-deep)]"
         title="Security settings"
-        titleClassName="bss-heading"
+        titleClassName="bss-heading [font-family:var(--cl-font-serif)] text-[clamp(2.5rem,4.6vw,3.4rem)] leading-[1.02] tracking-[-0.02em] text-[var(--cl-surface-ink-2)]"
         titleId="brag-settings-title"
         description="Manage how you sign in to Clausule."
-        descriptionClassName="bss-subheading"
+        descriptionClassName="bss-subheading text-[clamp(1rem,1.8vw,1.125rem)] leading-[1.6] text-[var(--cl-surface-muted-9)]"
       />
-      <div className="bss-divider" />
+      <div className="bss-divider mb-11 h-0.5 bg-[linear-gradient(90deg,var(--cl-accent-deep)_0%,var(--cl-accent-soft-11)_58%,transparent_100%)]" />
       <BragSecurityMethodsCard
         authenticatorAppConfigured={authenticatorAppConfigured}
         hasSecuritySnapshot={hasSecuritySnapshot}

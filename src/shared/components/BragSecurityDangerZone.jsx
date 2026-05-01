@@ -9,8 +9,8 @@ export default function BragSecurityDangerZone({ onDelete }) {
     <section className="bss-danger-section mt-[52px] max-[860px]:mt-10" aria-labelledby="security-danger-title">
       <div className="bss-danger-label mb-[10px] flex items-center gap-3 text-[var(--cl-text-sm)] font-bold uppercase tracking-[0.14em] text-[var(--cl-danger-5)] after:h-px after:flex-1 after:bg-[var(--cl-danger-alpha-18)] after:content-['']" id="security-danger-title">Danger zone</div>
       <SectionCard
-        className="danger-card border border-[var(--cl-danger-alpha-18)] bg-[var(--cl-surface-white)]"
-        headerClassName="danger-card-head flex items-center justify-between gap-4 bg-[#341818] px-8 py-5"
+        className="bss-danger-card danger-card border border-[var(--cl-danger-alpha-18)] bg-[var(--cl-surface-white)]"
+        headerClassName="bss-danger-card-head danger-card-head flex items-center justify-between gap-4 bg-[#341818] px-8 py-5"
         titleClassName="bss-danger-card-head-title"
         metaClassName="bss-danger-card-head-meta"
         title="Irreversible actions"

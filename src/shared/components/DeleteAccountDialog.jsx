@@ -4,7 +4,6 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { Button } from '@shared/components/ui/Button'
 import { Modal } from '@shared/components/ui/Modal'
 import { useDeleteAccount } from '@account/hooks/useDeleteAccount'
-import './DeleteAccountDialog.css'
 import { ShieldIcon } from '@shared/components/ui/icon/ShieldIcon'
 import { AlertIcon } from '@shared/components/ui/icon/AlertIcon'
 
@@ -216,35 +215,35 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
       labelledBy={titleId}
       describedBy={subtitleId}
     >
-      <div className="delete-account-dialog">
-        <div className="delete-account-dialog__head">
-          <canvas ref={headCanvasRef} className="delete-account-dialog__canvas" aria-hidden="true" />
-          <div className="delete-account-dialog__head-content">
-            <div className="delete-account-dialog__icon-wrap" aria-hidden="true">
-              <ShieldIcon />
+      <div className="delete-account-dialog mx-auto w-full max-w-[520px] overflow-hidden rounded-2xl bg-[var(--cl-dialog-delete-surface)]">
+        <div className="delete-account-dialog__head relative flex min-h-[110px] items-center gap-5 overflow-hidden bg-[#1A0808] px-7 pb-[26px] pt-6 max-[560px]:px-5">
+          <canvas ref={headCanvasRef} className="delete-account-dialog__canvas absolute inset-0 h-full w-full pointer-events-none" aria-hidden="true" />
+          <div className="delete-account-dialog__head-content relative z-[2] flex items-center gap-5 max-[560px]:gap-4">
+            <div className="delete-account-dialog__icon-wrap relative flex h-[52px] w-[52px] shrink-0 items-center justify-center max-[560px]:h-[46px] max-[560px]:w-[46px]" aria-hidden="true">
+              <ShieldIcon size={52} className="max-[560px]:h-[46px] max-[560px]:w-[46px]" />
             </div>
 
-            <div className="delete-account-dialog__head-text">
-              <h2 className="delete-account-dialog__title" id={titleId}>Delete your account?</h2>
-              <p className="delete-account-dialog__subtitle" id={subtitleId}>This action is permanent and cannot be undone.</p>
+            <div className="delete-account-dialog__head-text relative z-[2] flex-1">
+              <h2 className="delete-account-dialog__title mb-[5px] text-[var(--cl-title-lg)] font-normal leading-[1.1] tracking-[-0.4px] text-[#FFE8E8] [font-family:var(--cl-font-editorial)]" id={titleId}>Delete your account?</h2>
+              <p className="delete-account-dialog__subtitle text-[var(--cl-text-md)] leading-[1.45] text-[#C09090]" id={subtitleId}>This action is permanent and cannot be undone.</p>
             </div>
           </div>
         </div>
 
-        <div className="delete-account-dialog__body">
-          <p className="delete-account-dialog__copy">{description}</p>
+        <div className="delete-account-dialog__body px-7 pb-6 pt-7 max-[560px]:px-5">
+          <p className="delete-account-dialog__copy mb-[18px] text-[var(--cl-text-base)] leading-[1.7] text-[#3D2F22]">{description}</p>
 
-          <div className="delete-account-dialog__warning" role="alert">
-            <span className="delete-account-dialog__warning-icon" aria-hidden="true">
-              <AlertIcon />
+          <div className="delete-account-dialog__warning mb-6 flex items-start gap-3 rounded-lg border border-[rgba(176,48,48,0.2)] border-l-[3px] border-l-[#B83232] bg-[#FEF0EE] px-4 py-[14px]" role="alert">
+            <span className="delete-account-dialog__warning-icon mt-px shrink-0" aria-hidden="true">
+              <AlertIcon size={16} className="stroke-[#B83232] [stroke-linecap:round] [stroke-linejoin:round]" />
             </span>
-            <span className="delete-account-dialog__warning-text">You will lose all your data immediately. There is no recovery option.</span>
+            <span className="delete-account-dialog__warning-text text-[var(--cl-text-md)] font-bold leading-[1.45] text-[#8B2020]">You will lose all your data immediately. There is no recovery option.</span>
           </div>
 
           <div className="delete-account-dialog__confirm confirm-section">
-            <span className="delete-account-dialog__label confirm-label">Confirmation required</span>
-            <div className="delete-account-dialog__input-wrap confirm-input-wrap">
-              <span className="delete-account-dialog__input-label-inner confirm-input-label-inner" aria-hidden="true">Type DELETE to confirm</span>
+            <span className="delete-account-dialog__label confirm-label mb-3 block text-[var(--cl-text-xs)] font-bold uppercase leading-[1.2] tracking-[2px] text-[#4A3828]">Confirmation required</span>
+            <div className="delete-account-dialog__input-wrap confirm-input-wrap relative rounded-[10px] border-[1.5px] border-[rgba(176,48,48,0.35)] bg-[#1A0808] px-5 py-4 focus-within:border-[#B83232] focus-within:shadow-[0_0_0_3px_rgba(176,48,48,0.15),inset_0_0_40px_rgba(180,30,10,0.2)]">
+              <span className="delete-account-dialog__input-label-inner confirm-input-label-inner mb-1.5 block text-[var(--cl-text-2xs)] font-bold uppercase leading-[1.2] tracking-[2px] text-[#F0A090]" aria-hidden="true">Type DELETE to confirm</span>
               <input
                 ref={confirmInputRef}
                 id="delete-confirm-input"
@@ -255,27 +254,29 @@ export function DeleteAccountDialog({ open, onClose, description = DEFAULT_DESCR
                 autoComplete="off"
                 autoFocus
                 spellCheck={false}
-                className="delete-account-dialog__input confirm-input"
+                className="delete-account-dialog__input confirm-input block w-full border-0 bg-transparent p-0 text-[var(--cl-display-sm)] font-normal leading-[1.1] tracking-[6px] text-[#FFE8E8] outline-none [font-family:var(--cl-font-editorial)] placeholder:text-[rgba(255,160,130,0.6)]"
                 aria-label="Type DELETE to confirm"
                 aria-describedby={confirmDescId}
               />
-              <div className="delete-account-dialog__input-underline confirm-input-underline" aria-hidden="true" />
+              <div className="delete-account-dialog__input-underline confirm-input-underline relative mt-2.5 h-[1.5px] overflow-hidden rounded-[1px] bg-[rgba(176,48,48,0.25)]" aria-hidden="true">
+                <div className="absolute inset-y-0 left-0 w-full bg-[linear-gradient(90deg,transparent,rgba(255,80,40,0.7),transparent)] opacity-60" />
+              </div>
             </div>
-            <p className="delete-account-dialog__hint confirm-input-hint" aria-hidden="true">Type DELETE in capitals - this cannot be undone</p>
+            <p className="delete-account-dialog__hint confirm-input-hint mt-2 text-[var(--cl-text-xs)] leading-[1.45] tracking-[0.3px] text-[#C08888]" aria-hidden="true">Type DELETE in capitals - this cannot be undone</p>
             <span id={confirmDescId} className="sr-only">Type the word DELETE in capital letters to enable the delete button</span>
           </div>
 
-          <div className="delete-account-dialog__rule" />
+          <div className="delete-account-dialog__rule my-6 h-[0.5px] bg-[rgba(28,26,23,0.1)]" />
 
-          {deleteError && <p className="delete-account-dialog__error" role="alert">{deleteError}</p>}
+          {deleteError ? <p className="delete-account-dialog__error mb-4 rounded-lg border border-[rgba(180,60,40,0.22)] bg-[rgba(180,60,40,0.08)] px-4 py-[14px] text-[var(--cl-text-sm)] font-bold leading-[1.45] text-[#7A1F12]" role="alert">{deleteError}</p> : null}
 
-          <div className="delete-account-dialog__actions">
-            <Button type="button" variant="ghost" className="delete-account-dialog__cancel" onClick={handleClose} disabled={deleting}>
+          <div className="delete-account-dialog__actions flex gap-3 max-[560px]:flex-col-reverse">
+            <Button type="button" variant="ghost" className="delete-account-dialog__cancel flex-1 justify-center rounded-lg border-[1.5px] border-[rgba(28,26,23,0.15)] bg-transparent px-[13px] py-[13px] text-[var(--cl-text-md)] font-bold leading-[1.2] text-[#5C4E42] shadow-none transition-[background,border-color,color,opacity] duration-150 hover:bg-[#EAE4DA] hover:opacity-100 hover:translate-y-0" onClick={handleClose} disabled={deleting}>
               Cancel
             </Button>
             <Button
               type="button"
-              className={`delete-account-dialog__delete${confirmReady ? ' is-ready' : ''}`}
+              className={`delete-account-dialog__delete flex-1 justify-center rounded-lg border-0 px-[13px] py-[13px] text-[var(--cl-text-md)] font-bold leading-[1.2] text-[#F5E8E8] shadow-none transition-[background,border-color,color,opacity] duration-150 hover:translate-y-0 ${confirmReady ? 'is-ready bg-[#8B2020] opacity-100 hover:bg-[#6E1818]' : 'bg-[#8B2020] opacity-40'}`}
               onClick={handleConfirm}
               disabled={!confirmReady || deleting}
               aria-disabled={!confirmReady || deleting}
