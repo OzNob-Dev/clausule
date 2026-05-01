@@ -46,7 +46,7 @@ export default function BragSettings() {
         titleClassName="bss-heading [font-family:var(--cl-font-serif)] text-[clamp(2.5rem,4.6vw,3.4rem)] leading-[1.02] tracking-[-0.02em] text-[var(--cl-surface-ink-2)]"
         titleId="brag-settings-title"
         description="Manage how you sign in to Clausule."
-        descriptionClassName="bss-subheading text-[clamp(1rem,1.8vw,1.125rem)] leading-[1.6] text-[var(--cl-surface-muted-9)]"
+        descriptionClassName="bss-subheading text-[clamp(0.9375rem,1.45vw,1rem)] leading-[1.55] text-[var(--cl-surface-muted-9)]"
       />
       <div className="bss-divider mb-11 h-0.5 bg-[linear-gradient(90deg,var(--cl-accent-deep)_0%,var(--cl-accent-soft-11)_58%,transparent_100%)]" />
       <BragSecurityMethodsCard
