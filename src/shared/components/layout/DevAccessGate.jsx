@@ -28,5 +28,5 @@ export default function DevAccessGate({ children }) {
   }, [])
 
   if (!checked) return <LoadingOverlay />
-  return allowed ? children : <ComingSoon />
+  return allowed ? <LoadingOverlay /> : <ComingSoon />
 }
