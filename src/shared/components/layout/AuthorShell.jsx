@@ -9,6 +9,10 @@ const SETTINGS_CONFIG = {
 
 export default function AuthorShell({ children, pathname, session = null }) {
   const pageConfig = PAGE_CONFIG[pathname] ?? SETTINGS_CONFIG
+  const identityProfile = {
+    ...(session?.profile ?? {}),
+    email: session?.profile?.email || session?.user?.email || '',
+  }
 
   return (
     <div className="be-page flex min-h-screen w-full bg-[var(--canvas)] max-[768px]:flex-col">
@@ -17,7 +21,7 @@ export default function AuthorShell({ children, pathname, session = null }) {
         activeChildPage={pageConfig.activeChildPage}
         eyebrow={pageConfig.eyebrow}
         ariaLabel="Sidebar navigation"
-        profile={session?.profile ?? {}}
+        profile={identityProfile}
       />
       <main className="be-main bss-screen page-enter min-w-0 flex-1 overflow-y-auto bg-[var(--cl-surface-warm)]" aria-labelledby={pageConfig.ariaLabelledby}>
         <div className="be-inner bss-page mx-[100px] max-w-[920px] px-8 pb-16 pt-14 max-[768px]:mx-0 max-[768px]:px-5 max-[768px]:pb-20 max-[768px]:pt-8">{children}</div>

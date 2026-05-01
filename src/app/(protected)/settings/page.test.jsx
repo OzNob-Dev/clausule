@@ -1,15 +1,17 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import Page from './page'
+import { ROUTES } from '@shared/utils/routes'
 
-vi.mock('@brag/BragSettingsScreen', () => ({
-  default: () => <div>settings screen</div>,
+const redirect = vi.fn()
+
+vi.mock('next/navigation', () => ({
+  redirect: (...args) => redirect(...args),
 }))
 
 describe('settings page', () => {
-  it('renders the settings screen', () => {
-    render(<Page />)
-    expect(screen.getByText('settings screen')).toBeInTheDocument()
+  it('redirects to the brag settings route', () => {
+    Page()
+    expect(redirect).toHaveBeenCalledWith(ROUTES.bragSettings)
   })
 })

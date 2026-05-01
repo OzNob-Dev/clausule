@@ -1,5 +1,6 @@
-import BragSettingsScreen from '@brag/BragSettingsScreen'
+import { redirect } from 'next/navigation'
+import { ROUTES } from '@shared/utils/routes'
 
 export default function Page() {
-  return <BragSettingsScreen />
+  redirect(ROUTES.bragSettings)
 }

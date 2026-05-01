@@ -66,14 +66,14 @@ export default function BragIdentitySidebar({
       aria-label={ariaLabel}
     >
       <div className="sidebar__head border-b-[1.5px] border-b-[var(--sidebar-border)] px-7 pb-6 pt-8 max-[768px]:px-5">
-        <div className="sidebar__eyebrow mb-[22px] text-[var(--cl-text-xs)] font-bold uppercase tracking-[0.16em] text-[var(--cl-white-42)]">{eyebrow}</div>
+        <div className="sidebar__eyebrow mb-5 text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--cl-white-42)]">{eyebrow}</div>
         <div className="sidebar__profile flex items-center gap-4 rounded-2xl border border-[var(--sidebar-border)] bg-[var(--sidebar-bg-soft)] p-4 transition-[transform,border-color,background-color] duration-200 hover:translate-x-[2px] hover:border-[var(--sidebar-accent)] hover:bg-[var(--cl-white-8)] motion-reduce:transition-none motion-reduce:hover:translate-x-0">
           <div className="sidebar__avatar sidebar__avatar-pop relative grid h-[52px] w-[52px] shrink-0 place-items-center overflow-hidden rounded-[14px] border border-[var(--cl-border-2)] bg-[linear-gradient(135deg,var(--cl-surface-muted-14)_0%,var(--cl-surface-muted-10)_100%)] [font-family:var(--cl-font-editorial)] text-[var(--cl-text-2xl)] font-semibold tracking-[-0.03em] text-[var(--cl-ink-6)] shadow-[var(--cl-shadow-ink)] before:absolute before:inset-0 before:bg-[linear-gradient(180deg,var(--cl-white-24)_0%,transparent_55%)] before:content-[''] motion-safe:animate-[sidebar-avatar-pop-in_0.62s_cubic-bezier(0.2,1,0.3,1)_both]">
             {initials}
           </div>
           <div className="sidebar__profile-text min-w-0">
-            <div className="sidebar__name overflow-hidden text-ellipsis whitespace-nowrap text-[var(--cl-text-lg)] font-bold leading-[1.3] text-[var(--sidebar-text-strong)]">{displayName}</div>
-            <div className="sidebar__role mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap text-[var(--cl-text-md)] text-[var(--sidebar-text-muted)]">{profile.email}</div>
+            <div className="sidebar__name overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-semibold leading-[1.3] text-[var(--sidebar-text-strong)]">{displayName}</div>
+            <div className="sidebar__role mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap text-[11px] text-[var(--sidebar-text-muted)]">{profile.email}</div>
           </div>
         </div>
       </div>

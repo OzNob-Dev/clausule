@@ -23,6 +23,7 @@ describe('shared utilities', () => {
 
   it('formats profile names and initials', () => {
     expect(profileDisplayName({ firstName: 'Ada', lastName: 'Lovelace' })).toBe('Ada Lovelace')
+    expect(profileDisplayName({ email: 'ada.lovelace@example.com' })).toBe('ada lovelace')
     expect(profileDisplayName({})).toBe('Your profile')
     expect(profileInitials({ firstName: 'Ada', lastName: 'Lovelace' })).toBe('AL')
     expect(profileInitials({ email: 'ada@example.com' })).toBe('A')
