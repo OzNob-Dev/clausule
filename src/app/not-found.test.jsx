@@ -3,13 +3,15 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import NotFound from './not-found'
 
-vi.mock('@landing/NotFoundScreen', () => ({
-  default: () => <div>Not found screen</div>,
+const back = vi.fn()
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ back }),
 }))
 
 describe('NotFound', () => {
-  it('renders the landing not found screen', () => {
+  it('renders the 404 content', () => {
     render(<NotFound />)
-    expect(screen.getByText('Not found screen')).toBeInTheDocument()
+    expect(screen.getByText(/This entry doesn't exist/i)).toBeInTheDocument()
   })
 })
