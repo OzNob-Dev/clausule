@@ -65,15 +65,18 @@ export default function BragIdentitySidebar({
     storeProfile: state.profile,
     userEmail: state.user?.email ?? '',
   })))
+  const firstName = storeProfile.firstName || storeProfile.first_name || profile.firstName || profile.first_name || ''
+  const lastName = storeProfile.lastName || storeProfile.last_name || profile.lastName || profile.last_name || ''
+  const email = storeProfile.email || profile.email || userEmail || ''
   const identity = {
     ...profile,
-    firstName: storeProfile.firstName || profile.firstName || profile.first_name || '',
-    lastName: storeProfile.lastName || profile.lastName || profile.last_name || '',
-    email: storeProfile.email || profile.email || userEmail || '',
+    firstName,
+    lastName,
+    email,
   }
   const displayName = profileDisplayName(identity)
   const initials = profileInitials(identity)
-  const email = identity.email?.trim() || ''
+  const emailLabel = email.trim()
 
   return (
     <aside
@@ -86,9 +89,9 @@ export default function BragIdentitySidebar({
           <div className="sidebar__avatar sidebar__avatar-pop relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-[12px] border border-[var(--cl-brown-alpha-10)] bg-[linear-gradient(135deg,var(--cl-surface-muted-14)_0%,var(--cl-surface-muted-10)_100%)] [font-family:var(--cl-font-editorial)] text-[18px] font-medium tracking-[-0.02em] text-[var(--cl-ink-6)] shadow-[var(--cl-shadow-ink)] before:absolute before:inset-0 before:bg-[linear-gradient(180deg,var(--cl-white-24)_0%,transparent_55%)] before:content-[''] motion-safe:animate-[sidebar-avatar-pop-in_0.62s_cubic-bezier(0.2,1,0.3,1)_both]">
             <span className="relative z-10">{initials}</span>
           </div>
-          <div className="sidebar__profile-text min-w-0">
+          <div className="sidebar__profile-text min-w-0 flex-1 overflow-hidden">
             <div className="sidebar__name overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-semibold leading-[1.3] text-[var(--sidebar-text-strong)]">{displayName}</div>
-            {email ? <div className="sidebar__role mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap text-[13px] text-[var(--sidebar-text-muted)]">{email}</div> : null}
+            {emailLabel ? <div className="sidebar__role mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap text-[13px] text-[var(--sidebar-text-muted)]">{emailLabel}</div> : null}
           </div>
         </div>
       </div>

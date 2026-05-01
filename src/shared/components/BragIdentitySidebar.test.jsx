@@ -58,4 +58,15 @@ describe('BragIdentitySidebar', () => {
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
     expect(screen.getByText('ada@example.com')).toBeInTheDocument()
   })
+
+  it('renders store identity when hydrated names arrive in server field shape', () => {
+    useProfileStore.getState().setUser({ id: 'user-1', email: 'ada@example.com', role: 'employee' })
+    useProfileStore.getState().setProfile({ first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com' })
+
+    render(<BragIdentitySidebar activePage="settings" eyebrow="Clausule · Settings" profile={{}} />)
+
+    expect(screen.getByText('AL')).toBeInTheDocument()
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(screen.getByText('ada@example.com')).toBeInTheDocument()
+  })
 })
