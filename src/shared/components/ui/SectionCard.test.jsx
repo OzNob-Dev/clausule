@@ -7,8 +7,12 @@ describe('SectionCard', () => {
   it('renders the profile card shell', () => {
     render(<SectionCard as="form" ariaLabel="Personal details form" title="Your profile" meta="Account settings"><p>Body</p></SectionCard>)
 
-    expect(screen.getByRole('form', { name: 'Personal details form' })).toBeInTheDocument()
-    expect(screen.getByText('Your profile')).toBeInTheDocument()
+    const form = screen.getByRole('form', { name: 'Personal details form' })
+    const title = screen.getByText('Your profile')
+
+    expect(form).toBeInTheDocument()
+    expect(form).toHaveClass('border-[0.5px]', 'rounded-[16px]')
+    expect(title).toHaveClass('text-[28px]', 'leading-none')
     expect(screen.getByText('Body')).toBeInTheDocument()
   })
 
@@ -28,7 +32,10 @@ describe('SectionCard', () => {
       </SectionCard>
     )
 
-    expect(screen.getByRole('form', { name: 'Billing details form' })).toHaveClass('custom-card')
+    const form = screen.getByRole('form', { name: 'Billing details form' })
+
+    expect(form).toHaveClass('custom-card')
+    expect(form.firstChild).toHaveClass('custom-head')
     expect(screen.getByText('Billing')).toHaveClass('custom-title')
     expect(screen.queryByText('Account settings')).not.toBeInTheDocument()
     expect(screen.getByText('Billing body')).toBeInTheDocument()

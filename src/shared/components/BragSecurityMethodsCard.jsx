@@ -32,6 +32,7 @@ export default function BragSecurityMethodsCard({
     <section className="bss-section" aria-labelledby="security-methods-title">
       <div className="bss-section-label text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--cl-surface-ink-2)]" id="security-methods-title">Two-factor authentication</div>
       <SectionCard
+        headerClassName="card-header flex items-center justify-between gap-4 bg-[var(--cl-surface-ink-2)] px-8 py-5"
         titleClassName="bss-card-head-title"
         metaClassName="bss-card-head-meta"
         title="Sign-in protection"
