@@ -30,7 +30,7 @@ export default function BragSecurityMethodsCard({
 }) {
   return (
     <section className="bss-section" aria-labelledby="security-methods-title">
-      <div className="bss-section-label text-[0.9375rem] leading-[1.4] text-[var(--cl-surface-ink-2)]" id="security-methods-title">Two-factor authentication</div>
+      <div className="bss-section-label text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--cl-surface-ink-2)]" id="security-methods-title">Two-factor authentication</div>
       <SectionCard
         titleClassName="bss-card-head-title"
         metaClassName="bss-card-head-meta"
@@ -44,7 +44,7 @@ export default function BragSecurityMethodsCard({
           </div>
           <div className="bss-method-content min-w-0 flex-1">
             <div className="bss-method-title mb-1 [font-family:var(--cl-font-serif)] text-[var(--cl-title-sm)] font-normal tracking-[-0.015em] text-[var(--cl-surface-ink-2)]">Email code</div>
-            <div className="bss-method-desc text-[var(--cl-text-lg)] leading-[1.55] text-[var(--cl-surface-muted-9)]">A one-time code sent to your email address each time you sign in.</div>
+            <div className="bss-method-desc text-[14px] leading-[1.55] text-[var(--cl-surface-muted-9)]">A one-time code sent to your email address each time you sign in.</div>
           </div>
           <StatusPill ariaLabel="Email code is active" label="Active" />
         </div>
@@ -62,7 +62,7 @@ export default function BragSecurityMethodsCard({
           </div>
           <div className="bss-method-content min-w-0 flex-1">
             <div className="bss-method-title mb-1 [font-family:var(--cl-font-serif)] text-[var(--cl-title-sm)] font-normal tracking-[-0.015em] text-[var(--cl-surface-ink-2)]">Authenticator app</div>
-            <div className="bss-method-desc text-[var(--cl-text-lg)] leading-[1.55] text-[var(--cl-surface-muted-9)]">
+            <div className="bss-method-desc text-[14px] leading-[1.55] text-[var(--cl-surface-muted-9)]">
               {authenticatorAppConfigured
                 ? 'Authenticator app verification is active for this account.'
                 : 'Required - set up an authenticator app to unlock the rest of Clausule.'}
@@ -82,7 +82,7 @@ export default function BragSecurityMethodsCard({
               {totpExpanded ? 'Cancel' : 'Set up'}
             </Button>
           ) : (
-            <span className="bss-method-loading whitespace-nowrap text-[var(--cl-text-base)] font-semibold text-[var(--cl-surface-muted-8)]" aria-busy="true">Loading authenticator status...</span>
+              <span className="bss-method-loading whitespace-nowrap text-[14px] font-semibold text-[var(--cl-surface-muted-8)]" aria-busy="true">Loading authenticator status...</span>
           )}
         </div>
 
@@ -101,8 +101,8 @@ export default function BragSecurityMethodsCard({
               <TimerIcon />
             </span>
             <div className="bss-alert-copy min-w-0">
-              <div className="bss-alert-title mb-[3px] text-[var(--cl-text-base)] font-bold text-[var(--cl-accent-deeper)]">Authenticator setup required</div>
-              <p className="bss-alert-desc inline text-[var(--cl-text-lg)] leading-[1.55] text-[var(--cl-surface-muted-9)]">
+              <div className="bss-alert-title mb-[3px] text-[14px] font-bold text-[var(--cl-accent-deeper)]">Authenticator setup required</div>
+              <p className="bss-alert-desc inline text-[14px] leading-[1.55] text-[var(--cl-surface-muted-9)]">
                 This keeps your account protected.{' '}
                 <button
                   type="button"
