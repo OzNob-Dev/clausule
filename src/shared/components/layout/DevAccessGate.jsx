@@ -27,6 +27,6 @@ export default function DevAccessGate({ children }) {
     setChecked(true)
   }, [])
 
-  if (!checked) return <div className="relative min-h-[55vh] w-full overflow-hidden"><LoadingOverlay /></div>
+  if (!checked) return <LoadingOverlay />
   return allowed ? children : <ComingSoon />
 }

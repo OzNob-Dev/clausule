@@ -18,7 +18,5 @@ export default function DevLoadingOverlayFlag({ children }) {
     setShowOverlay(hasLoadingOverlayFlag(window.location.search))
   }, [])
 
-  return showOverlay
-    ? <div className="loading-overlay-frame" aria-busy="true"><LoadingOverlay /></div>
-    : children
+  return showOverlay ? <LoadingOverlay /> : children
 }

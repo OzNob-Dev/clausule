@@ -10,8 +10,9 @@ const dir = dirname(fileURLToPath(import.meta.url))
 
 describe('LoadingOverlay', () => {
   it('renders the loading status and centered copy structure', () => {
-    render(<LoadingOverlay />)
+    const { container } = render(<LoadingOverlay />)
 
+    expect(container.querySelector('.loading-overlay-frame')).toBeInTheDocument()
     expect(screen.getByRole('status', { name: 'Loading' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /just a moment/i })).toBeInTheDocument()
   })
