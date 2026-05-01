@@ -19,7 +19,7 @@ export default function AuthorShell({ children, pathname, session = null }) {
         ariaLabel="Sidebar navigation"
         profile={session?.profile ?? {}}
       />
-      <main className="be-main bss-screen page-enter min-w-0 flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top,_rgba(196,107,74,0.07),_transparent_30%),linear-gradient(180deg,#f8f3ec_0%,#f6f0e8_48%,#f9f5ef_100%)]" aria-labelledby={pageConfig.ariaLabelledby}>
+      <main className="be-main bss-screen page-enter min-w-0 flex-1 overflow-y-auto bg-[var(--cl-surface-warm)]" aria-labelledby={pageConfig.ariaLabelledby}>
         <div className="be-inner bss-page mx-[100px] max-w-[920px] px-8 pb-16 pt-14 max-[768px]:mx-0 max-[768px]:px-5 max-[768px]:pb-20 max-[768px]:pt-8">{children}</div>
       </main>
     </div>
