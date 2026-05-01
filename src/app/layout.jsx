@@ -66,13 +66,13 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {needsClientProviders ? (
-          <DevAccessGate>
-            <QueryProvider>
+        <QueryProvider>
+          {needsClientProviders ? (
+            <DevAccessGate>
               <AuthProvider initialSession={session}>{content}</AuthProvider>
-            </QueryProvider>
-          </DevAccessGate>
-        ) : content}
+            </DevAccessGate>
+          ) : content}
+        </QueryProvider>
       </body>
     </html>
   )
