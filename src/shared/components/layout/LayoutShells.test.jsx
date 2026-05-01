@@ -29,8 +29,9 @@ vi.mock('@shared/components/SignupProgress', () => ({
 
 describe('layout shells', () => {
   it('renders the login shell', () => {
-    render(<LoginShell><div>Auth content</div></LoginShell>)
+    const { container } = render(<LoginShell><div>Auth content</div></LoginShell>)
 
+    expect(container.firstChild).toHaveClass('su-shell-wrap', 'su-page')
     expect(screen.getByText(/Thoughtful records\./)).toBeInTheDocument()
     expect(screen.getByText('Auth content')).toBeInTheDocument()
   })
