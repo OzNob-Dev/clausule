@@ -45,6 +45,15 @@ describe('layout shells', () => {
     expect(screen.getByText('Signup content')).toBeInTheDocument()
   })
 
+  it('aliases register to the signup sidebar copy and progress state', () => {
+    render(<SignupShell pathname="/register"><div>Register content</div></SignupShell>)
+
+    expect(screen.getByText(/Build your record\./)).toBeInTheDocument()
+    expect(screen.getByText('Signup summary')).toBeInTheDocument()
+    expect(screen.getByText('Signup progress:/signup')).toBeInTheDocument()
+    expect(screen.getByText('Register content')).toBeInTheDocument()
+  })
+
   it('renders the mfa shell with dedicated copy', () => {
     render(<MfaShell><div>MFA content</div></MfaShell>)
 

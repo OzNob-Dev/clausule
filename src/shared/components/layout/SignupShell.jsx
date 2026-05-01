@@ -7,15 +7,16 @@ import '@signup/styles/signup-theme.css'
 import '@signup/styles/signup-form.css'
 
 export default function SignupShell({ children, pathname }) {
-  const config = panelConfig[pathname] ?? panelConfig['/signup']
+  const shellPathname = pathname === '/register' ? '/signup' : pathname
+  const config = panelConfig[shellPathname] ?? panelConfig['/signup']
 
   return (
     <div className="su-shell-wrap su-page">
       <div className="su-shell">
         <SignInBrandPanel brandHref="/" headline={config.headline} subtext={config.subtext}>
-          {pathname === '/signup' && <SignupPanelSummary />}
-          {pathname === '/signup/plan' && <SignupPlanPanelContent />}
-          <SignupProgress pathname={pathname} />
+          {shellPathname === '/signup' && <SignupPanelSummary />}
+          {shellPathname === '/signup/plan' && <SignupPlanPanelContent />}
+          <SignupProgress pathname={shellPathname} />
         </SignInBrandPanel>
         <div className="su-shell-right su-page flex-col justify-start">
           {children}

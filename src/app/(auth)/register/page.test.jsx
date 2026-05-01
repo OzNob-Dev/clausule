@@ -23,6 +23,10 @@ vi.mock('@signup/SignupScreen', () => ({
   default: () => <div>Signup screen</div>,
 }))
 
+vi.mock('./layout', () => ({
+  default: ({ children }) => <div data-testid="register-layout">{children}</div>,
+}))
+
 describe('register page', () => {
   beforeEach(() => {
     auth = { error: 'Unauthenticated' }
