@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { PROTECTED_PREFIXES, isRouteMatch } from './src/shared/utils/routePolicy'
 
-const PROTECTED_PREFIXES = ['/dashboard', '/settings', '/components', '/entries', '/profile', '/brag', '/mfa-setup']
 const AUTH_COOKIE_NAMES = ['clausule_session', 'clausule_at', 'clausule_rt'] as const
 
 function isProtectedPath(pathname: string) {
-  return PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+  return PROTECTED_PREFIXES.some((prefix) => isRouteMatch(pathname, prefix))
 }
 
 function hasAuthCookie(request: NextRequest) {

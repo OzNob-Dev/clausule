@@ -1,5 +1,16 @@
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { AuthProvider } from '@auth/context/AuthContext'
+import { getServerBootstrapSession } from '@auth/server/serverSession.js'
 import { QueryProvider } from '@shared/providers/QueryProvider'
 import DevAccessGate from '@shared/components/layout/DevAccessGate'
+import RouteShell from '@shared/components/layout/RouteShell'
+import {
+  isManagerRoute,
+  isMfaExemptPath,
+  isProtectedPath,
+} from '@shared/utils/routePolicy'
+import { ROUTES } from '@shared/utils/routes'
 import '@shared/styles/globals.css'
 
 export const metadata = {
@@ -13,12 +24,34 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({ children }) {
+async function getPathname() {
+  return (await headers()).get('x-clausule-pathname') ?? ROUTES.home
+}
+
+async function getProtectedContent(children, pathname) {
+  if (!isProtectedPath(pathname)) return children
+
+  const session = await getServerBootstrapSession()
+  if (!session) redirect(ROUTES.login)
+
+  const mfaSetupRequired = !session.security.authenticatorAppConfigured && !session.security.ssoConfigured
+  if (mfaSetupRequired && !isMfaExemptPath(pathname)) redirect(ROUTES.settings)
+  if (isManagerRoute(pathname) && session.user.role !== 'manager') redirect(ROUTES.brag)
+
+  return <AuthProvider initialSession={session}>{children}</AuthProvider>
+}
+
+export default async function RootLayout({ children }) {
+  const pathname = await getPathname()
+  const content = await getProtectedContent(children, pathname)
+
   return (
     <html lang="en">
       <body>
         <DevAccessGate>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <RouteShell initialPathname={pathname}>{content}</RouteShell>
+          </QueryProvider>
         </DevAccessGate>
       </body>
     </html>
