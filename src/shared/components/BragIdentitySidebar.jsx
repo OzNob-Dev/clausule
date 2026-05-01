@@ -16,7 +16,7 @@ const NAV_SECTIONS = [
     title: 'Account',
     items: [
       { page: 'profile', href: ROUTES.profile, label: 'Personal details', icon: 'profile' },
-      { page: 'settings', href: ROUTES.bragSettings, label: 'Security', icon: 'security' },
+      { page: 'settings', href: ROUTES.settings, label: 'Security', icon: 'security' },
     ],
   },
   {
@@ -28,16 +28,16 @@ const NAV_SECTIONS = [
         label: 'Your entries',
         icon: 'brag',
         children: [
-          { page: 'resume', href: ROUTES.bragResume, label: 'Resume' },
-          { page: 'linkedin', href: ROUTES.bragLinkedin, label: 'LinkedIn' },
+          { page: 'resume', href: ROUTES.resume, label: 'Resume' },
+          { page: 'linkedin', href: ROUTES.linkedin, label: 'LinkedIn' },
         ],
       },
       {
         page: 'feedback',
-        href: ROUTES.bragFeedback,
+        href: ROUTES.feedback,
         label: 'Feedback',
         icon: 'feedback',
-        children: [{ page: 'feedback-history', href: ROUTES.bragFeedbackHistory, label: 'Feedback history' }],
+        children: [{ page: 'feedback-history', href: ROUTES.feedbackHistory, label: 'Feedback history' }],
       },
     ],
   },

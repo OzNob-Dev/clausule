@@ -1,16 +1,16 @@
 import { MANAGER_ROUTES, ROUTES } from './routes'
 
-export const PROTECTED_PREFIXES = [ROUTES.dashboard, ROUTES.settings, '/components', ROUTES.entries, ROUTES.profile, ROUTES.brag, ROUTES.mfaSetup]
+export const PROTECTED_PREFIXES = [ROUTES.dashboard, ROUTES.settings, ROUTES.profile, ROUTES.resume, ROUTES.linkedin, ROUTES.feedback, '/components', ROUTES.entries, ROUTES.brag, ROUTES.mfaSetup]
 export const AUTH_SHELL_PREFIXES = [ROUTES.login, ROUTES.register, ROUTES.signup, ROUTES.mfaSetup]
 export const PUBLIC_SHELL_ROUTES = new Set([ROUTES.home, ROUTES.pricing])
-export const MFA_EXEMPT_ROUTES = new Set([ROUTES.settings, ROUTES.bragSettings, ROUTES.mfaSetup])
+export const MFA_EXEMPT_ROUTES = new Set([ROUTES.settings, ROUTES.mfaSetup])
 export const AUTHOR_SHELL_ROUTES = new Set([
   ROUTES.brag,
-  ROUTES.bragResume,
-  ROUTES.bragLinkedin,
-  ROUTES.bragFeedback,
-  ROUTES.bragFeedbackHistory,
-  ROUTES.bragSettings,
+  ROUTES.resume,
+  ROUTES.linkedin,
+  ROUTES.feedback,
+  ROUTES.feedbackHistory,
+  ROUTES.settings,
   ROUTES.profile,
 ])
 

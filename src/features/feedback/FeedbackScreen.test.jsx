@@ -110,6 +110,6 @@ describe('FeedbackScreen', () => {
     expect(apiFetch).toHaveBeenCalledWith('/api/feedback')
 
     await user.click(screen.getByRole('button', { name: /send your first note/i }))
-    expect(push).toHaveBeenCalledWith('/brag/feedback')
+    expect(push).toHaveBeenCalledWith('/feedback')
   })
 })

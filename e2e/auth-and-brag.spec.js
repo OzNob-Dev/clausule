@@ -222,7 +222,7 @@ test('brag settings shows SSO and hides MFA when SSO is configured', async ({ pa
     })
   })
 
-  await page.goto('/brag/settings')
+  await page.goto('/settings')
 
   await expect(page.getByText('Single sign-on')).toBeVisible()
   await expect(page.getByText('Two-factor authentication', { exact: true })).toHaveCount(0)
@@ -245,7 +245,7 @@ test('protected app redirects after non-OTP auth until authenticator setup is co
 
   await page.goto('/brag')
 
-  await expect(page).toHaveURL(/\/brag\/settings/)
+  await expect(page).toHaveURL(/\/settings/)
   await expect(page.getByText(/authenticator setup required/i)).toBeVisible()
   await expect(page.locator('.bss-totp-empty--required')).toBeVisible()
   await expect(page.getByRole('button', { name: /brag doc/i })).toHaveCount(0)
@@ -264,7 +264,7 @@ test('brag settings shows active two-factor status when authenticator MFA is ena
     })
   })
 
-  await page.goto('/brag/settings')
+  await page.goto('/settings')
 
   await expect(page.getByText('Single sign-on')).toHaveCount(0)
   await expect(page.getByText('Two-factor authentication', { exact: true })).toBeVisible()
@@ -287,7 +287,7 @@ test('brag settings shows active SSO status for enabled providers', async ({ pag
     })
   })
 
-  await page.goto('/brag/settings')
+  await page.goto('/settings')
 
   const row = page.locator('.bss-sso-row').filter({ hasText: 'Google' })
   await expect(page.getByText('Single sign-on')).toBeVisible()
@@ -309,7 +309,7 @@ test('brag settings hides active SSO status for non-SSO accounts', async ({ page
     })
   })
 
-  await page.goto('/brag/settings')
+  await page.goto('/settings')
 
   await expect(page.getByText('Single sign-on')).toHaveCount(0)
   await expect(page.locator('.bss-sso-row')).toHaveCount(0)

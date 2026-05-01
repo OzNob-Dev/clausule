@@ -46,6 +46,15 @@
       "@mfa/*": [
         "./src/features/mfa/*"
       ],
+      "@feedback/*": [
+        "./src/features/feedback/*"
+      ],
+      "@linkedin/*": [
+        "./src/features/linkedin/*"
+      ],
+      "@resume/*": [
+        "./src/features/resume/*"
+      ],
       "@signup/*": [
         "./src/features/signup/*"
       ],

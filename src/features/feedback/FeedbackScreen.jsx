@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { ConversationIllustration } from '@shared/components/ui/icon/ConversationIllustration'
+import { ROUTES } from '@shared/utils/routes'
 
 function FeedbackHistoryEmptyState() {
   const router = useRouter()
@@ -22,7 +23,7 @@ function FeedbackHistoryEmptyState() {
       <p className="be-feedback-empty-state__eyebrow mb-3 text-[var(--cl-text-xs)] font-bold uppercase tracking-[0.16em] text-[var(--cl-accent-deep)]">Feedback history</p>
       <h2 id="feedback-empty-title" className="be-feedback-empty-state__title [font-family:'DM_Serif_Display',Georgia,serif] text-[clamp(2.3rem,5vw,3.8rem)] leading-[0.98] tracking-[-0.03em] text-[var(--cl-surface-ink-2)]">The conversation<br />hasn't started <em className="text-[var(--cl-accent-deep)]">yet.</em></h2>
       <p id="feedback-empty-copy" className="be-feedback-empty-state__copy mt-4 max-w-[38ch] text-[var(--cl-text-lg)] leading-[1.7] text-[var(--cl-surface-muted-8)]">Send your first note and this centre will start keeping the conversation cozy.</p>
-      <button type="button" className="be-feedback-empty-state__cta mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--cl-accent-deep)] px-5 py-3 text-[var(--cl-text-base)] font-bold text-[var(--cl-surface-paper)] shadow-[0_16px_34px_var(--cl-accent-soft-21)] transition-transform duration-150 hover:-translate-y-0.5" onClick={() => router.push('/brag/feedback')}>
+      <button type="button" className="be-feedback-empty-state__cta mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--cl-accent-deep)] px-5 py-3 text-[var(--cl-text-base)] font-bold text-[var(--cl-surface-paper)] shadow-[0_16px_34px_var(--cl-accent-soft-21)] transition-transform duration-150 hover:-translate-y-0.5" onClick={() => router.push(ROUTES.feedback)}>
         <span className="be-feedback-empty-state__cta-icon flex h-6 w-6 items-center justify-center rounded-md bg-[var(--cl-black-20)]" aria-hidden="true">
           <ArrowIcon />
         </span>

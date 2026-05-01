@@ -30,6 +30,6 @@ describe('SignupStepDone', () => {
 
     expect(screen.getByText('ada@example.com')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /set up multi-factor authentication/i }))
-    expect(push).toHaveBeenCalledWith('/brag/settings')
+    expect(push).toHaveBeenCalledWith('/settings')
   })
 })

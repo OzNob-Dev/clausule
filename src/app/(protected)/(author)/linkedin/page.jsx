@@ -1,5 +1,5 @@
 import { getServerAuth } from '@auth/server/serverSession.js'
-import LinkedInImportScreen from '@brag/LinkedInImportScreen'
+import LinkedInImportScreen from '@linkedin/LinkedInImportScreen'
 import { getLatestLinkedInImport } from '@brag/server/linkedinImports.js'
 
 export default async function Page() {

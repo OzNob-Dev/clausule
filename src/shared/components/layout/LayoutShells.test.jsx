@@ -70,7 +70,7 @@ describe('layout shells', () => {
 
   it('renders the author shell using page config', () => {
     render(
-      <AuthorShell pathname="/brag/feedback/history">
+      <AuthorShell pathname="/feedback/history">
         <h1 id="feedback-history-title">Feedback history</h1>
         <div>author content</div>
       </AuthorShell>
@@ -83,7 +83,7 @@ describe('layout shells', () => {
 
   it('passes session profile data into the author shell sidebar', () => {
     render(
-      <AuthorShell pathname="/brag/feedback/history" session={{ profile: { email: 'ada@example.com' } }}>
+      <AuthorShell pathname="/feedback/history" session={{ profile: { email: 'ada@example.com' } }}>
         <h1 id="feedback-history-title">Feedback history</h1>
         <div>author content</div>
       </AuthorShell>
@@ -94,7 +94,7 @@ describe('layout shells', () => {
 
   it('falls back to the auth user email for the author shell sidebar', () => {
     render(
-      <AuthorShell pathname="/brag/settings" session={{ user: { email: 'ada@example.com' } }}>
+      <AuthorShell pathname="/settings" session={{ user: { email: 'ada@example.com' } }}>
         <h1 id="brag-settings-title">Security settings</h1>
         <div>open</div>
       </AuthorShell>
@@ -105,7 +105,7 @@ describe('layout shells', () => {
 
   it('renders the fallback author shell for brag settings', () => {
     render(
-      <AuthorShell pathname="/brag/settings">
+      <AuthorShell pathname="/settings">
         <h1 id="brag-settings-title">Security settings</h1>
         <div>open</div>
       </AuthorShell>

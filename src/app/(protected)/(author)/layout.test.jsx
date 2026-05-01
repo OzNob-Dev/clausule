@@ -29,11 +29,11 @@ describe('author layout', () => {
   })
 
   it('wraps author pages in the author shell using pathname and bootstrap session', async () => {
-    pathname = '/brag/feedback/history'
+    pathname = '/feedback/history'
 
     render(await AuthorLayout({ children: <main>Author page</main> }))
 
-    expect(screen.getByTestId('author-shell')).toHaveAttribute('data-pathname', '/brag/feedback/history')
+    expect(screen.getByTestId('author-shell')).toHaveAttribute('data-pathname', '/feedback/history')
     expect(screen.getByTestId('author-shell')).toHaveAttribute('data-session-email', 'ada@example.com')
     expect(screen.getByText('Author page')).toBeInTheDocument()
   })

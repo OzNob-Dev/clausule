@@ -6,7 +6,7 @@ import { ROUTES } from '@shared/utils/routes'
 const items = [
   { href: ROUTES.brag, title: 'Brag doc', body: 'Collect proof, entries, and feedback in the author workspace.' },
   { href: ROUTES.profile, title: 'Profile', body: 'Keep identity and contact data current for the account.' },
-  { href: ROUTES.bragSettings, title: 'Settings', body: 'Manage security controls, TOTP, and account deletion.' },
+  { href: ROUTES.settings, title: 'Settings', body: 'Manage security controls, TOTP, and account deletion.' },
 ]
 
 export default function Page() {

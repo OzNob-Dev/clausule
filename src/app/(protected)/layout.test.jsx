@@ -76,7 +76,7 @@ describe('protected layout', () => {
   })
 
   it('allows MFA-exempt routes while setup is incomplete', async () => {
-    pathname = '/brag/settings'
+    pathname = '/settings'
     session = {
       ...session,
       security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false },

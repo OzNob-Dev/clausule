@@ -190,7 +190,7 @@ export default function LinkedInImportScreen({ initialSession = null, initialErr
               </p>
             </div>
             <div className="li-success__actions flex flex-wrap gap-3">
-              <Button type="button" variant="ghost" className="li-btn li-btn--secondary min-h-12 rounded-xl border-2 border-[var(--cl-muted-12)] bg-[var(--cl-dialog-surface)] px-[18px] text-[var(--cl-text-xl)] font-bold text-[var(--cl-brown)] shadow-none" onClick={() => router.push(ROUTES.bragResume)}>Open resume</Button>
+              <Button type="button" variant="ghost" className="li-btn li-btn--secondary min-h-12 rounded-xl border-2 border-[var(--cl-muted-12)] bg-[var(--cl-dialog-surface)] px-[18px] text-[var(--cl-text-xl)] font-bold text-[var(--cl-brown)] shadow-none" onClick={() => router.push(ROUTES.resume)}>Open resume</Button>
               <Button type="button" variant="primary" className="li-btn li-btn--primary min-h-12 rounded-xl bg-[linear-gradient(135deg,var(--cl-accent-deep)_0%,var(--cl-accent-deeper)_100%)] px-[18px] text-[var(--cl-text-xl)] font-bold text-[var(--cl-surface-white)] shadow-[0_8px_24px_var(--cl-accent-soft-21)]" onClick={() => router.push(ROUTES.brag)}>Back to brag doc</Button>
             </div>
           </div>

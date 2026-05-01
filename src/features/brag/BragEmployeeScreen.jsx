@@ -1,6 +1,5 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import BragEmptyState from '@shared/components/BragEmptyState'
@@ -8,10 +7,6 @@ import EntryComposer from '@shared/components/EntryComposer'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import PageHeader from '@shared/components/ui/PageHeader'
-
-const ResumeTab = dynamic(() => import('@shared/components/ResumeTab'), {
-  loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,
-})
 
 function newestEntryFirst(a, b) {
   const dateDiff = new Date(b.entry_date).getTime() - new Date(a.entry_date).getTime()
@@ -48,8 +43,7 @@ function visibleEntriesByYear(groupedEntries, activeYear) {
   return activeYear === 'All' ? groupedEntries : groupedEntries.filter(({ year }) => String(year) === String(activeYear))
 }
 
-
-export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '', view = 'brag' }) {
+export default function BragEmployeeScreen({ initialEntries = [], initialEntriesError = '' }) {
   const profile = useProfileStore((state) => state.profile)
   const [composerOpen, setComposerOpen] = useState(false)
   const [activeYear, setActiveYear] = useState('All')
@@ -74,29 +68,6 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
   const handleYearSelect = (year) => {
     setActiveYear(year)
     if (year !== 'All') document.getElementById(yearSectionId(year))?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
-  }
-
-  if (view === 'resume') {
-    return (
-      <>
-        <h1 id="brag-page-title" className="sr-only">Brag document</h1>
-        {initialEntriesError ? (
-          <p className="be-entry-load-error" role="alert">{initialEntriesError}</p>
-        ) : (
-          <section aria-labelledby="resume-page-title">
-            <PageHeader
-              className="be-doc-header max-w-[760px] border-b border-[var(--cl-ink-alpha-12)] pb-7"
-              eyebrow="Your achievements"
-              eyebrowClassName="be-doc-eyebrow mb-3 block text-[var(--cl-text-xs)] font-bold uppercase tracking-[2.5px] text-[var(--cl-accent-deep)]"
-              title="Resume"
-              titleClassName="be-doc-title [font-family:'DM_Serif_Display',Georgia,serif] text-[44px] leading-none tracking-[-1.5px] text-[var(--cl-surface-ink-2)]"
-              titleId="resume-page-title"
-            />
-            <ResumeTab entries={initialEntries} />
-          </section>
-        )}
-      </>
-    )
   }
 
   return (

@@ -9,7 +9,7 @@ import { DeleteAccountDialog } from '@shared/components/DeleteAccountDialog'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { useTotpStatusQuery } from '@shared/queries/useProfileQuery'
 
-export default function BragSettings() {
+export default function SecuritySettingsScreen() {
   const {
     setSecurity,
     authenticatorAppConfigured,

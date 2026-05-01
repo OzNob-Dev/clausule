@@ -21,7 +21,7 @@ export default function SignupStepDone({ email }) {
 
   const handleEnter = () => {
     startTransition(() => {
-      router.push(ROUTES.bragSettings)
+      router.push(ROUTES.settings)
     })
   }
 

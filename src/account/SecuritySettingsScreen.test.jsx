@@ -16,7 +16,7 @@ vi.mock('@shared/utils/api', () => ({
   apiFetch: vi.fn(),
 }))
 
-describe('BragSettings integration', () => {
+describe('SecuritySettingsScreen integration', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.resetAllMocks()
@@ -27,10 +27,10 @@ describe('BragSettings integration', () => {
     const { useProfileStore } = await import('@auth/store/useProfileStore')
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: true, authenticatedWithOtp: true })
 
-    const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { default: SecuritySettingsScreen } = await import('./SecuritySettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: true }), { status: 200 }))
-    const { container } = renderWithQueryClient(<BragSettings />)
+    const { container } = renderWithQueryClient(<SecuritySettingsScreen />)
 
     expect(screen.getByRole('heading', { name: 'Security settings' })).toBeInTheDocument()
     expect(screen.getByText('Account')).toBeInTheDocument()
@@ -53,10 +53,10 @@ describe('BragSettings integration', () => {
     const { useProfileStore } = await import('@auth/store/useProfileStore')
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
 
-    const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { default: SecuritySettingsScreen } = await import('./SecuritySettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockResolvedValue(new Response(JSON.stringify({ configured: false }), { status: 200 }))
-    renderWithQueryClient(<BragSettings />)
+    renderWithQueryClient(<SecuritySettingsScreen />)
 
     expect(screen.getByText(/set up an authenticator app to unlock the rest of clausule/i)).toBeInTheDocument()
     const user = userEvent.setup()
@@ -70,14 +70,14 @@ describe('BragSettings integration', () => {
     const { useProfileStore } = await import('@auth/store/useProfileStore')
     useProfileStore.getState().setSecurity({ authenticatorAppConfigured: false, authenticatedWithOtp: true })
 
-    const { default: BragSettings } = await import('./BragSettingsScreen')
+    const { default: SecuritySettingsScreen } = await import('./SecuritySettingsScreen')
     const { apiFetch } = await import('@shared/utils/api')
     apiFetch.mockImplementation((url) => Promise.resolve(new Response(JSON.stringify(
       url === '/api/auth/totp/status'
         ? { configured: true }
         : {}
     ), { status: 200 })))
-    renderWithQueryClient(<BragSettings />)
+    renderWithQueryClient(<SecuritySettingsScreen />)
 
     await waitFor(() => expect(screen.getByLabelText('Authenticator app is active')).toHaveTextContent('Active'))
     expect(screen.queryByRole('button', { name: 'Set up' })).not.toBeInTheDocument()

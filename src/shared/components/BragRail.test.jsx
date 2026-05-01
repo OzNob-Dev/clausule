@@ -20,8 +20,8 @@ describe('BragIdentitySidebar integration', () => {
     render(<BragIdentitySidebar activePage="brag" activeChildPage="resume" profile={{ firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' }} />)
 
     expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
-    expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('href', '/brag/resume')
-    expect(screen.getByRole('link', { name: /linkedin/i })).toHaveAttribute('href', '/brag/linkedin')
+    expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('href', '/resume')
+    expect(screen.getByRole('link', { name: /linkedin/i })).toHaveAttribute('href', '/linkedin')
     expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('aria-current', 'page')
   })
 

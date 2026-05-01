@@ -1,5 +1,5 @@
 import { getServerAuth } from '@auth/server/serverSession.js'
-import BragEmployeeScreen from '@brag/BragEmployeeScreen'
+import ResumeScreen from '@resume/ResumeScreen'
 import { listEntries } from '@brag/server/entries.js'
 
 export default async function Page() {
@@ -9,8 +9,7 @@ export default async function Page() {
     : await listEntries({ userId: auth.userId, searchParams: new URLSearchParams({ limit: '100' }) })
 
   return (
-    <BragEmployeeScreen
-      view="resume"
+    <ResumeScreen
       initialEntries={result.status === 200 ? result.body.entries ?? [] : []}
       initialEntriesError={result.status === 200 ? '' : 'Could not load entries. Please refresh and try again.'}
     />
