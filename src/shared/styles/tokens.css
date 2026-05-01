@@ -232,7 +232,7 @@
   --cl-accent-code: #C0532A;
   --cl-dialog-surface: #F4EFE6;
   --cl-dialog-surface-2: #FBF7F0;
-  --cl-dialog-delete-surface: #F7F3EE;
+  --cl-dialog-delete-surface: var(--cl-surface-muted-16);
   --cl-dialog-delete-head: #1A0808;
   --cl-dialog-delete-title: #FFE8E8;
   --cl-dialog-delete-subtitle: #C09090;
@@ -240,7 +240,7 @@
   --cl-dialog-delete-warning-border: rgba(176, 48, 48, 0.2);
   --cl-dialog-delete-warning-surface: #FEF0EE;
   --cl-dialog-delete-warning-text: #8B2020;
-  --cl-dialog-delete-danger: #8B2020;
+  --cl-dialog-delete-danger: var(--cl-dialog-delete-warning-text);
   --cl-dialog-delete-danger-text: #F5E8E8;
   --cl-dialog-delete-danger-hover: #6E1818;
   --cl-dialog-delete-icon-ring: rgba(255, 100, 60, 0.3);
@@ -371,6 +371,21 @@
   --cl-radius-2xl: 16px;
   --cl-radius-3xl: 18px;
   --cl-radius-pill: 999px;
+
+  --cl-text-3xs: 0.5625rem;
+  --cl-text-2xs: 0.625rem;
+  --cl-text-xs: 0.6875rem;
+  --cl-text-sm: 0.75rem;
+  --cl-text-md: 0.8125rem;
+  --cl-text-base: 0.875rem;
+  --cl-text-lg: 0.9375rem;
+  --cl-text-xl: 1rem;
+  --cl-text-2xl: 1.125rem;
+  --cl-title-sm: 1.25rem;
+  --cl-title-md: 1.375rem;
+  --cl-title-lg: 1.5rem;
+  --cl-display-sm: 1.75rem;
+  --cl-display-md: 1.875rem;
 
   --cl-ring-outer: #C94F2A;
   --cl-ring-mid: #B9824F;

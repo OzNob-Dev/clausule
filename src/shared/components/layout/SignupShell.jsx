@@ -4,7 +4,6 @@ import SignupPlanPanelContent from '@shared/components/SignupPlanPanelContent'
 import SignupProgress from '@shared/components/SignupProgress'
 import panelConfig from '@auth/brand-panel-config.json'
 import '@signup/styles/signup-theme.css'
-import '@signup/styles/signup-form.css'
 
 export default function SignupShell({ children, pathname }) {
   const shellPathname = pathname === '/register' ? '/signup' : pathname

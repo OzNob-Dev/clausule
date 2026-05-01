@@ -75,7 +75,7 @@
   margin-bottom: 5px;
   color: #FFE8E8;
   font-family: 'DM Serif Display', serif;
-  font-size: 24px;
+  font-size: var(--cl-title-lg);
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.4px;
@@ -85,7 +85,7 @@
 
 .delete-account-dialog__subtitle {
   color: #C09090;
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   line-height: 1.45;
   animation: delete-account-dialog-fade-up .4s ease .3s both;
 }
@@ -97,7 +97,7 @@
 .delete-account-dialog__copy {
   margin-bottom: 18px;
   color: #3D2F22;
-  font-size: 14px;
+  font-size: var(--cl-text-base);
   line-height: 1.7;
   animation: delete-account-dialog-fade-up .4s ease .35s both;
 }
@@ -131,7 +131,7 @@
 
 .delete-account-dialog__warning-text {
   color: #8B2020;
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 700;
   line-height: 1.45;
 }
@@ -144,7 +144,7 @@
   display: block;
   margin-bottom: 12px;
   color: #4A3828;
-  font-size: 11px;
+  font-size: var(--cl-text-xs);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 2px;
@@ -169,7 +169,7 @@
   display: block;
   margin-bottom: 6px;
   color: #F0A090;
-  font-size: 10px;
+  font-size: var(--cl-text-2xs);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 2px;
@@ -185,7 +185,7 @@
   padding: 0;
   color: #FFE8E8;
   font-family: 'DM Serif Display', serif;
-  font-size: 28px;
+  font-size: var(--cl-display-sm);
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: 6px;
@@ -197,7 +197,7 @@
   color: rgba(255, 160, 130, 0.6);
   letter-spacing: 6px;
   font-family: 'DM Serif Display', serif;
-  font-size: 28px;
+  font-size: var(--cl-display-sm);
 }
 
 .delete-account-dialog__input-underline {
@@ -221,7 +221,7 @@
 .delete-account-dialog__hint {
   margin: 8px 0 0;
   color: #C08888;
-  font-size: 11px;
+  font-size: var(--cl-text-xs);
   line-height: 1.45;
   letter-spacing: 0.3px;
 }
@@ -239,7 +239,7 @@
   background: rgba(180, 60, 40, 0.08);
   padding: 14px 16px;
   color: #7A1F12;
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 700;
   line-height: 1.45;
 }
@@ -255,7 +255,7 @@
   flex: 1;
   border-radius: 8px;
   padding: 13px;
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 700;
   line-height: 1.2;
   justify-content: center;

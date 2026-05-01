@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import SignupProgress from '@shared/components/SignupProgress'
 import SignupStepAccount from '@shared/components/SignupStepAccount'
 import '@signup/styles/signup-theme.css'
-import '@signup/styles/signup-form.css'
 import '@shared/styles/page-loader.css'
 
 function SignUpInner() {

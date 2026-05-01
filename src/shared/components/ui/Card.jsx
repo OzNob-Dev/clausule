@@ -1,5 +1,4 @@
 import { cn } from '@shared/utils/cn'
-import './Card.css'
 const toneStyles = {
   default: 'border-rule bg-card',
   elevated: 'border-rule bg-card shadow-[var(--cl-shadow-card-soft)]',
@@ -14,7 +13,7 @@ const paddingStyles = {
 
 export function Card({ as: Component = 'div', tone = 'default', padding = 'md', className = '', children, ...props }) {
   return (
-    <Component className={cn('rounded-[1.75rem] border', toneStyles[tone] ?? toneStyles.default, paddingStyles[padding] ?? paddingStyles.md, className)} {...props}>
+    <Component className={cn('rounded-[1.75rem] border border-solid', toneStyles[tone] ?? toneStyles.default, paddingStyles[padding] ?? paddingStyles.md, className)} {...props}>
       {children}
     </Component>
   )

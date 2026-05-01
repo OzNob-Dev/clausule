@@ -6,7 +6,7 @@
 }
 
 .su-panel-summary-label {
-  font-size: 9px;
+  font-size: var(--cl-text-3xs);
   font-weight: 800;
   color: var(--cl-surface-muted-8);
   text-transform: uppercase;
@@ -21,7 +21,7 @@
 }
 
 .su-panel-summary-period {
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 500;
   color: var(--cl-surface-muted-11);
 }
@@ -39,7 +39,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   color: var(--cl-surface-muted-11);
   line-height: 1.5;
 }
@@ -71,7 +71,7 @@
 }
 
 .su-aside-label {
-  font-size: 9px;
+  font-size: var(--cl-text-3xs);
   font-weight: 800;
   color: var(--su-tx4);
   text-transform: uppercase;
@@ -92,7 +92,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   color: var(--su-tx2);
   line-height: 1.5;
 }
@@ -115,13 +115,13 @@
 }
 
 .su-aside-price-period {
-  font-size: 14px;
+  font-size: var(--cl-text-base);
   font-weight: 500;
   color: var(--su-tx3);
 }
 
 .su-aside-price-note {
-  font-size: 11px;
+  font-size: var(--cl-text-xs);
   font-weight: 500;
   color: var(--su-tx4);
   line-height: 1.4;

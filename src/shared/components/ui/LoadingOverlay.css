@@ -69,7 +69,7 @@
 }
 
 .loader-eyebrow {
-  font-size: 10px;
+  font-size: var(--cl-text-2xs);
   letter-spacing: 3.5px;
   text-transform: uppercase;
   color: rgba(196, 107, 74, 0.6);
@@ -101,7 +101,7 @@
 }
 
 .loader-sub {
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   color: #8B7B6B;
   letter-spacing: 0.2px;
   line-height: 1.5;

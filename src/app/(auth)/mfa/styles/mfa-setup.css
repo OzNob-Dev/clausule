@@ -82,7 +82,7 @@
 }
 
 .mfa-sub {
-  font-size: 14px;
+  font-size: var(--cl-text-base);
   line-height: 1.7;
   color: var(--cl-surface-muted-3);
   margin: 0 0 28px;
@@ -99,7 +99,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--cl-text-xs);
   font-weight: 500;
   color: var(--acc);
   background: var(--cl-accent-soft-2);
@@ -166,7 +166,7 @@
 
 /* ── Error message ───────────────────────────────────────────────── */
 .mfa-error {
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 600;
   color: var(--cl-danger-3);
   margin: 0 0 10px;
@@ -174,13 +174,13 @@
 
 /* ── Resend ──────────────────────────────────────────────────────── */
 .mfa-resend {
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   color: var(--cl-surface-muted-6);
   margin-top: 4px;
 }
 
 .mfa-resend-btn {
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 700;
   color: var(--acc);
   background: none;
@@ -205,7 +205,7 @@
   color: var(--cl-surface-paper);
   border: none;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: var(--cl-text-base);
   font-weight: 700;
   font-family: var(--font);
   cursor: pointer;
@@ -251,7 +251,7 @@
 
 /* ── Skip / secondary button ─────────────────────────────────────── */
 .mfa-skip-btn {
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 600;
   color: var(--cl-surface-muted-6);
   background: none;
@@ -269,7 +269,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 700;
   color: var(--cl-muted-3);
   background: var(--cl-brown-alpha-06);
@@ -323,7 +323,7 @@
   color: var(--cl-surface-paper);
   border: none;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: var(--cl-text-base);
   font-weight: 700;
   font-family: var(--font);
   cursor: pointer;
@@ -344,7 +344,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 700;
   color: var(--cl-surface-muted-8);
   background: none;
@@ -409,7 +409,7 @@
 .mfa-sec-icon--accent { background: var(--cl-accent-strong-alpha-15); }
 
 .mfa-sec-text {
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 600;
   color: var(--cl-muted);
   line-height: 1.45;
@@ -422,7 +422,7 @@
 
 /* Expiry countdown */
 .mfa-expiry-note {
-  font-size: 11px;
+  font-size: var(--cl-text-xs);
   font-weight: 600;
   color: var(--cl-surface-muted-8);
   margin-bottom: 28px;

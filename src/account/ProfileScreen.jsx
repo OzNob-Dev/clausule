@@ -10,7 +10,6 @@ import { useProfileForm } from '@account/hooks/useProfileForm'
 import { useProfileSave } from '@account/hooks/useProfileSave'
 import { Button } from '@shared/components/ui/Button'
 import '@brag/styles/brag-settings-core.css'
-import '@account/styles/profile.css'
 import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 
 export default function ProfileScreen() {
@@ -45,12 +44,13 @@ export default function ProfileScreen() {
         meta="Account settings"
         titleClassName="bss-card-head-title"
         metaClassName="bss-card-head-meta"
+        bodyClassName="px-10 py-9 max-[860px]:px-6"
         onSubmit={onSubmit}
       >
         <div className="bss-form">
-          <section className="bss-column" aria-labelledby="section-identity">
-            <div className="section-label" id="section-identity">Identity</div>
-            <div className="field-row">
+          <section className="bss-column flex flex-col" aria-labelledby="section-identity">
+            <div className="section-label mb-[22px] flex items-center gap-[10px] text-[var(--cl-text-xs)] font-bold uppercase tracking-[2px] text-[var(--cl-accent-deep)] after:h-[0.5px] after:flex-1 after:bg-[var(--cl-accent-alpha-22)] after:content-['']" id="section-identity">Identity</div>
+            <div className="field-row mb-6 grid grid-cols-2 gap-7 max-[860px]:grid-cols-1">
               <ProfileField
                 id="first-name"
                 label="First name"
@@ -68,9 +68,9 @@ export default function ProfileScreen() {
               />
             </div>
           </section>
-          <section className="bss-column" aria-labelledby="section-contact">
-            <div className="section-label" id="section-contact">Contact</div>
-            <div className="field-row single field-row--compact">
+          <section className="bss-column flex flex-col" aria-labelledby="section-contact">
+            <div className="section-label mb-[22px] flex items-center gap-[10px] text-[var(--cl-text-xs)] font-bold uppercase tracking-[2px] text-[var(--cl-accent-deep)] after:h-[0.5px] after:flex-1 after:bg-[var(--cl-accent-alpha-22)] after:content-['']" id="section-contact">Contact</div>
+            <div className="field-row single mb-1.5 grid grid-cols-1 gap-7">
               <ProfileField
                 id="email"
                 label="Email"
@@ -81,9 +81,9 @@ export default function ProfileScreen() {
                 aria-describedby="email-hint"
               />
             </div>
-            <p className="field-hint" id="email-hint">Your sign-in email stays unchanged.</p>
+            <p className="field-hint -mt-1 mb-6 text-[var(--cl-text-sm)] leading-[1.5] text-[var(--cl-surface-muted-9)]" id="email-hint">Your sign-in email stays unchanged.</p>
 
-            <div className="field-row single field-row--compact">
+            <div className="field-row single mb-1.5 grid grid-cols-1 gap-7">
               <ProfileField
                 id="mobile"
                 label="Mobile"
@@ -94,11 +94,11 @@ export default function ProfileScreen() {
                 onChange={(e) => setForm((state) => ({ ...state, mobile: formatMobile(e.target.value) }))}
               />
             </div>
-            <p className="field-hint" id="mobile-hint">Use the number you want tied to account recovery and contact updates.</p>
+            <p className="field-hint -mt-1 mb-6 text-[var(--cl-text-sm)] leading-[1.5] text-[var(--cl-surface-muted-9)]" id="mobile-hint">Use the number you want tied to account recovery and contact updates.</p>
           </section>
-          <section className="bss-column" aria-labelledby="section-work">
-            <div className="section-label" id="section-work">Work profile</div>
-            <div className="field-row last">
+          <section className="bss-column flex flex-col" aria-labelledby="section-work">
+            <div className="section-label mb-[22px] flex items-center gap-[10px] text-[var(--cl-text-xs)] font-bold uppercase tracking-[2px] text-[var(--cl-accent-deep)] after:h-[0.5px] after:flex-1 after:bg-[var(--cl-accent-alpha-22)] after:content-['']" id="section-work">Work profile</div>
+            <div className="field-row last grid grid-cols-2 gap-7 max-[860px]:grid-cols-1">
               <ProfileField
                 id="job-title"
                 label="Job title"
@@ -116,13 +116,13 @@ export default function ProfileScreen() {
             </div>
           </section>
 
-          {error ? <p className="profile-status profile-status--error" role="alert">{error}</p> : null}
-          {success ? <p className="profile-status profile-status--success" role="status">{success}</p> : null}
-          <div className="section-rule" aria-hidden="true" />
-          <div className="form-buttons">
+          {error ? <p className="profile-status profile-status--error mt-5 text-[var(--cl-text-base)] leading-[1.5] text-[var(--cl-danger-4)]" role="alert">{error}</p> : null}
+          {success ? <p className="profile-status profile-status--success mt-5 text-[var(--cl-text-base)] leading-[1.5] text-[var(--cl-success)]" role="status">{success}</p> : null}
+          <div className="section-rule my-7 h-[0.5px] bg-[var(--cl-ink-alpha-10)]" aria-hidden="true" />
+          <div className="form-buttons flex items-center justify-end gap-3 max-[560px]:flex-col-reverse max-[560px]:items-stretch">
             <Button type="button" variant="ghost" className="be-comp-cancel" onClick={resetForm} disabled={!dirty || saving}>Reset</Button>
             <Button type="submit" variant="primary" className="be-comp-save" disabled={!dirty || saving}>
-              <CheckIcon />
+              <CheckIcon className="h-[13px] w-[13px] fill-none stroke-[var(--cl-surface-muted-16)] [stroke-width:2.5]" />
               Send feedback
             </Button>
           </div>

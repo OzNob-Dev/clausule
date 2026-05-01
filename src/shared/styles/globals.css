@@ -13,13 +13,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-#root {
-  display: flex;
-  flex: 1;
-  min-height: 100vh;
-  width: 100%;
-}
-
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -120,7 +113,7 @@ body {
   padding: 0 22px;
   border-radius: 8px;
   font-family: 'Source Sans 3', var(--font-sans), system-ui, sans-serif;
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 700;
   transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
@@ -163,7 +156,7 @@ body {
 .be-comp-error {
   margin: 10px 0 0;
   color: var(--cl-danger-5);
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 700;
 }
 
@@ -174,6 +167,6 @@ body {
   border-radius: 8px;
   background: var(--cl-surface-paper);
   color: var(--tm);
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 600;
 }

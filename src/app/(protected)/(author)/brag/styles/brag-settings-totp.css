@@ -8,7 +8,7 @@
   margin: 0 0 24px;
   color: var(--cl-surface-ink-5);
   font-family: var(--cl-font-sans);
-  font-size: 0.9375rem;
+  font-size: var(--cl-text-lg);
   line-height: 1.6;
   max-width: 600px;
 }
@@ -21,7 +21,7 @@
   min-height: 120px;
   color: var(--cl-surface-muted-9);
   font-family: var(--cl-font-sans);
-  font-size: 0.9375rem;
+  font-size: var(--cl-text-lg);
 }
 
 .bss-totp-error {
@@ -34,7 +34,7 @@
 .bss-totp-error-title {
   margin: 0;
   color: var(--cl-danger-5);
-  font-size: 0.875rem;
+  font-size: var(--cl-text-base);
   font-weight: 700;
 }
 
@@ -46,7 +46,7 @@
   border-radius: 0;
   background: transparent;
   color: var(--cl-accent-deep);
-  font-size: 0.875rem;
+  font-size: var(--cl-text-base);
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -91,7 +91,7 @@
   padding: 12px 16px;
   color: var(--cl-surface-ink-2);
   font-family: var(--cl-font-code);
-  font-size: 0.8125rem;
+  font-size: var(--cl-text-md);
   font-weight: 600;
   letter-spacing: 0.14em;
   word-break: break-all;
@@ -106,7 +106,7 @@
 
 .bss-otp-label {
   color: var(--cl-surface-muted-9);
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -157,7 +157,7 @@
   border: 0;
   background: transparent;
   color: var(--cl-surface-muted-9);
-  font-size: 0.875rem;
+  font-size: var(--cl-text-base);
   font-weight: 600;
 }
 
@@ -170,7 +170,7 @@
   border-radius: 8px;
   background: var(--cl-surface-ink-2);
   color: var(--cl-surface-muted-16);
-  font-size: 0.875rem;
+  font-size: var(--cl-text-base);
   font-weight: 700;
 }
 

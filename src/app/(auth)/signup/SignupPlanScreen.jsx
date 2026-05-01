@@ -4,8 +4,6 @@ import { useRouter } from 'next/navigation'
 import SignupProgress from '@shared/components/SignupProgress'
 import SignupStepPayment from '@shared/components/SignupStepPayment'
 import '@signup/styles/signup-theme.css'
-import '@signup/styles/signup-form.css'
-import '@signup/styles/signup-payment.css'
 import '@shared/styles/page-loader.css'
 
 /**

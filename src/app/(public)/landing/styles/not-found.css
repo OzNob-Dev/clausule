@@ -39,7 +39,7 @@
   border: 1px solid var(--cl-border-dark);
   border-radius: var(--cl-radius-lg);
   padding: 10px 14px;
-  font-size: 11px;
+  font-size: var(--cl-text-xs);
   font-weight: 700;
   color: var(--cl-surface-muted-8);
   white-space: nowrap;
@@ -87,7 +87,7 @@
 }
 
 .nf-logo-name {
-  font-size: 15px;
+  font-size: var(--cl-text-lg);
   font-weight: 800;
   color: var(--cl-surface-ink-3);
   letter-spacing: -0.3px;
@@ -172,7 +172,7 @@
 }
 
 .nf-sub {
-  font-size: 15px;
+  font-size: var(--cl-text-lg);
   color: var(--cl-surface-muted-4);
   line-height: 1.65;
   margin-bottom: 32px;
@@ -189,7 +189,7 @@
   background: transparent;
   border: 1.5px solid var(--cl-border-dark-4);
   border-radius: var(--cl-radius-md);
-  font-size: 14px;
+  font-size: var(--cl-text-base);
   font-weight: 700;
   color: var(--cl-ink-2);
   padding: 12px 22px;

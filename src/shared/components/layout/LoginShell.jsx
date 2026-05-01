@@ -1,7 +1,6 @@
 import SignInBrandPanel from '@shared/components/ui/SignInBrandPanel'
 import panelConfig from '@auth/brand-panel-config.json'
 import '@signup/styles/signup-theme.css'
-import '@signup/styles/signup-form.css'
 
 export default function LoginShell({ children }) {
   const config = panelConfig['/']

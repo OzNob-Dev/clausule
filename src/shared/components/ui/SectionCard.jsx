@@ -1,5 +1,4 @@
 import { cn } from '@shared/utils/cn'
-import './SectionCard.css'
 
 export function SectionCard({
   as: Component = 'div',
@@ -17,10 +16,10 @@ export function SectionCard({
   ...props
 }) {
   return (
-    <Component className={cn(className)} aria-label={ariaLabel || undefined} {...props}>
-      <div className={cn(headerClassName)}>
-        <span id={titleId} className={cn(titleClassName)}>{title}</span>
-        {meta ? <span className={cn(metaClassName)}>{meta}</span> : null}
+    <Component className={cn('card overflow-hidden rounded-[16px] bg-[var(--cl-surface-white)] shadow-[var(--cl-shadow-soft),var(--cl-shadow-med)]', className)} aria-label={ariaLabel || undefined} {...props}>
+      <div className={cn('card-header flex items-center justify-between gap-4 bg-[var(--cl-surface-ink-2)] px-8 py-5', headerClassName)}>
+        <span id={titleId} className={cn('bss-card-head-title text-[var(--cl-surface-muted-15)] [font-family:var(--cl-font-serif)] text-[var(--cl-title-lg)] font-normal tracking-[-0.02em]', titleClassName)}>{title}</span>
+        {meta ? <span className={cn('bss-card-head-meta whitespace-nowrap text-[var(--cl-surface-muted-7)] text-[var(--cl-text-xs)] font-bold uppercase tracking-[0.16em]', metaClassName)}>{meta}</span> : null}
         {headerEnd}
       </div>
       <div className={cn(bodyClassName)}>

@@ -44,7 +44,7 @@
   border-radius: 50%;
   background: var(--acc);
   color: var(--cl-surface-paper);
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -59,14 +59,14 @@
 .mfa-factor-badge--locked { background: var(--cl-brown-alpha-20); color: var(--cl-surface-muted-6); }
 
 .mfa-factor-title {
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 700;
   color: var(--cl-surface-ink);
   line-height: 1.2;
 }
 
 .mfa-factor-sub {
-  font-size: 11px;
+  font-size: var(--cl-text-xs);
   color: var(--cl-surface-muted-6);
   margin-top: 2px;
 }
@@ -78,7 +78,7 @@
 }
 
 .mfa-factor-instruction {
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   line-height: 1.65;
   color: var(--cl-surface-muted-3);
   margin: 0 0 14px;
@@ -114,7 +114,7 @@
 .mfa-secret {
   flex: 1;
   font-family: var(--cl-font-code);
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 700;
   color: var(--cl-surface-ink);
   letter-spacing: 2px;
@@ -141,7 +141,7 @@
 
 /* Smaller demo pill inside a factor card */
 .mfa-demo-pill--sm {
-  font-size: 10px;
+  font-size: var(--cl-text-2xs);
   padding: 4px 10px;
   margin-bottom: 12px;
 }
@@ -165,9 +165,9 @@
 @media (max-width: 480px) {
   .mfa-card { padding: 28px 22px 40px; border-radius: var(--cl-radius-2xl); }
 
-  .mfa-otp-box { width: 42px; height: 50px; font-size: 20px; border-radius: 10px; }
+  .mfa-otp-box { width: 42px; height: 50px; font-size: var(--cl-title-sm); border-radius: 10px; }
 
   .mfa-otp-row { gap: 8px; }
 
-  .mfa-heading { font-size: 20px; }
+  .mfa-heading { font-size: var(--cl-title-sm); }
 }

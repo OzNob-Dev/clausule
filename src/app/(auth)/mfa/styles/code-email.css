@@ -33,7 +33,7 @@
 
 .ce-chrome-label {
   margin-left: 6px;
-  font-size: 10px;
+  font-size: var(--cl-text-2xs);
   font-weight: 600;
   color: var(--cl-muted-10);
   letter-spacing: 0.3px;
@@ -54,7 +54,7 @@
   border-radius: 50%;
   background: var(--cl-accent-alpha-85);
   color: var(--cl-surface-white);
-  font-size: 13px;
+  font-size: var(--cl-text-md);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -65,7 +65,7 @@
 .ce-meta { flex: 1; min-width: 0; }
 
 .ce-from {
-  font-size: 11.5px;
+  font-size: var(--cl-text-sm);
   font-weight: 600;
   color: var(--cl-ink-7);
   white-space: nowrap;
@@ -76,17 +76,17 @@
 .ce-from-addr {
   font-weight: 400;
   color: var(--cl-muted-10);
-  font-size: 10.5px;
+  font-size: var(--cl-text-2xs);
 }
 
 .ce-to {
-  font-size: 10.5px;
+  font-size: var(--cl-text-2xs);
   color: var(--cl-muted-10);
   margin-top: 1px;
 }
 
 .ce-time {
-  font-size: 10px;
+  font-size: var(--cl-text-2xs);
   color: var(--cl-muted-11);
   flex-shrink: 0;
 }
@@ -94,7 +94,7 @@
 /* Subject */
 .ce-subject {
   padding: 8px 16px 4px;
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 700;
   color: var(--cl-ink-7);
 }
@@ -105,13 +105,13 @@
 }
 
 .ce-greeting {
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   color: var(--cl-ink-7);
   margin: 0 0 4px;
 }
 
 .ce-copy {
-  font-size: 11.5px;
+  font-size: var(--cl-text-sm);
   color: var(--cl-surface-muted-4);
   margin: 0 0 12px;
   line-height: 1.5;
@@ -132,7 +132,7 @@
   background: var(--cl-surface-paper);
   border: 1.5px solid var(--cl-accent-soft-8);
   border-radius: var(--cl-radius-sm);
-  font-size: 16px;
+  font-size: var(--cl-text-xl);
   font-weight: 800;
   color: var(--cl-accent-code);
   letter-spacing: 0;
@@ -151,12 +151,12 @@
   content: '•';
   position: absolute;
   color: var(--cl-accent-code);
-  font-size: 18px;
+  font-size: var(--cl-text-2xl);
   line-height: 1;
 }
 
 .ce-disclaimer {
-  font-size: 10.5px;
+  font-size: var(--cl-text-2xs);
   color: var(--cl-muted-11);
   margin: 0;
   line-height: 1.5;

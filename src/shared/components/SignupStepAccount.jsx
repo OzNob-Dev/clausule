@@ -1,5 +1,4 @@
 'use client'
-import './SignupStepAccount.css'
 
 import { useReducer } from 'react'
 import { useMutation } from '@tanstack/react-query'
@@ -97,7 +96,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
   return (
     <form onSubmit={handleSubmit} noValidate>
       <div className="su-step-heading">Create your account</div>
-      <div className="su-step-sub">
+      <div className="su-step-sub mb-6">
         {hasSso ? 'Continue with your existing account — no new password needed.' : 'Your brag doc, your file. Takes about 2 minutes.'}
       </div>
 
@@ -107,16 +106,16 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             <SsoProviderButton key={provider.id} provider={provider} />
           ))}
 
-          <div className="su-sso-divider">
-            <div className="su-sso-divider-line" />
-            <span className="su-sso-divider-text">or sign up with email</span>
-            <div className="su-sso-divider-line" />
+          <div className="su-sso-divider my-[22px] flex items-center gap-3">
+            <div className="su-sso-divider-line h-px flex-1 bg-[var(--su-border-em)]" />
+            <span className="su-sso-divider-text whitespace-nowrap text-[var(--cl-text-xs)] font-bold text-[var(--su-tx4)]">or sign up with email</span>
+            <div className="su-sso-divider-line h-px flex-1 bg-[var(--su-border-em)]" />
           </div>
         </>
       )}
 
-      <div className="su-name-row">
-        <Field className="su-name-col">
+      <div className="mb-6 grid grid-cols-2 gap-4 max-[640px]:grid-cols-1 max-[640px]:gap-0">
+        <Field className="min-w-0 flex-1">
           <FieldLabel htmlFor="su-first-name">First name</FieldLabel>
           <FieldInput
             id="su-first-name"
@@ -127,7 +126,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             error={state.nameError}
           />
         </Field>
-        <Field className="su-name-col">
+        <Field className="min-w-0 flex-1">
           <FieldLabel htmlFor="su-last-name">Last name</FieldLabel>
           <FieldInput
             id="su-last-name"
@@ -139,7 +138,7 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
         </Field>
       </div>
 
-      <Field className="su-field">
+      <Field className="su-field mb-6">
         <FieldLabel htmlFor="su-email">Email</FieldLabel>
         <FieldInput
           id="su-email"
@@ -149,24 +148,30 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
           onChange={handleEmailChange}
           onBlur={() => dispatch({ type: 'set_email_dirty', value: true })}
           readOnly={emailLocked}
-          className={emailLocked ? 'su-input--locked' : ''}
+          className={emailLocked ? 'cursor-not-allowed bg-[var(--cl-rule-dark-4)] text-[var(--su-tx3)]' : ''}
           error={showEmailFeedback && !!emailResult.error}
           aria-invalid={showEmailFeedback && !emailResult.valid && !emailResult.suggestion}
           aria-describedby="su-email-hint"
         />
         <div id="su-email-hint">
           {showEmailFeedback && emailResult.error ? (
-            <span className="su-field-hint su-field-hint--error" role="alert">{emailResult.error}</span>
+            <span className="text-[var(--cl-text-xs)] font-medium text-[var(--cl-danger-2)]" role="alert">{emailResult.error}</span>
           ) : showEmailFeedback && emailResult.suggestion ? (
-              <span className="su-field-hint su-field-hint--suggest" role="alert">
+              <span className="text-[var(--cl-text-xs)] font-medium text-[var(--cl-warning)]" role="alert">
               Did you mean{' '}
-              <Button type="button" variant="ghost" size="sm" className="su-suggest-btn" onClick={acceptSuggestion}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="inline border-0 bg-transparent p-0 text-[var(--cl-warning)] text-[var(--cl-text-xs)] font-bold underline underline-offset-2 shadow-none hover:bg-transparent hover:text-[var(--cl-warning-2)] hover:opacity-100 hover:translate-y-0"
+                onClick={acceptSuggestion}
+              >
                 {emailResult.suggestion}
               </Button>
               ?
             </span>
           ) : (
-            <span className="su-field-hint">
+            <span className="text-[var(--cl-text-xs)] font-medium text-[var(--su-tx4)]">
               {emailLocked ? 'Email carried over from sign in.' : 'We will verify this email before creating your account.'}
             </span>
           )}
@@ -174,8 +179,8 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
       </Field>
 
 
-      <div className="su-terms">
-        <label className="su-terms-label">
+      <div className="su-terms mb-6">
+        <label className="su-terms-label flex items-start gap-3 text-[var(--cl-text-base)] leading-[1.6] text-[var(--su-tx2)]">
           <FieldCheckbox
             checked={state.agreed}
             onChange={(event) => {
@@ -183,10 +188,10 @@ export default function SignupStepAccount({ emailLocked = false, hideSso = false
             }}
           />
           <span>
-            I agree to Clausule&apos;s <Link href={ROUTES.terms}>Terms of Service</Link>{' '}and <Link href={ROUTES.privacy}>Privacy Policy</Link>
+            I agree to Clausule&apos;s <Link href={ROUTES.terms} className="text-[var(--su-tx1)]">Terms of Service</Link>{' '}and <Link href={ROUTES.privacy} className="text-[var(--su-tx1)]">Privacy Policy</Link>
           </span>
         </label>
-        {state.agreedError && <div className="su-terms-error">Please agree to continue.</div>}
+        {state.agreedError ? <div className="su-terms-error mt-1 text-[var(--cl-text-xs)] text-[var(--cl-danger-2)]">Please agree to continue.</div> : null}
       </div>
 
       <CtaBtn type="submit">

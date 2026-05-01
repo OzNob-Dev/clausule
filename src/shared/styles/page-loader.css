@@ -303,7 +303,7 @@
 }
 
 .page-loader-label {
-  font-size: 12px;
+  font-size: var(--cl-text-sm);
   font-weight: 500;
   color: var(--tm, #54483F);
   margin: 0;
