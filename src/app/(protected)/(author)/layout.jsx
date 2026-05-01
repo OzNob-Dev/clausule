@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
+import DevLoadingOverlayFlag from '@shared/components/ui/DevLoadingOverlayFlag'
 import { PAGE_CONFIG } from './authorPageConfig'
 import '@brag/styles/brag-shell.css'
 
@@ -19,7 +20,7 @@ export default function AuthorLayout({ children }) {
       />
       <main className="be-main page-enter bss-screen" aria-labelledby={pageConfig.ariaLabelledby}>
         <div className="be-inner bss-page">
-          {children}
+          <DevLoadingOverlayFlag>{children}</DevLoadingOverlayFlag>
         </div>
       </main>
     </div>

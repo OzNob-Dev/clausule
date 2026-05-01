@@ -1,6 +1,7 @@
 'use client'
 
 import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
+import DevLoadingOverlayFlag from '@shared/components/ui/DevLoadingOverlayFlag'
 import '@brag/styles/brag-shell.css'
 
 export default function AuthorLayout({ children }) {
@@ -9,7 +10,7 @@ export default function AuthorLayout({ children }) {
       <BragIdentitySidebar activePage="settings" eyebrow="Clausule · Settings" ariaLabel="Sidebar navigation" />
       <main className="be-main page-enter bss-screen" aria-labelledby="brag-settings-title">
         <div className="be-inner bss-page">
-          {children}
+          <DevLoadingOverlayFlag>{children}</DevLoadingOverlayFlag>
         </div>
       </main>
     </div>
