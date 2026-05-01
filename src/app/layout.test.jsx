@@ -86,7 +86,7 @@ describe('RootLayout', () => {
     expect(screen.getByText('Pricing')).toBeInTheDocument()
   })
 
-  it('wraps auth routes in the gated client providers', async () => {
+  it('leaves login shell selection to the login route subtree while keeping auth providers', async () => {
     pathname = '/login'
     session = null
 
@@ -94,7 +94,7 @@ describe('RootLayout', () => {
 
     expect(screen.getByTestId('dev-gate')).toBeInTheDocument()
     expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
-    expect(screen.getByTestId('login-shell')).toBeInTheDocument()
+    expect(screen.queryByTestId('login-shell')).not.toBeInTheDocument()
     expect(screen.getByText('Login')).toBeInTheDocument()
   })
 

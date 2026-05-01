@@ -47,6 +47,7 @@ async function getProtectedSession(pathname) {
 }
 
 function renderShell(children, pathname) {
+  if (pathname.startsWith('/login')) return children
   if (pathname.startsWith('/signup')) return children
   if (pathname.startsWith('/mfa-setup')) return children
   if (isAuthShellPath(pathname)) return <LoginShell>{children}</LoginShell>
