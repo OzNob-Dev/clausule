@@ -27,4 +27,19 @@ describe('bootstrapSession', () => {
       body: { security: { authenticatorAppConfigured: true, ssoConfigured: true } },
     })
   })
+
+  it('reuses preloaded profile data when provided', async () => {
+    await expect(bootstrapSession({
+      userId: 'user-1',
+      email: 'ada@example.com',
+      role: 'employee',
+      authMethod: 'otp',
+      profile: { first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', mobile: '', job_title: '', department: '', totp_secret: 'secret' },
+    })).resolves.toMatchObject({
+      status: 200,
+      body: { profile: { firstName: 'Ada', lastName: 'Lovelace' } },
+    })
+
+    expect(findProfileById).not.toHaveBeenCalled()
+  })
 })

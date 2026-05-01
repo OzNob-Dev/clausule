@@ -160,45 +160,62 @@ function cacheActiveAuth(auth) {
   })
 }
 
-export async function requireActiveAuth(request) {
+function activeProfileQuery(userId, profileFields) {
+  return new URLSearchParams({
+    id: `eq.${userId}`,
+    select: profileFields,
+    limit: '1',
+  }).toString()
+}
+
+/**
+ * Resolve authenticated user plus selected profile fields in one lookup.
+ *
+ * @param {Request} request
+ * @param {string} profileFields
+ * @returns {Promise<{ userId: string|null, email: string|null, role: string|null, authMethod: string|null, error: string|null, profile: Record<string, unknown>|null }>}
+ */
+export async function requireActiveAuthProfile(request, profileFields = 'id,is_active,is_deleted') {
   const auth = requireAuth(request)
-  if (auth.error) return auth
+  if (auth.error) return { ...auth, profile: null }
   const cached = readCachedActiveAuth(auth.userId)
-  if (cached) return cached
+  if (cached && profileFields === 'id,is_active,is_deleted') return { ...cached, profile: null }
 
   const inflight = activeAuthInflight.get(auth.userId)
-  if (inflight) return inflight
+  if (inflight && profileFields === 'id,is_active,is_deleted') return inflight.then((result) => ({ ...result, profile: null }))
 
   const lookup = (async () => {
-    const { data, error } = await select(
-      'profiles',
-      `id=eq.${auth.userId}&select=id,is_active,is_deleted&limit=1`
-    )
-    if (error) return authLookupFailed(auth)
+    const { data, error } = await select('profiles', activeProfileQuery(auth.userId, profileFields))
+    if (error) return { ...authLookupFailed(auth), profile: null }
 
     const profile = data?.[0]
-    if (!profile?.id || profile.is_deleted) return userNotFound(auth)
+    if (!profile?.id || profile.is_deleted) return { ...userNotFound(auth), profile: null }
 
     // Cache only the common active-profile path. Subscription-backed access
     // stays uncached so billing and deletion changes take effect immediately.
     if (profile.is_active) {
       cacheActiveAuth(auth)
-      return auth
+      return { ...auth, profile }
     }
 
     const { hasPaid, error: subError } = await hasActiveSubscription(auth.userId)
-    if (subError) return authLookupFailed(auth)
-    if (!hasPaid) return userNotFound(auth)
-    return auth
+    if (subError) return { ...authLookupFailed(auth), profile: null }
+    if (!hasPaid) return { ...userNotFound(auth), profile: null }
+    return { ...auth, profile }
   })()
 
-  activeAuthInflight.set(auth.userId, lookup)
+  if (profileFields === 'id,is_active,is_deleted') activeAuthInflight.set(auth.userId, lookup)
 
   try {
     return await lookup
   } finally {
-    activeAuthInflight.delete(auth.userId)
+    if (profileFields === 'id,is_active,is_deleted') activeAuthInflight.delete(auth.userId)
   }
+}
+
+export async function requireActiveAuth(request) {
+  const { profile: _profile, ...auth } = await requireActiveAuthProfile(request)
+  return auth
 }
 
 // ── Standard error responses ─────────────────────────────────────────────────

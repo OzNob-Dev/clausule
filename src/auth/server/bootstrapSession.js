@@ -2,18 +2,24 @@ import { findProfileById, getAuthUserDetails } from './accountRepository.js'
 import { reconcileProfileEmail } from './reconcileProfileEmail.js'
 
 /** @typedef {import('@shared/types/contracts').AuthBootstrap} AuthBootstrap */
+export const BOOTSTRAP_PROFILE_FIELDS = 'id,is_active,is_deleted,first_name,last_name,email,mobile,job_title,department,totp_secret'
 
 function authMetaName(user, key) {
   return user?.user_metadata?.[key] ?? user?.raw_user_meta_data?.[key] ?? ''
 }
 
 /**
- * @param {{ userId: string, email: string, role: import('@shared/types/contracts').Role, authMethod: import('@shared/types/contracts').AuthMethod }} param0
+ * @param {{ userId: string, email: string, role: import('@shared/types/contracts').Role, authMethod: import('@shared/types/contracts').AuthMethod, profile?: Record<string, unknown>|null }} param0
  * @returns {Promise<{ body: AuthBootstrap, status: 200 }>}
  */
-export async function bootstrapSession({ userId, email, role, authMethod }) {
-  const { profile, error } = await findProfileById(userId, 'first_name,last_name,email,mobile,job_title,department,totp_secret')
-  if (error) console.error('[auth/bootstrap GET]', error)
+export async function bootstrapSession({ userId, email, role, authMethod, profile: initialProfile = null }) {
+  let profile = initialProfile
+
+  if (!profile) {
+    const result = await findProfileById(userId, 'first_name,last_name,email,mobile,job_title,department,totp_secret')
+    profile = result.profile
+    if (result.error) console.error('[auth/bootstrap GET]', result.error)
+  }
 
   const { user, provider, error: authUserError } = await getAuthUserDetails(userId)
   if (authUserError) console.error('[auth/bootstrap auth user GET]', authUserError)

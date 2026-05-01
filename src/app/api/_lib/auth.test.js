@@ -11,7 +11,7 @@ vi.mock('@auth/server/accountRepository.js', () => ({
 
 import { select } from './supabase.js'
 import { hasActiveSubscription } from '@auth/server/accountRepository.js'
-import { accessTokenCookie, clearAuthCookies, refreshTokenCookie, requireActiveAuth, requireAuth, sessionCookie } from './auth.js'
+import { accessTokenCookie, clearAuthCookies, refreshTokenCookie, requireActiveAuth, requireActiveAuthProfile, requireAuth, sessionCookie } from './auth.js'
 
 describe('requireAuth test bypass', () => {
   beforeEach(() => {
@@ -94,6 +94,40 @@ describe('requireAuth test bypass', () => {
 
     expect(select).toHaveBeenCalledTimes(1)
     expect(hasActiveSubscription).not.toHaveBeenCalled()
+  })
+
+  it('returns selected profile fields for bootstrap consumers', async () => {
+    process.env.JWT_SECRET = 'test-secret'
+    const exp = Math.floor(Date.now() / 1000) + 60
+    const payload = Buffer.from(JSON.stringify({
+      sub: 'user-3',
+      email: 'lin@example.com',
+      role: 'employee',
+      type: 'access',
+      exp,
+    })).toString('base64url')
+    const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url')
+    const sig = crypto.createHmac('sha256', 'test-secret').update(`${header}.${payload}`).digest('base64url')
+    const token = `${header}.${payload}.${sig}`
+
+    select.mockResolvedValueOnce({
+      data: [{
+        id: 'user-3',
+        is_active: true,
+        is_deleted: false,
+        first_name: 'Lin',
+        department: 'Platform',
+      }],
+      error: null,
+    })
+
+    await expect(requireActiveAuthProfile(new Request('http://localhost', {
+      headers: { cookie: `clausule_at=${encodeURIComponent(token)}` },
+    }), 'id,is_active,is_deleted,first_name,department')).resolves.toMatchObject({
+      userId: 'user-3',
+      profile: { first_name: 'Lin', department: 'Platform' },
+      error: null,
+    })
   })
 
   it('expires the active profile cache after the ttl', async () => {

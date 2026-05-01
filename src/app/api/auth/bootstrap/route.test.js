@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { requireActiveAuth } from '@api/_lib/auth.js'
+import { requireActiveAuthProfile } from '@api/_lib/auth.js'
 import { getAuthUser, select, update } from '@api/_lib/supabase.js'
 import { GET } from './route.js'
 
 vi.mock('@api/_lib/auth.js', () => ({
-  requireActiveAuth: vi.fn(),
+  requireActiveAuthProfile: vi.fn(),
   authErrorResponse: vi.fn((message = 'Unauthenticated') => Response.json({ error: message === 'Auth lookup failed' ? 'Failed to verify session' : message }, { status: message === 'Auth lookup failed' ? 500 : 401 })),
 }))
 
@@ -22,15 +22,15 @@ describe('auth bootstrap route', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     delete process.env.NEXT_PUBLIC_AUTH_TEST_BYPASS
-    requireActiveAuth.mockResolvedValue({
+    requireActiveAuthProfile.mockResolvedValue({
       userId: 'user-1',
       email: 'ada@example.com',
       role: 'employee',
       authMethod: 'otp',
-      error: null,
-    })
-    select.mockResolvedValue({
-      data: [{
+      profile: {
+        id: 'user-1',
+        is_active: true,
+        is_deleted: false,
         first_name: 'Ada',
         last_name: 'Lovelace',
         email: 'ada@example.com',
@@ -38,7 +38,8 @@ describe('auth bootstrap route', () => {
         job_title: 'Engineer',
         department: 'Platform',
         totp_secret: null,
-      }],
+      },
+      error: null,
     })
     update.mockResolvedValue({ data: [{ id: 'user-1' }], error: null })
   })
@@ -63,8 +64,15 @@ describe('auth bootstrap route', () => {
   })
 
   it('sets authenticator state from the profile row', async () => {
-    select.mockResolvedValue({
-      data: [{
+    requireActiveAuthProfile.mockResolvedValueOnce({
+      userId: 'user-1',
+      email: 'ada@example.com',
+      role: 'employee',
+      authMethod: 'otp',
+      profile: {
+        id: 'user-1',
+        is_active: true,
+        is_deleted: false,
         first_name: 'Ada',
         last_name: 'Lovelace',
         email: 'ada@example.com',
@@ -72,7 +80,8 @@ describe('auth bootstrap route', () => {
         job_title: 'Engineer',
         department: 'Platform',
         totp_secret: 'SECRET',
-      }],
+      },
+      error: null,
     })
     getAuthUser.mockResolvedValue({
       data: {
@@ -93,7 +102,15 @@ describe('auth bootstrap route', () => {
 
   it('keeps authenticated users in the app when the bootstrap lookup fails', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    select.mockResolvedValue({ data: [], error: new Error('boom') })
+    requireActiveAuthProfile.mockResolvedValueOnce({
+      userId: 'user-1',
+      email: 'ada@example.com',
+      role: 'employee',
+      authMethod: 'otp',
+      profile: null,
+      error: null,
+    })
+    select.mockResolvedValueOnce({ data: [], error: new Error('boom') })
     getAuthUser.mockResolvedValue({
       data: {
         app_metadata: { provider: 'email' },
@@ -118,8 +135,15 @@ describe('auth bootstrap route', () => {
   })
 
   it('falls back to auth metadata names when profile names are blank', async () => {
-    select.mockResolvedValue({
-      data: [{
+    requireActiveAuthProfile.mockResolvedValueOnce({
+      userId: 'user-1',
+      email: 'ada@example.com',
+      role: 'employee',
+      authMethod: 'otp',
+      profile: {
+        id: 'user-1',
+        is_active: true,
+        is_deleted: false,
         first_name: '',
         last_name: null,
         email: 'postbox.adrian+8@gmail.com',
@@ -127,7 +151,8 @@ describe('auth bootstrap route', () => {
         job_title: null,
         department: null,
         totp_secret: null,
-      }],
+      },
+      error: null,
     })
     getAuthUser.mockResolvedValue({
       data: {
@@ -171,6 +196,6 @@ describe('auth bootstrap route', () => {
         ssoConfigured: false,
       },
     })
-    expect(requireActiveAuth).not.toHaveBeenCalled()
+    expect(requireActiveAuthProfile).not.toHaveBeenCalled()
   })
 })

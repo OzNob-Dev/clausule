@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
-import { requireActiveAuth } from '@api/_lib/auth.js'
-import { bootstrapSession } from './bootstrapSession.js'
+import { requireActiveAuth, requireActiveAuthProfile } from '@api/_lib/auth.js'
+import { BOOTSTRAP_PROFILE_FIELDS, bootstrapSession } from './bootstrapSession.js'
 import { authTestBypassBootstrap, authTestBypassUser, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 function authRequestFromCookieHeader(cookieHeader) {
@@ -21,7 +21,11 @@ export async function getServerAuth() {
 export async function getServerBootstrapSession() {
   if (isAuthTestBypassEnabled()) return authTestBypassBootstrap
 
-  const auth = await getServerAuth()
+  const cookieStore = await cookies()
+  const auth = await requireActiveAuthProfile(
+    authRequestFromCookieHeader(cookieStore.toString()),
+    BOOTSTRAP_PROFILE_FIELDS
+  )
   if (auth.error) return null
 
   const result = await bootstrapSession(auth)
