@@ -38,16 +38,16 @@
         "./src/lib/*"
       ],
       "@brag/*": [
-        "./src/app/(protected)/(author)/brag/*"
+        "./src/features/brag/*"
       ],
       "@landing/*": [
         "./src/app/(public)/landing/*"
       ],
       "@mfa/*": [
-        "./src/app/(auth)/mfa/*"
+        "./src/features/mfa/*"
       ],
       "@signup/*": [
-        "./src/app/(auth)/signup/*"
+        "./src/features/signup/*"
       ],
       "@shared/*": [
         "./src/shared/*"

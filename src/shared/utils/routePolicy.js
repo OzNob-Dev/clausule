@@ -1,9 +1,9 @@
 import { MANAGER_ROUTES, ROUTES } from './routes'
 
-export const PROTECTED_PREFIXES = ['/dashboard', '/settings', '/components', '/entries', '/profile', '/brag', '/mfa-setup']
-export const AUTH_SHELL_PREFIXES = ['/login', '/register', '/signup', '/mfa-setup']
+export const PROTECTED_PREFIXES = [ROUTES.dashboard, ROUTES.settings, '/components', ROUTES.entries, ROUTES.profile, ROUTES.brag, ROUTES.mfaSetup]
+export const AUTH_SHELL_PREFIXES = [ROUTES.login, ROUTES.register, ROUTES.signup, ROUTES.mfaSetup]
 export const PUBLIC_SHELL_ROUTES = new Set([ROUTES.home, ROUTES.pricing])
-export const MFA_EXEMPT_ROUTES = new Set([ROUTES.settings, ROUTES.bragSettings, '/mfa-setup'])
+export const MFA_EXEMPT_ROUTES = new Set([ROUTES.settings, ROUTES.bragSettings, ROUTES.mfaSetup])
 export const AUTHOR_SHELL_ROUTES = new Set([
   ROUTES.brag,
   ROUTES.bragResume,

@@ -1,6 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import Page from './page'
 
 const { redirect } = vi.hoisted(() => ({
@@ -9,40 +8,13 @@ const { redirect } = vi.hoisted(() => ({
   }),
 }))
 
-let auth = { error: 'Unauthenticated' }
-
 vi.mock('next/navigation', () => ({
   redirect,
 }))
 
-vi.mock('@auth/server/serverSession.js', () => ({
-  getServerAuth: vi.fn(async () => auth),
-}))
-
-vi.mock('@signup/SignupScreen', () => ({
-  default: () => <div>Signup screen</div>,
-}))
-
-vi.mock('./layout', () => ({
-  default: ({ children }) => <div data-testid="register-layout">{children}</div>,
-}))
-
 describe('register page', () => {
-  beforeEach(() => {
-    auth = { error: 'Unauthenticated' }
-    redirect.mockClear()
-  })
-
-  it('redirects authenticated users to their home route', async () => {
-    auth = { error: null, role: 'employee' }
-
-    await expect(Page()).rejects.toThrow('redirect:/brag')
-    expect(redirect).toHaveBeenCalledWith('/brag')
-  })
-
-  it('renders the signup screen for unauthenticated users', async () => {
-    const ui = await Page()
-    render(ui)
-    expect(screen.getByText('Signup screen')).toBeInTheDocument()
+  it('redirects register traffic to the canonical signup route', async () => {
+    expect(() => Page()).toThrow('redirect:/signup')
+    expect(redirect).toHaveBeenCalledWith('/signup')
   })
 })
