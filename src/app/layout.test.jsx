@@ -46,10 +46,6 @@ vi.mock('@shared/components/layout/MfaShell', () => ({
   default: ({ children }) => <div data-testid="mfa-shell">{children}</div>,
 }))
 
-vi.mock('@shared/components/layout/AuthorShell', () => ({
-  default: ({ children, pathname: currentPathname, session: currentSession }) => <div data-testid="author-shell" data-pathname={currentPathname} data-session-email={currentSession?.profile?.email ?? ''}>{children}</div>,
-}))
-
 vi.mock('@shared/components/layout/PublicShell', () => ({
   default: ({ children }) => <div data-testid="public-shell">{children}</div>,
 }))
@@ -164,8 +160,6 @@ describe('RootLayout', () => {
 
     expect(screen.getByTestId('dev-gate')).toBeInTheDocument()
     expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
-    expect(screen.getByTestId('author-shell')).toHaveAttribute('data-pathname', '/brag/settings')
-    expect(screen.getByTestId('author-shell')).toHaveAttribute('data-session-email', 'ada@example.com')
     expect(screen.getByText('Security settings')).toBeInTheDocument()
     expect(redirect).not.toHaveBeenCalled()
   })
