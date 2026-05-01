@@ -71,7 +71,7 @@ describe('RootLayout', () => {
     expect(container.querySelector('html')).toHaveAttribute('lang', 'en')
     expect(screen.getByText('Home')).toBeInTheDocument()
     expect(screen.getByTestId('public-shell')).toBeInTheDocument()
-    expect(screen.queryByTestId('auth-provider')).not.toBeInTheDocument()
+    expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
   })
 
   it('leaves public routes outside the gated client providers', async () => {
@@ -82,7 +82,7 @@ describe('RootLayout', () => {
 
     expect(screen.getByTestId('public-shell')).toBeInTheDocument()
     expect(screen.queryByTestId('dev-gate')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('auth-provider')).not.toBeInTheDocument()
+    expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
     expect(screen.getByText('Pricing')).toBeInTheDocument()
   })
 
