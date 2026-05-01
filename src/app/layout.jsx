@@ -51,7 +51,7 @@ export default async function RootLayout({ children }) {
       <body>
         <DevAccessGate>
           <QueryProvider>
-            {session ? <AuthProvider initialSession={session}>{content}</AuthProvider> : content}
+            <AuthProvider initialSession={session}>{content}</AuthProvider>
           </QueryProvider>
         </DevAccessGate>
       </body>

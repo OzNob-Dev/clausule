@@ -61,6 +61,16 @@ describe('RootLayout', () => {
     expect(screen.getByText('Home').parentElement).toHaveAttribute('data-pathname', '/')
   })
 
+  it('keeps auth context mounted on public routes', async () => {
+    pathname = '/pricing'
+    session = null
+
+    render(await RootLayout({ children: <main>Pricing</main> }))
+
+    expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
+    expect(screen.getByText('Pricing')).toBeInTheDocument()
+  })
+
   it('keeps the favicon metadata pointed at the public svg mirror', () => {
     expect(metadata.icons.icon).toEqual(
       expect.arrayContaining([
