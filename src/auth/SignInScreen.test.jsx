@@ -53,8 +53,9 @@ describe('SignInScreen', () => {
   })
 
   it('renders the email sign-in flow when no MFA step is active', () => {
-    render(<SignInScreen />)
+    const { container } = render(<SignInScreen />)
 
+    expect(container.firstChild).toHaveClass('su-narrow', 'su-auth-stack', 'page-enter')
     expect(screen.getByText('Form')).toBeInTheDocument()
     expect(screen.getByText('SSO')).toBeInTheDocument()
   })

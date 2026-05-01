@@ -52,7 +52,7 @@ export default function SignIn() {
   }
 
   return (
-    <div className="su-narrow page-enter" style={{ maxWidth: '780px' }}>
+    <div className="su-narrow su-auth-stack page-enter">
       <SignInEmailForm
         email={flow.email}
         result={flow.result}
