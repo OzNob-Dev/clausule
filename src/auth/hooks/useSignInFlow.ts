@@ -266,7 +266,7 @@ export function useSignInFlow() {
         value: error instanceof Error && error.message ? error.message : 'Could not send a sign-in code. Try again.',
       })
     }
-  }, [code, resetExpirySeconds, resetResendTimer, sendCodeMutation])
+  }, [code, resetExpirySeconds, resetResendTimer, router, sendCodeMutation])
 
   const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

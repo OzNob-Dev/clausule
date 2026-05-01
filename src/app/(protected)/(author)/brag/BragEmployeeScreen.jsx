@@ -54,7 +54,7 @@ export default function BragEmployeeScreen({ initialEntries = [], initialEntries
   const [composerOpen, setComposerOpen] = useState(false)
   const [activeYear, setActiveYear] = useState('All')
   const yearInitRef = useRef(false)
-  const groupedEntries = useMemo(() => groupEntries(initialEntries ?? [], profile), [initialEntries, profile.department, profile.jobTitle])
+  const groupedEntries = useMemo(() => groupEntries(initialEntries ?? [], profile), [initialEntries, profile])
   const years = useMemo(() => groupedEntries.map(({ year }) => year), [groupedEntries])
   const visibleGroups = useMemo(() => visibleEntriesByYear(groupedEntries, activeYear), [activeYear, groupedEntries])
   const hasEntries = groupedEntries.length > 0
