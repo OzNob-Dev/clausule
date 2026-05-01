@@ -5,6 +5,7 @@
   flex: 1 1 auto;
   align-self: stretch;
   overflow: hidden;
+  height: 100vh;
 }
 
 .be-inner > .loading-overlay-frame,
@@ -27,19 +28,6 @@
   width: 100%;
   height: 100%;
   display: block;
-}
-
-.skeleton-body {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 240px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  pointer-events: none;
-  margin-top: 4px;
 }
 
 .skel-line-group {

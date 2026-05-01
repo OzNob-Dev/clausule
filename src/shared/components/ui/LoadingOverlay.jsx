@@ -122,22 +122,6 @@ export default function LoadingOverlay({
     <div className="loading-overlay-frame" aria-busy="true">
       <div className="loading-overlay" role="status" aria-label={label}>
         <canvas ref={canvasRef} className="loader-canvas" aria-hidden="true" />
-        <div className="skeleton-body" aria-hidden="true">
-          <div className="skel-line-group">
-            <div className="skel-line" />
-            <div className="skel-line" />
-            <div className="skel-line" />
-          </div>
-          <div className="skel-line-group">
-            <div className="skel-line" />
-            <div className="skel-line" />
-            <div className="skel-line" />
-          </div>
-          <div className="skel-line-group">
-            <div className="skel-line" />
-            <div className="skel-line" />
-          </div>
-        </div>
         <div className="loader-copy">
           <p className="loader-eyebrow">{eyebrow}</p>
           <h2 className="loader-heading" aria-label="Just a moment.">Just a<br /><em>moment.</em></h2>
