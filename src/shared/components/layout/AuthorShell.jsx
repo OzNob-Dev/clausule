@@ -9,9 +9,13 @@ const SETTINGS_CONFIG = {
 
 export default function AuthorShell({ children, pathname, session = null }) {
   const pageConfig = PAGE_CONFIG[pathname] ?? SETTINGS_CONFIG
+  const profile = session?.profile ?? {}
+  const userMeta = session?.user?.user_metadata ?? session?.user?.raw_user_meta_data ?? {}
   const identityProfile = {
-    ...(session?.profile ?? {}),
-    email: session?.profile?.email || session?.user?.email || '',
+    ...profile,
+    firstName: profile.firstName || profile.first_name || userMeta.first_name || userMeta.firstName || '',
+    lastName: profile.lastName || profile.last_name || userMeta.last_name || userMeta.lastName || '',
+    email: profile.email || session?.user?.email || '',
   }
 
   return (

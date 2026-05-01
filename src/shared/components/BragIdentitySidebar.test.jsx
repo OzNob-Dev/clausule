@@ -23,6 +23,8 @@ describe('BragIdentitySidebar', () => {
 
     expect(screen.getByRole('complementary', { name: /sidebar navigation/i })).toBeInTheDocument()
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(screen.getByText('AL')).toBeInTheDocument()
+    expect(screen.getByText('ada@example.com')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
     expect(screen.getByRole('link', { name: /security/i })).toHaveAttribute('href', '/brag/settings')
     expect(screen.getByRole('link', { name: /your entries/i })).toHaveAttribute('href', '/brag')
@@ -34,5 +36,13 @@ describe('BragIdentitySidebar', () => {
     const user = (await import('@testing-library/user-event')).default.setup()
     await user.click(screen.getByRole('button', { name: /log out/i }))
     expect(logout).toHaveBeenCalledTimes(1)
+  })
+
+  it('falls back to auth email when profile names are absent', () => {
+    render(<BragIdentitySidebar activePage="settings" eyebrow="Clausule · Settings" profile={{ email: 'ada@example.com' }} />)
+
+    expect(screen.getByText('A')).toBeInTheDocument()
+    expect(screen.getByText('ada')).toBeInTheDocument()
+    expect(screen.getByText('ada@example.com')).toBeInTheDocument()
   })
 })

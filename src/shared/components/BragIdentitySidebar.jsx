@@ -70,7 +70,7 @@ export default function BragIdentitySidebar({
         <div className="sidebar__eyebrow mb-5 text-[12px] font-semibold uppercase tracking-[0.1em] text-[var(--cl-white-42)]">{eyebrow}</div>
         <div className="sidebar__profile flex items-center gap-4 rounded-[12px] border border-[var(--sidebar-border)] bg-[var(--sidebar-bg-soft)] p-4 transition-[transform,border-color,background-color] duration-200 hover:translate-x-[2px] hover:border-[var(--sidebar-accent)] hover:bg-[var(--cl-white-10)] motion-reduce:transition-none motion-reduce:hover:translate-x-0">
           <div className="sidebar__avatar sidebar__avatar-pop relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-[12px] border border-[var(--cl-brown-alpha-10)] bg-[linear-gradient(135deg,var(--cl-surface-muted-14)_0%,var(--cl-surface-muted-10)_100%)] [font-family:var(--cl-font-editorial)] text-[18px] font-medium tracking-[-0.02em] text-[var(--cl-ink-6)] shadow-[var(--cl-shadow-ink)] before:absolute before:inset-0 before:bg-[linear-gradient(180deg,var(--cl-white-24)_0%,transparent_55%)] before:content-[''] motion-safe:animate-[sidebar-avatar-pop-in_0.62s_cubic-bezier(0.2,1,0.3,1)_both]">
-            {initials}
+            <span className="relative z-10">{initials}</span>
           </div>
           <div className="sidebar__profile-text min-w-0">
             <div className="sidebar__name overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-semibold leading-[1.3] text-[var(--sidebar-text-strong)]">{displayName}</div>
