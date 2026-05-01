@@ -23,6 +23,8 @@ describe('LoadingOverlay', () => {
     expect(component).toContain("import './LoadingOverlay.css'")
     expect(component).not.toContain('<style>')
     expect(css).toContain('.loader-copy')
+    expect(css).toContain('.loading-overlay-frame')
+    expect(css).toContain('min-height: 100%')
     expect(css).toContain('position: absolute')
     expect(css).toContain('@keyframes dot-rise')
   })

@@ -1,3 +1,17 @@
+.loading-overlay-frame {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  flex: 1 1 auto;
+  align-self: stretch;
+  overflow: hidden;
+}
+
+.be-inner > .loading-overlay-frame,
+.su-shell-right > .loading-overlay-frame {
+  margin: -44px -32px -100px;
+}
+
 .loading-overlay {
   position: absolute;
   inset: 0;
