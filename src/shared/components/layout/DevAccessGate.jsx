@@ -23,7 +23,6 @@ export default function DevAccessGate({ children }) {
     }
 
     setAllowed(hasDevAccess())
-    setChecked(true)
   }, [])
 
   return allowed ? children : <ComingSoon />
