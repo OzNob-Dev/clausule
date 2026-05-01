@@ -98,6 +98,7 @@ describe('RootLayout', () => {
     render(await RootLayout({ children: <div>Security settings</div> }))
 
     expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
+    expect(screen.getByTestId('auth-provider').firstChild).toHaveAttribute('data-pathname', '/brag/settings')
     expect(screen.getByText('Security settings')).toBeInTheDocument()
     expect(redirect).not.toHaveBeenCalled()
   })

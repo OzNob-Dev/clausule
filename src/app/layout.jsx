@@ -28,8 +28,8 @@ async function getPathname() {
   return (await headers()).get('x-clausule-pathname') ?? ROUTES.home
 }
 
-async function getProtectedContent(children, pathname) {
-  if (!isProtectedPath(pathname)) return children
+async function getProtectedSession(pathname) {
+  if (!isProtectedPath(pathname)) return null
 
   const session = await getServerBootstrapSession()
   if (!session) redirect(ROUTES.login)
@@ -38,19 +38,20 @@ async function getProtectedContent(children, pathname) {
   if (mfaSetupRequired && !isMfaExemptPath(pathname)) redirect(ROUTES.settings)
   if (isManagerRoute(pathname) && session.user.role !== 'manager') redirect(ROUTES.brag)
 
-  return <AuthProvider initialSession={session}>{children}</AuthProvider>
+  return session
 }
 
 export default async function RootLayout({ children }) {
   const pathname = await getPathname()
-  const content = await getProtectedContent(children, pathname)
+  const session = await getProtectedSession(pathname)
+  const content = <RouteShell initialPathname={pathname}>{children}</RouteShell>
 
   return (
     <html lang="en">
       <body>
         <DevAccessGate>
           <QueryProvider>
-            <RouteShell initialPathname={pathname}>{content}</RouteShell>
+            {session ? <AuthProvider initialSession={session}>{content}</AuthProvider> : content}
           </QueryProvider>
         </DevAccessGate>
       </body>
