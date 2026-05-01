@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@source "../../";
+
 :root {
   --cl-font-sans: 'DM Sans', system-ui, sans-serif;
   --cl-font-serif: 'DM Serif Display', Georgia, serif;
   --cl-font-editorial: 'Fraunces', Georgia, serif;
   --cl-font-code: 'Courier New', monospace;
-
   --cl-surface-warm: #F5F0EA;
   --cl-surface-paper: #FAF7F3;
   --cl-surface-paper-2: #FDFCFA;
@@ -38,7 +41,6 @@
   --cl-surface-muted-19: #FAF8F5;
   --cl-surface-muted-20: #F0EBE3;
   --cl-surface-muted-21: #EAE4DA;
-
   --cl-accent: #D05A34;
   --cl-accent-strong: var(--cl-ring-outer);
   --cl-accent-deep: #C46B4A;
@@ -65,7 +67,6 @@
   --cl-accent-soft-19: var(--cl-accent-alpha-20);
   --cl-accent-soft-20: rgba(196, 107, 74, 0.26);
   --cl-accent-soft-21: var(--cl-accent-alpha-28);
-
   --cl-rule: rgba(60, 45, 35, 0.10);
   --cl-rule-2: rgba(60, 45, 35, 0.12);
   --cl-rule-3: rgba(60, 45, 35, 0.13);
@@ -80,7 +81,6 @@
   --cl-rule-dark-5: rgba(26, 21, 16, 0.1);
   --cl-rule-dark-6: rgba(26, 21, 16, 0.12);
   --cl-rule-dark-7: rgba(26, 21, 16, 0.18);
-
   --cl-border: var(--cl-rule);
   --cl-border-2: var(--cl-rule-2);
   --cl-border-3: var(--cl-rule-3);
@@ -92,7 +92,6 @@
   --cl-border-dark-3: rgba(26, 21, 16, 0.15);
   --cl-border-dark-4: var(--cl-rule-dark-7);
   --cl-border-dark-5: rgba(26, 21, 16, 0.2);
-
   --cl-white-4: rgba(255, 255, 255, 0.04);
   --cl-white-05: rgba(255, 255, 255, 0.05);
   --cl-white-7: rgba(255, 255, 255, 0.07);
@@ -279,7 +278,6 @@
   --cl-dialog-red-soft: rgba(180, 60, 40, 0.25);
   --cl-dialog-red-soft-2: rgba(180, 60, 40, 0.08);
   --cl-dialog-shadow: rgba(0, 0, 0, 0.3);
-
   --cl-ink: var(--cl-surface-ink);
   --cl-ink-2: #3D3228;
   --cl-ink-3: #3D3229;
@@ -290,7 +288,6 @@
   --cl-ink-8: var(--cl-surface-ink-2);
   --cl-ink-9: var(--cl-surface-ink-3);
   --cl-ink-10: var(--cl-surface-ink-5);
-
   --cl-muted: var(--cl-surface-muted-6);
   --cl-muted-3: var(--cl-surface-muted-5);
   --cl-muted-4: var(--cl-surface-muted-7);
@@ -307,7 +304,6 @@
   --cl-muted-15: #9A8E84;
   --cl-muted-16: #C4C0BA;
   --cl-muted-17: #AAA29A;
-
   --cl-success: #2F6F43;
   --cl-success-2: #3A9E7E;
   --cl-success-3: #5DCAA5;
@@ -315,11 +311,9 @@
   --cl-success-soft-2: rgba(93, 202, 165, 0.06);
   --cl-success-soft-3: rgba(93, 202, 165, 0.14);
   --cl-success-soft-4: rgba(93, 202, 165, 0.18);
-
   --cl-warning: #8A6200;
   --cl-warning-2: #C07A00;
   --cl-warning-soft: rgba(138, 98, 0, 0.08);
-
   --cl-danger: #B83232;
   --cl-danger-2: #C0392B;
   --cl-danger-3: #D94040;
@@ -331,7 +325,6 @@
   --cl-danger-soft-3: rgba(184, 50, 50, 0.12);
   --cl-danger-soft-4: rgba(224, 80, 80, 0.08);
   --cl-danger-soft-5: rgba(224, 80, 80, 0.2);
-
   --cl-linkedin: #0A66C2;
   --cl-linkedin-2: #004182;
   --cl-sky: #185FA5;
@@ -348,14 +341,11 @@
   --cl-brown-2: var(--cl-surface-ink-8);
   --cl-brown-3: #3A2E28;
   --cl-accent-brown: #5C2C1A;
-
   --cl-grid: var(--cl-rule-dark);
   --cl-grid-2: rgba(0, 0, 0, 0.038);
   --cl-grid-3: rgba(0, 0, 0, 0.09);
-
   --cl-white: var(--cl-surface-white);
   --cl-black: #000000;
-
   --cl-shadow-soft: 0 2px 8px rgba(61, 50, 41, 0.08);
   --cl-shadow-med: 0 16px 48px rgba(61, 50, 41, 0.12);
   --cl-shadow-strong: 0 12px 48px rgba(60, 45, 35, 0.13);
@@ -363,7 +353,6 @@
   --cl-shadow-ink: 0 10px 28px rgba(0, 0, 0, 0.12);
   --cl-shadow-linkedin: 0 8px 24px rgba(10, 102, 194, 0.24);
   --cl-shadow-linkedin-2: 0 8px 24px rgba(10, 102, 194, 0.26);
-
   --cl-radius-sm: 4px;
   --cl-radius-md: 8px;
   --cl-radius-lg: 12px;
@@ -371,7 +360,6 @@
   --cl-radius-2xl: 16px;
   --cl-radius-3xl: 18px;
   --cl-radius-pill: 999px;
-
   --cl-text-3xs: 0.5625rem;
   --cl-text-2xs: 0.625rem;
   --cl-text-xs: 0.6875rem;
@@ -386,11 +374,9 @@
   --cl-title-lg: 1.5rem;
   --cl-display-sm: 1.75rem;
   --cl-display-md: 1.875rem;
-
   --cl-ring-outer: #C94F2A;
   --cl-ring-mid: #B9824F;
   --cl-ring-inner: #225F3D;
-
   --font-sans: var(--cl-font-sans);
   --font-serif: var(--cl-font-serif);
   --canvas: var(--cl-canvas);
@@ -412,7 +398,6 @@
   --ring-inner: var(--cl-ring-inner);
   --r: var(--cl-radius-md);
   --r2: var(--cl-radius-md);
-
   --cl-canvas: var(--cl-surface-warm);
   --cl-card: var(--cl-surface-paper);
   --cl-nav: var(--cl-surface-ink);
@@ -420,4 +405,36 @@
   --cl-ts: var(--cl-surface-muted);
   --cl-tm: var(--cl-surface-muted-2);
   --cl-tc: var(--cl-surface-muted-3);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--canvas);
+  color: var(--tp);
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes think {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: page-enter 0.28s ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .motion-safe\:animate-\[think_1\.2s_ease-in-out_infinite\] {
+    animation: none !important;
+    opacity: 1 !important;
+  }
 }

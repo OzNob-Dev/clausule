@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SignupProgress from '@shared/components/SignupProgress'
 import SignupStepAccount from '@shared/components/SignupStepAccount'
-import '@shared/styles/page-loader.css'
 import { authShellNarrowClassName, authSigninNoteClassName, authShellRootClassName } from '@shared/components/layout/authShellClasses'
 
 function SignUpInner() {

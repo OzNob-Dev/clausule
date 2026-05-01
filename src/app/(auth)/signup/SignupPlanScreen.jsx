@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation'
 import SignupProgress from '@shared/components/SignupProgress'
 import SignupStepPayment from '@shared/components/SignupStepPayment'
-import '@shared/styles/page-loader.css'
 import { authShellNarrowClassName } from '@shared/components/layout/authShellClasses'
 
 /**

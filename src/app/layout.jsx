@@ -14,7 +14,7 @@ import {
   isPublicShellPath,
 } from '@shared/utils/routePolicy'
 import { ROUTES } from '@shared/utils/routes'
-import '@shared/styles/globals.css'
+import '@shared/styles/tailwind.css'
 
 export const metadata = {
   title: 'Clausule',

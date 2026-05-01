@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { ConversationIllustration } from '@shared/components/ui/icon/ConversationIllustration'
-import '@shared/styles/page-loader.css'
 
 function FeedbackHistoryEmptyState() {
   const router = useRouter()

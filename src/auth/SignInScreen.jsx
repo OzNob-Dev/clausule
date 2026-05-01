@@ -7,7 +7,6 @@ import SsoButtons from '@shared/components/ui/SsoButtons'
 import { useSignInFlow } from '@auth/hooks/useSignInFlow'
 import MfaLoginEmailStep from '@shared/components/MfaLoginEmailStep'
 import MfaLoginAppStep from '@shared/components/MfaLoginAppStep'
-import '@shared/styles/page-loader.css'
 import { authShellNarrowClassName } from '@shared/components/layout/authShellClasses'
 
 export default function SignIn() {

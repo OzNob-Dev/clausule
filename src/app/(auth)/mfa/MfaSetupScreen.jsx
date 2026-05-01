@@ -4,7 +4,6 @@ import { useMfaSetupFlow } from '@mfa/hooks/useMfaSetupFlow'
 import MfaOtpStep from '@shared/components/MfaOtpStep'
 import MfaSuccessStep from '@shared/components/MfaSuccessStep'
 import MfaTotpStep from '@shared/components/MfaTotpStep'
-import '@shared/styles/page-loader.css'
 
 export default function MfaSetup() {
   const flow = useMfaSetupFlow()

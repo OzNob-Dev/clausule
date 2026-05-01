@@ -8,7 +8,6 @@ import EntryComposer from '@shared/components/EntryComposer'
 import BragDocEntryCard from '@shared/components/ui/BragDocEntryCard'
 import BragDocToolbar from '@shared/components/ui/BragDocToolbar'
 import PageHeader from '@shared/components/ui/PageHeader'
-import '@shared/styles/page-loader.css'
 
 const ResumeTab = dynamic(() => import('@shared/components/ResumeTab'), {
   loading: () => <p className="be-entry-load-error" role="status">Loading resume workspace…</p>,

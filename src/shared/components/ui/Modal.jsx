@@ -106,7 +106,7 @@ export function Modal({
   if (!open || !portalNode) return null
   return createPortal(
     <div
-      className="modal-overlay"
+      className="modal-overlay fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--cl-black-50)] p-4"
       onClick={onClose}
       role="presentation"
     >

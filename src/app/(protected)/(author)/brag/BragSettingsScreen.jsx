@@ -8,7 +8,6 @@ import PageHeader from '@shared/components/ui/PageHeader'
 import { DeleteAccountDialog } from '@shared/components/DeleteAccountDialog'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { useTotpStatusQuery } from '@shared/queries/useProfileQuery'
-import '@shared/styles/page-loader.css'
 
 export default function BragSettings() {
   const {
