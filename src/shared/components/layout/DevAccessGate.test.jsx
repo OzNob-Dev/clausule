@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import DevAccessGate, { hasDevAccess } from './DevAccessGate'
+import DevAccessGate, { hasDevAccess, primeDevAccessFromLocation } from './DevAccessGate'
 
 describe('DevAccessGate', () => {
   beforeEach(() => {
@@ -37,5 +37,10 @@ describe('DevAccessGate', () => {
     localStorage.setItem('clausule_dev_accexx', 'granted')
 
     expect(hasDevAccess()).toBe(true)
+  })
+
+  it('primes dev access from a bypaxxx location', () => {
+    expect(primeDevAccessFromLocation('?bypaxxx=true', '/')).toBe(true)
+    expect(localStorage.getItem('clausule_dev_accexx')).toBe('true')
   })
 })
