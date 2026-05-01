@@ -91,6 +91,7 @@ describe('FeedbackScreen', () => {
     expect(await screen.findByText('jj')).toBeInTheDocument()
     expect(screen.getByText('bnv')).toBeInTheDocument()
     expect(screen.getByText('Thanks for the note.')).toBeInTheDocument()
+    expect(listFeedbackThreadsAction).toHaveBeenCalledTimes(1)
   })
 
   it('renders the empty history mockup when there is no feedback yet', async () => {

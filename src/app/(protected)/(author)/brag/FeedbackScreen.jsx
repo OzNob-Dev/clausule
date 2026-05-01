@@ -6,6 +6,7 @@ import PageHeader from '@shared/components/ui/PageHeader'
 import { useFeedbackThreadsQuery } from '@shared/queries/useFeedbackThreadsQuery'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { ArrowIcon } from '@shared/components/ui/icon/ArrowIcon'
 import { ConversationIllustration } from '@shared/components/ui/icon/ConversationIllustration'
 import '@brag/styles/brag-settings-core.css'
@@ -35,9 +36,12 @@ function FeedbackHistoryEmptyState() {
 }
 
 function FeedbackHistoryScreen() {
-  const feedbackQuery = useFeedbackThreadsQuery({ enabled: true })
+  const [ready, setReady] = useState(false)
+  useEffect(() => setReady(true), [])
+
+  const feedbackQuery = useFeedbackThreadsQuery({ enabled: ready })
   const threads = feedbackQuery.data ?? []
-  const loading = feedbackQuery.isPending
+  const loading = ready && feedbackQuery.isPending
   const loadError = feedbackQuery.error instanceof Error ? feedbackQuery.error.message : ''
   const hasHistory = threads.length > 0
 
