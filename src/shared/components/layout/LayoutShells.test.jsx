@@ -115,4 +115,15 @@ describe('layout shells', () => {
     expect(screen.getByRole('main', { name: 'Security settings' })).toHaveClass('be-main', 'page-enter', 'bss-screen')
     expect(screen.getByText('open')).toBeInTheDocument()
   })
+
+  it('passes profile page config through author shell', () => {
+    render(
+      <AuthorShell pathname="/profile">
+        <h1 id="profile-page-title">Profile</h1>
+        <div>profile</div>
+      </AuthorShell>
+    )
+
+    expect(screen.getByText('profile::Clausule · Profile:')).toBeInTheDocument()
+  })
 })

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useProfileStore } from '@auth/store/useProfileStore'
 import ClientSignOutButton from '@shared/components/ClientSignOutButton'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
@@ -53,6 +54,25 @@ function SidebarIcon({ icon }) {
         : <MessageIcon />
 }
 
+function resolveNavState(pathname, activePage, activeChildPage) {
+  for (const section of NAV_SECTIONS) {
+    for (const item of section.items) {
+      if (pathname === item.href) return { activePage: item.page, activeChildPage: undefined, activeLabel: item.label }
+      const child = item.children?.find((entry) => pathname === entry.href)
+      if (child) return { activePage: item.page, activeChildPage: child.page, activeLabel: child.label }
+    }
+  }
+
+  const selectedItem = NAV_SECTIONS.flatMap((section) => section.items).find((item) => item.page === activePage)
+  const selectedChild = selectedItem?.children?.find((child) => child.page === activeChildPage)
+
+  return {
+    activePage,
+    activeChildPage,
+    activeLabel: selectedChild?.label || selectedItem?.label,
+  }
+}
+
 export default function BragIdentitySidebar({
   ariaLabel = 'Sidebar navigation',
   eyebrow = 'Clausule',
@@ -61,6 +81,7 @@ export default function BragIdentitySidebar({
   profile = {},
   showSignOut = true,
 }) {
+  const pathname = usePathname()
   const { storeProfile, userEmail } = useProfileStore(useShallow((state) => ({
     storeProfile: state.profile,
     userEmail: state.user?.email ?? '',
@@ -77,6 +98,9 @@ export default function BragIdentitySidebar({
   const displayName = profileDisplayName(identity)
   const initials = profileInitials(identity)
   const emailLabel = email.trim()
+  const navState = resolveNavState(pathname, activePage, activeChildPage)
+  const eyebrowPrefix = eyebrow.split('·')[0]?.trim() || 'Clausule'
+  const resolvedEyebrow = navState.activeLabel ? `${eyebrowPrefix} · ${navState.activeLabel}` : eyebrow
 
   return (
     <aside
@@ -84,7 +108,7 @@ export default function BragIdentitySidebar({
       aria-label={ariaLabel}
     >
       <div className="sidebar__head border-b-[1.5px] border-b-[var(--sidebar-border)] px-7 pb-6 pt-8 max-[768px]:px-5">
-        <div className="sidebar__eyebrow mb-5 text-[12px] font-semibold uppercase tracking-[0.1em] text-[var(--cl-white-42)]">{eyebrow}</div>
+        <div className="sidebar__eyebrow mb-5 text-[12px] font-semibold uppercase tracking-[0.1em] text-[var(--cl-white-42)]">{resolvedEyebrow}</div>
         <div className="sidebar__profile flex items-center gap-4 rounded-[12px] border border-[var(--sidebar-border)] bg-[var(--sidebar-bg-soft)] p-4 transition-[transform,border-color,background-color] duration-200 hover:translate-x-[2px] hover:border-[var(--sidebar-accent)] hover:bg-[var(--cl-white-10)] motion-reduce:transition-none motion-reduce:hover:translate-x-0">
           <div className="sidebar__avatar sidebar__avatar-pop relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-[12px] border border-[var(--cl-brown-alpha-10)] bg-[linear-gradient(135deg,var(--cl-surface-muted-14)_0%,var(--cl-surface-muted-10)_100%)] [font-family:var(--cl-font-editorial)] text-[18px] font-medium tracking-[-0.02em] text-[var(--cl-ink-6)] shadow-[var(--cl-shadow-ink)] before:absolute before:inset-0 before:bg-[linear-gradient(180deg,var(--cl-white-24)_0%,transparent_55%)] before:content-[''] motion-safe:animate-[sidebar-avatar-pop-in_0.62s_cubic-bezier(0.2,1,0.3,1)_both]">
             <span className="relative z-10">{initials}</span>
@@ -107,9 +131,9 @@ export default function BragIdentitySidebar({
                     href={item.href}
                     className={cn(
                       'sidebar__link flex items-center gap-3 border-l-[3px] border-l-transparent px-7 py-3 text-[15px] font-medium text-[var(--sidebar-text)] no-underline transition-[color,background-color,border-color] duration-200 hover:border-l-[var(--sidebar-accent)] hover:bg-[var(--sidebar-bg-hover)] hover:text-[var(--sidebar-text-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[var(--sidebar-focus)] max-[768px]:px-5 motion-reduce:transition-none',
-                      (activePage === item.page || item.children?.some((child) => activeChildPage === child.page)) && 'sidebar__link--active border-l-[var(--sidebar-accent)] bg-[var(--sidebar-accent-soft)] text-[var(--sidebar-text-strong)] font-semibold'
+                      (navState.activePage === item.page || item.children?.some((child) => navState.activeChildPage === child.page)) && 'sidebar__link--active border-l-[var(--sidebar-accent)] bg-[var(--sidebar-accent-soft)] text-[var(--sidebar-text-strong)] font-semibold'
                     )}
-                    aria-current={activePage === item.page || item.children?.some((child) => activeChildPage === child.page) ? 'page' : undefined}
+                    aria-current={navState.activePage === item.page || item.children?.some((child) => navState.activeChildPage === child.page) ? 'page' : undefined}
                   >
                     <span className="sidebar__icon h-5 w-5 shrink-0 text-current [&_svg]:h-full [&_svg]:w-full" aria-hidden="true">
                       <SidebarIcon icon={item.icon} />
@@ -122,8 +146,8 @@ export default function BragIdentitySidebar({
                         <li key={child.page} className="sidebar__subitem">
                           <Link
                             href={child.href}
-                            className={cn('sidebar__sublink block px-7 py-2 pl-[60px] text-[14px] text-[var(--sidebar-text-muted)] no-underline transition-[color,background-color] duration-200 hover:bg-[var(--sidebar-bg-hover)] hover:text-[var(--sidebar-text-strong)] max-[768px]:px-5 max-[768px]:pl-[52px] motion-reduce:transition-none', activeChildPage === child.page && 'sidebar__sublink--active text-[var(--sidebar-accent)] font-semibold')}
-                            aria-current={activeChildPage === child.page ? 'page' : undefined}
+                            className={cn('sidebar__sublink block px-7 py-2 pl-[60px] text-[14px] text-[var(--sidebar-text-muted)] no-underline transition-[color,background-color] duration-200 hover:bg-[var(--sidebar-bg-hover)] hover:text-[var(--sidebar-text-strong)] max-[768px]:px-5 max-[768px]:pl-[52px] motion-reduce:transition-none', navState.activeChildPage === child.page && 'sidebar__sublink--active text-[var(--sidebar-accent)] font-semibold')}
+                            aria-current={navState.activeChildPage === child.page ? 'page' : undefined}
                           >
                             {child.label}
                           </Link>
