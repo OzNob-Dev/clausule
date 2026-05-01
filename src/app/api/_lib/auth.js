@@ -18,10 +18,13 @@ import { hasActiveSubscription } from '@auth/server/accountRepository.js'
 import { authTestBypassUser, isAuthTestBypassEnabled } from '@shared/utils/authTestBypass.js'
 
 const IS_PROD = process.env.NODE_ENV === 'production'
+const ACTIVE_AUTH_CACHE_TTL_MS = 1000
 
 const COOKIE_AT = 'clausule_at'   // access token
 const COOKIE_RT = 'clausule_rt'   // refresh token
 const COOKIE_SESSION = 'clausule_session'
+const activeAuthCache = new Map()
+const activeAuthInflight = new Map()
 
 // ── Cookie extraction ─────────────────────────────────────────────────────────
 
@@ -132,37 +135,70 @@ export function requireAuth(request) {
   }
 }
 
+function authLookupFailed(auth) {
+  return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'Auth lookup failed' }
+}
+
+function userNotFound(auth) {
+  return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'User not found' }
+}
+
+function readCachedActiveAuth(userId) {
+  const cached = activeAuthCache.get(userId)
+  if (!cached) return null
+  if (Date.now() - cached.checkedAt > ACTIVE_AUTH_CACHE_TTL_MS) {
+    activeAuthCache.delete(userId)
+    return null
+  }
+  return cached.auth
+}
+
+function cacheActiveAuth(auth) {
+  activeAuthCache.set(auth.userId, {
+    auth,
+    checkedAt: Date.now(),
+  })
+}
+
 export async function requireActiveAuth(request) {
   const auth = requireAuth(request)
   if (auth.error) return auth
+  const cached = readCachedActiveAuth(auth.userId)
+  if (cached) return cached
 
-  const { data, error } = await select(
-    'profiles',
-    `id=eq.${auth.userId}&select=id,is_active,is_deleted&limit=1`
-  )
-  if (error) {
-    return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'Auth lookup failed' }
-  }
+  const inflight = activeAuthInflight.get(auth.userId)
+  if (inflight) return inflight
 
-  const profile = data?.[0]
-  if (!profile?.id || profile.is_deleted) {
-    return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'User not found' }
-  }
+  const lookup = (async () => {
+    const { data, error } = await select(
+      'profiles',
+      `id=eq.${auth.userId}&select=id,is_active,is_deleted&limit=1`
+    )
+    if (error) return authLookupFailed(auth)
 
-  // Mirror the accountActive(profile, hasPaid) predicate used at session-mint time:
-  // accept is_active=true OR a current paid subscription. The subscription query only
-  // fires for the rare is_active=false case to avoid overhead on every API call.
-  if (!profile.is_active) {
+    const profile = data?.[0]
+    if (!profile?.id || profile.is_deleted) return userNotFound(auth)
+
+    // Cache only the common active-profile path. Subscription-backed access
+    // stays uncached so billing and deletion changes take effect immediately.
+    if (profile.is_active) {
+      cacheActiveAuth(auth)
+      return auth
+    }
+
     const { hasPaid, error: subError } = await hasActiveSubscription(auth.userId)
-    if (subError) {
-      return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'Auth lookup failed' }
-    }
-    if (!hasPaid) {
-      return { ...auth, userId: null, email: null, role: null, authMethod: null, error: 'User not found' }
-    }
-  }
+    if (subError) return authLookupFailed(auth)
+    if (!hasPaid) return userNotFound(auth)
+    return auth
+  })()
 
-  return auth
+  activeAuthInflight.set(auth.userId, lookup)
+
+  try {
+    return await lookup
+  } finally {
+    activeAuthInflight.delete(auth.userId)
+  }
 }
 
 // ── Standard error responses ─────────────────────────────────────────────────

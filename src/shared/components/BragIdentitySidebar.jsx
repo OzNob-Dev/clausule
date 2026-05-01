@@ -1,10 +1,7 @@
-'use client'
 import './BragIdentitySidebar.css'
 
 import Link from 'next/link'
-import { useAuth } from '@auth/context/AuthContext'
-import { useProfileStore } from '@auth/store/useProfileStore'
-import { Button } from '@shared/components/ui/Button'
+import ClientSignOutButton from '@shared/components/ClientSignOutButton'
 import { profileDisplayName, profileInitials } from '@shared/utils/profile'
 import { ROUTES } from '@shared/utils/routes'
 import { cn } from '@shared/utils/cn'
@@ -12,8 +9,6 @@ import { ProfileIcon } from '@shared/components/ui/icon/ProfileIcon'
 import { SecurityIcon } from '@shared/components/ui/icon/SecurityIcon'
 import { DocumentIcon } from '@shared/components/ui/icon/DocumentIcon'
 import { MessageIcon } from '@shared/components/ui/icon/MessageIcon'
-import { LogoutIcon } from '@shared/components/ui/icon/LogoutIcon'
-
 const NAV_SECTIONS = [
   {
     title: 'Account',
@@ -61,10 +56,9 @@ export default function BragIdentitySidebar({
   eyebrow = 'Clausule',
   activePage,
   activeChildPage,
+  profile = {},
   showSignOut = true,
 }) {
-  const { logout } = useAuth()
-  const profile = useProfileStore((state) => state.profile)
   const displayName = profileDisplayName(profile)
   const initials = profileInitials(profile)
 
@@ -125,10 +119,7 @@ export default function BragIdentitySidebar({
 
       {showSignOut && (
         <div className="sidebar__foot">
-          <Button type="button" variant="ghost" className="sidebar__signout" onClick={logout}>
-            <LogoutIcon />
-            Log out
-          </Button>
+          <ClientSignOutButton />
         </div>
       )}
     </aside>

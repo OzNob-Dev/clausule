@@ -6,9 +6,13 @@ import { CheckIcon } from '@shared/components/ui/icon/CheckIcon'
 
 const STEPS = ['Account', 'Plan', 'Done']
 
-export default function SignupProgress({ mobile = false }) {
-  const p = usePathname()
-  const step = p.endsWith('/done') ? 3 : p.endsWith('/plan') ? 2 : 1
+function stepFromPath(pathname = '') {
+  return pathname.endsWith('/done') ? 3 : pathname.endsWith('/plan') ? 2 : 1
+}
+
+export default function SignupProgress({ mobile = false, pathname = null }) {
+  const currentPathname = usePathname()
+  const step = stepFromPath(pathname ?? currentPathname ?? '')
 
   return (
     <nav className={`su-progress${mobile ? ' su-progress--mobile' : ' su-progress--sidebar'}`} aria-label="Signup progress">

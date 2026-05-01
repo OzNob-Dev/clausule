@@ -2,28 +2,20 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import BragIdentitySidebar from './BragIdentitySidebar'
-import { useProfileStore } from '@auth/store/useProfileStore'
 
 const logout = vi.fn()
 
-vi.mock('@auth/context/AuthContext', () => ({
-  useAuth: () => ({ logout }),
+vi.mock('@shared/components/ClientSignOutButton', () => ({
+  default: () => <button type="button" onClick={logout}>Log out</button>,
 }))
 
 describe('BragIdentitySidebar integration', () => {
   beforeEach(() => {
     logout.mockClear()
-    useProfileStore.getState().clearProfile()
   })
 
   it('renders the same sidebar routes as the standalone shell', () => {
-    useProfileStore.getState().setProfile({
-      firstName: 'Ada',
-      lastName: 'Lovelace',
-      email: 'ada@example.com',
-    })
-
-    render(<BragIdentitySidebar activePage="brag" activeChildPage="resume" />)
+    render(<BragIdentitySidebar activePage="brag" activeChildPage="resume" profile={{ firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' }} />)
 
     expect(screen.getByRole('link', { name: /personal details/i })).toHaveAttribute('href', '/profile')
     expect(screen.getByRole('link', { name: /resume/i })).toHaveAttribute('href', '/brag/resume')

@@ -1,13 +1,12 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useProfileStore } from '@auth/store/useProfileStore'
 import BragIdentitySidebar from './BragIdentitySidebar'
 
 const logout = vi.fn()
 
-vi.mock('@auth/context/AuthContext', () => ({
-  useAuth: () => ({ logout }),
+vi.mock('@shared/components/ClientSignOutButton', () => ({
+  default: () => <button type="button" onClick={logout}>Log out</button>,
 }))
 
 vi.mock('next/link', () => ({
@@ -17,17 +16,10 @@ vi.mock('next/link', () => ({
 describe('BragIdentitySidebar', () => {
   beforeEach(() => {
     logout.mockClear()
-    useProfileStore.getState().clearProfile()
   })
 
   it('renders child menus for resume and feedback history', async () => {
-    useProfileStore.getState().setProfile({
-      firstName: 'Ada',
-      lastName: 'Lovelace',
-      email: 'ada@example.com',
-    })
-
-    render(<BragIdentitySidebar activePage="feedback" activeChildPage="feedback-history" eyebrow="Clausule · Feedback" ariaLabel="Sidebar navigation" />)
+    render(<BragIdentitySidebar activePage="feedback" activeChildPage="feedback-history" eyebrow="Clausule · Feedback" ariaLabel="Sidebar navigation" profile={{ firstName: 'Ada', lastName: 'Lovelace', email: 'ada@example.com' }} />)
 
     expect(screen.getByRole('complementary', { name: /sidebar navigation/i })).toBeInTheDocument()
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()

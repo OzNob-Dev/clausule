@@ -20,4 +20,11 @@ describe('SignupProgress', () => {
 
     expect(screen.getByText('Plan')).toHaveAttribute('aria-current', 'step')
   })
+
+  it('accepts an explicit pathname override', () => {
+    pathname = '/signup'
+    render(<SignupProgress pathname="/signup/done" />)
+
+    expect(screen.getByText('Done')).toHaveAttribute('aria-current', 'step')
+  })
 })

@@ -35,11 +35,23 @@ vi.mock('@shared/providers/QueryProvider', () => ({
 }))
 
 vi.mock('@shared/components/layout/DevAccessGate', () => ({
-  default: ({ children }) => <>{children}</>,
+  default: ({ children }) => <div data-testid="dev-gate">{children}</div>,
 }))
 
-vi.mock('@shared/components/layout/RouteShell', () => ({
-  default: ({ children, initialPathname }) => <div data-pathname={initialPathname}>{children}</div>,
+vi.mock('@shared/components/layout/LoginShell', () => ({
+  default: ({ children }) => <div data-testid="login-shell">{children}</div>,
+}))
+
+vi.mock('@shared/components/layout/MfaShell', () => ({
+  default: ({ children }) => <div data-testid="mfa-shell">{children}</div>,
+}))
+
+vi.mock('@shared/components/layout/AuthorShell', () => ({
+  default: ({ children, pathname: currentPathname, session: currentSession }) => <div data-testid="author-shell" data-pathname={currentPathname} data-session-email={currentSession?.profile?.email ?? ''}>{children}</div>,
+}))
+
+vi.mock('@shared/components/layout/PublicShell', () => ({
+  default: ({ children }) => <div data-testid="public-shell">{children}</div>,
 }))
 
 describe('RootLayout', () => {
@@ -58,17 +70,60 @@ describe('RootLayout', () => {
 
     expect(container.querySelector('html')).toHaveAttribute('lang', 'en')
     expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('Home').parentElement).toHaveAttribute('data-pathname', '/')
+    expect(screen.getByTestId('public-shell')).toBeInTheDocument()
+    expect(screen.queryByTestId('auth-provider')).not.toBeInTheDocument()
   })
 
-  it('keeps auth context mounted on public routes', async () => {
+  it('leaves public routes outside the gated client providers', async () => {
     pathname = '/pricing'
     session = null
 
     render(await RootLayout({ children: <main>Pricing</main> }))
 
-    expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
+    expect(screen.getByTestId('public-shell')).toBeInTheDocument()
+    expect(screen.queryByTestId('dev-gate')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('auth-provider')).not.toBeInTheDocument()
     expect(screen.getByText('Pricing')).toBeInTheDocument()
+  })
+
+  it('wraps auth routes in the gated client providers', async () => {
+    pathname = '/login'
+    session = null
+
+    render(await RootLayout({ children: <main>Login</main> }))
+
+    expect(screen.getByTestId('dev-gate')).toBeInTheDocument()
+    expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
+    expect(screen.getByTestId('login-shell')).toBeInTheDocument()
+    expect(screen.getByText('Login')).toBeInTheDocument()
+  })
+
+  it('wraps signup routes in the signup shell', async () => {
+    pathname = '/signup/plan'
+    session = null
+
+    render(await RootLayout({ children: <main>Signup</main> }))
+
+    expect(screen.getByTestId('dev-gate')).toBeInTheDocument()
+    expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
+    expect(screen.queryByTestId('login-shell')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('public-shell')).not.toBeInTheDocument()
+    expect(screen.getByText('Signup')).toBeInTheDocument()
+  })
+
+  it('leaves mfa setup shell selection to the route subtree', async () => {
+    pathname = '/mfa-setup'
+    session = {
+      ...session,
+      security: { authenticatorAppConfigured: false, authenticatedWithOtp: true, ssoConfigured: false },
+    }
+
+    render(await RootLayout({ children: <main>MFA setup</main> }))
+
+    expect(screen.getByTestId('dev-gate')).toBeInTheDocument()
+    expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
+    expect(screen.queryByTestId('login-shell')).not.toBeInTheDocument()
+    expect(screen.getByText('MFA setup')).toBeInTheDocument()
   })
 
   it('keeps the favicon metadata pointed at the public svg mirror', () => {
@@ -107,8 +162,10 @@ describe('RootLayout', () => {
 
     render(await RootLayout({ children: <div>Security settings</div> }))
 
+    expect(screen.getByTestId('dev-gate')).toBeInTheDocument()
     expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
-    expect(screen.getByTestId('auth-provider').firstChild).toHaveAttribute('data-pathname', '/brag/settings')
+    expect(screen.getByTestId('author-shell')).toHaveAttribute('data-pathname', '/brag/settings')
+    expect(screen.getByTestId('author-shell')).toHaveAttribute('data-session-email', 'ada@example.com')
     expect(screen.getByText('Security settings')).toBeInTheDocument()
     expect(redirect).not.toHaveBeenCalled()
   })
@@ -129,6 +186,7 @@ describe('RootLayout', () => {
 
     render(await RootLayout({ children: <div>Manager dashboard</div> }))
 
+    expect(screen.getByTestId('dev-gate')).toBeInTheDocument()
     expect(screen.getByTestId('auth-provider')).toBeInTheDocument()
     expect(screen.getByText('Manager dashboard')).toBeInTheDocument()
     expect(redirect).not.toHaveBeenCalled()
