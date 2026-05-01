@@ -12,7 +12,6 @@ export function hasDevAccess() {
 }
 
 export default function DevAccessGate({ children }) {
-  const [checked, setChecked] = useState(false)
   const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
@@ -27,6 +26,5 @@ export default function DevAccessGate({ children }) {
     setChecked(true)
   }, [])
 
-  if (!checked) return <LoadingOverlay />
-  return allowed ? <LoadingOverlay /> : <ComingSoon />
+  return allowed ? children : <ComingSoon />
 }

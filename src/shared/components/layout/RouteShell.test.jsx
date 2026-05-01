@@ -17,10 +17,6 @@ vi.mock('@shared/components/BragIdentitySidebar', () => ({
   default: ({ activePage, activeChildPage, eyebrow }) => <div>{activePage}:{activeChildPage ?? ''}:{eyebrow}</div>,
 }))
 
-vi.mock('@shared/components/ui/DevLoadingOverlayFlag', () => ({
-  default: ({ children }) => <>{children}</>,
-}))
-
 describe('RouteShell', () => {
   beforeEach(() => {
     pathname = '/'

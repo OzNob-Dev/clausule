@@ -3,7 +3,6 @@
 import { usePathname } from 'next/navigation'
 import AuthBrandPanel from '@shared/components/ui/AuthBrandPanel'
 import BragIdentitySidebar from '@shared/components/BragIdentitySidebar'
-import DevLoadingOverlayFlag from '@shared/components/ui/DevLoadingOverlayFlag'
 import {
   isAuthShellPath,
   isAuthorShellPath,
@@ -53,9 +52,7 @@ function AuthorShell({ children, pathname }) {
         ariaLabel="Sidebar navigation"
       />
       <main className="be-main page-enter bss-screen" aria-labelledby={pageConfig.ariaLabelledby}>
-        <div className="be-inner bss-page">
-          <DevLoadingOverlayFlag>{children}</DevLoadingOverlayFlag>
-        </div>
+        <div className="be-inner bss-page">{children}</div>
       </main>
     </div>
   )

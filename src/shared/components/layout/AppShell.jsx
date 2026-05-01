@@ -1,5 +1,4 @@
 import './AppShell.css'
-import DevLoadingOverlayFlag from '@shared/components/ui/DevLoadingOverlayFlag'
 
 export function AppShell({ children }) {
   return (
@@ -10,9 +9,7 @@ export function AppShell({ children }) {
       >
         Skip to main content
       </a>
-      <main id="main-content" className="app-main">
-        <DevLoadingOverlayFlag>{children}</DevLoadingOverlayFlag>
-      </main>
+      <main id="main-content" className="app-main">{children}</main>
     </div>
   )
 }
